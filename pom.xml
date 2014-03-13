@@ -281,8 +281,8 @@
         <profile>
             <id>local</id>
             <properties>
-                <database.server.id></database.server.id>
-                <database.server.url>jdbc:postgresql://localhost/</database.server.url>
+                <database.server.id>godtools-local</database.server.id>
+                <database.server.url>jdbc:postgresql://localhost/godtools</database.server.url>
                 <errbit.environment>local</errbit.environment>
                 <github.global.server>github</github.global.server>
             </properties>
