@@ -1,5 +1,8 @@
 package org.cru.godtools.api.packages;
 
+import org.xml.sax.SAXException;
+
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -10,6 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -18,6 +23,9 @@ import javax.ws.rs.core.Response;
 @Path("/packages")
 public class PackageResource
 {
+
+    @Inject
+    MockPackageService packageService;
 
     @GET
     @Produces(MediaType.APPLICATION_XML)
@@ -29,10 +37,10 @@ public class PackageResource
                                 @QueryParam("revision-number") Integer revisionNumber,
                                 @QueryParam("segment") String segment,
                                 @QueryParam("screen-size") String screenSize,
-                                @HeaderParam("authentication") String authCode)
+                                @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
 
-        return Response.ok().build();
+        return Response.ok(packageService.getPackage(languageCode,packageCode)).build();
     }
 
     @POST
