@@ -52,6 +52,4 @@ public class PackageResource
 
         return Response.noContent().build();
     }
-
-
 }

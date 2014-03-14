@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+    <language code="en">
+        <packages>
+            <package status="live" type="interactive" name="Knowing God Personally" path="Packages/kgp/en" icon="Packages/kgp/icons/en.png" version="1" minimum_interpreter_version="1" hash="2807c4b0844f65494c86f0c1bb81a19252980691"/>
+        </packages>
+    </language>
+</languages>
+

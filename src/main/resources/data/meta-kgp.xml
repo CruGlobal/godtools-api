@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+    <language code="en">
+        <packages>
+            <package status="live" type="interactive" name="Knowing God Personally" path="Packages/kgp/en" icon="Packages/kgp/icons/en.png" version="1" minimum_interpreter_version="1" hash="2807c4b0844f65494c86f0c1bb81a19252980691"/>
+        </packages>
+    </language>
+
+    <language code="en_US">
+        <packages>
+            <package status="live" type="interactive" name="Would You Like To Know God Personally?" path="Packages/kgp/en_US" icon="Packages/kgp/icons/en_US.png" version="1" minimum_interpreter_version="1" hash="ca973f26f08e039bec14124f02bacdf7df4f2e87"/>
+        </packages>
+    </language>
+
+    <language code="en_heartbeat">
+        <packages>
+            <package status="live" type="interactive" name="Knowing God Personally" path="Packages/kgp/en_heartbeat" icon="Packages/kgp/icons/en_heartbeat.png" version="1" minimum_interpreter_version="1" hash="2807c4b0844f65494c86f0c1bb81a19252980691"/>
+        </packages>
+    </language>
+
+</languages>
+
