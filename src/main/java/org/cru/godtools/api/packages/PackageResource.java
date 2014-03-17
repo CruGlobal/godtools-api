@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -40,7 +42,10 @@ public class PackageResource
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
 
-        return Response.ok(packageService.getPackage(languageCode,packageCode)).build();
+        Document contentsFile = packageService.getContentsFile(languageCode, packageCode);
+        Map<String, Document> pageFiles = packageService.getPageFiles(languageCode, packageCode, new PageFilenameList().fromContentsFile(contentsFile));
+
+        return Response.ok().build();
     }
 
     @POST

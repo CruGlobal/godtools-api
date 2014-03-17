@@ -1,43 +1,61 @@
 package org.cru.godtools.api.packages;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import org.w3c.dom.Document;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ryancarlson on 3/14/14.
  */
 public class MockPackageService
 {
-    public Document getPackage(String languageCode, String packageCode) throws IOException, SAXException, ParserConfigurationException
+
+    public Document getContentsFile(String languageCode, String packageCode) throws IOException, SAXException, ParserConfigurationException
     {
         DocumentBuilder documentBuilder =  DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-        if(Strings.isNullOrEmpty(languageCode) && Strings.isNullOrEmpty(packageCode))
+        try
         {
-//            return documentBuilder.parse(this.getClass().getResourceAsStream("/data/meta-all.xml"));
+            return documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml"));
         }
-
-        else if("en".equalsIgnoreCase(languageCode) && "kgp".equalsIgnoreCase(packageCode))
+        catch(Exception swallowed)
         {
-            return documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-en-kgp.xml"));
+            return null;
         }
-
-        else if("en".equalsIgnoreCase(languageCode))
-        {
-//            return documentBuilder.parse(this.getClass().getResourceAsStream("/data/meta-en.xml"));
-        }
-
-        else if("kgp".equalsIgnoreCase(packageCode))
-        {
-//            return documentBuilder.parse(this.getClass().getResourceAsStream("/data/meta-kgp.xml"));
-        }
-
-        return null;
     }
+
+    public Map<String, Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames) throws IOException, SAXException, ParserConfigurationException
+    {
+        Map<String, Document> pages = Maps.newHashMap();
+
+        DocumentBuilder documentBuilder =  DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+        for(String filename : fileNames)
+        {
+            String path = path(languageCode,packageCode,filename);
+
+            Document page = documentBuilder.parse(this.getClass().getResourceAsStream(path));
+            pages.put(filename, page);
+        }
+
+       return pages;
+    }
+
+    private String path(String languageCode, String packageCode, String filename)
+    {
+        return "/data/packages/" + languageCode + "/" + packageCode + "/" + filename;
+    }
+
 }
