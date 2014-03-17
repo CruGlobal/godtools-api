@@ -1,7 +1,9 @@
 package org.cru.godtools.api.packages;
 
+import org.jboss.resteasy.plugins.providers.multipart.MultipartRelatedOutput;
 import org.w3c.dom.Document;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
@@ -20,13 +22,17 @@ public class PackageResponse
         this.pageFiles = pageFiles;
     }
 
-    public Document getContentsFile()
+    public MultipartRelatedOutput build()
     {
-        return contentsFile;
-    }
+        MultipartRelatedOutput output = new MultipartRelatedOutput();
 
-    public Map<String, Document> getPageFiles()
-    {
-        return pageFiles;
+        output.addPart(contentsFile, MediaType.valueOf("application/xml"), "foo.xml");
+
+        for(String key : pageFiles.keySet())
+        {
+            output.addPart(pageFiles.get(key), MediaType.valueOf("application/xml"), String.valueOf(pageFiles.get(key).hashCode()) + ".xml", "");
+        }
+
+        return output;
     }
 }
