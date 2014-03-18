@@ -1,7 +1,5 @@
 package org.cru.godtools.api.packages;
 
-import org.jboss.resteasy.annotations.providers.multipart.PartType;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartRelatedOutput;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -32,8 +30,8 @@ public class PackageResource
     MockPackageService packageService;
 
     @GET
-    @Produces("multipart/related")
-    public MultipartRelatedOutput getPackages(@QueryParam("language") String languageCode,
+    @Produces({"application/zip"})
+    public Response getPackages(@QueryParam("language") String languageCode,
                                 @QueryParam("package") String packageCode,
                                 @QueryParam("interpreter-version") String minimumInterpreterVersion,
                                 @QueryParam("compressed") String compressed,
@@ -44,10 +42,9 @@ public class PackageResource
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
 
-        Document contentsFile = packageService.getContentsFile(languageCode, packageCode);
-        Map<String, Document> pageFiles = packageService.getPageFiles(languageCode, packageCode, new PageFilenameList().fromContentsFile(contentsFile));
+        AssemblePackageProcess packageAssembler = new AssemblePackageProcess(packageService, languageCode, packageCode);
 
-        return new PackageResponse(contentsFile, pageFiles).build();
+        return packageAssembler.buildZippedResponse();
     }
 
     @POST
