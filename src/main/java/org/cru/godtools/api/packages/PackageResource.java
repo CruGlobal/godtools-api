@@ -42,9 +42,9 @@ public class PackageResource
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
 
-        AssemblePackageProcess packageAssembler = new AssemblePackageProcess(packageService, languageCode, packageCode);
+        AssemblePackageProcess packageAssembler = new AssemblePackageProcess(packageService);
 
-        return packageAssembler.buildZippedResponse();
+        return packageAssembler.buildZippedResponse(languageCode, packageCode);
     }
 
     @POST

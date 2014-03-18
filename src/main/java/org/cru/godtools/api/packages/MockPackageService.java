@@ -1,25 +1,17 @@
 package org.cru.godtools.api.packages;
 
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.cru.godtools.api.packages.utils.PageFilenameList;
 import org.w3c.dom.Document;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -27,12 +19,17 @@ import java.util.Map;
 public class MockPackageService
 {
 
-    public Document getContentsFile(String languageCode, String packageCode)
+    public GodToolsPackage getPackage(String languageCode, String packageCode)
     {
         try
         {
             DocumentBuilder documentBuilder =  DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            return documentBuilder.parse(getContentsFileStream(languageCode,packageCode));
+            Document packageFile =  documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml"));
+
+            return new GodToolsPackage(packageFile,
+                    getPageFiles(languageCode, packageCode, new PageFilenameList().fromContentsFile(packageFile)),
+                    languageCode,
+                    packageCode);
         }
         catch(Exception e)
         {
@@ -41,20 +38,15 @@ public class MockPackageService
         }
     }
 
-    public InputStream getContentsFileStream(String languageCode, String packageCode)
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
     {
-        try
-        {
-            return this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml");
-        }
-        catch(Exception e)
-        {
-            Throwables.propagate(e);
-            return null; /*unreachable*/
-        }
+        GodToolsPackage kgp = getPackage(languageCode, "kgp");
+        GodToolsPackage satisfied = getPackage(languageCode, "satisfied");
+
+        return Sets.newHashSet(kgp, satisfied);
     }
 
-    public Map<String, Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
+    private Map<String, Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
     {
         Map<String, Document> pages = Maps.newHashMap();
 
