@@ -1,29 +1,19 @@
 package org.cru.godtools.api.packages;
 
 import com.google.common.base.Throwables;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartRelatedOutput;
+import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.PageFilenameList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -54,9 +44,11 @@ public class AssemblePackageProcess
             ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
             FileZipper fileZipper = new FileZipper();
 
-            fileZipper.zipContentsFile(contentsFile, zipOutputStream);
+            String packageFileChecksum = fileZipper.zipPackageFile(contentsFile, zipOutputStream);
 
             fileZipper.zipPageFiles(packagePages, zipOutputStream);
+
+            fileZipper.zipContentsFile(createContentsFile(packageFileChecksum), zipOutputStream);
 
             zipOutputStream.close();
 
@@ -71,27 +63,21 @@ public class AssemblePackageProcess
         }
     }
 
-
-
-//    private void convertContentsFile()
-//    {
-//        NodeList pageNodes = contentsFile.getElementsByTagName("page");
-//
-//        for(int i = 0; i < pageNodes.getLength(); i++)
-//        {
-//            Node pageNode = pageNodes.item(i);
-//
-//            if(pageNode instanceof Element)
-//            {
-//                Element pageElement = (Element) pageNode;
-//                String newFilename = getStringHash(packagePages.get(pageElement.getAttribute("filename")));
-//                pageElement.setAttribute("filename", newFilename + ".xml");
-//            }
-//        }
-//    }
-
-    private String getStringHash(Document page)
+    private Document createContentsFile(String packageFileChecksum) throws ParserConfigurationException
     {
-        return String.valueOf(page.hashCode());
+        Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+        Element rootElement = contents.createElement("content");
+        contents.appendChild(rootElement);
+
+        Element resourceElement = contents.createElement("resource");
+        resourceElement.setAttribute("package", packageCode);
+        resourceElement.setAttribute("language", languageCode);
+        resourceElement.setAttribute("config", packageFileChecksum + ".xml");
+
+        rootElement.appendChild(resourceElement);
+
+        return contents;
+
     }
 }

@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api.packages.utils;
 
 import org.w3c.dom.Document;
 
@@ -19,17 +19,28 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileZipper
 {
-    public void zipContentsFile(Document contentsFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException
+    public String zipPackageFile(Document packageFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
-        zipFile(contentsFile, "contents.xml", zipOutputStream);
+        String checksum = new FileChecksumGenerator().getChecksum(packageFile);
+
+        zipFile(packageFile, checksum + ".xml", zipOutputStream);
+
+        return checksum;
     }
 
-    public void zipPageFiles(Map<String,Document> packagePages, ZipOutputStream zipOutputStream) throws IOException, TransformerException
+    public void zipPageFiles(Map<String,Document> packagePages, ZipOutputStream zipOutputStream) throws Exception
     {
         for(String key : packagePages.keySet())
         {
-            zipFile(packagePages.get(key), key, zipOutputStream);
+            String checksum = new FileChecksumGenerator().getChecksum(packagePages.get(key));
+
+            zipFile(packagePages.get(key), checksum + ".xml", zipOutputStream);
         }
+    }
+
+    public void zipContentsFile(Document contentsFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException
+    {
+        zipFile(contentsFile, "contents.xml", zipOutputStream);
     }
 
     public void zipFile(Document file, String filename, ZipOutputStream zipOutputStream) throws IOException, TransformerException

@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api.packages.utils;
 
 import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
