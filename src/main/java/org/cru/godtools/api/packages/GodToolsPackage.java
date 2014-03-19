@@ -1,7 +1,9 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,37 +11,48 @@ import java.util.Map;
  */
 public class GodToolsPackage
 {
-    Document packageFile;
-    Map<String, Document> pageFiles;
+    Document packageXml;
+    List<GodToolsPackagePage> pageFiles;
     String languageCode;
     String packageCode;
 
-    String packageFileChecksum;
+    String packageXmlHash;
 
-    public GodToolsPackage(Document packageFile, Map<String, Document> pageFiles, String languageCode, String packageCode)
+    public GodToolsPackage(Document packageXml, List<Document> xmlPageFiles, String languageCode, String packageCode)
     {
-        this.packageFile = packageFile;
-        this.pageFiles = pageFiles;
+        this.packageXml = packageXml;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
+
+        hashPages(xmlPageFiles);
     }
 
-    public Document getPackageFile()
+    private void hashPages(List<Document> xmlPageFiles)
     {
-        return packageFile;
+        pageFiles = Lists.newArrayList();
+
+        for(Document xmlPage : xmlPageFiles)
+        {
+            pageFiles.add(new GodToolsPackagePage(xmlPage));
+        }
     }
 
-    public void setPackageFile(Document packageFile)
+    public Document getPackageXml()
     {
-        this.packageFile = packageFile;
+        return packageXml;
     }
 
-    public Map<String, Document> getPageFiles()
+    public void setPackageXml(Document packageXml)
+    {
+        this.packageXml = packageXml;
+    }
+
+    public List<GodToolsPackagePage> getPageFiles()
     {
         return pageFiles;
     }
 
-    public void setPageFiles(Map<String, Document> pageFiles)
+    public void setPageFiles(List<GodToolsPackagePage> pageFiles)
     {
         this.pageFiles = pageFiles;
     }
@@ -64,13 +77,13 @@ public class GodToolsPackage
         this.packageCode = packageCode;
     }
 
-    public String getPackageFileChecksum()
+    public String getPackageXmlHash()
     {
-        return packageFileChecksum;
+        return packageXmlHash;
     }
 
-    public void setPackageFileChecksum(String packageFileChecksum)
+    public void setPackageXmlHash(String packageXmlHash)
     {
-        this.packageFileChecksum = packageFileChecksum;
+        this.packageXmlHash = packageXmlHash;
     }
 }

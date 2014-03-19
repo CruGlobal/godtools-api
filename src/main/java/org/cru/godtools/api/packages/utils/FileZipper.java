@@ -1,5 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
+import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.Result;
@@ -10,7 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -19,25 +21,50 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileZipper
 {
-    public String zipPackageFile(Document packageFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+
+    /**
+     * The package XML is added to the zipOutputStream.
+     *
+     * @param godToolsPackage
+     * @param zipOutputStream
+     * @return
+     * @throws IOException
+     * @throws TransformerException
+     * @throws Exception
+     */
+    public void zipPackageFile(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
-        String checksum = new FileChecksumGenerator().getChecksum(packageFile);
-
-        zipFile(packageFile, checksum + ".xml", zipOutputStream);
-
-        return checksum;
+        zipFile(godToolsPackage.getPackageXml(), godToolsPackage.getPackageXmlHash() + ".xml", zipOutputStream);
     }
 
-    public void zipPageFiles(Map<String,Document> packagePages, ZipOutputStream zipOutputStream) throws Exception
+    /**
+     * The page XML is added to the zipOutputStream.
+     *
+     * @param godToolsPackage
+     * @param zipOutputStream
+     * @return
+     * @throws IOException
+     * @throws TransformerException
+     * @throws Exception
+     */
+    public void zipPageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws Exception
     {
-        for(String key : packagePages.keySet())
+        for(GodToolsPackagePage page : godToolsPackage.getPageFiles())
         {
-            String checksum = new FileChecksumGenerator().getChecksum(packagePages.get(key));
-
-            zipFile(packagePages.get(key), checksum + ".xml", zipOutputStream);
+            zipFile(page.getXml(), page.getPageHash() + ".xml", zipOutputStream);
         }
     }
 
+    /**
+     * The contents XML is added to the zipOutputStream.
+     *
+     * @param contentsFile
+     * @param zipOutputStream
+     * @return
+     * @throws IOException
+     * @throws TransformerException
+     * @throws Exception
+     */
     public void zipContentsFile(Document contentsFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException
     {
         zipFile(contentsFile, "contents.xml", zipOutputStream);

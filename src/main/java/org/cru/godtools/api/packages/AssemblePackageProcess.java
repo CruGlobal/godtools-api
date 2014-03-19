@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.XmlFileHasher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -17,6 +18,10 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 /**
+ * Logic to take a single or multiple GodTools package(s) and convert it/them into a javax.ws.rs.core.Response.
+ *
+ * The content is zipped into a zip file by using a ZipOutputStream
+ *
  * Created by ryancarlson on 3/17/14.
  */
 public class AssemblePackageProcess
@@ -34,7 +39,6 @@ public class AssemblePackageProcess
         {
             ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
             ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
-            FileZipper fileZipper = new FileZipper();
             Set<GodToolsPackage> packages;
 
             if(Strings.isNullOrEmpty(packageCode))
@@ -46,16 +50,9 @@ public class AssemblePackageProcess
                 packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
             }
 
-            for(GodToolsPackage godToolsPackage : packages)
-            {
-                godToolsPackage.setPackageFileChecksum(fileZipper.zipPackageFile(godToolsPackage.getPackageFile(), zipOutputStream));
+            new XmlFileHasher().setHashes(packages);
 
-                fileZipper.zipPageFiles(godToolsPackage.getPageFiles(), zipOutputStream);
-            }
-
-            fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);
-
-            zipOutputStream.close();
+            createZipFolder(zipOutputStream, packages);
 
             bundledStream.close();
 
@@ -66,6 +63,22 @@ public class AssemblePackageProcess
             Throwables.propagate(e);
             return null;
         }
+    }
+
+    private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages) throws Exception
+    {
+        FileZipper fileZipper = new FileZipper();
+
+        for(GodToolsPackage godToolsPackage : packages)
+        {
+            fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);
+
+            fileZipper.zipPageFiles(godToolsPackage, zipOutputStream);
+        }
+
+        fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);
+
+        zipOutputStream.close();
     }
 
     private Document createContentsFile(Set<GodToolsPackage> packages) throws ParserConfigurationException
@@ -80,7 +93,7 @@ public class AssemblePackageProcess
             Element resourceElement = contents.createElement("resource");
             resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
             resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
-            resourceElement.setAttribute("config", godToolsPackage.getPackageFileChecksum() + ".xml");
+            resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
 
             rootElement.appendChild(resourceElement);
         }

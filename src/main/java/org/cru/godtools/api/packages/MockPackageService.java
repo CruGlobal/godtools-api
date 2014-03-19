@@ -1,7 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.PageFilenameList;
 import org.w3c.dom.Document;
@@ -10,7 +10,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -46,9 +45,9 @@ public class MockPackageService
         return Sets.newHashSet(kgp, satisfied);
     }
 
-    private Map<String, Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
+    private List<Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
     {
-        Map<String, Document> pages = Maps.newHashMap();
+        List<Document> pages = Lists.newArrayList();
 
         try
         {
@@ -59,7 +58,7 @@ public class MockPackageService
                 String path = path(languageCode,packageCode,filename);
 
                 Document page = documentBuilder.parse(this.getClass().getResourceAsStream(path));
-                pages.put(filename, page);
+                pages.add(page);
             }
         }
         catch(Exception e)
