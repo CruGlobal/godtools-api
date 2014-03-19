@@ -45,9 +45,9 @@ public class MockPackageService
         return Sets.newHashSet(kgp, satisfied);
     }
 
-    private List<Document> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
+    private List<GodToolsPackagePage> getPageFiles(String languageCode, String packageCode, List<String> fileNames)
     {
-        List<Document> pages = Lists.newArrayList();
+        List<GodToolsPackagePage> pages = Lists.newArrayList();
 
         try
         {
@@ -57,8 +57,8 @@ public class MockPackageService
             {
                 String path = path(languageCode,packageCode,filename);
 
-                Document page = documentBuilder.parse(this.getClass().getResourceAsStream(path));
-                pages.add(page);
+                Document xmlPage = documentBuilder.parse(this.getClass().getResourceAsStream(path));
+                pages.add(new GodToolsPackagePage(xmlPage, filename));
             }
         }
         catch(Exception e)

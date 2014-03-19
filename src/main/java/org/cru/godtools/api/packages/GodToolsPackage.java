@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Created by ryancarlson on 3/18/14.
@@ -18,23 +19,25 @@ public class GodToolsPackage
 
     String packageXmlHash;
 
-    public GodToolsPackage(Document packageXml, List<Document> xmlPageFiles, String languageCode, String packageCode)
+    public GodToolsPackage(Document packageXml, List<GodToolsPackagePage> pageFiles, String languageCode, String packageCode)
     {
         this.packageXml = packageXml;
+        this.pageFiles = pageFiles;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
-
-        hashPages(xmlPageFiles);
     }
 
-    private void hashPages(List<Document> xmlPageFiles)
+    public GodToolsPackagePage getPageByFilename(String filename)
     {
-        pageFiles = Lists.newArrayList();
-
-        for(Document xmlPage : xmlPageFiles)
+        for(GodToolsPackagePage godToolsPackagePage : pageFiles)
         {
-            pageFiles.add(new GodToolsPackagePage(xmlPage));
+            if(godToolsPackagePage.getOriginalFilename().equals(filename))
+            {
+                return godToolsPackagePage;
+            }
         }
+
+        throw new NoSuchElementException();
     }
 
     public Document getPackageXml()

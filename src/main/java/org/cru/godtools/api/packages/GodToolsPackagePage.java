@@ -10,10 +10,12 @@ public class GodToolsPackagePage
 {
     Document xml;
     String pageHash;
+    String originalFilename;
 
-    public GodToolsPackagePage(Document xml)
+    public GodToolsPackagePage(Document xml, String originalFilename)
     {
         this.xml = xml;
+        this.originalFilename = originalFilename;
     }
 
     public Document getXml()
@@ -34,5 +36,15 @@ public class GodToolsPackagePage
     public void setPageHash(String pageHash)
     {
         this.pageHash = pageHash;
+    }
+
+    public String getOriginalFilename()
+    {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename)
+    {
+        this.originalFilename = originalFilename;
     }
 }

@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,17 +32,29 @@ public class ReplaceFilenamesWithHashes
     {
         Document packageXml = godToolsPackage.getPackageXml();
 
-        NodeList pageNodes = packageXml.getElementsByTagName("page");
+        replaceFilenamesForElement(godToolsPackage, packageXml, "page");
+        replaceFilenamesForElement(godToolsPackage, packageXml, "about");
+    }
+
+    private void replaceFilenamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName)
+    {
+        replaceFilenamesForElement(godToolsPackage, packageXml, elementName, "filename");
+    }
+
+    private void replaceFilenamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName, String attributeName)
+    {
+        NodeList pageNodes = packageXml.getElementsByTagName(elementName);
 
         for(int i = 0; i < pageNodes.getLength(); i++)
         {
-            Node page = pageNodes.item(i);
+            Node pageNode = pageNodes.item(i);
 
-            if(page instanceof Element)
+            if(pageNode instanceof Element)
             {
-                ((Element) page).setAttribute("filename", godToolsPackage.getPageFiles().get(i).getPageHash() + ".xml");
+                Element pageElement = (Element) pageNode;
+                GodToolsPackagePage godToolsPackagePage = godToolsPackage.getPageByFilename(pageElement.getAttribute(attributeName));
+                pageElement.setAttribute(attributeName, godToolsPackagePage.getPageHash() + ".xml");
             }
-
         }
     }
 }

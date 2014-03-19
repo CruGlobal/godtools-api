@@ -19,9 +19,22 @@ public class PageFilenameList extends ForwardingList<String>
 
     public PageFilenameList fromContentsFile(Document contentsFile)
     {
+        loadFileNamesForElementName(contentsFile, "page");
+        loadFileNamesForElementName(contentsFile, "about");
+
+        return this;
+    }
+
+    private void loadFileNamesForElementName(Document contentsFile, String elementName)
+    {
+        loadFileNamesForElementName(contentsFile, elementName, "filename");
+    }
+
+    private void loadFileNamesForElementName(Document contentsFile, String elementName, String attributeName)
+    {
         Element rootElement = contentsFile.getDocumentElement();
 
-        NodeList pageNodes = rootElement.getElementsByTagName("page");
+        NodeList pageNodes = rootElement.getElementsByTagName(elementName);
 
         for(int i = 0; i < pageNodes.getLength(); i++)
         {
@@ -30,11 +43,9 @@ public class PageFilenameList extends ForwardingList<String>
             if(node instanceof Element)
             {
                 Element page = (Element) node;
-                list.add(page.getAttribute("filename"));
+                list.add(page.getAttribute(attributeName));
             }
         }
-
-        return this;
     }
 
     @Override
