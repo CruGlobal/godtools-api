@@ -3,12 +3,18 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.IOUtils;
 import org.cru.godtools.api.packages.utils.PageFilenameList;
+import org.cru.godtools.api.packages.utils.PageImageNameList;
 import org.w3c.dom.Document;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -25,11 +31,19 @@ public class MockPackageService
             DocumentBuilder documentBuilder =  DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document packageFile =  documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml"));
 
-            return new GodToolsPackage(packageFile,
+            GodToolsPackage godToolsPackage = new GodToolsPackage(packageFile,
                     getPageFiles(languageCode, packageCode, new PageFilenameList().fromContentsFile(packageFile)),
                     languageCode,
                     packageCode);
+
+            godToolsPackage.setImageFiles(getImages(
+                    languageCode,
+                    packageCode,
+                    new PageImageNameList().fromPageFiles(godToolsPackage.getPageFiles())));
+
+            return godToolsPackage;
         }
+
         catch(Exception e)
         {
             Throwables.propagate(e);
@@ -68,9 +82,36 @@ public class MockPackageService
        return pages;
     }
 
+    private Set<GodToolsPackageImage> getImages(String languageCode, String packageCode, Set<String> imageNames)
+    {
+        Set<GodToolsPackageImage> images = Sets.newHashSet();
+
+        for(String imageName : imageNames)
+        {
+            String path = imagePath(languageCode, packageCode, imageName);
+
+            try
+            {
+                byte[] imageBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream(path));
+                images.add(new GodToolsPackageImage(imageBytes, imageName));
+            }
+            catch (IOException e)
+            {
+                Throwables.propagate(e);
+            }
+        }
+
+        return images;
+    }
+
     private String path(String languageCode, String packageCode, String filename)
     {
         return "/data/packages/" + languageCode + "/" + packageCode + "/" + filename;
+    }
+
+    private String imagePath(String languageCode, String packageCode, String filename)
+    {
+        return "/data/packages/" + languageCode + "/" + packageCode + "/images/" + filename;
     }
 
 }

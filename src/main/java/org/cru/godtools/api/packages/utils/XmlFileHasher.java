@@ -1,12 +1,12 @@
 package org.cru.godtools.api.packages.utils;
 
 import com.google.common.base.Throwables;
-import com.sun.java.swing.plaf.gtk.resources.gtk_pt_BR;
+import javassist.bytecode.ByteArray;
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackageImage;
 import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.w3c.dom.Document;
 
-import javax.mail.Message;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -15,7 +15,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import java.util.Set;
 
 /**
@@ -31,6 +31,11 @@ public class XmlFileHasher
         for(GodToolsPackagePage page : godToolsPackage.getPageFiles())
         {
             page.setPageHash(calculateHash(page.getXml()));
+        }
+
+        for(GodToolsPackageImage image: godToolsPackage.getImageFiles())
+        {
+            image.setHash(calculateHash(image.getContents()));
         }
     }
 
@@ -57,6 +62,23 @@ public class XmlFileHasher
 
             messageDigest.update(byteStream.toByteArray());
 
+            return calculateHash(messageDigest.digest());
+        }
+        catch(Exception e)
+        {
+            Throwables.propagate(e);
+            return null;
+        }
+    }
+
+    private String calculateHash(byte[] image)
+    {
+        try
+        {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+
+            messageDigest.update(image);
+
             byte[] messageDigestBytes = messageDigest.digest();
 
             StringBuffer hexString = new StringBuffer();
@@ -71,7 +93,8 @@ public class XmlFileHasher
         catch(Exception e)
         {
             Throwables.propagate(e);
-            return null;
+            return null; /*unreachable*/
         }
     }
+
 }

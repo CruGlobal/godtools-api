@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackageImage;
 import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,12 +13,13 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/19/14.
  */
-public class ReplaceFilenamesWithHashes
+public class ReplaceNamesWithHashes
 {
 
     public void replace(GodToolsPackage godToolsPackage)
     {
         replacePageFilenames(godToolsPackage);
+        replaceImageFilename(godToolsPackage);
     }
 
     public void replace(Set<GodToolsPackage> godToolsPackages)
@@ -32,13 +34,17 @@ public class ReplaceFilenamesWithHashes
     {
         Document packageXml = godToolsPackage.getPackageXml();
 
-        replaceFilenamesForElement(godToolsPackage, packageXml, "page");
-        replaceFilenamesForElement(godToolsPackage, packageXml, "about");
+        replaceFilenamesForElement(godToolsPackage, packageXml, "page", "filename");
+        replaceFilenamesForElement(godToolsPackage, packageXml, "about", "filename");
     }
 
-    private void replaceFilenamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName)
+    private void replaceImageFilename(GodToolsPackage godToolsPackage)
     {
-        replaceFilenamesForElement(godToolsPackage, packageXml, elementName, "filename");
+        for(GodToolsPackagePage godToolsPackagePage : godToolsPackage.getPageFiles())
+        {
+            replaceImageNamesForElement(godToolsPackage,godToolsPackagePage.getXml(), "page", "backgroundimage");
+            replaceImageNamesForElement(godToolsPackage,godToolsPackagePage.getXml(), "page", "watermark");
+        }
     }
 
     private void replaceFilenamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName, String attributeName)
@@ -54,6 +60,23 @@ public class ReplaceFilenamesWithHashes
                 Element pageElement = (Element) pageNode;
                 GodToolsPackagePage godToolsPackagePage = godToolsPackage.getPageByFilename(pageElement.getAttribute(attributeName));
                 pageElement.setAttribute(attributeName, godToolsPackagePage.getPageHash() + ".xml");
+            }
+        }
+    }
+
+    private void replaceImageNamesForElement(GodToolsPackage godToolsPackage, Document pageXml, String elementName, String attributeName)
+    {
+        NodeList pageNodes = pageXml.getElementsByTagName(elementName);
+
+        for(int i = 0; i < pageNodes.getLength(); i++)
+        {
+            Node pageNode = pageNodes.item(i);
+
+            if(pageNode instanceof Element)
+            {
+                Element pageElement = (Element) pageNode;
+                GodToolsPackageImage godToolsPackageImage = godToolsPackage.getImageByFilename(pageElement.getAttribute(attributeName));
+                pageElement.setAttribute(attributeName, godToolsPackageImage.getHash() + ".png");
             }
         }
     }

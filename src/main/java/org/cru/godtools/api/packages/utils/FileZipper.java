@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackageImage;
 import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.w3c.dom.Document;
 
@@ -55,6 +56,13 @@ public class FileZipper
         }
     }
 
+    public void zipImageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws IOException
+    {
+        for(GodToolsPackageImage image : godToolsPackage.getImageFiles())
+        {
+            zipImage(image.getContents(), image.getHash() + ".png", zipOutputStream);
+        }
+    }
     /**
      * The contents XML is added to the zipOutputStream.
      *
@@ -79,6 +87,15 @@ public class FileZipper
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
         transformer.transform(source, result);
+
+        zipOutputStream.closeEntry();
+    }
+
+    public void zipImage(byte[] image, String filename, ZipOutputStream zipOutputStream) throws IOException
+    {
+        zipOutputStream.putNextEntry(new ZipEntry(filename));
+
+        zipOutputStream.write(image);
 
         zipOutputStream.closeEntry();
     }

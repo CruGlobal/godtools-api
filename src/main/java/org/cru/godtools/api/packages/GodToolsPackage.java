@@ -6,6 +6,7 @@ import org.w3c.dom.Document;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Created by ryancarlson on 3/18/14.
@@ -14,6 +15,7 @@ public class GodToolsPackage
 {
     Document packageXml;
     List<GodToolsPackagePage> pageFiles;
+    Set<GodToolsPackageImage> imageFiles;
     String languageCode;
     String packageCode;
 
@@ -34,6 +36,20 @@ public class GodToolsPackage
             if(godToolsPackagePage.getOriginalFilename().equals(filename))
             {
                 return godToolsPackagePage;
+            }
+        }
+
+        throw new NoSuchElementException();
+    }
+
+
+    public GodToolsPackageImage getImageByFilename(String imageName)
+    {
+        for(GodToolsPackageImage godToolsPackageImage : imageFiles)
+        {
+            if(godToolsPackageImage.getOriginalFilename().equals(imageName))
+            {
+                return godToolsPackageImage;
             }
         }
 
@@ -88,5 +104,15 @@ public class GodToolsPackage
     public void setPackageXmlHash(String packageXmlHash)
     {
         this.packageXmlHash = packageXmlHash;
+    }
+
+    public Set<GodToolsPackageImage> getImageFiles()
+    {
+        return imageFiles;
+    }
+
+    public void setImageFiles(Set<GodToolsPackageImage> imageFiles)
+    {
+        this.imageFiles = imageFiles;
     }
 }
