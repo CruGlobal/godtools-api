@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.ReplaceFilenamesWithHashes;
 import org.cru.godtools.api.packages.utils.XmlFileHasher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,6 +52,8 @@ public class AssemblePackageProcess
             }
 
             new XmlFileHasher().setHashes(packages);
+
+            new ReplaceFilenamesWithHashes().replace(packages);
 
             createZipFolder(zipOutputStream, packages);
 
