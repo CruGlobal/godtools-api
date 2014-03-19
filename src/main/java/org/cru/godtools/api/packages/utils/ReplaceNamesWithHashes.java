@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
+import com.google.common.base.Strings;
 import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.packages.GodToolsPackageImage;
 import org.cru.godtools.api.packages.GodToolsPackagePage;
@@ -75,6 +76,9 @@ public class ReplaceNamesWithHashes
             if(pageNode instanceof Element)
             {
                 Element pageElement = (Element) pageNode;
+
+                if(Strings.isNullOrEmpty(pageElement.getAttribute(attributeName))) continue;
+
                 GodToolsPackageImage godToolsPackageImage = godToolsPackage.getImageByFilename(pageElement.getAttribute(attributeName));
                 pageElement.setAttribute(attributeName, godToolsPackageImage.getHash() + ".png");
             }

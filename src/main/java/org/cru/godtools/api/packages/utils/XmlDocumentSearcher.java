@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,6 +38,8 @@ public class XmlDocumentSearcher
             if(node instanceof Element)
             {
                 Element page = (Element) node;
+                if(Strings.isNullOrEmpty(page.getAttribute(attributeName))) continue;
+
                 list.add(page.getAttribute(attributeName));
             }
         }
