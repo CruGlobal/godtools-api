@@ -8,3 +8,4 @@ out/*
 *.jar
 *.war
 *.ear
+*.png
