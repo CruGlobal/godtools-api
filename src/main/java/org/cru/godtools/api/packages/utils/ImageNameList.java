@@ -10,17 +10,17 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/19/14.
  */
-public class PageImageNameList extends ForwardingSet<String>
+public class ImageNameList extends ForwardingSet<String>
 {
     Set<String> set = Sets.newHashSet();
 
-    public PageImageNameList fromPageFiles(List<GodToolsPackagePage> godToolsPackagePages)
+    public ImageNameList fromPageFiles(List<GodToolsPackagePage> godToolsPackagePages)
     {
         for(GodToolsPackagePage page : godToolsPackagePages)
         {
-            set.addAll(XmlDocumentSearcher.searchDocumentForElementsWithAttributes(page.getXml(), "page", "backgroundimage"));
-            set.addAll(XmlDocumentSearcher.searchDocumentForElementsWithAttributes(page.getXml(), "page", "watermark"));
-            set.addAll(XmlDocumentSearcher.searchDocumentForElementValues(page.getXml(), "image"));
+            set.addAll(XmlDocumentSearchUtilities.findAttributesWithinElement(page.getXml(), "page", "backgroundimage"));
+            set.addAll(XmlDocumentSearchUtilities.findAttributesWithinElement(page.getXml(), "page", "watermark"));
+            set.addAll(XmlDocumentSearchUtilities.findElementValues(page.getXml(), "image"));
         }
         return this;
     }

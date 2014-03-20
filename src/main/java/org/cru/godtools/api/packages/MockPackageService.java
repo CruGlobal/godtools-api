@@ -4,16 +4,13 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
-import org.cru.godtools.api.packages.utils.PageFilenameList;
-import org.cru.godtools.api.packages.utils.PageImageNameList;
+import org.cru.godtools.api.packages.utils.ImageNameList;
+import org.cru.godtools.api.packages.utils.PageNameList;
 import org.w3c.dom.Document;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -32,14 +29,14 @@ public class MockPackageService
             Document packageFile =  documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml"));
 
             GodToolsPackage godToolsPackage = new GodToolsPackage(packageFile,
-                    getPageFiles(languageCode, packageCode, new PageFilenameList().fromContentsFile(packageFile)),
+                    getPageFiles(languageCode, packageCode, new PageNameList().fromContentsFile(packageFile)),
                     languageCode,
                     packageCode);
 
             godToolsPackage.setImageFiles(getImages(
                     languageCode,
                     packageCode,
-                    new PageImageNameList().fromPageFiles(godToolsPackage.getPageFiles())));
+                    new ImageNameList().fromPageFiles(godToolsPackage.getPageFiles())));
 
             return godToolsPackage;
         }

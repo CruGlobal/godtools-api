@@ -14,20 +14,20 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/19/14.
  */
-public class ReplaceNamesWithHashes
+public class GodtoolsPackageFilenameUtilities
 {
 
-    public void replace(GodToolsPackage godToolsPackage)
+    public void replaceFilenamesWithHash(GodToolsPackage godToolsPackage)
     {
         replacePageFilenames(godToolsPackage);
-        replaceImageFilename(godToolsPackage);
+        replaceImageFilenames(godToolsPackage);
     }
 
-    public void replace(Set<GodToolsPackage> godToolsPackages)
+    public void replaceFilenamesWithHash(Set<GodToolsPackage> godToolsPackages)
     {
         for(GodToolsPackage godToolsPackage : godToolsPackages)
         {
-            replace(godToolsPackage);
+            replaceFilenamesWithHash(godToolsPackage);
         }
     }
 
@@ -35,11 +35,11 @@ public class ReplaceNamesWithHashes
     {
         Document packageXml = godToolsPackage.getPackageXml();
 
-        replaceFilenamesForElement(godToolsPackage, packageXml, "page", "filename");
-        replaceFilenamesForElement(godToolsPackage, packageXml, "about", "filename");
+        replacePageNamesForElement(godToolsPackage, packageXml, "page", "filename");
+        replacePageNamesForElement(godToolsPackage, packageXml, "about", "filename");
     }
 
-    private void replaceImageFilename(GodToolsPackage godToolsPackage)
+    private void replaceImageFilenames(GodToolsPackage godToolsPackage)
     {
         for(GodToolsPackagePage godToolsPackagePage : godToolsPackage.getPageFiles())
         {
@@ -48,7 +48,7 @@ public class ReplaceNamesWithHashes
         }
     }
 
-    private void replaceFilenamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName, String attributeName)
+    private void replacePageNamesForElement(GodToolsPackage godToolsPackage, Document packageXml, String elementName, String attributeName)
     {
         NodeList pageNodes = packageXml.getElementsByTagName(elementName);
 

@@ -4,11 +4,12 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.packages.utils.ReplaceNamesWithHashes;
-import org.cru.godtools.api.packages.utils.XmlFileHasher;
+import org.cru.godtools.api.packages.utils.GodtoolsPackageFilenameUtilities;
+import org.cru.godtools.api.packages.utils.GodtoolsPackageShaGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,10 +29,20 @@ import java.util.zip.ZipOutputStream;
 public class AssemblePackageProcess
 {
     MockPackageService packageService;
+    GodtoolsPackageShaGenerator shaGenerator;
+    GodtoolsPackageFilenameUtilities filenameUtilities;
+    FileZipper fileZipper;
 
-    public AssemblePackageProcess(MockPackageService packageService)
+    @Inject
+    public AssemblePackageProcess(MockPackageService packageService,
+                                  GodtoolsPackageShaGenerator shaGenerator,
+                                  GodtoolsPackageFilenameUtilities filenameUtilities,
+                                  FileZipper fileZipper)
     {
         this.packageService = packageService;
+        this.shaGenerator = shaGenerator;
+        this.filenameUtilities = filenameUtilities;
+        this.fileZipper = fileZipper;
     }
 
     public Response buildZippedResponse(String languageCode, String packageCode) throws IOException
@@ -51,9 +62,9 @@ public class AssemblePackageProcess
                 packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
             }
 
-            new XmlFileHasher().setHashes(packages);
+            shaGenerator.setHashes(packages);
 
-            new ReplaceNamesWithHashes().replace(packages);
+            filenameUtilities.replaceFilenamesWithHash(packages);
 
             createZipFolder(zipOutputStream, packages);
 
@@ -70,8 +81,6 @@ public class AssemblePackageProcess
 
     private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages) throws Exception
     {
-        FileZipper fileZipper = new FileZipper();
-
         for(GodToolsPackage godToolsPackage : packages)
         {
             fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);

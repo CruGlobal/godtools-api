@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * Created by ryancarlson on 3/17/14.
  */
-public class PageFilenameList extends ForwardingList<String>
+public class PageNameList extends ForwardingList<String>
 {
     List<String> list = Lists.newArrayList();
 
-    public PageFilenameList fromContentsFile(Document contentsFile)
+    public PageNameList fromContentsFile(Document contentsFile)
     {
-        list.addAll(XmlDocumentSearcher.searchDocumentForElementsWithAttributes(contentsFile, "page", "filename"));
-        list.addAll(XmlDocumentSearcher.searchDocumentForElementsWithAttributes(contentsFile, "about", "filename"));
+        list.addAll(XmlDocumentSearchUtilities.findAttributesWithinElement(contentsFile, "page", "filename"));
+        list.addAll(XmlDocumentSearchUtilities.findAttributesWithinElement(contentsFile, "about", "filename"));
 
         return this;
     }

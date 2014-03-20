@@ -1,6 +1,5 @@
 package org.cru.godtools.api.packages;
 
-import org.cru.godtools.api.packages.utils.XmlFileHasher;
 import org.w3c.dom.Document;
 
 /**

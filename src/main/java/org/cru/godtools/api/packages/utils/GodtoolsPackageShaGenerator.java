@@ -1,7 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
 import com.google.common.base.Throwables;
-import javassist.bytecode.ByteArray;
 import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.packages.GodToolsPackageImage;
 import org.cru.godtools.api.packages.GodToolsPackagePage;
@@ -21,7 +20,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/18/14.
  */
-public class XmlFileHasher
+public class GodtoolsPackageShaGenerator
 {
 
     public void setHashes(GodToolsPackage godToolsPackage)

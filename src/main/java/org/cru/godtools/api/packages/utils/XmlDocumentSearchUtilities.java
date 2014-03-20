@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by ryancarlson on 3/19/14.
  */
-public class XmlDocumentSearcher
+public class XmlDocumentSearchUtilities
 {
 
     /**
@@ -25,7 +25,7 @@ public class XmlDocumentSearcher
      * @param attributeName
      * @return
      */
-    public static List<String> searchDocumentForElementsWithAttributes(Document document, String elementName, String attributeName)
+    public static List<String> findAttributesWithinElement(Document document, String elementName, String attributeName)
     {
         List<String> list = Lists.newArrayList();
 
@@ -47,7 +47,7 @@ public class XmlDocumentSearcher
         return list;
     }
 
-    public static List<String> searchDocumentForElementValues(Document document, String elementName)
+    public static List<String> findElementValues(Document document, String elementName)
     {
         List<String> list = Lists.newArrayList();
 

@@ -26,8 +26,7 @@ import java.util.Map;
 public class PackageResource
 {
 
-    @Inject
-    MockPackageService packageService;
+    @Inject AssemblePackageProcess packageProcess;
 
     @GET
     @Produces({"application/zip"})
@@ -41,10 +40,7 @@ public class PackageResource
                                 @QueryParam("screen-size") String screenSize,
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
-
-        AssemblePackageProcess packageAssembler = new AssemblePackageProcess(packageService);
-
-        return packageAssembler.buildZippedResponse(languageCode, packageCode);
+        return packageProcess.buildZippedResponse(languageCode, packageCode);
     }
 
     @POST
