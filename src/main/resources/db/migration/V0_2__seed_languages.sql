@@ -1,0 +1,2 @@
+INSERT into LANGUAGES(id, code, name) VALUES ('5d469b6c-df1d-417a-a320-64039c2a898a', 'en', 'English');
+INSERT into LANGUAGES(id, code, name) VALUES ('f0518a70-76c9-4bee-8c19-389ffc1d9742', 'fr', 'French');

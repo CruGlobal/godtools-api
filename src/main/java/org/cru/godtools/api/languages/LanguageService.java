@@ -29,7 +29,7 @@ public class LanguageService
 
     public Language getLanguageById(UUID id)
     {
-        return sqlConnection.createQuery(LanguageQueries.selectByCode)
+        return sqlConnection.createQuery(LanguageQueries.selectById)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("id", id)
                 .executeAndFetchFirst(Language.class);
