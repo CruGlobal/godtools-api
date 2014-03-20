@@ -23,7 +23,8 @@ CREATE TABLE versions (
   released boolean DEFAULT false,
   package_id uuid REFERENCES packages(id),
   translation_id uuid REFERENCES translations(id),
-  minimum_interpreter_version integer
+  minimum_interpreter_version integer,
+  package_structure xml
 );
 
 CREATE TABLE pages (
@@ -31,7 +32,8 @@ CREATE TABLE pages (
   version_id uuid REFERENCES versions(id),
   ordinal integer,
   xml_content xml,
-  description text
+  description text,
+  page_hash text
 );
 
 CREATE TABLE images (
