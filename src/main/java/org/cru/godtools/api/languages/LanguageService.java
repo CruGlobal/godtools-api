@@ -20,14 +20,14 @@ public class LanguageService
         this.sqlConnection = sqlConnection;
     }
 
-    public List<Language> getAllLanguages()
+    public List<Language> selectAllLanguages()
     {
         return sqlConnection.createQuery(LanguageQueries.selectAll)
                 .setAutoDeriveColumnNames(true)
                 .executeAndFetch(Language.class);
     }
 
-    public Language getLanguageById(UUID id)
+    public Language selectLanguageById(UUID id)
     {
         return sqlConnection.createQuery(LanguageQueries.selectById)
                 .setAutoDeriveColumnNames(true)
@@ -35,7 +35,7 @@ public class LanguageService
                 .executeAndFetchFirst(Language.class);
     }
 
-    public Language getLanguageByCode(String code)
+    public Language selectLanguageByCode(String code)
     {
         return sqlConnection.createQuery(LanguageQueries.selectByCode)
                 .setAutoDeriveColumnNames(true)
@@ -43,7 +43,7 @@ public class LanguageService
                 .executeAndFetchFirst(Language.class);
     }
 
-    public Language getLanguageByName(String name)
+    public Language selectLanguageByName(String name)
     {
         return sqlConnection.createQuery(LanguageQueries.selectByName)
                 .setAutoDeriveColumnNames(true)

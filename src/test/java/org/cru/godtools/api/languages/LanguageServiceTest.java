@@ -32,7 +32,7 @@ public class LanguageServiceTest
     {
         try
         {
-            List<Language> languageList = languageService.getAllLanguages();
+            List<Language> languageList = languageService.selectAllLanguages();
 
             Assert.assertEquals(languageList.size(), 2);
         }
@@ -47,7 +47,7 @@ public class LanguageServiceTest
     {
         try
         {
-            Language english = languageService.getLanguageById(UUID.fromString("5d469b6c-df1d-417a-a320-64039c2a898a"));
+            Language english = languageService.selectLanguageById(UUID.fromString("5d469b6c-df1d-417a-a320-64039c2a898a"));
 
             Assert.assertNotNull(english);
             Assert.assertEquals(english.getCode(), "en");
@@ -65,7 +65,7 @@ public class LanguageServiceTest
     {
         try
         {
-            Language french = languageService.getLanguageByCode("fr");
+            Language french = languageService.selectLanguageByCode("fr");
 
             Assert.assertNotNull(french);
             Assert.assertEquals(french.getId(), UUID.fromString("f0518a70-76c9-4bee-8c19-389ffc1d9742"));

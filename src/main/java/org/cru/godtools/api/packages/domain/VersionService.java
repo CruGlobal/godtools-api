@@ -27,6 +27,27 @@ public class VersionService
                 .executeAndFetch(Version.class);
     }
 
+    public Version selectLatestVersionForTranslation(UUID translationId)
+    {
+        List<Version> versions = selectByTranslationId(translationId);
+
+        if(versions != null && !versions.isEmpty())
+        {
+            Version max = versions.get(0);
+            for(Version version : versions)
+            {
+                if(version.getVersionNumber().compareTo(max.getVersionNumber()) > 0)
+                {
+                    max = version;
+                }
+            }
+
+            return max;
+        }
+
+        return null;
+    }
+
     public static class VersionQueries
     {
         public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";

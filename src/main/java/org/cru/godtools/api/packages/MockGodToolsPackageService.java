@@ -18,6 +18,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/14/14.
  */
+@Mock
 public class MockGodToolsPackageService implements IGodToolsPackageService
 {
 

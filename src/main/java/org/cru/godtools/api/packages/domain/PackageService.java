@@ -4,6 +4,7 @@ import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
@@ -25,17 +26,19 @@ public class PackageService
                 .executeAndFetch(Package.class);
     }
 
-    public Package selectById()
+    public Package selectById(UUID id)
     {
         return sqlConnection.createQuery(PackageQueries.selectById)
                 .setAutoDeriveColumnNames(true)
+                .addParameter("id", id)
                 .executeAndFetchFirst(Package.class);
     }
 
-    public Package selectByCode()
+    public Package selectByCode(String code)
     {
         return sqlConnection.createQuery(PackageQueries.selectByCode)
                 .setAutoDeriveColumnNames(true)
+                .addParameter("code", code)
                 .executeAndFetchFirst(Package.class);
     }
 
