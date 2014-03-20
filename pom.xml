@@ -74,21 +74,27 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901.jdbc4</version>
         </dependency>
 
         <dependency>
-            <groupId>com.thetransactioncompany</groupId>
-            <artifactId>cors-filter</artifactId>
-            <version>1.8</version>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>3.0.6.Final</version>
         </dependency>
 
         <dependency>
-            <groupId>org.ccci</groupId>
-            <artifactId>red-egg</artifactId>
-            <version>1-SNAPSHOT</version>
+            <groupId>com.thetransactioncompany</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>1.8</version>
         </dependency>
 
         <!-- Import the APIs that we depend on and are included in JBoss AS 7 -->
@@ -242,7 +248,7 @@
                     <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
                     <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
                     <includes><include>**/*</include></includes>
-                    <repositoryName>conf-registration-api</repositoryName>      <!-- github repo name -->
+                    <repositoryName>godtools-api</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>CruGlobal</repositoryOwner>    <!-- github username  -->
                 </configuration>
                 <executions>
@@ -281,8 +287,8 @@
         <profile>
             <id>local</id>
             <properties>
-                <database.server.id></database.server.id>
-                <database.server.url>jdbc:postgresql://localhost/</database.server.url>
+                <database.server.id>godtools-local</database.server.id>
+                <database.server.url>jdbc:postgresql://localhost/godtools</database.server.url>
                 <errbit.environment>local</errbit.environment>
                 <github.global.server>github</github.global.server>
             </properties>

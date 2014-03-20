@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languages>
+    <language code="en">
+        <packages>
+            <package status="live" type="interactive" name="Knowing God Personally" path="Packages/kgp/en" icon="Packages/kgp/icons/en.png" version="1" minimum_interpreter_version="1" hash="2807c4b0844f65494c86f0c1bb81a19252980691"/>
+            <package status="live" type="interactive" name="Satisfied?" path="Packages/satisfied/en" icon="Packages/satisfied/icons/en.png" version="1" minimum_interpreter_version="1" hash="d10c5b4d0aabb2410e847cf4b4d4cf7d6226603d"/>
+            <package status="live" type="interactive" name="The Four Spiritual Laws" path="Packages/4laws/en" icon="Packages/fourlaws/icons/en.png" version="1" minimum_interpreter_version="1" hash="9d16459c9b3fe7692ccfc2f30553237e255ebe38"/>
+        </packages>
+    </language>
+</languages>
+
