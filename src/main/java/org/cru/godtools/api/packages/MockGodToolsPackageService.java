@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/14/14.
  */
-public class MockGodToolsPackageService
+public class MockGodToolsPackageService implements GodToolsPackageService
 {
 
     public GodToolsPackage getPackage(String languageCode, String packageCode)
