@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Lists;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
@@ -24,14 +25,20 @@ public class GodToolsPackageService implements IGodToolsPackageService
     VersionService versionService;
     TranslationService translationService;
     LanguageService languageService;
+    PageService pageService;
 
     @Inject
-    public GodToolsPackageService(PackageService packageService, VersionService versionService, TranslationService translationService, LanguageService languageService)
+    public GodToolsPackageService(PackageService packageService,
+                                  VersionService versionService,
+                                  TranslationService translationService,
+                                  LanguageService languageService,
+                                  PageService pageService)
     {
         this.packageService = packageService;
         this.versionService = versionService;
         this.translationService = translationService;
         this.languageService = languageService;
+        this.pageService = pageService;
     }
 
     @Override
@@ -41,6 +48,11 @@ public class GodToolsPackageService implements IGodToolsPackageService
         Package gtPackage = packageService.selectByCode(packageCode);
         Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
         Version version = versionService.selectLatestVersionForTranslation(translation.getId());
+        List<Page> pages = pageService.selectByVersionId(version.getId());
+
+        GodToolsPackagePage godToolsPackagePage = new GodToolsPackagePage(pages.get(0).getXmlContent(), "");
+
+        GodToolsPackage godToolsPackage = new GodToolsPackage(version.getPackageStructure(), Lists.newArrayList(godToolsPackagePage), languageCode, packageCode);
         /*
         - lookup language
         - lookup package
@@ -50,7 +62,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
         - lookup images
          */
 
-        return null;
+        return godToolsPackage;
     }
 
     @Override

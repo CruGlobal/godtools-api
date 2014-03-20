@@ -14,6 +14,7 @@ public class Page
     private Integer ordinal;
     private Document xmlContent;
     private String description;
+    private String filename;
 
     public UUID getId()
     {
@@ -63,5 +64,15 @@ public class Page
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    public String getFilename()
+    {
+        return filename;
+    }
+
+    public void setFilename(String filename)
+    {
+        this.filename = filename;
     }
 }
