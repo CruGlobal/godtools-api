@@ -1,5 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.w3c.dom.Document;
+
 import java.util.UUID;
 
 /**
@@ -13,6 +15,7 @@ public class Version
     UUID packageId;
     UUID translationId;
     Integer minimumInterpreterVersion;
+    Document packageStructure;
 
     public UUID getId()
     {
@@ -72,5 +75,15 @@ public class Version
     public void setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
         this.minimumInterpreterVersion = minimumInterpreterVersion;
+    }
+
+    public Document getPackageStructure()
+    {
+        return packageStructure;
+    }
+
+    public void setPackageStructure(Document packageStructure)
+    {
+        this.packageStructure = packageStructure;
     }
 }

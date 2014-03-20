@@ -1,5 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.w3c.dom.Document;
+
 import java.util.UUID;
 
 /**
