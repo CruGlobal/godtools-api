@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.packages.utils.GodtoolsPackageFilenameUtilities;
-import org.cru.godtools.api.packages.utils.GodtoolsPackageShaGenerator;
+import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,18 +26,18 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
-public class AssemblePackageProcess
+public class GodToolsResponseAssemblyProcess
 {
-    MockPackageService packageService;
-    GodtoolsPackageShaGenerator shaGenerator;
-    GodtoolsPackageFilenameUtilities filenameUtilities;
+    MockGodToolsPackageService packageService;
+    GodToolsPackageShaGenerator shaGenerator;
+    GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
     @Inject
-    public AssemblePackageProcess(MockPackageService packageService,
-                                  GodtoolsPackageShaGenerator shaGenerator,
-                                  GodtoolsPackageFilenameUtilities filenameUtilities,
-                                  FileZipper fileZipper)
+    public GodToolsResponseAssemblyProcess(MockGodToolsPackageService packageService,
+                                           GodToolsPackageShaGenerator shaGenerator,
+                                           GodToolsPackageFilenameUtilities filenameUtilities,
+                                           FileZipper fileZipper)
     {
         this.packageService = packageService;
         this.shaGenerator = shaGenerator;

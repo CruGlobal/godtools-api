@@ -1,0 +1,34 @@
+package org.cru.godtools.api.packages.service;
+
+import org.sql2o.Connection;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Created by ryancarlson on 3/20/14.
+ */
+public class VersionService
+{
+    Connection sqlConnection;
+
+    @Inject
+    public VersionService(Connection sqlConnection)
+    {
+        this.sqlConnection = sqlConnection;
+    }
+
+    public List<Version> selectByTranslationId(UUID translationId)
+    {
+        return sqlConnection.createQuery(VersionQueries.selectByTranslationId)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("translationId", translationId)
+                .executeAndFetch(Version.class);
+    }
+
+    public static class VersionQueries
+    {
+        public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";
+    }
+}

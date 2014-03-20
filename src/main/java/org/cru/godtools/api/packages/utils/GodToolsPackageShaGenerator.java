@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/18/14.
  */
-public class GodtoolsPackageShaGenerator
+public class GodToolsPackageShaGenerator
 {
 
     public void setHashes(GodToolsPackage godToolsPackage)

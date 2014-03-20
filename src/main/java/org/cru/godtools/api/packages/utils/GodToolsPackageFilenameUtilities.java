@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/19/14.
  */
-public class GodtoolsPackageFilenameUtilities
+public class GodToolsPackageFilenameUtilities
 {
 
     public void replaceFilenamesWithHash(GodToolsPackage godToolsPackage)
