@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 
@@ -14,8 +15,8 @@ import java.util.Set;
 public class GodToolsPackage
 {
     Document packageXml;
-    List<GodToolsPackagePage> pageFiles;
-    Set<GodToolsPackageImage> imageFiles;
+    List<GodToolsPackagePage> pageFiles = Lists.newArrayList();
+    Set<GodToolsPackageImage> imageFiles = Sets.newHashSet();
     String languageCode;
     String packageCode;
 
