@@ -28,13 +28,13 @@ import java.util.zip.ZipOutputStream;
  */
 public class GodToolsResponseAssemblyProcess
 {
-    GodToolsPackageService packageService;
+    IGodToolsPackageService packageService;
     GodToolsPackageShaGenerator shaGenerator;
     GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
     @Inject
-    public GodToolsResponseAssemblyProcess(GodToolsPackageService packageService,
+    public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
                                            GodToolsPackageShaGenerator shaGenerator,
                                            GodToolsPackageFilenameUtilities filenameUtilities,
                                            FileZipper fileZipper)

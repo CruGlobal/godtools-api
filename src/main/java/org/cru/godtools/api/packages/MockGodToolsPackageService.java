@@ -4,9 +4,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
-import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.GodToolsPackageImage;
-import org.cru.godtools.api.packages.GodToolsPackagePage;
 import org.cru.godtools.api.packages.utils.ImageNameList;
 import org.cru.godtools.api.packages.utils.PageNameList;
 import org.w3c.dom.Document;
@@ -21,7 +18,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/14/14.
  */
-public class MockGodToolsPackageService implements GodToolsPackageService
+public class MockGodToolsPackageService implements IGodToolsPackageService
 {
 
     public GodToolsPackage getPackage(String languageCode, String packageCode)

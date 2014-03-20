@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages.service;
+package org.cru.godtools.api.packages.domain;
 
 import java.util.UUID;
 
