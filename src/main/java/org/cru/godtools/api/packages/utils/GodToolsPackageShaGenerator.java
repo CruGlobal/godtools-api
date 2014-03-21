@@ -46,7 +46,7 @@ public class GodToolsPackageShaGenerator
         }
     }
 
-    private String calculateHash(Document xmlFile)
+    public String calculateHash(Document xmlFile)
     {
         try
         {

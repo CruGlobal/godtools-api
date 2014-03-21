@@ -7,6 +7,7 @@ import org.cru.godtools.api.packages.domain.PackageService;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.PageService;
 import org.cru.godtools.api.packages.domain.VersionService;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.cru.godtools.api.translations.Translation;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.translations.TranslationService;
@@ -47,7 +48,6 @@ public class V0_7__migrate_pages implements JdbcMigration
                     pageService.insert(page);
                 }
             }
-
         }
 
         sqlConnection.commit();

@@ -46,6 +46,7 @@ public class PageService
                 .addParameter("xmlContent", page.getXmlContent())
                 .addParameter("description", page.getDescription())
                 .addParameter("filename", page.getFilename())
+                .addParameter("pageHash", page.getPageHash())
                 .executeUpdate();
     }
 
@@ -54,7 +55,7 @@ public class PageService
     {
         public static final String selectById = "SELECT * FROM pages WHERE id = :id";
         public static final String selectByVersionId = "SELECT * FROM pages WHERE version_id = :versionId";
-        public static final String insert = "INSERT INTO pages(id, version_id, filename, ordinal, xml_content, description) VALUES" +
-                "(:id, :versionId, :filename, :ordinal, :xmlContent, :description)";
+        public static final String insert = "INSERT INTO pages(id, version_id, filename, ordinal, xml_content, description, page_hash) VALUES" +
+                "(:id, :versionId, :filename, :ordinal, :xmlContent, :description, :pageHash)";
     }
 }

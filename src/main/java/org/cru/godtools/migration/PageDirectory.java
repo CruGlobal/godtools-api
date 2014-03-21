@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Lists;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -34,6 +35,8 @@ public class PageDirectory
 
     public List<Page> buildPages(Version version) throws URISyntaxException, ParserConfigurationException, SAXException, IOException
     {
+        GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
+
         File directory = getDirectory();
         List<Page> pages = Lists.newArrayList();
 
@@ -46,7 +49,7 @@ public class PageDirectory
                 page.setVersionId(version.getId());
                 page.setFilename(file.getName());
                 page.setXmlContent(getPageXml(file));
-
+                page.setPageHash(shaGenerator.calculateHash(page.getXmlContent()));
                 pages.add(page);
             }
         }

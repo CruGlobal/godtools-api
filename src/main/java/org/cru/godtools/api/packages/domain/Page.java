@@ -15,6 +15,7 @@ public class Page
     private Document xmlContent;
     private String description;
     private String filename;
+    private String pageHash;
 
     public UUID getId()
     {
@@ -74,5 +75,15 @@ public class Page
     public void setFilename(String filename)
     {
         this.filename = filename;
+    }
+
+    public String getPageHash()
+    {
+        return pageHash;
+    }
+
+    public void setPageHash(String pageHash)
+    {
+        this.pageHash = pageHash;
     }
 }

@@ -1,7 +1,9 @@
 CREATE TABLE languages (
   id uuid NOT NULL PRIMARY KEY,
   name text,
-  code text
+  code varchar(4),
+  locale varchar(4),
+  subculture text
 );
 
 CREATE TABLE packages (
@@ -33,13 +35,16 @@ CREATE TABLE pages (
   ordinal integer,
   xml_content xml,
   description text,
+  filename text,
   page_hash text
 );
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
   version_id uuid REFERENCES versions(id),
-  image bytea
+  image bytea,
+  filename text,
+  image_hash text
 );
 
 CREATE TABLE page_images (
