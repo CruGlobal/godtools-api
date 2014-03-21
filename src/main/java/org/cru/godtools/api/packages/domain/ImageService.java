@@ -27,6 +27,13 @@ public class ImageService
 
     }
 
+    public Image selectByFilename(String filename)
+    {
+        return sqlConnection.createQuery(ImageQueries.selectByFilename)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("filename", filename)
+                .executeAndFetchFirst(Image.class);
+    }
     public void insert(Image image)
     {
         sqlConnection.createQuery(ImageQueries.insert)
@@ -39,7 +46,8 @@ public class ImageService
 
     public static class ImageQueries
     {
-        public static final String selectById = "SELECT * FROM images";
+        public static final String selectById = "SELECT * FROM images where id = :id";
+        public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
         public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash) VALUES(:id, :imageContent, :filename, :imageHash)";
     }
 }
