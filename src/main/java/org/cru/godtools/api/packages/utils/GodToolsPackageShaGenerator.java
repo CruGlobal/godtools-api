@@ -70,7 +70,7 @@ public class GodToolsPackageShaGenerator
         }
     }
 
-    private String calculateHash(byte[] image)
+    public String calculateHash(byte[] image)
     {
         try
         {

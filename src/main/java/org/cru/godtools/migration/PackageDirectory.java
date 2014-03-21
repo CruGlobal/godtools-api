@@ -3,17 +3,22 @@ package org.cru.godtools.migration;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.cru.godtools.api.translations.Translation;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -124,6 +129,31 @@ public class PackageDirectory
         version.setReleased(true);
 
         return version;
+    }
+
+    public List<Image> buildIcons() throws URISyntaxException, IOException
+    {
+        File directory = getDirectory();
+        GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
+        List<Image> images = Lists.newArrayList();
+
+        for(File file : directory.listFiles())
+        {
+            if(file.isDirectory() && file.getName().equalsIgnoreCase("icons"))
+            {
+                for(File imageFile : file.listFiles())
+                {
+                Image image = new Image();
+                image.setId(UUID.randomUUID());
+                image.setFilename(imageFile.getName());
+                image.setImageContent(ImageReader.read(imageFile));
+                image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+                images.add(image);
+                }
+            }
+        }
+
+        return images;
     }
 
     public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
