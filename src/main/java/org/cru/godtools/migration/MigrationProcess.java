@@ -1,6 +1,7 @@
 package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.Flyway;
+import org.cru.godtools.api.database.SqlConnectionProducer;
 
 /**
  * Created by ryancarlson on 3/21/14.
@@ -17,5 +18,10 @@ public class MigrationProcess
         flyway.init();
         flyway.migrate();
 
+    }
+
+    public static org.sql2o.Connection getSql2oConnection()
+    {
+        return new SqlConnectionProducer().getTestSqlConnection();
     }
 }

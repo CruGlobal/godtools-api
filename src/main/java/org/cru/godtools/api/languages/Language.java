@@ -11,6 +11,8 @@ public class Language
     UUID id;
     String name;
     String code;
+    String locale;
+    String subculture;
 
     public UUID getId()
     {
@@ -40,5 +42,25 @@ public class Language
     public void setCode(String code)
     {
         this.code = code;
+    }
+
+    public String getLocale()
+    {
+        return locale;
+    }
+
+    public void setLocale(String locale)
+    {
+        this.locale = locale;
+    }
+
+    public String getSubculture()
+    {
+        return subculture;
+    }
+
+    public void setSubculture(String subculture)
+    {
+        this.subculture = subculture;
     }
 }

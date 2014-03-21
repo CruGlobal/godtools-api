@@ -44,15 +44,15 @@ public class GodToolsPackageService implements IGodToolsPackageService
     @Override
     public GodToolsPackage getPackage(String languageCode, String packageCode)
     {
-        Language language = languageService.selectLanguageByCode(languageCode);
-        Package gtPackage = packageService.selectByCode(packageCode);
-        Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
-        Version version = versionService.selectLatestVersionForTranslation(translation.getId());
-        List<Page> pages = pageService.selectByVersionId(version.getId());
-
-        GodToolsPackagePage godToolsPackagePage = new GodToolsPackagePage(pages.get(0).getXmlContent(), "");
-
-        GodToolsPackage godToolsPackage = new GodToolsPackage(version.getPackageStructure(), Lists.newArrayList(godToolsPackagePage), languageCode, packageCode);
+//        Language language = languageService.selectLanguageByCode(languageCode);
+//        Package gtPackage = packageService.selectByCode(packageCode);
+//        Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
+//        Version version = versionService.selectLatestVersionForTranslation(translation.getId());
+//        List<Page> pages = pageService.selectByVersionId(version.getId());
+//
+//        GodToolsPackagePage godToolsPackagePage = new GodToolsPackagePage(pages.get(0).getXmlContent(), "");
+//
+//        GodToolsPackage godToolsPackage = new GodToolsPackage(version.getPackageStructure(), Lists.newArrayList(godToolsPackagePage), languageCode, packageCode);
         /*
         - lookup language
         - lookup package
@@ -61,8 +61,8 @@ public class GodToolsPackageService implements IGodToolsPackageService
         - lookup pages
         - lookup images
          */
-
-        return godToolsPackage;
+          return null;
+//        return godToolsPackage;
     }
 
     @Override

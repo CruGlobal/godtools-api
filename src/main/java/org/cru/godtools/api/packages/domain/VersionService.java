@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
 import org.sql2o.Connection;
+import org.w3c.dom.Document;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -48,8 +49,23 @@ public class VersionService
         return null;
     }
 
+    public void insert(Version version)
+    {
+        sqlConnection.createQuery(VersionQueries.insert)
+                .addParameter("id", version.getId())
+                .addParameter("versionNumber", version.getVersionNumber())
+                .addParameter("released", version.isReleased())
+                .addParameter("packageId", version.getPackageId())
+                .addParameter("translationId", version.getTranslationId())
+                .addParameter("minimumInterpreterVersion", version.getMinimumInterpreterVersion())
+                .addParameter("packageStructure", version.getPackageStructure())
+                .executeUpdate();
+    }
+
     public static class VersionQueries
     {
         public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";
+        public static final String insert = "INSERT INTO versions(id, version_number, released, package_id, translation_id, minimum_interpreter_version, package_structure) " +
+                "VALUES(:id, :versionNumber, :released, :packageId, :translationId, :minimumInterpreterVersion, :packageStructure)";
     }
 }
