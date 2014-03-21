@@ -41,8 +41,7 @@ CREATE TABLE pages (
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
-  version_id uuid REFERENCES versions(id),
-  image bytea,
+  image_content bytea,
   filename text,
   image_hash text
 );
