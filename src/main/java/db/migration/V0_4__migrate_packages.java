@@ -16,20 +16,6 @@ import java.sql.Connection;
  */
 public class V0_4__migrate_packages implements JdbcMigration
 {
-
-    public static void main(String[] args)
-    {
-        V0_4__migrate_packages proc = new V0_4__migrate_packages();
-        
-        Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser");
-        flyway.setInitVersion("0");
-        flyway.clean();
-        flyway.init();
-        flyway.migrate();
-
-    }
-
     private org.sql2o.Connection getSql2oConnection()
     {
         return new SqlConnectionProducer().getTestSqlConnection();
