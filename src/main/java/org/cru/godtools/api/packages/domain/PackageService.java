@@ -14,7 +14,7 @@ public class PackageService
     Connection sqlConnection;
 
     @Inject
-    public PackageService(Connection sqlConnection, VersionService versionService)
+    public PackageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
     }
@@ -42,10 +42,22 @@ public class PackageService
                 .executeAndFetchFirst(Package.class);
     }
 
+    public void insert(Package godToolsPackage)
+    {
+        sqlConnection.createQuery(PackageQueries.insert)
+                .addParameter("id", godToolsPackage.getId())
+                .addParameter("code", godToolsPackage.getCode())
+                .addParameter("name", godToolsPackage.getName())
+                .addParameter("defaultLanguageId", godToolsPackage.getDefaultLanguageId())
+                .executeUpdate();
+    }
+
+
     public static class PackageQueries
     {
         public static final String selectAll = "SELECT * FROM packages";
         public static final String selectById = "SELECT * FROM packages WHERE id = :id";
         public static final String selectByCode = "SELECT * FROM packages WHERE code = :code";
+        public static final String insert = "INSERT INTO packages(id, code, name, default_language_id) VALUES(:id, :code, :name, :defaultLanguageId)";
     }
 }
