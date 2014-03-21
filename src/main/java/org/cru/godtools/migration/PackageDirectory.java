@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.translations.Translation;
 import org.w3c.dom.Document;
@@ -54,6 +55,12 @@ public class PackageDirectory
         throw new RuntimeException("unable to build package for packageCode: " + packageCode);
     }
 
+    /**
+     * Returns a list of all the languages represented in this package directory.
+     *
+     * @return
+     * @throws Exception
+     */
     public List<Language> buildLanguages() throws Exception
     {
         List<Language> languages = Lists.newArrayList();
@@ -79,6 +86,14 @@ public class PackageDirectory
         return languages;
     }
 
+    /**
+     * Returns a list of all the translations represented in this package directory.
+     *  - package and language are passed in to use the UUIDs that have already been created.
+     *
+     * @param gtPackage
+     * @param language
+     * @return
+     */
     public Translation buildTranslation(Package gtPackage, Language language)
     {
         Translation translation = new Translation();
@@ -90,6 +105,14 @@ public class PackageDirectory
         return translation;
     }
 
+    /**
+     * Returns a list of all the translations represented in this package directory.
+     *  - package and translation are passed in to use the UUIDs that have already been created.
+     *
+     * @param gtPackage
+     * @param translation
+     * @return
+     */
     public Version buildVersion(Package gtPackage, Translation translation) throws URISyntaxException
     {
         Version version = new Version();
@@ -98,9 +121,21 @@ public class PackageDirectory
         version.setPackageId(gtPackage.getId());
         version.setTranslationId(translation.getId());
         version.setVersionNumber(1);
-//        version.setPackageStructure();
+        version.setReleased(true);
 
         return version;
+    }
+
+    public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
+    {
+        String path = "/data/Packages/" + packageCode + "/";
+        path += language.getCode();
+        if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
+        if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
+        path += ".xml";
+
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        return builder.parse(this.getClass().getResourceAsStream(path));
     }
 
     private File getDirectory() throws URISyntaxException
@@ -114,18 +149,6 @@ public class PackageDirectory
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
         return builder.parse(packageDescriptor);
-    }
-
-    public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
-    {
-        String path = "/data/Packages/" + packageCode + "/";
-        path += language.getCode();
-        if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
-        if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
-        path += ".xml";
-
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        return builder.parse(this.getClass().getResourceAsStream(path));
     }
 
     private String getPackageName(Document packageDescriptorXml)
