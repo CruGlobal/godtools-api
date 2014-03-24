@@ -44,6 +44,14 @@ public class TranslationService
                 .executeAndFetch(Translation.class);
     }
 
+    public Translation selectByLanguageIdPackageId(UUID languageId, UUID packageId)
+    {
+        return sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("packageId", packageId)
+                .addParameter("languageId", languageId)
+                .executeAndFetchFirst(Translation.class);
+    }
     public void insert(Translation translation)
     {
         sqlConnection.createQuery(TranslationQueries.insert)
@@ -67,6 +75,7 @@ public class TranslationService
         public static final String selectById = "SELECT * FROM translations WHERE id = :id";
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
+        public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
         public static final String insert = "INSERT INTO translations(id, language_id, package_id) VALUES(:id, :languageId, :packageId)";
         public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId WHERE id = :id";
     }

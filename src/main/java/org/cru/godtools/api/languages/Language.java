@@ -1,5 +1,7 @@
 package org.cru.godtools.api.languages;
 
+import com.google.common.base.Strings;
+
 import java.util.UUID;
 
 /**
@@ -11,6 +13,16 @@ public class Language
     UUID id;
     String name;
     String code;
+    String locale;
+    String subculture;
+
+    public String getPath()
+    {
+        String path = code;
+        if(!Strings.isNullOrEmpty(locale)) path = path + "_" + locale;
+        if(!Strings.isNullOrEmpty(subculture)) path = path + "_" + subculture;
+        return path;
+    }
 
     public UUID getId()
     {
@@ -40,5 +52,25 @@ public class Language
     public void setCode(String code)
     {
         this.code = code;
+    }
+
+    public String getLocale()
+    {
+        return locale;
+    }
+
+    public void setLocale(String locale)
+    {
+        this.locale = locale;
+    }
+
+    public String getSubculture()
+    {
+        return subculture;
+    }
+
+    public void setSubculture(String subculture)
+    {
+        this.subculture = subculture;
     }
 }

@@ -1,5 +1,8 @@
 package org.cru.godtools.api.translations;
 
+import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.api.packages.domain.Package;
+
 import java.util.UUID;
 
 /**
@@ -10,6 +13,18 @@ public class Translation
     UUID id;
     UUID packageId;
     UUID languageId;
+
+    public Translation()
+    {
+
+    }
+
+    public Translation(Package gtPackage, Language language)
+    {
+        setId(UUID.randomUUID());
+        setPackageId(gtPackage.getId());
+        setLanguageId(language.getId());
+    }
 
     public UUID getId()
     {

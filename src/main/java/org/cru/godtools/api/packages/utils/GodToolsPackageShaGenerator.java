@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/18/14.
  */
-public class GodtoolsPackageShaGenerator
+public class GodToolsPackageShaGenerator
 {
 
     public void setHashes(GodToolsPackage godToolsPackage)
@@ -46,7 +46,7 @@ public class GodtoolsPackageShaGenerator
         }
     }
 
-    private String calculateHash(Document xmlFile)
+    public String calculateHash(Document xmlFile)
     {
         try
         {
@@ -70,7 +70,7 @@ public class GodtoolsPackageShaGenerator
         }
     }
 
-    private String calculateHash(byte[] image)
+    public String calculateHash(byte[] image)
     {
         try
         {
