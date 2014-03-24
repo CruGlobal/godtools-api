@@ -1,8 +1,6 @@
 package org.cru.godtools.migration;
 
-import com.beust.jcommander.internal.Lists;
-import com.sun.mail.iap.ByteArray;
-import org.cru.godtools.api.languages.Language;
+import com.google.common.collect.Lists;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
@@ -10,15 +8,12 @@ import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,7 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by ryancarlson on 3/21/14.
+ * Encapsulates logic for a pages directory. (e.g: "Packages/kgp/en_US")
+ *
+ *  - build a list of Pages
+ *  - build a list of Images used by a Package
  */
 public class PageDirectory
 {

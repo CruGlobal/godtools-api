@@ -41,7 +41,7 @@ public class V0_6__migrate_versions implements JdbcMigration
             {
                 Language language = languageService.selectLanguageById(translation.getLanguageId());
 
-                Version version = packageDirectory.buildVersion(gtPackage, translation);
+                Version version = new Version(gtPackage, translation, 1, true);
 
                 version.setPackageStructure(packageDirectory.getPackageDescriptorXml(language));
                 versionService.insert(version);

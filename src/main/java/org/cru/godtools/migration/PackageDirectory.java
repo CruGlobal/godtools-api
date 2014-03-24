@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.cru.godtools.api.translations.Translation;
@@ -13,12 +12,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,7 +23,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by ryancarlson on 3/21/14.
+ * Encapsulates logic for a package directory. (e.g: "Packages/kgp")
+ *
+ *  - build a Package
+ *  - build a list of Languages a Package is translated into
+ *  - build a list of Icons represented by a Package
  */
 public class PackageDirectory
 {
@@ -89,46 +89,6 @@ public class PackageDirectory
         }
 
         return languages;
-    }
-
-    /**
-     * Returns a list of all the translations represented in this package directory.
-     *  - package and language are passed in to use the UUIDs that have already been created.
-     *
-     * @param gtPackage
-     * @param language
-     * @return
-     */
-    public Translation buildTranslation(Package gtPackage, Language language)
-    {
-        Translation translation = new Translation();
-
-        translation.setId(UUID.randomUUID());
-        translation.setPackageId(gtPackage.getId());
-        translation.setLanguageId(language.getId());
-
-        return translation;
-    }
-
-    /**
-     * Returns a list of all the translations represented in this package directory.
-     *  - package and translation are passed in to use the UUIDs that have already been created.
-     *
-     * @param gtPackage
-     * @param translation
-     * @return
-     */
-    public Version buildVersion(Package gtPackage, Translation translation) throws URISyntaxException
-    {
-        Version version = new Version();
-
-        version.setId(UUID.randomUUID());
-        version.setPackageId(gtPackage.getId());
-        version.setTranslationId(translation.getId());
-        version.setVersionNumber(1);
-        version.setReleased(true);
-
-        return version;
     }
 
     public List<Image> buildIcons() throws URISyntaxException, IOException

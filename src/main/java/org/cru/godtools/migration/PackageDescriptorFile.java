@@ -3,6 +3,8 @@ package org.cru.godtools.migration;
 import java.io.File;
 
 /**
+ * This file encapsulates some logic for a "package descriptor file" (e.g: "Packages/kgp/en.xml")
+ *
  * code_locale_subculture
  * code_subculture
  * code_locale

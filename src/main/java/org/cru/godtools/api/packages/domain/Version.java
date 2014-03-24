@@ -1,7 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.translations.Translation;
 import org.w3c.dom.Document;
 
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
@@ -16,6 +18,20 @@ public class Version
     UUID translationId;
     Integer minimumInterpreterVersion;
     Document packageStructure;
+
+    public Version()
+    {
+
+    }
+
+    public Version(Package gtPackage, Translation translation, Integer versionNumber, boolean released)
+    {
+        setId(UUID.randomUUID());
+        setPackageId(gtPackage.getId());
+        setTranslationId(translation.getId());
+        setVersionNumber(versionNumber);
+        setReleased(released);
+    }
 
     public UUID getId()
     {
