@@ -18,6 +18,7 @@ public class Version
     UUID translationId;
     Integer minimumInterpreterVersion;
     Document packageStructure;
+    String packageStructureHash;
 
     public Version()
     {
@@ -101,5 +102,15 @@ public class Version
     public void setPackageStructure(Document packageStructure)
     {
         this.packageStructure = packageStructure;
+    }
+
+    public String getPackageStructureHash()
+    {
+        return packageStructureHash;
+    }
+
+    public void setPackageStructureHash(String packageStructureHash)
+    {
+        this.packageStructureHash = packageStructureHash;
     }
 }

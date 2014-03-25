@@ -5,7 +5,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
-import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,18 +28,15 @@ import java.util.zip.ZipOutputStream;
 public class GodToolsResponseAssemblyProcess
 {
     IGodToolsPackageService packageService;
-    GodToolsPackageShaGenerator shaGenerator;
     GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
     @Inject
     public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
-                                           GodToolsPackageShaGenerator shaGenerator,
                                            GodToolsPackageFilenameUtilities filenameUtilities,
                                            FileZipper fileZipper)
     {
         this.packageService = packageService;
-        this.shaGenerator = shaGenerator;
         this.filenameUtilities = filenameUtilities;
         this.fileZipper = fileZipper;
     }
@@ -61,10 +57,6 @@ public class GodToolsResponseAssemblyProcess
             {
                 packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
             }
-
-            shaGenerator.setHashes(packages);
-
-            filenameUtilities.replaceFilenamesWithHash(packages);
 
             createZipFolder(zipOutputStream, packages);
 

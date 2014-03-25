@@ -2,6 +2,7 @@ package org.cru.godtools.api.packages;
 
 import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class GodToolsPackage
         this.pageFiles = pageFiles;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
+        this.packageXmlHash = new GodToolsPackageShaGenerator().calculateHash(packageXml);
     }
 
     public GodToolsPackagePage getPageByFilename(String filename)

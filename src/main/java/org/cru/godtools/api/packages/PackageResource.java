@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -39,7 +40,18 @@ public class PackageResource
                                 @QueryParam("screen-size") String screenSize,
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
-        return packageProcess.buildZippedResponse(languageCode, packageCode);
+        try
+        {
+            return packageProcess.buildZippedResponse(languageCode, packageCode);
+        }
+        catch(IllegalStateException messedUpData)
+        {
+            return Response.serverError().build();
+        }
+        catch(InvalidParameterException noPackage)
+        {
+            return Response.status(404).build();
+        }
     }
 
     @POST

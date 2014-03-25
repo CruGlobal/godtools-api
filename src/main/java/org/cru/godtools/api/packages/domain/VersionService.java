@@ -59,6 +59,7 @@ public class VersionService
                 .addParameter("translationId", version.getTranslationId())
                 .addParameter("minimumInterpreterVersion", version.getMinimumInterpreterVersion())
                 .addParameter("packageStructure", version.getPackageStructure())
+                .addParameter("packageStructureHash", version.getPackageStructureHash())
                 .executeUpdate();
     }
 
@@ -79,16 +80,18 @@ public class VersionService
                 .addParameter("translationId", version.getTranslationId())
                 .addParameter("minimumInterpreterVersion", version.getMinimumInterpreterVersion())
                 .addParameter("packageStructure", version.getPackageStructure())
+                .addParameter("packageStructureHash", version.getPackageStructureHash())
                 .executeUpdate();
     }
 
     public static class VersionQueries
     {
         public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";
-        public static final String insert = "INSERT INTO versions(id, version_number, released, package_id, translation_id, minimum_interpreter_version, package_structure) " +
-                "VALUES(:id, :versionNumber, :released, :packageId, :translationId, :minimumInterpreterVersion, :packageStructure)";
+        public static final String insert = "INSERT INTO versions(id, version_number, released, package_id, translation_id, minimum_interpreter_version, package_structure, package_structure_hash) " +
+                "VALUES(:id, :versionNumber, :released, :packageId, :translationId, :minimumInterpreterVersion, :packageStructure, :packageStructureHash)";
         public static final String selectAll = "SELECT * FROM versions";
         public static final String update = "UPDATE versions SET version_number = :versionNumber, released = :released, package_id = :packageId, " +
-                "translation_id = :translationId, minimum_interpreter_version = :minimumInterpreterVersion, package_structure = :packageStructure WHERE id = :id";
+                "translation_id = :translationId, minimum_interpreter_version = :minimumInterpreterVersion, package_structure = :packageStructure, " +
+                "package_structure_hash = :packageStructureHash WHERE id = :id";
     }
 }

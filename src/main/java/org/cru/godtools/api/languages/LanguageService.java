@@ -1,6 +1,7 @@
 package org.cru.godtools.api.languages;
 
 import com.google.common.base.Strings;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
@@ -44,9 +45,9 @@ public class LanguageService
                 .executeAndFetch(Language.class);
     }
 
-    public Language selectLanguageByCodeLocaleSubculture(String code, String locale, String subculture)
+    public Language selectLanguageByCodeLocaleSubculture(LanguageCode languangeCode)
     {
-        List<Language> possibleMatches = selectLanguageByCode(code);
+        List<Language> possibleMatches = selectLanguageByCode(languangeCode.getLanguageCode());
 
         if(possibleMatches == null || possibleMatches.isEmpty()) return null;
 
@@ -54,8 +55,8 @@ public class LanguageService
         {
             boolean matched = true;
 
-            if(!Strings.nullToEmpty(locale).equals(Strings.nullToEmpty(possibleMatch.getLocale()))) matched = false;
-            if(!Strings.nullToEmpty(subculture).equals(Strings.nullToEmpty(possibleMatch.getSubculture()))) matched = false;
+            if(!Strings.nullToEmpty(languangeCode.getLocaleCode()).equals(Strings.nullToEmpty(possibleMatch.getLocale()))) matched = false;
+            if(!Strings.nullToEmpty(languangeCode.getSubculture()).equals(Strings.nullToEmpty(possibleMatch.getSubculture()))) matched = false;
 
             if(matched) return possibleMatch;
         }

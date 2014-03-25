@@ -4,6 +4,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.PackageService;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.Translation;
 import org.cru.godtools.api.translations.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
@@ -39,7 +40,7 @@ public class V0_5__migrate_languages_translations implements JdbcMigration
                     languageService.insert(language);
                 }
 
-                Language retrievedLanguage = languageService.selectLanguageByCodeLocaleSubculture(language.getCode(), language.getLocale(), language.getSubculture());
+                Language retrievedLanguage = languageService.selectLanguageByCodeLocaleSubculture(LanguageCode.fromLanguage(language));
                 translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
             }
         }

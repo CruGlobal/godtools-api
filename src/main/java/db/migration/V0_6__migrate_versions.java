@@ -4,6 +4,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.cru.godtools.api.translations.Translation;
 import org.cru.godtools.api.translations.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
@@ -44,6 +45,7 @@ public class V0_6__migrate_versions implements JdbcMigration
                 Version version = new Version(gtPackage, translation, 1, true);
 
                 version.setPackageStructure(packageDirectory.getPackageDescriptorXml(language));
+                version.setPackageStructureHash(new GodToolsPackageShaGenerator().calculateHash(version.getPackageStructure()));
                 versionService.insert(version);
             }
 
