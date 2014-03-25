@@ -49,6 +49,17 @@ public class GodToolsPackageService implements IGodToolsPackageService
         this.imagePageRelationshipService = imagePageRelationshipService;
     }
 
+    /**
+     * Retrieves the latest revision of a specific package in a specific language.
+     *
+     * @param languageCode
+     * @param packageCode
+     * @return
+     * @throws LanguageNotFoundException
+     * @throws PackageNotFoundException
+     * @throws NoTranslationException
+     * @throws MissingVersionException
+     */
     @Override
     public GodToolsPackage getPackage(String languageCode, String packageCode) throws LanguageNotFoundException,
             PackageNotFoundException,
@@ -58,6 +69,18 @@ public class GodToolsPackageService implements IGodToolsPackageService
         return getPackage(languageCode, packageCode, null);
     }
 
+    /**
+     * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
+     *
+     * @param languageCode
+     * @param packageCode
+     * @param revisionNumber
+     * @return
+     * @throws LanguageNotFoundException
+     * @throws PackageNotFoundException
+     * @throws NoTranslationException
+     * @throws MissingVersionException
+     */
     @Override
     public GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
@@ -81,6 +104,16 @@ public class GodToolsPackageService implements IGodToolsPackageService
                 packageCode);
     }
 
+    /**
+     * Retrieves the latest version of all packages for a specified language.
+     *
+     * @param languageCode
+     * @return
+     * @throws LanguageNotFoundException
+     * @throws PackageNotFoundException
+     * @throws NoTranslationException
+     * @throws MissingVersionException
+     */
     @Override
     public Set<GodToolsPackage> getPackagesForLanguage(String languageCode) throws LanguageNotFoundException,
             PackageNotFoundException,
@@ -90,6 +123,17 @@ public class GodToolsPackageService implements IGodToolsPackageService
         return getPackagesForLanguage(languageCode, null);
     }
 
+    /**
+     * Retrieves all packages for specified language at specified revision
+     *
+     * @param languageCode
+     * @param revisionNumber
+     * @return
+     * @throws LanguageNotFoundException
+     * @throws PackageNotFoundException
+     * @throws NoTranslationException
+     * @throws MissingVersionException
+     */
     @Override
     public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
@@ -107,6 +151,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
             {
                 packages.add(getPackage(languageCode, packageService.selectById(translation.getPackageId()).getCode(), revisionNumber));
             }
+            //if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
             catch(MissingVersionException missingVersion){ continue; }
         }
 
