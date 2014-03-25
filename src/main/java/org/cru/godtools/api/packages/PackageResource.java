@@ -4,6 +4,7 @@ import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -44,10 +45,12 @@ public class PackageResource
     {
 
         return packageProcess
+                .forLanguage(languageCode)
+                .forPackage(packageCode)
                 .compressed(Boolean.parseBoolean(compressed))
                 .atRevisionNumber(revisionNumber)
                 .forMinimumInterpreterVersion(minimumInterpreterVersion)
-                .buildResponse(languageCode, packageCode);
+                .buildResponse();
     }
 
     @POST

@@ -9,6 +9,7 @@ import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.ImageNameList;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.PageNameList;
 import org.w3c.dom.Document;
 
@@ -26,7 +27,7 @@ import java.util.Set;
 public class MockGodToolsPackageService implements IGodToolsPackageService
 {
 
-    public GodToolsPackage getPackage(String languageCode, String packageCode)
+    public GodToolsPackage getPackage(LanguageCode languageCode, String packageCode)
     {
         try
         {
@@ -34,9 +35,9 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
             Document packageFile =  documentBuilder.parse(this.getClass().getResourceAsStream("/data/packages-" + languageCode + "-" + packageCode + ".xml"));
 
             GodToolsPackage godToolsPackage = new GodToolsPackage(packageFile,
-                    getPageFiles(languageCode, packageCode, new PageNameList().fromContentsFile(packageFile)),
+                    getPageFiles(languageCode.toString(), packageCode, new PageNameList().fromContentsFile(packageFile)),
                     null,
-                    languageCode,
+                    languageCode.toString(),
                     packageCode);
 
             godToolsPackage.setImageFiles(getImages(
@@ -55,12 +56,12 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
     }
 
     @Override
-    public GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    public GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
     {
         return getPackage(languageCode, packageCode);
     }
 
-    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
+    public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode)
     {
         GodToolsPackage kgp = getPackage(languageCode, "kgp");
         GodToolsPackage satisfied = getPackage(languageCode, "satisfied");
@@ -69,7 +70,7 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
     }
 
     @Override
-    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
     {
         return getPackagesForLanguage(languageCode, null);
     }
@@ -97,13 +98,13 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
        return pages;
     }
 
-    private Set<GodToolsPackageImage> getImages(String languageCode, String packageCode, Set<String> imageNames)
+    private Set<GodToolsPackageImage> getImages(LanguageCode languageCode, String packageCode, Set<String> imageNames)
     {
         Set<GodToolsPackageImage> images = Sets.newHashSet();
 
         for(String imageName : imageNames)
         {
-            String path = imagePath(languageCode, packageCode, imageName);
+            String path = imagePath(languageCode.toString(), packageCode, imageName);
 
             try
             {

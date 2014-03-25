@@ -40,7 +40,7 @@ public class V0_5__migrate_languages_translations implements JdbcMigration
                     languageService.insert(language);
                 }
 
-                Language retrievedLanguage = languageService.selectLanguageByCodeLocaleSubculture(LanguageCode.fromLanguage(language));
+                Language retrievedLanguage = languageService.selectByLanguageCode(LanguageCode.fromLanguage(language));
                 translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
             }
         }

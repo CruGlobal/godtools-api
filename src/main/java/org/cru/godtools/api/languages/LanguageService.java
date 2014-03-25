@@ -38,17 +38,9 @@ public class LanguageService
                 .executeAndFetchFirst(Language.class);
     }
 
-    public List<Language> selectLanguageByCode(String code)
+    public Language selectByLanguageCode(LanguageCode languangeCode) throws LanguageNotFoundException
     {
-        return sqlConnection.createQuery(LanguageQueries.selectByCode)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("code", code)
-                .executeAndFetch(Language.class);
-    }
-
-    public Language selectLanguageByCodeLocaleSubculture(LanguageCode languangeCode) throws LanguageNotFoundException
-    {
-        List<Language> possibleMatches = selectLanguageByCode(languangeCode.getLanguageCode());
+        List<Language> possibleMatches = selectLanguageByStringCode(languangeCode.getLanguageCode());
 
         if(possibleMatches == null || possibleMatches.isEmpty()) throw new LanguageNotFoundException(languangeCode.toString());
 
@@ -65,6 +57,14 @@ public class LanguageService
        throw new LanguageNotFoundException(languangeCode.toString());
     }
 
+    private List<Language> selectLanguageByStringCode(String code)
+    {
+        return sqlConnection.createQuery(LanguageQueries.selectByCode)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("code", code)
+                .executeAndFetch(Language.class);
+    }
+
     /**
      * this method is required b/c databases stupidly don't equate null = null.
      * @param language
@@ -72,7 +72,7 @@ public class LanguageService
      */
     public boolean languageExists(Language language)
     {
-        List<Language> retrievedList = selectLanguageByCode(language.getCode());
+        List<Language> retrievedList = selectLanguageByStringCode(language.getCode());
 
         if(retrievedList == null || retrievedList.isEmpty()) return false;
 

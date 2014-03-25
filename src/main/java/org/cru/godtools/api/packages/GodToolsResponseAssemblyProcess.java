@@ -10,6 +10,7 @@ import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,6 +40,8 @@ public class GodToolsResponseAssemblyProcess
     GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
+    String packageCode;
+    LanguageCode languageCode;
     Integer minimumInterpreterVersion;
     Integer revisionNumber;
     boolean compressed;
@@ -51,6 +54,18 @@ public class GodToolsResponseAssemblyProcess
         this.packageService = packageService;
         this.filenameUtilities = filenameUtilities;
         this.fileZipper = fileZipper;
+    }
+
+    public GodToolsResponseAssemblyProcess forPackage(String packageCode)
+    {
+        this.packageCode = packageCode;
+        return this;
+    }
+
+    public GodToolsResponseAssemblyProcess forLanguage(String languageCode)
+    {
+        this.languageCode = new LanguageCode(languageCode);
+        return this;
     }
 
     public GodToolsResponseAssemblyProcess forMinimumInterpreterVersion(Integer minimumInterpreterVersion)
@@ -71,7 +86,7 @@ public class GodToolsResponseAssemblyProcess
         return this;
     }
 
-    public Response buildResponse(String languageCode, String packageCode) throws IOException
+    public Response buildResponse() throws IOException
     {
         try
         {
@@ -119,7 +134,7 @@ public class GodToolsResponseAssemblyProcess
                 .build();
     }
 
-    private Set<GodToolsPackage> loadPackages(String languageCode, String packageCode) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    private Set<GodToolsPackage> loadPackages(LanguageCode languageCode, String packageCode) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
     {
         Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))

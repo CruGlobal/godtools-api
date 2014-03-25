@@ -4,6 +4,7 @@ import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import java.util.Set;
 
@@ -12,22 +13,22 @@ import java.util.Set;
  */
 public interface IGodToolsPackageService
 {
-    GodToolsPackage getPackage(String languageCode, String packageCode) throws LanguageNotFoundException,
+    GodToolsPackage getPackage(LanguageCode languageCode, String packageCode) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;
 
-    GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException,
+    GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;
 
-    Set<GodToolsPackage> getPackagesForLanguage(String languageCode) throws LanguageNotFoundException,
+    Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;
 
-    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException,
+    public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;
