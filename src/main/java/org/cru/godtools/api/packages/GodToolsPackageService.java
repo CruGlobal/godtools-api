@@ -83,6 +83,22 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
     }
 
+    @Override
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
+    {
+        Set<GodToolsPackage> packages = Sets.newHashSet();
+
+        Language language = languageService.selectLanguageByCodeLocaleSubculture(new LanguageCode(languageCode));
+        List<Translation> translationsForLanguage = translationService.selectByLanguageId(language.getId());
+
+        for(Translation translation : translationsForLanguage)
+        {
+            packages.add(getPackage(languageCode, packageService.selectById(translation.getPackageId()).getCode()));
+        }
+
+        return packages;
+    }
+
     private Set<Image> getImages(List<Page> pages)
     {
         Set<Image> images = Sets.newHashSet();
@@ -95,9 +111,4 @@ public class GodToolsPackageService implements IGodToolsPackageService
         return images;
     }
 
-    @Override
-    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
-    {
-        return null;
-    }
 }
