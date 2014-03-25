@@ -1,6 +1,9 @@
 package org.cru.godtools.api.packages;
 
-import org.w3c.dom.Document;
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
+import org.cru.godtools.api.packages.exceptions.NoTranslationException;
+import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -16,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Map;
+import java.security.InvalidParameterException;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -26,7 +29,8 @@ import java.util.Map;
 public class PackageResource
 {
 
-    @Inject AssemblePackageProcess packageProcess;
+    @Inject
+    GodToolsResponseAssemblyProcess packageProcess;
 
     @GET
     @Produces({"application/zip"})
@@ -40,7 +44,18 @@ public class PackageResource
                                 @QueryParam("screen-size") String screenSize,
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
-        return packageProcess.buildZippedResponse(languageCode, packageCode);
+        try
+        {
+            return packageProcess.buildZippedResponse(languageCode, packageCode);
+        }
+        catch(PackageNotFoundException | LanguageNotFoundException | NoTranslationException exception)
+        {
+            return Response.status(404).build();
+        }
+        catch(MissingVersionException exception)
+        {
+            return Response.serverError().build();
+        }
     }
 
     @POST

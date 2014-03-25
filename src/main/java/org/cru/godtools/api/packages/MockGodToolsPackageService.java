@@ -18,7 +18,8 @@ import java.util.Set;
 /**
  * Created by ryancarlson on 3/14/14.
  */
-public class MockPackageService
+@Mock
+public class MockGodToolsPackageService implements IGodToolsPackageService
 {
 
     public GodToolsPackage getPackage(String languageCode, String packageCode)
@@ -30,6 +31,7 @@ public class MockPackageService
 
             GodToolsPackage godToolsPackage = new GodToolsPackage(packageFile,
                     getPageFiles(languageCode, packageCode, new PageNameList().fromContentsFile(packageFile)),
+                    null,
                     languageCode,
                     packageCode);
 

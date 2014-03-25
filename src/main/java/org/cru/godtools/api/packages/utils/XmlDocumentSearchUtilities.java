@@ -47,6 +47,38 @@ public class XmlDocumentSearchUtilities
         return list;
     }
 
+    /**
+     * Retrieves a list of all attribute values it finds within a specific element.  Or more simply, this method will
+     * scan the document for all elements named "elementName".  If those elements have an attribute named "attributeName", it will
+     * return a list of all of those attribute values.
+     *
+     * @param document
+     * @param elementName
+     * @param attributeName
+     * @return
+     */
+    public static List<Element> findElementsWithAttribute(Document document, String elementName, String attributeName)
+    {
+        List<Element> list = Lists.newArrayList();
+
+        NodeList pageNodes = document.getElementsByTagName(elementName);
+
+        for(int i = 0; i < pageNodes.getLength(); i++)
+        {
+            Node node = pageNodes.item(i);
+
+            if(node instanceof Element)
+            {
+                Element page = (Element) node;
+                if(Strings.isNullOrEmpty(page.getAttribute(attributeName))) continue;
+
+                list.add(page);
+            }
+        }
+
+        return list;
+    }
+
     public static List<String> findElementValues(Document document, String elementName)
     {
         List<String> list = Lists.newArrayList();
@@ -61,6 +93,25 @@ public class XmlDocumentSearchUtilities
             {
                 Element element = (Element) node;
                 list.add(element.getTextContent());
+            }
+        }
+
+        return list;
+    }
+
+    public static List<Element> findElements(Document document, String elementName)
+    {
+        List<Element> list = Lists.newArrayList();
+
+        NodeList nodes = document.getElementsByTagName(elementName);
+
+        for(int i = 0; i < nodes.getLength(); i++)
+        {
+            Node node = nodes.item(i);
+
+            if(node instanceof Element)
+            {
+                list.add((Element) node);
             }
         }
 
