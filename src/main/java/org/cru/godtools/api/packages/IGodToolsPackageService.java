@@ -13,20 +13,10 @@ import java.util.Set;
  */
 public interface IGodToolsPackageService
 {
-//    GodToolsPackage getPackage(LanguageCode languageCode, String packageCode) throws LanguageNotFoundException,
-//            PackageNotFoundException,
-//            NoTranslationException,
-//            MissingVersionException;
-
     GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber, Integer minimumInterpreterVersion) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;
-
-//    Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode) throws LanguageNotFoundException,
-//            PackageNotFoundException,
-//            NoTranslationException,
-//            MissingVersionException;
 
     Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber, Integer minimumInterpreterVersion) throws LanguageNotFoundException,
             PackageNotFoundException,
