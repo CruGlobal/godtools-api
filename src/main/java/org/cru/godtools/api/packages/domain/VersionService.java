@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.sql2o.Connection;
 import org.w3c.dom.Document;
 
@@ -20,33 +21,32 @@ public class VersionService
         this.sqlConnection = sqlConnection;
     }
 
-    public List<Version> selectByTranslationId(UUID translationId)
+    public List<Version> selectByTranslationId(UUID translationId) throws MissingVersionException
     {
-        return sqlConnection.createQuery(VersionQueries.selectByTranslationId)
+        List<Version> versions = sqlConnection.createQuery(VersionQueries.selectByTranslationId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("translationId", translationId)
                 .executeAndFetch(Version.class);
+
+        if(versions == null || versions.isEmpty()) throw new MissingVersionException();
+
+        return versions;
     }
 
-    public Version selectLatestVersionForTranslation(UUID translationId)
+    public Version selectLatestVersionForTranslation(UUID translationId) throws MissingVersionException
     {
         List<Version> versions = selectByTranslationId(translationId);
 
-        if(versions != null && !versions.isEmpty())
+        Version max = versions.get(0);
+        for(Version version : versions)
         {
-            Version max = versions.get(0);
-            for(Version version : versions)
+            if(version.getVersionNumber().compareTo(max.getVersionNumber()) > 0)
             {
-                if(version.getVersionNumber().compareTo(max.getVersionNumber()) > 0)
-                {
-                    max = version;
-                }
+                max = version;
             }
-
-            return max;
         }
 
-        return null;
+        return max;
     }
 
     public void insert(Version version)

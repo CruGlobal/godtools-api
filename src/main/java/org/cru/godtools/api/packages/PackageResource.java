@@ -1,5 +1,9 @@
 package org.cru.godtools.api.packages;
 
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
+import org.cru.godtools.api.packages.exceptions.NoTranslationException;
+import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -44,13 +48,13 @@ public class PackageResource
         {
             return packageProcess.buildZippedResponse(languageCode, packageCode);
         }
-        catch(IllegalStateException messedUpData)
-        {
-            return Response.serverError().build();
-        }
-        catch(InvalidParameterException noPackage)
+        catch(PackageNotFoundException | LanguageNotFoundException | NoTranslationException exception)
         {
             return Response.status(404).build();
+        }
+        catch(MissingVersionException exception)
+        {
+            return Response.serverError().build();
         }
     }
 

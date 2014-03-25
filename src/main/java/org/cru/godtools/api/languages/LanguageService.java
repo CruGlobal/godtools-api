@@ -1,6 +1,7 @@
 package org.cru.godtools.api.languages;
 
 import com.google.common.base.Strings;
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.sql2o.Connection;
 
@@ -45,11 +46,11 @@ public class LanguageService
                 .executeAndFetch(Language.class);
     }
 
-    public Language selectLanguageByCodeLocaleSubculture(LanguageCode languangeCode)
+    public Language selectLanguageByCodeLocaleSubculture(LanguageCode languangeCode) throws LanguageNotFoundException
     {
         List<Language> possibleMatches = selectLanguageByCode(languangeCode.getLanguageCode());
 
-        if(possibleMatches == null || possibleMatches.isEmpty()) return null;
+        if(possibleMatches == null || possibleMatches.isEmpty()) throw new LanguageNotFoundException(languangeCode.toString());
 
         for(Language possibleMatch : possibleMatches)
         {
@@ -61,7 +62,7 @@ public class LanguageService
             if(matched) return possibleMatch;
         }
 
-        return null;
+       throw new LanguageNotFoundException(languangeCode.toString());
     }
 
     /**

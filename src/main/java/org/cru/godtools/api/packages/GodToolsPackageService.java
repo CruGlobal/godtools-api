@@ -6,6 +6,10 @@ import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
+import org.cru.godtools.api.packages.exceptions.NoTranslationException;
+import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.Translation;
 import org.cru.godtools.api.translations.TranslationService;
@@ -48,29 +52,16 @@ public class GodToolsPackageService implements IGodToolsPackageService
     }
 
     @Override
-    public GodToolsPackage getPackage(String languageCode, String packageCode)
+    public GodToolsPackage getPackage(String languageCode, String packageCode) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException
     {
         Language language = languageService.selectLanguageByCodeLocaleSubculture(new LanguageCode(languageCode));
         Package gtPackage = packageService.selectByCode(packageCode);
-
-        if(language == null || gtPackage == null)
-        {
-            throw new InvalidParameterException("No package found for language/package combination: " + languageCode + "," + packageCode);
-        }
-
         Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
-
-        if(translation == null)
-        {
-            throw new InvalidParameterException("No translation found for language/package combination: " + languageCode + "," + packageCode);
-        }
-
         Version version = versionService.selectLatestVersionForTranslation(translation.getId());
 
-        if(version == null)
-        {
-            throw new IllegalStateException("No version found for translation: " + translation.getId());
-        }
 
         List<Page> pages = pageService.selectByVersionId(version.getId());
         Set<Image> images = getImages(pages);
@@ -84,7 +75,10 @@ public class GodToolsPackageService implements IGodToolsPackageService
     }
 
     @Override
-    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException
     {
         Set<GodToolsPackage> packages = Sets.newHashSet();
 

@@ -23,6 +23,14 @@ public class LanguageCode
         return new LanguageCode(constructedLanguageCode);
     }
 
+    @Override
+    public String toString()
+    {
+        return getLanguageCode() +
+                (Strings.isNullOrEmpty(getLocaleCode()) ? "" : "_" + getLocaleCode()) +
+                (Strings.isNullOrEmpty(getSubculture()) ? "" : "_" + getSubculture());
+    }
+
     public String getLanguageCode()
     {
         String[] languageCodeParts = providedLanguageCode.split("_");

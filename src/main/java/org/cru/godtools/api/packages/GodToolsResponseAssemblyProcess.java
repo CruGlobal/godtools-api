@@ -3,6 +3,10 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
+import org.cru.godtools.api.packages.exceptions.NoTranslationException;
+import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
 import org.w3c.dom.Document;
@@ -42,52 +46,56 @@ public class GodToolsResponseAssemblyProcess
         this.fileZipper = fileZipper;
     }
 
-    public Response buildZippedResponse(String languageCode, String packageCode) throws IOException
+    public Response buildZippedResponse(String languageCode, String packageCode) throws IOException,
+            PackageNotFoundException,
+            LanguageNotFoundException,
+            NoTranslationException,
+            MissingVersionException
+    {
+        ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
+        Set<GodToolsPackage> packages;
+
+        if(Strings.isNullOrEmpty(packageCode))
+        {
+            packages = packageService.getPackagesForLanguage(languageCode);
+        }
+        else
+        {
+            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
+        }
+
+        createZipFolder(zipOutputStream, packages);
+
+        bundledStream.close();
+
+        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray())).build();
+    }
+
+
+    private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages)
     {
         try
         {
-            ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
-            ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
-            Set<GodToolsPackage> packages;
+            PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
 
-            if(Strings.isNullOrEmpty(packageCode))
+            for(GodToolsPackage godToolsPackage : packages)
             {
-                packages = packageService.getPackagesForLanguage(languageCode);
-            }
-            else
-            {
-                packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
+                fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);
+
+                fileZipper.zipPageFiles(godToolsPackage, zipOutputStream);
+
+                fileZipper.zipImageFiles(godToolsPackage, zipOutputStream, imagesAlreadyZipped);
             }
 
-            createZipFolder(zipOutputStream, packages);
+            fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);
 
-            bundledStream.close();
-
-            return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray())).build();
+            zipOutputStream.close();
         }
         catch(Exception e)
         {
             Throwables.propagate(e);
-            return null;
         }
-    }
-
-    private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages) throws Exception
-    {
-        PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
-
-        for(GodToolsPackage godToolsPackage : packages)
-        {
-            fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);
-
-            fileZipper.zipPageFiles(godToolsPackage, zipOutputStream);
-
-            fileZipper.zipImageFiles(godToolsPackage, zipOutputStream, imagesAlreadyZipped);
-        }
-
-        fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);
-
-        zipOutputStream.close();
     }
 
     private Document createContentsFile(Set<GodToolsPackage> packages) throws ParserConfigurationException
