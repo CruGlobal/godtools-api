@@ -24,7 +24,7 @@ import java.util.Set;
  * Created by ryancarlson on 3/14/14.
  */
 @Mock
-public class MockGodToolsPackageService implements IGodToolsPackageService
+public class MockGodToolsPackageService
 {
 
     public GodToolsPackage getPackage(LanguageCode languageCode, String packageCode)
@@ -55,7 +55,6 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
         }
     }
 
-    @Override
     public GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
     {
         return getPackage(languageCode, packageCode);
@@ -69,7 +68,6 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
         return Sets.newHashSet(kgp, satisfied);
     }
 
-    @Override
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
     {
         return getPackagesForLanguage(languageCode, null);

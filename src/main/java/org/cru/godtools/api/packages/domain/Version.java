@@ -32,6 +32,7 @@ public class Version
         setTranslationId(translation.getId());
         setVersionNumber(versionNumber);
         setReleased(released);
+        setMinimumInterpreterVersion(1);
     }
 
     public UUID getId()

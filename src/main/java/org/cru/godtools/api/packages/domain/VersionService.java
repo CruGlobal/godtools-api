@@ -5,6 +5,7 @@ import org.sql2o.Connection;
 import org.w3c.dom.Document;
 
 import javax.inject.Inject;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,12 +36,28 @@ public class VersionService
 
     public Version selectLatestVersionForTranslation(UUID translationId) throws MissingVersionException
     {
+        return selectLatestVersionForTranslation(translationId, -1);
+    }
+
+    public Version selectLatestVersionForTranslation(UUID translationId, Integer minimumInterpreterVersion) throws MissingVersionException
+    {
         List<Version> versions = selectByTranslationId(translationId);
+
+        Iterator<Version> i = versions.iterator();
+
+        for( ; i.hasNext();)
+        {
+            Version nextVersion = i.next();
+            if(nextVersion.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) i.remove();
+        }
+
+        if(versions.isEmpty()) throw new MissingVersionException();
 
         Version max = versions.get(0);
         for(Version version : versions)
         {
-            if(version.getVersionNumber().compareTo(max.getVersionNumber()) > 0)
+            if(version.getVersionNumber().compareTo(max.getVersionNumber()) > 0
+                    && version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) >= 0)
             {
                 max = version;
             }
@@ -49,7 +66,12 @@ public class VersionService
         return max;
     }
 
-    public Version selectByTranslationIdVersionNumber(UUID translationId, Integer versionNumber) throws MissingVersionException
+    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber) throws MissingVersionException
+    {
+        return selectSpecificVersionForTranslation(translationId, versionNumber, -1);
+    }
+
+    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber, Integer minimumInterpreterVersion) throws MissingVersionException
     {
         Version version = sqlConnection.createQuery(VersionQueries.selectByTranslationIdVersionNumber)
                 .setAutoDeriveColumnNames(true)
@@ -57,7 +79,7 @@ public class VersionService
                 .addParameter("versionNumber", versionNumber)
                 .executeAndFetchFirst(Version.class);
 
-        if(version == null) throw new MissingVersionException();
+        if(version == null || version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) throw new MissingVersionException();
 
         return version;
     }

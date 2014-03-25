@@ -139,11 +139,11 @@ public class GodToolsResponseAssemblyProcess
         Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))
         {
-            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber);
+            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion);
         }
         else
         {
-            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber));
+            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion));
         }
         return packages;
     }
