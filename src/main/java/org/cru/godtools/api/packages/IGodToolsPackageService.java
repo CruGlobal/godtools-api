@@ -17,7 +17,17 @@ public interface IGodToolsPackageService
             NoTranslationException,
             MissingVersionException;
 
+    GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException;
+
     Set<GodToolsPackage> getPackagesForLanguage(String languageCode) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException;
+
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException;

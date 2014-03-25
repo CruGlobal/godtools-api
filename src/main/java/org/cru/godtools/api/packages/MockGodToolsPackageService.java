@@ -4,6 +4,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
+import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
+import org.cru.godtools.api.packages.exceptions.MissingVersionException;
+import org.cru.godtools.api.packages.exceptions.NoTranslationException;
+import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.ImageNameList;
 import org.cru.godtools.api.packages.utils.PageNameList;
 import org.w3c.dom.Document;
@@ -50,12 +54,24 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
         }
     }
 
+    @Override
+    public GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    {
+        return getPackage(languageCode, packageCode);
+    }
+
     public Set<GodToolsPackage> getPackagesForLanguage(String languageCode)
     {
         GodToolsPackage kgp = getPackage(languageCode, "kgp");
         GodToolsPackage satisfied = getPackage(languageCode, "satisfied");
 
         return Sets.newHashSet(kgp, satisfied);
+    }
+
+    @Override
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    {
+        return getPackagesForLanguage(languageCode, null);
     }
 
     private List<GodToolsPackagePage> getPageFiles(String languageCode, String packageCode, List<String> fileNames)

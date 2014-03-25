@@ -9,6 +9,7 @@ import org.w3c.dom.Document;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -51,13 +52,7 @@ public class GodToolsPackageShaGenerator
         try
         {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-
-            Source source = new DOMSource(xmlFile);
-            Result result = new StreamResult(byteStream);
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-
-            transformer.transform(source, result);
+            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.convert(xmlFile);
 
             messageDigest.update(byteStream.toByteArray());
 
@@ -69,6 +64,8 @@ public class GodToolsPackageShaGenerator
             return null;
         }
     }
+
+
 
     public String calculateHash(byte[] image)
     {

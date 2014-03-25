@@ -3,16 +3,19 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import org.apache.http.impl.auth.NTLMEngineException;
 import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
+import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +39,10 @@ public class GodToolsResponseAssemblyProcess
     GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
+    Integer minimumInterpreterVersion;
+    Integer revisionNumber;
+    boolean compressed;
+
     @Inject
     public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
                                            GodToolsPackageFilenameUtilities filenameUtilities,
@@ -46,32 +53,85 @@ public class GodToolsResponseAssemblyProcess
         this.fileZipper = fileZipper;
     }
 
-    public Response buildZippedResponse(String languageCode, String packageCode) throws IOException,
-            PackageNotFoundException,
-            LanguageNotFoundException,
-            NoTranslationException,
-            MissingVersionException
+    public GodToolsResponseAssemblyProcess forMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
-        ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
-        Set<GodToolsPackage> packages;
+        this.minimumInterpreterVersion = minimumInterpreterVersion;
+        return this;
+    }
 
+    public GodToolsResponseAssemblyProcess atRevisionNumber(Integer revisionNumber)
+    {
+        this.revisionNumber = revisionNumber;
+        return this;
+    }
+
+    public GodToolsResponseAssemblyProcess compressed(boolean compressed)
+    {
+        this.compressed = compressed;
+        return this;
+    }
+
+    public Response buildResponse(String languageCode, String packageCode) throws IOException
+    {
+        try
+        {
+            if(compressed)
+            {
+                return buildZippedResponse(loadPackages(languageCode, packageCode));
+            }
+            else
+            {
+                return buildXmlContentsResponse(loadPackages(languageCode, packageCode));
+            }
+        }
+        catch(PackageNotFoundException | LanguageNotFoundException | NoTranslationException | MissingVersionException e)
+        {
+            return Response.status(404).build();
+        }
+    }
+
+    private Response buildXmlContentsResponse(Set<GodToolsPackage> packages) throws IOException
+    {
+        if(packages.isEmpty())
+        {
+            return Response.status(404).build();
+        }
+
+        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.convert(createContentsFile(packages));
+        bundledStream.close();
+
+        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
+                .type(MediaType.APPLICATION_XML)
+                .build();
+    }
+
+    private Response buildZippedResponse(Set<GodToolsPackage> packages) throws IOException
+    {
+        if(packages.isEmpty()) return Response.status(404).build();
+
+        ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
+
+        createZipFolder(new ZipOutputStream(bundledStream), packages);
+        bundledStream.close();
+
+        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
+                .type("application/zip")
+                .build();
+    }
+
+    private Set<GodToolsPackage> loadPackages(String languageCode, String packageCode) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    {
+        Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))
         {
-            packages = packageService.getPackagesForLanguage(languageCode);
+            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber);
         }
         else
         {
-            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode));
+            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber));
         }
-
-        createZipFolder(zipOutputStream, packages);
-
-        bundledStream.close();
-
-        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray())).build();
+        return packages;
     }
-
 
     private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages)
     {
@@ -98,23 +158,30 @@ public class GodToolsResponseAssemblyProcess
         }
     }
 
-    private Document createContentsFile(Set<GodToolsPackage> packages) throws ParserConfigurationException
+    private Document createContentsFile(Set<GodToolsPackage> packages)
     {
-        Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-
-        Element rootElement = contents.createElement("content");
-        contents.appendChild(rootElement);
-
-        for(GodToolsPackage godToolsPackage : packages)
+        try
         {
-            Element resourceElement = contents.createElement("resource");
-            resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
-            resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
-            resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
+            Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
-            rootElement.appendChild(resourceElement);
+            Element rootElement = contents.createElement("content");
+            contents.appendChild(rootElement);
+
+            for(GodToolsPackage godToolsPackage : packages)
+            {
+                Element resourceElement = contents.createElement("resource");
+                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
+                resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
+                resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
+
+                rootElement.appendChild(resourceElement);
+            }
+            return contents;
         }
-        return contents;
-
+        catch(ParserConfigurationException e)
+        {
+            Throwables.propagate(e);
+            return null;
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.cru.godtools.api.packages;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
@@ -16,7 +15,6 @@ import org.cru.godtools.api.translations.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Set;
 
@@ -57,11 +55,21 @@ public class GodToolsPackageService implements IGodToolsPackageService
             NoTranslationException,
             MissingVersionException
     {
+        return getPackage(languageCode, packageCode, null);
+    }
+
+    @Override
+    public GodToolsPackage getPackage(String languageCode, String packageCode, Integer revisionNumber) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException
+    {
         Language language = languageService.selectLanguageByCodeLocaleSubculture(new LanguageCode(languageCode));
         Package gtPackage = packageService.selectByCode(packageCode);
         Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
-        Version version = versionService.selectLatestVersionForTranslation(translation.getId());
 
+        Version version = revisionNumber != null ? versionService.selectByTranslationIdVersionNumber(translation.getId(), revisionNumber)
+                                                 : versionService.selectLatestVersionForTranslation(translation.getId());
 
         List<Page> pages = pageService.selectByVersionId(version.getId());
         Set<Image> images = getImages(pages);
@@ -71,11 +79,19 @@ public class GodToolsPackageService implements IGodToolsPackageService
                 GodToolsPackageImage.createSet(images),
                 languageCode,
                 packageCode);
-
     }
 
     @Override
     public Set<GodToolsPackage> getPackagesForLanguage(String languageCode) throws LanguageNotFoundException,
+            PackageNotFoundException,
+            NoTranslationException,
+            MissingVersionException
+    {
+        return getPackagesForLanguage(languageCode, null);
+    }
+
+    @Override
+    public Set<GodToolsPackage> getPackagesForLanguage(String languageCode, Integer revisionNumber) throws LanguageNotFoundException,
             PackageNotFoundException,
             NoTranslationException,
             MissingVersionException
@@ -87,7 +103,11 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
         for(Translation translation : translationsForLanguage)
         {
-            packages.add(getPackage(languageCode, packageService.selectById(translation.getPackageId()).getCode()));
+            try
+            {
+                packages.add(getPackage(languageCode, packageService.selectById(translation.getPackageId()).getCode(), revisionNumber));
+            }
+            catch(MissingVersionException missingVersion){ continue; }
         }
 
         return packages;

@@ -33,29 +33,21 @@ public class PackageResource
     GodToolsResponseAssemblyProcess packageProcess;
 
     @GET
-    @Produces({"application/zip"})
+    @Produces({"application/zip", "application/xml"})
     public Response getPackages(@QueryParam("language") String languageCode,
                                 @QueryParam("package") String packageCode,
-                                @QueryParam("interpreter-version") String minimumInterpreterVersion,
+                                @QueryParam("interpreter-version") Integer minimumInterpreterVersion,
                                 @QueryParam("compressed") String compressed,
-                                @QueryParam("encoding") String encoding,
                                 @QueryParam("revision-number") Integer revisionNumber,
-                                @QueryParam("segment") String segment,
                                 @QueryParam("screen-size") String screenSize,
                                 @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
     {
-        try
-        {
-            return packageProcess.buildZippedResponse(languageCode, packageCode);
-        }
-        catch(PackageNotFoundException | LanguageNotFoundException | NoTranslationException exception)
-        {
-            return Response.status(404).build();
-        }
-        catch(MissingVersionException exception)
-        {
-            return Response.serverError().build();
-        }
+
+        return packageProcess
+                .compressed(Boolean.parseBoolean(compressed))
+                .atRevisionNumber(revisionNumber)
+                .forMinimumInterpreterVersion(minimumInterpreterVersion)
+                .buildResponse(languageCode, packageCode);
     }
 
     @POST

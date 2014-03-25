@@ -49,6 +49,19 @@ public class VersionService
         return max;
     }
 
+    public Version selectByTranslationIdVersionNumber(UUID translationId, Integer versionNumber) throws MissingVersionException
+    {
+        Version version = sqlConnection.createQuery(VersionQueries.selectByTranslationIdVersionNumber)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("translationId", translationId)
+                .addParameter("versionNumber", versionNumber)
+                .executeAndFetchFirst(Version.class);
+
+        if(version == null) throw new MissingVersionException();
+
+        return version;
+    }
+
     public void insert(Version version)
     {
         sqlConnection.createQuery(VersionQueries.insert)
@@ -87,6 +100,7 @@ public class VersionService
     public static class VersionQueries
     {
         public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";
+        public static String selectByTranslationIdVersionNumber = "SELECT * FROM versions WHERE translation_id = :translationId AND version_number = :versionNumber";
         public static final String insert = "INSERT INTO versions(id, version_number, released, package_id, translation_id, minimum_interpreter_version, package_structure, package_structure_hash) " +
                 "VALUES(:id, :versionNumber, :released, :packageId, :translationId, :minimumInterpreterVersion, :packageStructure, :packageStructureHash)";
         public static final String selectAll = "SELECT * FROM versions";
