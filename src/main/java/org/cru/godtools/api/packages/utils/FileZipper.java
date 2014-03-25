@@ -14,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -56,11 +57,13 @@ public class FileZipper
         }
     }
 
-    public void zipImageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws IOException
+    public void zipImageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
     {
         for(GodToolsPackageImage image : godToolsPackage.getImageFiles())
         {
+            if(imagesAlreadyZipped.contains(image.getHash())) continue;
             zipImage(image.getContents(), image.getHash() + ".png", zipOutputStream);
+            imagesAlreadyZipped.add(image.getHash());
         }
     }
     /**

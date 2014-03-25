@@ -31,6 +31,7 @@ public class MockGodToolsPackageService implements IGodToolsPackageService
 
             GodToolsPackage godToolsPackage = new GodToolsPackage(packageFile,
                     getPageFiles(languageCode, packageCode, new PageNameList().fromContentsFile(packageFile)),
+                    null,
                     languageCode,
                     packageCode);
 

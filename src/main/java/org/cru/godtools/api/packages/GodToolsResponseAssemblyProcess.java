@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
@@ -73,13 +74,15 @@ public class GodToolsResponseAssemblyProcess
 
     private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages) throws Exception
     {
+        PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
+
         for(GodToolsPackage godToolsPackage : packages)
         {
             fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);
 
             fileZipper.zipPageFiles(godToolsPackage, zipOutputStream);
 
-            fileZipper.zipImageFiles(godToolsPackage, zipOutputStream);
+            fileZipper.zipImageFiles(godToolsPackage, zipOutputStream, imagesAlreadyZipped);
         }
 
         fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);

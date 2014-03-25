@@ -1,5 +1,10 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Sets;
+import org.cru.godtools.api.packages.domain.Image;
+
+import java.util.Set;
+
 /**
  * Created by ryancarlson on 3/19/14.
  */
@@ -13,6 +18,24 @@ public class GodToolsPackageImage
     {
         this.contents = contents;
         this.originalFilename = originalFilename;
+    }
+
+    public GodToolsPackageImage(byte[] contents, String originalFilename, String imageHash)
+    {
+        this(contents, originalFilename);
+        this.hash = imageHash;
+    }
+
+    public static Set<GodToolsPackageImage> createSet(Set<Image> databaseImages)
+    {
+        Set<GodToolsPackageImage> apiImages = Sets.newHashSet();
+
+        for(Image image : databaseImages)
+        {
+            apiImages.add(new GodToolsPackageImage(image.getImageContent(), image.getFilename(), image.getImageHash()));
+        }
+
+        return apiImages;
     }
 
     public byte[] getContents()

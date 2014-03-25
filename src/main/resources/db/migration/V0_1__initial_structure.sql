@@ -26,7 +26,8 @@ CREATE TABLE versions (
   package_id uuid REFERENCES packages(id),
   translation_id uuid REFERENCES translations(id),
   minimum_interpreter_version integer,
-  package_structure xml
+  package_structure xml,
+  package_structure_hash text
 );
 
 CREATE TABLE pages (

@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
@@ -28,7 +29,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
     TranslationService translationService;
     LanguageService languageService;
     PageService pageService;
-    ImageService imageService;
+    ImagePageRelationshipService imagePageRelationshipService;
 
     @Inject
     public GodToolsPackageService(PackageService packageService,
@@ -36,14 +37,14 @@ public class GodToolsPackageService implements IGodToolsPackageService
                                   TranslationService translationService,
                                   LanguageService languageService,
                                   PageService pageService,
-                                  ImageService imageService)
+                                  ImagePageRelationshipService imagePageRelationshipService)
     {
         this.packageService = packageService;
         this.versionService = versionService;
         this.translationService = translationService;
         this.languageService = languageService;
         this.pageService = pageService;
-        this.imageService = imageService;
+        this.imagePageRelationshipService = imagePageRelationshipService;
     }
 
     @Override
@@ -72,11 +73,26 @@ public class GodToolsPackageService implements IGodToolsPackageService
         }
 
         List<Page> pages = pageService.selectByVersionId(version.getId());
+        Set<Image> images = getImages(pages);
 
-//        List<Image> images = imageService.
-        GodToolsPackage godToolsPackage = new GodToolsPackage(version.getPackageStructure(), GodToolsPackagePage.createList(pages), languageCode, packageCode);
+        return new GodToolsPackage(version.getPackageStructure(),
+                GodToolsPackagePage.createList(pages),
+                GodToolsPackageImage.createSet(images),
+                languageCode,
+                packageCode);
 
-        return godToolsPackage;
+    }
+
+    private Set<Image> getImages(List<Page> pages)
+    {
+        Set<Image> images = Sets.newHashSet();
+
+        for(Page page : pages)
+        {
+            images.addAll(imagePageRelationshipService.selectImagesByPageId(page.getId()));
+        }
+
+        return images;
     }
 
     @Override

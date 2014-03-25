@@ -6,7 +6,6 @@ import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -20,13 +19,13 @@ public class GodToolsPackage
     Set<GodToolsPackageImage> imageFiles = Sets.newHashSet();
     String languageCode;
     String packageCode;
-
     String packageXmlHash;
 
-    public GodToolsPackage(Document packageXml, List<GodToolsPackagePage> pageFiles, String languageCode, String packageCode)
+    public GodToolsPackage(Document packageXml, List<GodToolsPackagePage> pageFiles, Set<GodToolsPackageImage> images, String languageCode, String packageCode)
     {
         this.packageXml = packageXml;
         this.pageFiles = pageFiles;
+        this.imageFiles = images;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
         this.packageXmlHash = new GodToolsPackageShaGenerator().calculateHash(packageXml);

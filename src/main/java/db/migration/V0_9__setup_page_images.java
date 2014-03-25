@@ -28,7 +28,7 @@ public class V0_9__setup_page_images implements JdbcMigration
 
         PageService pageService = new PageService(sqlConnection);
         ImageService imageService = new ImageService(sqlConnection);
-        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
+        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection, imageService);
 
         for(Page page : pageService.selectAllPages())
         {
