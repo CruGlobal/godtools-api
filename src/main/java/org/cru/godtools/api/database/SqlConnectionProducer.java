@@ -25,9 +25,25 @@ public class SqlConnectionProducer
     @Inject GodToolsProperties properties;
 
     @Produces
-    public org.sql2o.Connection getSqlConnection()
+    public Connection getSqlConnection()
     {
         Connection sqlConnection = new Connection(getSql2o());
+
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(false);
+        }
+        catch(SQLException e)
+        { /*come on... really*/
+            Throwables.propagate(e);
+        }
+
+        return sqlConnection;
+    }
+
+    public Connection getTestSqlConnection()
+    {
+        Connection sqlConnection = new Connection(new Sql2o("jdbc:postgresql://localhost/godtools","godtoolsuser","godtoolsuser",QuirksMode.PostgreSQL));
 
         try
         {

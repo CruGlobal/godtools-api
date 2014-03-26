@@ -20,6 +20,6 @@ public class MigrationProcess
 
     public static org.sql2o.Connection getSql2oConnection()
     {
-        return new SqlConnectionProducer().getSqlConnection();
+        return new SqlConnectionProducer().getTestSqlConnection();
     }
 }

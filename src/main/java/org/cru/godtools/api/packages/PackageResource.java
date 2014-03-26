@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import org.cru.godtools.api.authentication.AuthenticationService;
 import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
@@ -32,6 +33,8 @@ public class PackageResource
 
     @Inject
     GodToolsResponseAssemblyProcess packageProcess;
+    @Inject
+    AuthenticationService authenticator;
 
     @GET
     @Produces({"application/zip", "application/xml"})
@@ -41,8 +44,10 @@ public class PackageResource
                                 @QueryParam("compressed") String compressed,
                                 @QueryParam("revision-number") Integer revisionNumber,
                                 @QueryParam("screen-size") String screenSize,
-                                @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
+                                @HeaderParam("authorization") String authCodeHeader,
+                                @QueryParam("authorization") String authCodeParam) throws ParserConfigurationException, SAXException, IOException
     {
+        authenticator.authorizeUser(authCodeHeader == null ? authCodeParam : authCodeHeader);
 
         return packageProcess
                 .forLanguage(languageCode)
