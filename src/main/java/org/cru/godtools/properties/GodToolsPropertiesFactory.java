@@ -7,8 +7,8 @@ import javax.enterprise.inject.Produces;
  */
 public class GodToolsPropertiesFactory
 {
-    private static final String propertiesFile = "/apps/apps-config/godtools-api-properties.xml";
-    private static final String propertiesFile2 = "/default-properties.xml";
+    private final String propertiesFile = "/apps/apps-config/godtools-api-properties.xml";
+    private final String propertiesFile2 = "/default-properties.xml";
 
     @Produces
     public GodToolsProperties get()
