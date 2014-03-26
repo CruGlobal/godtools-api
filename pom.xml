@@ -103,6 +103,12 @@
             <version>1.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.ccci</groupId>
+            <artifactId>util</artifactId>
+            <version>3-SNAPSHOT</version>
+        </dependency>
+
         <!-- Import the APIs that we depend on and are included in JBoss AS 7 -->
         <dependency>
             <groupId>javax.enterprise</groupId>

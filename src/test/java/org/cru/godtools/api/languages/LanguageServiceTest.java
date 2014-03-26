@@ -23,7 +23,7 @@ public class LanguageServiceTest
     {
         SqlConnectionProducer connectionProducer = new SqlConnectionProducer();
 
-        sqlConnection = connectionProducer.getTestSqlConnection();
+        sqlConnection = connectionProducer.getSqlConnection();
         languageService = new LanguageService(sqlConnection);
     }
 
