@@ -45,7 +45,7 @@ public class PackageResource
                                 @QueryParam("revision-number") Integer revisionNumber,
                                 @QueryParam("screen-size") String screenSize,
                                 @HeaderParam("authorization") String authCodeHeader,
-                                @QueryParam("authorization") String authCodeParam) throws ParserConfigurationException, SAXException, IOException
+                                @QueryParam("auth_token") String authCodeParam) throws ParserConfigurationException, SAXException, IOException
     {
         authenticator.authorizeUser(authCodeHeader == null ? authCodeParam : authCodeHeader);
 
