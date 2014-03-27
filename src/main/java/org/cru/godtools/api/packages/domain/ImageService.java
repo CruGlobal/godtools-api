@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages.domain;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -16,6 +17,13 @@ public class ImageService
     public ImageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
+    }
+
+    public List<Image> selectRetinaFiles()
+    {
+        return sqlConnection.createQuery(ImageQueries.selectRetinaFiles)
+                .setAutoDeriveColumnNames(true)
+                .executeAndFetch(Image.class);
     }
 
     public Image selectById(UUID id)
@@ -34,6 +42,17 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
+    public void update(Image image)
+    {
+        sqlConnection.createQuery(ImageQueries.update)
+                .addParameter("id", image.getId())
+                .addParameter("imageContent", image.getImageContent())
+                .addParameter("filename", image.getFilename())
+                .addParameter("imageHash", image.getImageHash())
+                .addParameter("resolution", image.getResolution())
+                .executeUpdate();
+    }
+
     public void insert(Image image)
     {
         sqlConnection.createQuery(ImageQueries.insert)
@@ -49,11 +68,8 @@ public class ImageService
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
         public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
+        public static final String selectRetinaFiles = "SELECT * FROM images where filename like '%2x%'";
         public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash, resolution) VALUES(:id, :imageContent, :filename, :imageHash, :resolution)";
-    }
-
-    private class ImageResolutionQueries
-    {
-        public static final String selectByResolution = "SELECT * FROM image_resolutions WHERE resolution = :resolution";
+        public static final String update = "UPDATE images SET image_content = :imageContent, filename = :filename, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
     }
 }
