@@ -1,6 +1,5 @@
 package org.cru.godtools.api.packages.domain;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.sql2o.Connection;
 
@@ -33,7 +32,7 @@ public class ImagePageRelationshipService
                 .executeUpdate();
     }
 
-    public Set<Image> selectImagesByPageId(UUID pageId)
+    public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
     {
         List<ImagePageRelationship> relationships = sqlConnection.createQuery(ImagePageRelationshipQueries.selectByPageId)
                 .setAutoDeriveColumnNames(true)
@@ -45,19 +44,19 @@ public class ImagePageRelationshipService
         for(ImagePageRelationship relationship : relationships)
         {
             Image image = imageService.selectById(relationship.getImageId());
-            if(image != null) images.add(image);
+            if(image != null && image.getResolution().equalsIgnoreCase(pixelDensity.toString())) images.add(image);
         }
 
         return images;
     }
 
-    public Set<Image> selectImagesForAllPages(List<Page> pages)
+    public Set<Image> selectImagesForAllPages(List<Page> pages, PixelDensity pixelDensity)
     {
         Set<Image> images = Sets.newHashSet();
 
         for(Page page : pages)
         {
-            images.addAll(selectImagesByPageId(page.getId()));
+            images.addAll(selectImagesByPageId(page.getId(), pixelDensity));
         }
 
         return images;

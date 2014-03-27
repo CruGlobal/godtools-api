@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ public class PackageResource
                                 @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
                                 @QueryParam("compressed") String compressed,
                                 @QueryParam("revision-number") Integer revisionNumber,
-                                @QueryParam("screen-size") String screenSize,
+                                @QueryParam("density") String desiredPixelDensity,
                                 @HeaderParam("authorization") String authTokenHeader,
                                 @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
@@ -49,6 +50,7 @@ public class PackageResource
                 .forPackage(packageCode)
                 .compressed(Boolean.parseBoolean(compressed))
                 .atRevisionNumber(revisionNumber)
+                .withPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .forMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
                 .buildResponse();
     }

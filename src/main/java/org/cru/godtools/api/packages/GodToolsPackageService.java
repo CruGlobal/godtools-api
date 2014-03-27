@@ -49,6 +49,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
     /**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
      *
+     *
      * @param languageCode
      * @param packageCode
      * @param revisionNumber
@@ -58,7 +59,8 @@ public class GodToolsPackageService implements IGodToolsPackageService
     public GodToolsPackage getPackage(LanguageCode languageCode,
                                       String packageCode,
                                       Integer revisionNumber,
-                                      Integer minimumInterpreterVersion)
+                                      Integer minimumInterpreterVersion,
+                                      PixelDensity pixelDensity)
     {
         Language language = languageService.selectByLanguageCode(languageCode);
         Package gtPackage = packageService.selectByCode(packageCode);
@@ -66,9 +68,10 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
         Version version = getVersion(revisionNumber, minimumInterpreterVersion, translation);
         List<Page> pages = pageService.selectByVersionId(version.getId());
+
         return new GodToolsPackage(version.getPackageStructure(),
                 pages,
-                imagePageRelationshipService.selectImagesForAllPages(pages),
+                imagePageRelationshipService.selectImagesForAllPages(pages, pixelDensity),
                 languageCode.toString(),
                 packageCode);
     }
@@ -90,6 +93,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
     /**
      * Retrieves all packages for specified language at specified revision
      *
+     *
      * @param languageCode
      * @param revisionNumber
      * @return
@@ -98,7 +102,8 @@ public class GodToolsPackageService implements IGodToolsPackageService
     @Override
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
                                                        Integer revisionNumber,
-                                                       Integer minimumInterpreterVersion)
+                                                       Integer minimumInterpreterVersion,
+                                                       PixelDensity pixelDensity)
     {
         Set<GodToolsPackage> packages = Sets.newHashSet();
 
@@ -110,7 +115,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
             try
             {
                 Package gtPackage = packageService.selectById(translation.getPackageId());
-                packages.add(getPackage(languageCode, gtPackage.getCode(), revisionNumber, minimumInterpreterVersion));
+                packages.add(getPackage(languageCode, gtPackage.getCode(), revisionNumber, minimumInterpreterVersion, pixelDensity));
             }
             //if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
             catch(NotFoundException e){ continue; }
@@ -119,13 +124,13 @@ public class GodToolsPackageService implements IGodToolsPackageService
         return packages;
     }
 
-    private Set<Image> getImages(List<Page> pages)
+    private Set<Image> getImages(List<Page> pages, PixelDensity pixelDensity)
     {
         Set<Image> images = Sets.newHashSet();
 
         for(Page page : pages)
         {
-            images.addAll(imagePageRelationshipService.selectImagesByPageId(page.getId()));
+            images.addAll(imagePageRelationshipService.selectImagesByPageId(page.getId(), pixelDensity));
         }
 
         return images;

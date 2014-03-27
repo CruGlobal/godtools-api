@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
@@ -39,6 +40,7 @@ public class GodToolsResponseAssemblyProcess
     Integer minimumInterpreterVersion;
     Integer revisionNumber;
     boolean compressed;
+    PixelDensity pixelDensity;
 
     @Inject
     public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
@@ -75,6 +77,13 @@ public class GodToolsResponseAssemblyProcess
     public GodToolsResponseAssemblyProcess compressed(boolean compressed)
     {
         this.compressed = compressed;
+        return this;
+    }
+
+
+    public GodToolsResponseAssemblyProcess withPixelDensity(PixelDensity pixelDensity)
+    {
+        this.pixelDensity = pixelDensity;
         return this;
     }
 
@@ -124,11 +133,11 @@ public class GodToolsResponseAssemblyProcess
         Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))
         {
-            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion);
+            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity);
         }
         else
         {
-            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion));
+            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
         }
         return packages;
     }
@@ -184,4 +193,5 @@ public class GodToolsResponseAssemblyProcess
             return null;
         }
     }
+
 }

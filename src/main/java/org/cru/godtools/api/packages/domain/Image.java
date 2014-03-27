@@ -11,6 +11,7 @@ public class Image
     private byte[] imageContent;
     private String filename;
     private String imageHash;
+    private String resolution;
 
     public UUID getId()
     {
@@ -50,5 +51,15 @@ public class Image
     public void setImageHash(String imageHash)
     {
         this.imageHash = imageHash;
+    }
+
+    public String getResolution()
+    {
+        return resolution;
+    }
+
+    public void setResolution(String resolution)
+    {
+        this.resolution = resolution;
     }
 }

@@ -69,6 +69,7 @@ public class V0_8__migrate_images implements JdbcMigration
             image.setFilename(sharedImage.getName());
             image.setImageContent(ImageReader.read(sharedImage));
             image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+            image.setResolution("High");
             imageService.insert(image);
         }
 

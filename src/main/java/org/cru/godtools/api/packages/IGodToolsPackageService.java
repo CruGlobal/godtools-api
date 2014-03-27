@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import java.util.Set;
@@ -9,6 +10,6 @@ import java.util.Set;
  */
 public interface IGodToolsPackageService
 {
-    GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber, Integer minimumInterpreterVersion);
-    Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber, Integer minimumInterpreterVersion);
+    GodToolsPackage getPackage(LanguageCode languageCode, String packageCode, Integer revisionNumber, Integer minimumInterpreterVersion, PixelDensity pixelDensity);
+    Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode, Integer revisionNumber, Integer minimumInterpreterVersion, PixelDensity pixelDensity);
 }

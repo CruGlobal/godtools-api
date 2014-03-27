@@ -24,7 +24,6 @@ public class ImageService
                 .setAutoDeriveColumnNames(true)
                 .addParameter("id", id)
                 .executeAndFetchFirst(Image.class);
-
     }
 
     public Image selectByFilename(String filename)
@@ -34,6 +33,7 @@ public class ImageService
                 .addParameter("filename", filename)
                 .executeAndFetchFirst(Image.class);
     }
+
     public void insert(Image image)
     {
         sqlConnection.createQuery(ImageQueries.insert)
@@ -41,6 +41,7 @@ public class ImageService
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
+                .addParameter("resolution", image.getResolution())
                 .executeUpdate();
     }
 
@@ -48,6 +49,11 @@ public class ImageService
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
         public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
-        public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash) VALUES(:id, :imageContent, :filename, :imageHash)";
+        public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash, resolution) VALUES(:id, :imageContent, :filename, :imageHash, :resolution)";
+    }
+
+    private class ImageResolutionQueries
+    {
+        public static final String selectByResolution = "SELECT * FROM image_resolutions WHERE resolution = :resolution";
     }
 }

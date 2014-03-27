@@ -80,6 +80,7 @@ public class PageDirectory
                     image.setFilename(imageFile.getName());
                     image.setImageContent(ImageReader.read(imageFile));
                     image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+                    image.setResolution("High");
                     images.add(image);
                 }
             }
