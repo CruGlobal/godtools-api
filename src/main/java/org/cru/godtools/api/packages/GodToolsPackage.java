@@ -2,6 +2,8 @@ package org.cru.godtools.api.packages;
 
 import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
+import org.cru.godtools.api.packages.domain.Image;
+import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 
@@ -15,47 +17,20 @@ import java.util.Set;
 public class GodToolsPackage
 {
     Document packageXml;
-    List<GodToolsPackagePage> pageFiles = Lists.newArrayList();
-    Set<GodToolsPackageImage> imageFiles = Sets.newHashSet();
+    List<Page> pageFiles = Lists.newArrayList();
+    Set<Image> images = Sets.newHashSet();
     String languageCode;
     String packageCode;
     String packageXmlHash;
 
-    public GodToolsPackage(Document packageXml, List<GodToolsPackagePage> pageFiles, Set<GodToolsPackageImage> images, String languageCode, String packageCode)
+    public GodToolsPackage(Document packageXml, List<Page> pageFiles, Set<Image> images, String languageCode, String packageCode)
     {
         this.packageXml = packageXml;
         this.pageFiles = pageFiles;
-        this.imageFiles = images;
+        this.images = images;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
         this.packageXmlHash = new GodToolsPackageShaGenerator().calculateHash(packageXml);
-    }
-
-    public GodToolsPackagePage getPageByFilename(String filename)
-    {
-        for(GodToolsPackagePage godToolsPackagePage : pageFiles)
-        {
-            if(godToolsPackagePage.getOriginalFilename().equals(filename))
-            {
-                return godToolsPackagePage;
-            }
-        }
-
-        throw new NoSuchElementException();
-    }
-
-
-    public GodToolsPackageImage getImageByFilename(String imageName)
-    {
-        for(GodToolsPackageImage godToolsPackageImage : imageFiles)
-        {
-            if(godToolsPackageImage.getOriginalFilename().equals(imageName))
-            {
-                return godToolsPackageImage;
-            }
-        }
-
-        throw new NoSuchElementException();
     }
 
     public Document getPackageXml()
@@ -68,14 +43,24 @@ public class GodToolsPackage
         this.packageXml = packageXml;
     }
 
-    public List<GodToolsPackagePage> getPageFiles()
+    public List<Page> getPageFiles()
     {
         return pageFiles;
     }
 
-    public void setPageFiles(List<GodToolsPackagePage> pageFiles)
+    public void setPageFiles(List<Page> pageFiles)
     {
         this.pageFiles = pageFiles;
+    }
+
+    public Set<Image> getImages()
+    {
+        return images;
+    }
+
+    public void setImages(Set<Image> images)
+    {
+        this.images = images;
     }
 
     public String getLanguageCode()
@@ -108,13 +93,4 @@ public class GodToolsPackage
         this.packageXmlHash = packageXmlHash;
     }
 
-    public Set<GodToolsPackageImage> getImageFiles()
-    {
-        return imageFiles;
-    }
-
-    public void setImageFiles(Set<GodToolsPackageImage> imageFiles)
-    {
-        this.imageFiles = imageFiles;
-    }
 }

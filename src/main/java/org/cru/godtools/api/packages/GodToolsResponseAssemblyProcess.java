@@ -3,13 +3,11 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.apache.http.impl.auth.NTLMEngineException;
 import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.packages.utils.GodToolsPackageFilenameUtilities;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
@@ -37,7 +35,6 @@ import java.util.zip.ZipOutputStream;
 public class GodToolsResponseAssemblyProcess
 {
     IGodToolsPackageService packageService;
-    GodToolsPackageFilenameUtilities filenameUtilities;
     FileZipper fileZipper;
 
     String packageCode;
@@ -48,11 +45,9 @@ public class GodToolsResponseAssemblyProcess
 
     @Inject
     public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
-                                           GodToolsPackageFilenameUtilities filenameUtilities,
                                            FileZipper fileZipper)
     {
         this.packageService = packageService;
-        this.filenameUtilities = filenameUtilities;
         this.fileZipper = fileZipper;
     }
 

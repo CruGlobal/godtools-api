@@ -75,13 +75,10 @@ public class GodToolsPackageService implements IGodToolsPackageService
         Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
 
         Version version = getVersion(revisionNumber, minimumInterpreterVersion, translation);
-
         List<Page> pages = pageService.selectByVersionId(version.getId());
-        Set<Image> images = getImages(pages);
-
         return new GodToolsPackage(version.getPackageStructure(),
-                GodToolsPackagePage.createList(pages),
-                GodToolsPackageImage.createSet(images),
+                pages,
+                imagePageRelationshipService.selectImagesForAllPages(pages),
                 languageCode.toString(),
                 packageCode);
     }

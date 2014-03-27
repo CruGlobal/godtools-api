@@ -1,10 +1,12 @@
 package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -31,19 +33,31 @@ public class ImagePageRelationshipService
                 .executeUpdate();
     }
 
-    public List<Image> selectImagesByPageId(UUID pageId)
+    public Set<Image> selectImagesByPageId(UUID pageId)
     {
         List<ImagePageRelationship> relationships = sqlConnection.createQuery(ImagePageRelationshipQueries.selectByPageId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("pageId", pageId)
                 .executeAndFetch(ImagePageRelationship.class);
 
-        List<Image> images = Lists.newArrayList();
+        Set<Image> images = Sets.newHashSet();
 
         for(ImagePageRelationship relationship : relationships)
         {
             Image image = imageService.selectById(relationship.getImageId());
             if(image != null) images.add(image);
+        }
+
+        return images;
+    }
+
+    public Set<Image> selectImagesForAllPages(List<Page> pages)
+    {
+        Set<Image> images = Sets.newHashSet();
+
+        for(Page page : pages)
+        {
+            images.addAll(selectImagesByPageId(page.getId()));
         }
 
         return images;
