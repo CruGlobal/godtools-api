@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.api.utilities.ErrorResponse;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -37,12 +38,16 @@ public class MetaResource
                                 @HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
     {
         authService.authorizeUser(authCodeParam, authCodeHeader);
+        Integer interpreterVersion = getMinimumInterpreterVersion(minimumInterpreterVersionParam, minimumInterpreterVersionHeader);
 
-        return Response.ok(metaService.getMetaResults(languageCode,
-                packageCode,
-                getMinimumInterpreterVersion(minimumInterpreterVersionParam,
-                        minimumInterpreterVersionHeader)))
-                .build();
+        if(interpreterVersion == null)
+        {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse("parameter or header \"interpreter\" is required"))
+                    .build();
+        }
+
+        return Response.ok(metaService.getMetaResults(languageCode, packageCode, interpreterVersion)).build();
     }
 
     private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
