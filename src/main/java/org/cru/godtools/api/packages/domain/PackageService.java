@@ -1,9 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
-import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,14 +35,14 @@ public class PackageService
                 .executeAndFetchFirst(Package.class);
     }
 
-    public Package selectByCode(String code) throws PackageNotFoundException
+    public Package selectByCode(String code)
     {
         Package gtPackage = sqlConnection.createQuery(PackageQueries.selectByCode)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("code", code)
                 .executeAndFetchFirst(Package.class);
 
-        if(gtPackage == null) throw new PackageNotFoundException(code);
+        if(gtPackage == null) throw new NotFoundException();
 
         return gtPackage;
     }

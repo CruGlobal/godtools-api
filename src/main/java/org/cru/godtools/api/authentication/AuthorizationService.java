@@ -9,20 +9,22 @@ import javax.inject.Inject;
 /**
  * Created by ryancarlson on 3/26/14.
  */
-public class AuthenticationService
+public class AuthorizationService
 {
     Connection sqlConnection;
     Clock clock;
 
     @Inject
-    public AuthenticationService(Connection sqlConnection, Clock clock)
+    public AuthorizationService(Connection sqlConnection, Clock clock)
     {
         this.sqlConnection = sqlConnection;
         this.clock = clock;
     }
 
-    public void authorizeUser(String authToken)
+    public void authorizeUser(String authTokenParam, String authTokenHeader)
     {
+        String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
+
         if(Strings.isNullOrEmpty(authToken)) throw new UnauthorizedException();
 
         AuthenticationRecord authRecord = sqlConnection.createQuery(AuthenticationQueries.selectByAuthToken)

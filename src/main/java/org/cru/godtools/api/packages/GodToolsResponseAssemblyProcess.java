@@ -3,10 +3,6 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
-import org.cru.godtools.api.packages.exceptions.MissingVersionException;
-import org.cru.godtools.api.packages.exceptions.NoTranslationException;
-import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
@@ -14,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -83,20 +80,13 @@ public class GodToolsResponseAssemblyProcess
 
     public Response buildResponse() throws IOException
     {
-        try
+        if(compressed)
         {
-            if(compressed)
-            {
-                return buildZippedResponse(loadPackages(languageCode, packageCode));
-            }
-            else
-            {
-                return buildXmlContentsResponse(loadPackages(languageCode, packageCode));
-            }
+            return buildZippedResponse(loadPackages(languageCode, packageCode));
         }
-        catch(PackageNotFoundException | LanguageNotFoundException | NoTranslationException | MissingVersionException e)
+        else
         {
-            return Response.status(404).build();
+            return buildXmlContentsResponse(loadPackages(languageCode, packageCode));
         }
     }
 
@@ -104,7 +94,7 @@ public class GodToolsResponseAssemblyProcess
     {
         if(packages.isEmpty())
         {
-            return Response.status(404).build();
+            throw new NotFoundException();
         }
 
         ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.convert(createContentsFile(packages));
@@ -129,7 +119,7 @@ public class GodToolsResponseAssemblyProcess
                 .build();
     }
 
-    private Set<GodToolsPackage> loadPackages(LanguageCode languageCode, String packageCode) throws LanguageNotFoundException, PackageNotFoundException, NoTranslationException, MissingVersionException
+    private Set<GodToolsPackage> loadPackages(LanguageCode languageCode, String packageCode)
     {
         Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))

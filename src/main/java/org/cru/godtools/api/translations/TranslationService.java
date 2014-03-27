@@ -1,9 +1,9 @@
 package org.cru.godtools.api.translations;
 
-import org.cru.godtools.api.packages.exceptions.NoTranslationException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +21,7 @@ public class TranslationService
         this.sqlConnection = sqlConnection;
     }
 
-    public Translation selectById(UUID id) throws NoTranslationException
+    public Translation selectById(UUID id)
     {
         Translation translation = sqlConnection.createQuery(TranslationQueries.selectById)
                 .setAutoDeriveColumnNames(true)
@@ -29,7 +29,7 @@ public class TranslationService
                 .executeAndFetchFirst(Translation.class);
 
 
-        if(translation == null) throw new NoTranslationException();
+        if(translation == null) throw new NotFoundException();
 
         return translation;
     }
@@ -50,7 +50,7 @@ public class TranslationService
                 .executeAndFetch(Translation.class);
     }
 
-    public Translation selectByLanguageIdPackageId(UUID languageId, UUID packageId) throws NoTranslationException
+    public Translation selectByLanguageIdPackageId(UUID languageId, UUID packageId)
     {
         Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
                 .setAutoDeriveColumnNames(true)
@@ -58,7 +58,7 @@ public class TranslationService
                 .addParameter("languageId", languageId)
                 .executeAndFetchFirst(Translation.class);
 
-        if(translation == null) throw new NoTranslationException();
+        if(translation == null) throw new NotFoundException();
 
         return translation;
     }

@@ -1,5 +1,6 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.api.authentication.AuthorizationService;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -22,16 +23,30 @@ public class MetaResource
 {
 
     @Inject
-    MockMetaService metaService;
+    MetaService metaService;
+    @Inject
+    AuthorizationService authService;
 
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Response getMetaInfo(@QueryParam("language") String languageCode,
                                 @QueryParam("package") String packageCode,
-                                @HeaderParam("authentication") String authCode) throws ParserConfigurationException, SAXException, IOException
+                                @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+                                @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+                                @QueryParam("authorization") String authCodeParam,
+                                @HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
     {
+        authService.authorizeUser(authCodeParam, authCodeHeader);
 
+        return Response.ok(metaService.getMetaResults(languageCode,
+                packageCode,
+                getMinimumInterpreterVersion(minimumInterpreterVersionParam,
+                        minimumInterpreterVersionHeader)))
+                .build();
+    }
 
-        return Response.ok(metaService.getMetaResults(languageCode, packageCode)).build();
+    private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
+    {
+        return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
     }
 }

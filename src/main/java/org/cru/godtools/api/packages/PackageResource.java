@@ -1,11 +1,6 @@
 package org.cru.godtools.api.packages;
 
-import org.cru.godtools.api.authentication.AuthenticationService;
-import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
-import org.cru.godtools.api.packages.exceptions.MissingVersionException;
-import org.cru.godtools.api.packages.exceptions.NoTranslationException;
-import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
-import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.authentication.AuthorizationService;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -21,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.security.InvalidParameterException;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -34,27 +28,28 @@ public class PackageResource
     @Inject
     GodToolsResponseAssemblyProcess packageProcess;
     @Inject
-    AuthenticationService authenticator;
+    AuthorizationService authService;
 
     @GET
     @Produces({"application/zip", "application/xml"})
     public Response getPackages(@QueryParam("language") String languageCode,
                                 @QueryParam("package") String packageCode,
-                                @QueryParam("interpreter-version") Integer minimumInterpreterVersion,
+                                @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+                                @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
                                 @QueryParam("compressed") String compressed,
                                 @QueryParam("revision-number") Integer revisionNumber,
                                 @QueryParam("screen-size") String screenSize,
-                                @HeaderParam("authorization") String authCodeHeader,
-                                @QueryParam("auth_token") String authCodeParam) throws ParserConfigurationException, SAXException, IOException
+                                @HeaderParam("authorization") String authTokenHeader,
+                                @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
-        authenticator.authorizeUser(authCodeHeader == null ? authCodeParam : authCodeHeader);
+        authService.authorizeUser(authTokenParam, authTokenHeader);
 
         return packageProcess
                 .forLanguage(languageCode)
                 .forPackage(packageCode)
                 .compressed(Boolean.parseBoolean(compressed))
                 .atRevisionNumber(revisionNumber)
-                .forMinimumInterpreterVersion(minimumInterpreterVersion)
+                .forMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
                 .buildResponse();
     }
 

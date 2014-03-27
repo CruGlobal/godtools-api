@@ -1,11 +1,11 @@
 package org.cru.godtools.api.languages;
 
 import com.google.common.base.Strings;
-import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,11 +38,11 @@ public class LanguageService
                 .executeAndFetchFirst(Language.class);
     }
 
-    public Language selectByLanguageCode(LanguageCode languangeCode) throws LanguageNotFoundException
+    public Language selectByLanguageCode(LanguageCode languangeCode)
     {
         List<Language> possibleMatches = selectLanguageByStringCode(languangeCode.getLanguageCode());
 
-        if(possibleMatches == null || possibleMatches.isEmpty()) throw new LanguageNotFoundException(languangeCode.toString());
+        if(possibleMatches == null || possibleMatches.isEmpty()) throw new NotFoundException();
 
         for(Language possibleMatch : possibleMatches)
         {
@@ -54,7 +54,7 @@ public class LanguageService
             if(matched) return possibleMatch;
         }
 
-       throw new LanguageNotFoundException(languangeCode.toString());
+        throw new NotFoundException();
     }
 
     private List<Language> selectLanguageByStringCode(String code)

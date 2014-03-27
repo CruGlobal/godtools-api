@@ -5,16 +5,13 @@ import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.exceptions.LanguageNotFoundException;
-import org.cru.godtools.api.packages.exceptions.MissingVersionException;
-import org.cru.godtools.api.packages.exceptions.NoTranslationException;
-import org.cru.godtools.api.packages.exceptions.PackageNotFoundException;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.Translation;
 import org.cru.godtools.api.translations.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -56,19 +53,12 @@ public class GodToolsPackageService implements IGodToolsPackageService
      * @param packageCode
      * @param revisionNumber
      * @return
-     * @throws LanguageNotFoundException
-     * @throws PackageNotFoundException
-     * @throws NoTranslationException
-     * @throws MissingVersionException
      */
     @Override
     public GodToolsPackage getPackage(LanguageCode languageCode,
                                       String packageCode,
                                       Integer revisionNumber,
-                                      Integer minimumInterpreterVersion) throws LanguageNotFoundException,
-            PackageNotFoundException,
-            NoTranslationException,
-            MissingVersionException
+                                      Integer minimumInterpreterVersion)
     {
         Language language = languageService.selectByLanguageCode(languageCode);
         Package gtPackage = packageService.selectByCode(packageCode);
@@ -83,7 +73,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
                 packageCode);
     }
 
-    private Version getVersion(Integer revisionNumber, Integer minimumInterpreterVersion, Translation translation) throws MissingVersionException
+    private Version getVersion(Integer revisionNumber, Integer minimumInterpreterVersion, Translation translation)
     {
         if(minimumInterpreterVersion == null)
         {
@@ -103,18 +93,12 @@ public class GodToolsPackageService implements IGodToolsPackageService
      * @param languageCode
      * @param revisionNumber
      * @return
-     * @throws LanguageNotFoundException
-     * @throws PackageNotFoundException
-     * @throws NoTranslationException
-     * @throws MissingVersionException
+
      */
     @Override
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
                                                        Integer revisionNumber,
-                                                       Integer minimumInterpreterVersion) throws LanguageNotFoundException,
-            PackageNotFoundException,
-            NoTranslationException,
-            MissingVersionException
+                                                       Integer minimumInterpreterVersion)
     {
         Set<GodToolsPackage> packages = Sets.newHashSet();
 
@@ -129,7 +113,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
                 packages.add(getPackage(languageCode, gtPackage.getCode(), revisionNumber, minimumInterpreterVersion));
             }
             //if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
-            catch(MissingVersionException missingVersion){ continue; }
+            catch(NotFoundException e){ continue; }
         }
 
         return packages;

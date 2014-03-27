@@ -1,10 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
-import org.cru.godtools.api.packages.exceptions.MissingVersionException;
 import org.sql2o.Connection;
-import org.w3c.dom.Document;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -22,24 +21,24 @@ public class VersionService
         this.sqlConnection = sqlConnection;
     }
 
-    public List<Version> selectByTranslationId(UUID translationId) throws MissingVersionException
+    public List<Version> selectByTranslationId(UUID translationId)
     {
         List<Version> versions = sqlConnection.createQuery(VersionQueries.selectByTranslationId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("translationId", translationId)
                 .executeAndFetch(Version.class);
 
-        if(versions == null || versions.isEmpty()) throw new MissingVersionException();
+        if(versions == null || versions.isEmpty()) throw new NotFoundException();
 
         return versions;
     }
 
-    public Version selectLatestVersionForTranslation(UUID translationId) throws MissingVersionException
+    public Version selectLatestVersionForTranslation(UUID translationId)
     {
         return selectLatestVersionForTranslation(translationId, -1);
     }
 
-    public Version selectLatestVersionForTranslation(UUID translationId, Integer minimumInterpreterVersion) throws MissingVersionException
+    public Version selectLatestVersionForTranslation(UUID translationId, Integer minimumInterpreterVersion)
     {
         List<Version> versions = selectByTranslationId(translationId);
 
@@ -51,7 +50,7 @@ public class VersionService
             if(nextVersion.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) i.remove();
         }
 
-        if(versions.isEmpty()) throw new MissingVersionException();
+        if(versions.isEmpty()) throw new NotFoundException();
 
         Version max = versions.get(0);
         for(Version version : versions)
@@ -66,12 +65,12 @@ public class VersionService
         return max;
     }
 
-    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber) throws MissingVersionException
+    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber)
     {
         return selectSpecificVersionForTranslation(translationId, versionNumber, -1);
     }
 
-    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber, Integer minimumInterpreterVersion) throws MissingVersionException
+    public Version selectSpecificVersionForTranslation(UUID translationId, Integer versionNumber, Integer minimumInterpreterVersion)
     {
         Version version = sqlConnection.createQuery(VersionQueries.selectByTranslationIdVersionNumber)
                 .setAutoDeriveColumnNames(true)
@@ -79,7 +78,7 @@ public class VersionService
                 .addParameter("versionNumber", versionNumber)
                 .executeAndFetchFirst(Version.class);
 
-        if(version == null || version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) throw new MissingVersionException();
+        if(version == null || version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) throw new NotFoundException();
 
         return version;
     }
