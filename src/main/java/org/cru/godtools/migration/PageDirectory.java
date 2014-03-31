@@ -77,7 +77,7 @@ public class PageDirectory
                 {
                     Image image = new Image();
                     image.setId(UUID.randomUUID());
-                    image.setFilename(imageFile.getName());
+                    image.setFilename(buildFileName(imageFile.getName()));
                     image.setImageContent(ImageReader.read(imageFile));
                     image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
                     image.setResolution("High");
@@ -99,5 +99,14 @@ public class PageDirectory
     {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         return builder.parse(pageFile);
+    }
+
+    private String buildFileName(String filename )
+    {
+        if(translationPath.contains("classic"))
+        {
+            return translationPath + "_" + filename;
+        }
+        return filename;
     }
 }
