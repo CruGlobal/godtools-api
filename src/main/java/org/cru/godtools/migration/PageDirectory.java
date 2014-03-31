@@ -100,6 +100,4 @@ public class PageDirectory
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         return builder.parse(pageFile);
     }
-
-
 }

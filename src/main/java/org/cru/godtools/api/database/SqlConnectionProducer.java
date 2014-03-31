@@ -29,13 +29,13 @@ public class SqlConnectionProducer
     {
         Connection sqlConnection = new Connection(getSql2o());
 
-        try
+//        try
         {
-            sqlConnection.getJdbcConnection().setAutoCommit(false);
+//            sqlConnection.getJdbcConnection().setAutoCommit(false);
         }
-        catch(SQLException e)
+//        catch(SQLException e)
         { /*come on... really*/
-            Throwables.propagate(e);
+//            Throwables.propagate(e);
         }
 
         return sqlConnection;
