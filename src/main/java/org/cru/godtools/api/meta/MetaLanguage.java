@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.Set;
@@ -32,14 +33,16 @@ public class MetaLanguage
         return this;
     }
 
+    @XmlAttribute
     public String getCode()
     {
         return code;
     }
 
-    public void setCode(String code)
+    public MetaLanguage setCode(String code)
     {
         this.code = code;
+        return this;
     }
 
     @XmlElementWrapper(name = "packages")

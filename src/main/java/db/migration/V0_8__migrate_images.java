@@ -58,7 +58,7 @@ public class V0_8__migrate_images implements JdbcMigration
             }
         }
 
-        URL url = this.getClass().getResource("/data/Packages/shared");
+        URL url = this.getClass().getResource("/data/SnuffyPackages/shared");
         File sharedDirectory = new File(url.toURI());
         GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
 

@@ -119,7 +119,7 @@ public class PackageDirectory
 
     public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
     {
-        String path = "/data/Packages/" + packageCode + "/";
+        String path = "/data/SnuffyPackages/" + packageCode + "/";
         path += language.getCode();
         if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
         if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
@@ -131,7 +131,7 @@ public class PackageDirectory
 
     private File getDirectory() throws URISyntaxException
     {
-        URL packageFolderUrl = this.getClass().getResource("/data/Packages/" + packageCode);
+        URL packageFolderUrl = this.getClass().getResource("/data/SnuffyPackages/" + packageCode);
         return new File(packageFolderUrl.toURI());
     }
 

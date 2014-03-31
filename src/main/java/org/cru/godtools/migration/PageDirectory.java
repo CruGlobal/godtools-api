@@ -91,7 +91,7 @@ public class PageDirectory
 
     private File getDirectory() throws URISyntaxException
     {
-        URL url = this.getClass().getResource("/data/Packages/" + packageCode + "/" + translationPath);
+        URL url = this.getClass().getResource("/data/SnuffyPackages/" + packageCode + "/" + translationPath);
         return new File(url.toURI());
     }
 

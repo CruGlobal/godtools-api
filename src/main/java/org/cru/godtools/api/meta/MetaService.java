@@ -43,9 +43,11 @@ public class MetaService
         }
         else
         {
-            return getForSingleLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+            MetaResults results = new MetaResults();
+            LanguageCode languangeCode = new LanguageCode(languageCode);
+            return results.withLanguage(getForSingleLanguage(languageService.selectByLanguageCode(languangeCode),
                     packageCode,
-                    minimumInterpreterVersion);
+                    minimumInterpreterVersion).setCode(languangeCode.toString()));
         }
     }
 
@@ -54,16 +56,24 @@ public class MetaService
         MetaResults results = new MetaResults();
         for(Language language : languages)
         {
-            results.withLanguage(getForSingleLanguage(language, packageCode, minimumInterpreterVersion));
+            results.withLanguage(getForSingleLanguage(language, packageCode, minimumInterpreterVersion)
+                    .setCode(LanguageCode.fromLanguage(language).toString()));
         }
 
-
+        return results;
     }
 
-    private MetaResults getForSingleLanguage(Language language, String packageCode, Integer minimumInterpreterVersion)
+    private MetaLanguage getForSingleLanguage(Language language, String packageCode, Integer minimumInterpreterVersion)
     {
-        if(Strings.isNullOrEmpty(packageCode)) return getForMultiplePackages(language, minimumInterpreterVersion);
-        else return getForSinglePackage(language, packageService.selectByCode(packageCode), minimumInterpreterVersion);
+        if(Strings.isNullOrEmpty(packageCode))
+        {
+            return getForMultiplePackages(language, minimumInterpreterVersion);
+        }
+        else
+        {
+            return getForSinglePackage(language, packageService.selectByCode(packageCode), minimumInterpreterVersion)
+                    .setCode(LanguageCode.fromLanguage(language).toString());
+        }
     }
 
     private MetaLanguage getForSinglePackage(Language language, Package gtPackage, Integer minimumInterpreterVersion)
@@ -91,6 +101,6 @@ public class MetaService
             metaLanguage.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
         }
 
-        return results;
+        return metaLanguage;
     }
 }
