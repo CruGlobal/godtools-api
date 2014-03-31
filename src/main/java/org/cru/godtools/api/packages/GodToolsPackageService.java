@@ -71,9 +71,14 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
         return new GodToolsPackage(version.getPackageStructure(),
                 pages,
-                imagePageRelationshipService.selectImagesForAllPages(pages, pixelDensity),
+                getImages(pixelDensity, pages),
                 languageCode.toString(),
                 packageCode);
+    }
+
+    private Set<Image> getImages(PixelDensity pixelDensity, List<Page> pages)
+    {
+        return imagePageRelationshipService.selectImagesForAllPages(pages, pixelDensity);
     }
 
     private Version getVersion(Integer revisionNumber, Integer minimumInterpreterVersion, Translation translation)
@@ -123,17 +128,4 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
         return packages;
     }
-
-    private Set<Image> getImages(List<Page> pages, PixelDensity pixelDensity)
-    {
-        Set<Image> images = Sets.newHashSet();
-
-        for(Page page : pages)
-        {
-            images.addAll(imagePageRelationshipService.selectImagesByPageId(page.getId(), pixelDensity));
-        }
-
-        return images;
-    }
-
 }

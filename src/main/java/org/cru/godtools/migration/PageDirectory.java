@@ -105,7 +105,7 @@ public class PageDirectory
     {
         if(translationPath.contains("classic"))
         {
-            return translationPath + "_" + filename;
+            return packageCode + "_" + translationPath + "_" + filename;
         }
         return filename;
     }
