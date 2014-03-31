@@ -1,7 +1,5 @@
 package org.cru.godtools.api.packages.domain;
 
-import org.cru.godtools.migration.PackageDescriptorFile;
-
 /**
  * Created by ryancarlson on 3/27/14.
  */

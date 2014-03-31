@@ -37,34 +37,58 @@ public class MetaService
 
     public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion)
     {
-        Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+        if(Strings.isNullOrEmpty(languageCode))
+        {
+            return getForMultipleLanguages(languageService.selectAllLanguages(),packageCode,minimumInterpreterVersion);
+        }
+        else
+        {
+            return getForSingleLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+                    packageCode,
+                    minimumInterpreterVersion);
+        }
+    }
 
+    private MetaResults getForMultipleLanguages(List<Language> languages, String packageCode, Integer minimumInterpreterVersion)
+    {
+        MetaResults results = new MetaResults();
+        for(Language language : languages)
+        {
+            results.withLanguage(getForSingleLanguage(language, packageCode, minimumInterpreterVersion));
+        }
+
+
+    }
+
+    private MetaResults getForSingleLanguage(Language language, String packageCode, Integer minimumInterpreterVersion)
+    {
         if(Strings.isNullOrEmpty(packageCode)) return getForMultiplePackages(language, minimumInterpreterVersion);
         else return getForSinglePackage(language, packageService.selectByCode(packageCode), minimumInterpreterVersion);
     }
 
-    private MetaResults getForSinglePackage(Language language, Package gtPackage, Integer minimumInterpreterVersion)
+    private MetaLanguage getForSinglePackage(Language language, Package gtPackage, Integer minimumInterpreterVersion)
     {
         Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
 
-        MetaResults results = new MetaResults(language);
+        MetaLanguage metaLanguage = new MetaLanguage(language);
 
         Version version = versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion);
 
-        return results.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
+        return metaLanguage.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
     }
 
-    private MetaResults getForMultiplePackages(Language language, Integer minimumInterpreterVersion)
+    private MetaLanguage getForMultiplePackages(Language language, Integer minimumInterpreterVersion)
     {
         List<Translation> translations = translationService.selectByLanguageId(language.getId());
 
-        MetaResults results = new MetaResults(language);
+        MetaLanguage metaLanguage = new MetaLanguage();
+
         for(Translation translation : translations)
         {
             Version version = versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion);
             Package gtPackage = packageService.selectById(version.getPackageId());
 
-            results.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
+            metaLanguage.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
         }
 
         return results;
