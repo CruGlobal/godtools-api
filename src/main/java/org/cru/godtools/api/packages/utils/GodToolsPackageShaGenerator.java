@@ -25,7 +25,7 @@ public class GodToolsPackageShaGenerator
         catch(Exception e)
         {
             Throwables.propagate(e);
-            return null;
+            return null; /*unreachable*/
         }
     }
 

@@ -1,5 +1,7 @@
 package org.cru.godtools.migration;
 
+import com.google.common.base.Throwables;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -11,6 +13,19 @@ import java.io.IOException;
  */
 public class ImageReader
 {
+
+	public static byte[] read(String filePath)
+	{
+		try
+		{
+			return read(new File(ImageReader.class.getResource(filePath).toURI()));
+		}
+		catch(Exception e)
+		{
+			Throwables.propagate(e);
+			return null; /*unreachable*/
+		}
+	}
 
     public static byte[] read(File imageFile) throws IOException
     {
