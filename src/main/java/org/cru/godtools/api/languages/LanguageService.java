@@ -2,10 +2,10 @@ package org.cru.godtools.api.languages;
 
 import com.google.common.base.Strings;
 import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class LanguageService
     {
         List<Language> possibleMatches = selectLanguageByStringCode(languangeCode.getLanguageCode());
 
-        if(possibleMatches == null || possibleMatches.isEmpty()) throw new NotFoundException();
+        if(possibleMatches == null || possibleMatches.isEmpty()) throw new ResourceNotFoundException(Language.class);
 
         for(Language possibleMatch : possibleMatches)
         {
@@ -54,7 +54,7 @@ public class LanguageService
             if(matched) return possibleMatch;
         }
 
-        throw new NotFoundException();
+        throw new ResourceNotFoundException(Language.class);
     }
 
     private List<Language> selectLanguageByStringCode(String code)
@@ -89,15 +89,6 @@ public class LanguageService
         return false;
     }
 
-
-    public Language selectLanguageByName(String name)
-    {
-        return sqlConnection.createQuery(LanguageQueries.selectByName)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("name", name)
-                .executeAndFetchFirst(Language.class);
-    }
-
     public void insert(Language language)
     {
         sqlConnection.createQuery(LanguageQueries.insert)
@@ -114,8 +105,6 @@ public class LanguageService
         public final static String selectAll = "SELECT * FROM languages";
         public final static String selectById = "SELECT * FROM languages WHERE id = :id";
         public final static String selectByCode = "SELECT * FROM languages WHERE code = :code";
-        public final static String selectByCodeLocaleSubculture = "SELECT * FROM languages WHERE code = :code AND locale = :locale AND subculture = :subculture";
-        public final static String selectByName = "SELECT * FROM languages WHERE name = :name";
         public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
     }
 }

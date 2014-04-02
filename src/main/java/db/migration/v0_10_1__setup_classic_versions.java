@@ -31,9 +31,9 @@ public class v0_10_1__setup_classic_versions implements JdbcMigration
         LanguageService languageService = new LanguageService(sqlConnection);
         TranslationService translationService = new TranslationService(sqlConnection);
         VersionService versionService = new VersionService(sqlConnection);
-        ImageService imageService = new ImageService(sqlConnection);
+		ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
         PageService pageService = new PageService(sqlConnection);
-        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection, imageService);
+        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
         PackageService packageService = new PackageService(sqlConnection);
 
         for(Language language : languageService.selectAllLanguages())

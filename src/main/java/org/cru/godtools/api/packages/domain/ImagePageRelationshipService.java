@@ -14,13 +14,11 @@ import java.util.UUID;
 public class ImagePageRelationshipService
 {
     Connection sqlConnection;
-    ImageService imageService;
 
     @Inject
-    public ImagePageRelationshipService(Connection sqlConnection, ImageService imageService)
+    public ImagePageRelationshipService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-        this.imageService = imageService;
     }
 
     public void insert(ImagePageRelationship imagePageRelationship)
@@ -32,34 +30,12 @@ public class ImagePageRelationshipService
                 .executeUpdate();
     }
 
-    public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
+    public List<ImagePageRelationship> selectByPageId(UUID pageId, PixelDensity pixelDensity)
     {
-        List<ImagePageRelationship> relationships = sqlConnection.createQuery(ImagePageRelationshipQueries.selectByPageId)
+        return sqlConnection.createQuery(ImagePageRelationshipQueries.selectByPageId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("pageId", pageId)
                 .executeAndFetch(ImagePageRelationship.class);
-
-        Set<Image> images = Sets.newHashSet();
-
-        for(ImagePageRelationship relationship : relationships)
-        {
-            Image image = imageService.selectById(relationship.getImageId());
-            if(image != null && image.getResolution().equalsIgnoreCase(pixelDensity.toString())) images.add(image);
-        }
-
-        return images;
-    }
-
-    public Set<Image> selectImagesForAllPages(List<Page> pages, PixelDensity pixelDensity)
-    {
-        Set<Image> images = Sets.newHashSet();
-
-        for(Page page : pages)
-        {
-            images.addAll(selectImagesByPageId(page.getId(), pixelDensity));
-        }
-
-        return images;
     }
 
     public void delete(UUID id)

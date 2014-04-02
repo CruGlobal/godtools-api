@@ -32,7 +32,7 @@ public class V0_8__migrate_images implements JdbcMigration
         LanguageService languageService = new LanguageService(sqlConnection);
         PackageService packageService = new PackageService(sqlConnection);
         TranslationService translationService = new TranslationService(sqlConnection);
-        ImageService imageService = new ImageService(sqlConnection);
+        ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
 
         for(String packageCode : KnownGodtoolsPackages.packageNames)
         {

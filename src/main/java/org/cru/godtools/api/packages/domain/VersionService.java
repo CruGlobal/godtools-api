@@ -1,9 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class VersionService
                 .addParameter("translationId", translationId)
                 .executeAndFetch(Version.class);
 
-        if(versions == null || versions.isEmpty()) throw new NotFoundException();
+        if(versions == null || versions.isEmpty()) throw new ResourceNotFoundException(Version.class);
 
         return versions;
     }
@@ -50,7 +50,7 @@ public class VersionService
             if(nextVersion.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) i.remove();
         }
 
-        if(versions.isEmpty()) throw new NotFoundException();
+        if(versions.isEmpty()) throw new ResourceNotFoundException(Version.class);
 
         Version max = versions.get(0);
         for(Version version : versions)
@@ -78,7 +78,7 @@ public class VersionService
                 .addParameter("versionNumber", versionNumber)
                 .executeAndFetchFirst(Version.class);
 
-        if(version == null || version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) throw new NotFoundException();
+        if(version == null || version.getMinimumInterpreterVersion().compareTo(minimumInterpreterVersion) < 0) throw new ResourceNotFoundException(Version.class);
 
         return version;
     }

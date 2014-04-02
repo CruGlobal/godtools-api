@@ -28,7 +28,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
     TranslationService translationService;
     LanguageService languageService;
     PageService pageService;
-    ImagePageRelationshipService imagePageRelationshipService;
+	ImageService imageService;
 
     @Inject
     public GodToolsPackageService(PackageService packageService,
@@ -36,14 +36,14 @@ public class GodToolsPackageService implements IGodToolsPackageService
                                   TranslationService translationService,
                                   LanguageService languageService,
                                   PageService pageService,
-                                  ImagePageRelationshipService imagePageRelationshipService)
+                                  ImageService imageService)
     {
         this.packageService = packageService;
         this.versionService = versionService;
         this.translationService = translationService;
         this.languageService = languageService;
         this.pageService = pageService;
-        this.imagePageRelationshipService = imagePageRelationshipService;
+        this.imageService = imageService;
     }
 
     /**
@@ -78,7 +78,7 @@ public class GodToolsPackageService implements IGodToolsPackageService
 
     private Set<Image> getImages(PixelDensity pixelDensity, List<Page> pages)
     {
-        return imagePageRelationshipService.selectImagesForAllPages(pages, pixelDensity);
+        return imageService.selectImagesForAllPages(pages, pixelDensity);
     }
 
     private Version getVersion(Integer revisionNumber, Integer minimumInterpreterVersion, Translation translation)

@@ -1,9 +1,11 @@
 package org.cru.godtools.api.packages.domain;
 
+import com.google.common.collect.Sets;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -12,11 +14,13 @@ import java.util.UUID;
 public class ImageService
 {
     Connection sqlConnection;
+	ImagePageRelationshipService imagePageRelationshipService;
 
     @Inject
-    public ImageService(Connection sqlConnection)
+    public ImageService(Connection sqlConnection, ImagePageRelationshipService imagePageRelationshipService)
     {
         this.sqlConnection = sqlConnection;
+		this.imagePageRelationshipService = imagePageRelationshipService;
     }
 
     public List<Image> selectRetinaFiles()
@@ -42,6 +46,30 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
+	public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
+	{
+		Set<Image> images = Sets.newHashSet();
+
+		for(ImagePageRelationship relationship : imagePageRelationshipService.selectByPageId(pageId, pixelDensity))
+		{
+			Image image = selectById(relationship.getImageId());
+			if(image != null && image.getResolution().equalsIgnoreCase(pixelDensity.toString())) images.add(image);
+		}
+
+		return images;
+	}
+
+	public Set<Image> selectImagesForAllPages(List<Page> pages, PixelDensity pixelDensity)
+	{
+		Set<Image> images = Sets.newHashSet();
+
+		for(Page page : pages)
+		{
+			images.addAll(selectImagesByPageId(page.getId(), pixelDensity));
+		}
+
+		return images;
+	}
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
