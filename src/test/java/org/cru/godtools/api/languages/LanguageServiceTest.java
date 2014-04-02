@@ -38,7 +38,6 @@ public class LanguageServiceTest
 		mockData = new LanguageServiceTestMockDataService();
 
 		mockData.persistLanguages(languageService);
-
 	}
 
     @Test

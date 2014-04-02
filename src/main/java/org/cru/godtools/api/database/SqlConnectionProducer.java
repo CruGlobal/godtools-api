@@ -6,13 +6,9 @@ import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
 import org.sql2o.Sql2o;
 
-
-import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import java.net.URL;
-import java.sql.SQLException;
 
 /**
  * Created by ryancarlson on 3/20/14.

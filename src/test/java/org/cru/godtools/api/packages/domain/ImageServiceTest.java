@@ -8,7 +8,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -104,10 +103,10 @@ public class ImageServiceTest
 	@Test
 	public void testUpdate() throws Exception
 	{
+		Connection nonAutoCommitSqlConnection1 = sqlConnection.getSql2o().beginTransaction();
 
 		try
 		{
-			Connection nonAutoCommitSqlConnection1 = sqlConnection.getSql2o().beginTransaction();
 			ImageService nonAutoCommitImageService = new ImageService(nonAutoCommitSqlConnection1, null);
 
 			mockData.modifyImage(nonAutoCommitImageService);
@@ -116,7 +115,7 @@ public class ImageServiceTest
 
 		finally
 		{
-			sqlConnection.rollback();
+			nonAutoCommitSqlConnection1.rollback();
 		}
 
 	}
