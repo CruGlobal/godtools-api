@@ -1,10 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,13 +17,6 @@ public class PackageService
     public PackageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-    }
-
-    public List<Package> selectAll()
-    {
-        return sqlConnection.createQuery(PackageQueries.selectAll)
-                .setAutoDeriveColumnNames(true)
-                .executeAndFetch(Package.class);
     }
 
     public Package selectById(UUID id)
@@ -42,7 +34,7 @@ public class PackageService
                 .addParameter("code", code)
                 .executeAndFetchFirst(Package.class);
 
-        if(gtPackage == null) throw new NotFoundException();
+        if(gtPackage == null) throw new ResourceNotFoundException(Package.class);
 
         return gtPackage;
     }
@@ -60,7 +52,6 @@ public class PackageService
 
     public static class PackageQueries
     {
-        public static final String selectAll = "SELECT * FROM packages";
         public static final String selectById = "SELECT * FROM packages WHERE id = :id";
         public static final String selectByCode = "SELECT * FROM packages WHERE code = :code";
         public static final String insert = "INSERT INTO packages(id, code, name, default_language_id) VALUES(:id, :code, :name, :defaultLanguageId)";

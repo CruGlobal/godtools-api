@@ -27,8 +27,8 @@ public class V0_9__setup_page_images implements JdbcMigration
         org.sql2o.Connection sqlConnection = MigrationProcess.getSql2oConnection();
 
         PageService pageService = new PageService(sqlConnection);
-        ImageService imageService = new ImageService(sqlConnection);
-        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection, imageService);
+		ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
+        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
 
         for(Page page : pageService.selectAllPages())
         {

@@ -1,9 +1,9 @@
 package org.cru.godtools.api.translations;
 
+import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,19 +19,6 @@ public class TranslationService
     public TranslationService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-    }
-
-    public Translation selectById(UUID id)
-    {
-        Translation translation = sqlConnection.createQuery(TranslationQueries.selectById)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("id", id)
-                .executeAndFetchFirst(Translation.class);
-
-
-        if(translation == null) throw new NotFoundException();
-
-        return translation;
     }
 
     public List<Translation> selectByLanguageId(UUID languageId)
@@ -58,7 +45,7 @@ public class TranslationService
                 .addParameter("languageId", languageId)
                 .executeAndFetchFirst(Translation.class);
 
-        if(translation == null) throw new NotFoundException();
+        if(translation == null) throw new ResourceNotFoundException(Translation.class);
 
         return translation;
     }
@@ -82,7 +69,6 @@ public class TranslationService
 
     public static class TranslationQueries
     {
-        public static final String selectById = "SELECT * FROM translations WHERE id = :id";
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";

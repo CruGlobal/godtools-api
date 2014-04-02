@@ -52,6 +52,7 @@ public class FileZipper
     {
         for(Page page : godToolsPackage.getPageFiles())
         {
+            if(page.getXmlContent() == null) continue;
             zipFile(page.getXmlContent(), page.getPageHash() + ".xml", zipOutputStream);
         }
     }

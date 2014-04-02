@@ -32,7 +32,7 @@ public class V0_8__migrate_images implements JdbcMigration
         LanguageService languageService = new LanguageService(sqlConnection);
         PackageService packageService = new PackageService(sqlConnection);
         TranslationService translationService = new TranslationService(sqlConnection);
-        ImageService imageService = new ImageService(sqlConnection);
+        ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
 
         for(String packageCode : KnownGodtoolsPackages.packageNames)
         {
@@ -58,7 +58,7 @@ public class V0_8__migrate_images implements JdbcMigration
             }
         }
 
-        URL url = this.getClass().getResource("/data/Packages/shared");
+        URL url = this.getClass().getResource("/data/SnuffyPackages/shared");
         File sharedDirectory = new File(url.toURI());
         GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
 
@@ -69,6 +69,7 @@ public class V0_8__migrate_images implements JdbcMigration
             image.setFilename(sharedImage.getName());
             image.setImageContent(ImageReader.read(sharedImage));
             image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+            image.setResolution("High");
             imageService.insert(image);
         }
 

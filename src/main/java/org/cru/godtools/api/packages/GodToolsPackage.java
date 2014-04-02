@@ -23,6 +23,10 @@ public class GodToolsPackage
     String packageCode;
     String packageXmlHash;
 
+    public GodToolsPackage()
+    {
+    }
+
     public GodToolsPackage(Document packageXml, List<Page> pageFiles, Set<Image> images, String languageCode, String packageCode)
     {
         this.packageXml = packageXml;

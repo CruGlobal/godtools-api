@@ -18,49 +18,32 @@ import java.util.Set;
  * Created by ryancarlson on 3/26/14.
  */
 
-@XmlRootElement(name = "language")
+@XmlRootElement(name = "languages")
 public class MetaResults implements java.io.Serializable
 {
-    String code;
 
-    Set<MetaPackage> packages = Sets.newHashSet();
+    Set<MetaLanguage> languages = Sets.newHashSet();
+
 
     public MetaResults()
     {
 
     }
 
-    public MetaResults(Language language)
+    public MetaResults withLanguage(MetaLanguage metaLanguage)
     {
-        setCode(LanguageCode.fromLanguage(language).toString());
-    }
-
-    public MetaResults withPackage(String packageName, String packageCode, Integer versionNumber)
-    {
-        packages.add(new MetaPackage(packageName, packageCode, versionNumber));
+        languages.add(metaLanguage);
         return this;
     }
 
-    @XmlAttribute
-    public String getCode()
+    @XmlElement(name = "language")
+    public Set<MetaLanguage> getLanguages()
     {
-        return code;
+        return languages;
     }
 
-    public void setCode(String code)
+    public void setLanguages(Set<MetaLanguage> languages)
     {
-        this.code = code;
-    }
-
-    @XmlElementWrapper(name = "packages")
-    @XmlElement(name = "package")
-    public Set<MetaPackage> getPackages()
-    {
-        return packages;
-    }
-
-    public void setPackages(Set<MetaPackage> packages)
-    {
-        this.packages = packages;
+        this.languages = languages;
     }
 }

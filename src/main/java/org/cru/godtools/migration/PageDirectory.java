@@ -77,9 +77,10 @@ public class PageDirectory
                 {
                     Image image = new Image();
                     image.setId(UUID.randomUUID());
-                    image.setFilename(imageFile.getName());
+                    image.setFilename(buildFileName(imageFile.getName()));
                     image.setImageContent(ImageReader.read(imageFile));
                     image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+                    image.setResolution("High");
                     images.add(image);
                 }
             }
@@ -90,7 +91,7 @@ public class PageDirectory
 
     private File getDirectory() throws URISyntaxException
     {
-        URL url = this.getClass().getResource("/data/Packages/" + packageCode + "/" + translationPath);
+        URL url = this.getClass().getResource("/data/SnuffyPackages/" + packageCode + "/" + translationPath);
         return new File(url.toURI());
     }
 
@@ -100,5 +101,12 @@ public class PageDirectory
         return builder.parse(pageFile);
     }
 
-
+    private String buildFileName(String filename )
+    {
+        if(translationPath.contains("classic"))
+        {
+            return packageCode + "_" + translationPath + "_" + filename;
+        }
+        return filename;
+    }
 }

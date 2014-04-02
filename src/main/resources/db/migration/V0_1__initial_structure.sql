@@ -40,8 +40,17 @@ CREATE TABLE pages (
   page_hash text
 );
 
+CREATE TABLE image_resolutions (
+  upper_bound integer,
+  lower_bound integer,
+  resolution text,
+  UNIQUE(resolution)
+);
+
+
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
+  resolution text REFERENCES image_resolutions(resolution),
   image_content bytea,
   filename text,
   image_hash text

@@ -1,10 +1,7 @@
 package db.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.packages.domain.Image;
-import org.cru.godtools.api.packages.domain.ImageService;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.domain.VersionService;
+import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.migration.MigrationProcess;
 import org.w3c.dom.Element;
@@ -21,7 +18,7 @@ public class v0_11__setup_thumbnails implements JdbcMigration
     public void migrate(Connection connection) throws Exception
     {
         org.sql2o.Connection sqlConnection = MigrationProcess.getSql2oConnection();
-        ImageService imageService = new ImageService(sqlConnection);
+		ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
         VersionService versionService = new VersionService(sqlConnection);
 
         for(Version version : versionService.selectAllVersions())
