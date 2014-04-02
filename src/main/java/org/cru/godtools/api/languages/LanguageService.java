@@ -104,7 +104,6 @@ public class LanguageService
     {
         public final static String selectAll = "SELECT * FROM languages";
         public final static String selectById = "SELECT * FROM languages WHERE id = :id";
-        public final static String selectByCode = "SELECT * FROM languages WHERE code = :code";
-        public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
+        public final static String selectByCode = "SELECT * FROM languages WHERE code = :code";        public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
     }
 }
