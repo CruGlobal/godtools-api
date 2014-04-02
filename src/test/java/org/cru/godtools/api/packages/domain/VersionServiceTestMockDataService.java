@@ -38,33 +38,6 @@ public class VersionServiceTestMockDataService
 		Assert.assertFalse(versionThree.isReleased());
 	}
 
-	public void persistVersionThreeOldInterpreter(VersionService versionService)
-	{
-		Version version = new Version();
-		version.setId(VersionServiceTest.TEST_VERSION_THREE_OLD_INTERPRETER_ID);
-		version.setVersionNumber(3);
-		version.setMinimumInterpreterVersion(1);
-		version.setPackageId(VersionServiceTest.TEST_PACKAGE_ID);
-		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
-		version.setPackageStructure(null);
-		version.setPackageStructureHash("sefkjhka");
-		version.setReleased(true);
-
-		versionService.insert(version);
-	}
-
-	public void validateVersionThreeOldInterpreter(Version versionThreeOldInterpreter)
-	{
-		Assert.assertNotNull(versionThreeOldInterpreter);
-		Assert.assertEquals(versionThreeOldInterpreter.getId(), VersionServiceTest.TEST_VERSION_THREE_OLD_INTERPRETER_ID);
-		Assert.assertEquals(versionThreeOldInterpreter.getMinimumInterpreterVersion(), (Integer)1);
-		Assert.assertEquals(versionThreeOldInterpreter.getVersionNumber(), (Integer)3);
-		Assert.assertEquals(versionThreeOldInterpreter.getPackageStructureHash(), "sefkjhka");
-		Assert.assertEquals(versionThreeOldInterpreter.getPackageId(), VersionServiceTest.TEST_PACKAGE_ID);
-		Assert.assertEquals(versionThreeOldInterpreter.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
-		Assert.assertTrue(versionThreeOldInterpreter.isReleased());
-	}
-
 	public void persistVersionTwo(VersionService versionService)
 	{
 		Version version = new Version();
@@ -113,9 +86,36 @@ public class VersionServiceTestMockDataService
 		for(Version version : versions)
 		{
 			if(version.getId().equals(VersionServiceTest.TEST_VERSION_THREE_ID)) validateVersionThree(version);
-			else if(version.getId().equals(VersionServiceTest.TEST_VERSION_THREE_OLD_INTERPRETER_ID)) validateVersionThreeOldInterpreter(version);
 			else if(version.getId().equals(VersionServiceTest.TEST_VERSION_TWO_ID)) validateVersionTwo(version);
 			else Assert.fail("Unknown version found");
 		}
 	}
+
+	public void modifyVersion(VersionService versionService)
+	{
+		Version version = new Version();
+		version.setId(VersionServiceTest.TEST_VERSION_THREE_ID);
+		version.setVersionNumber(3);
+		version.setMinimumInterpreterVersion(3);
+		version.setPackageId(VersionServiceTest.TEST_PACKAGE_ID);
+		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
+		version.setPackageStructure(null);
+		version.setPackageStructureHash("adgsdfss");
+		version.setReleased(true);
+
+		versionService.update(version);
+	}
+
+	public void validateModifiedVersion(Version modifiedVersion)
+	{
+		Assert.assertNotNull(modifiedVersion);
+		Assert.assertEquals(modifiedVersion.getId(), VersionServiceTest.TEST_VERSION_THREE_ID);
+		Assert.assertEquals(modifiedVersion.getMinimumInterpreterVersion(), (Integer)3);
+		Assert.assertEquals(modifiedVersion.getVersionNumber(), (Integer)3);
+		Assert.assertEquals(modifiedVersion.getPackageStructureHash(), "adgsdfss");
+		Assert.assertEquals(modifiedVersion.getPackageId(), VersionServiceTest.TEST_PACKAGE_ID);
+		Assert.assertEquals(modifiedVersion.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
+		Assert.assertTrue(modifiedVersion.isReleased());
+	}
+
 }

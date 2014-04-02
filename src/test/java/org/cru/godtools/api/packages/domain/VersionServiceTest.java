@@ -22,9 +22,9 @@ public class VersionServiceTest extends AbstractServiceTest
 
 	public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
+
 	public static final UUID TEST_VERSION_THREE_ID = UUID.randomUUID();
 	public static final UUID TEST_VERSION_TWO_ID = UUID.randomUUID();
-	public static final UUID TEST_VERSION_THREE_OLD_INTERPRETER_ID = UUID.randomUUID();
 
 	@Override
 	@BeforeClass
@@ -38,7 +38,6 @@ public class VersionServiceTest extends AbstractServiceTest
 		mockData.persistTranslation(new TranslationService(sqlConnection));
 		mockData.persistPackage(new PackageService(sqlConnection));
 		mockData.persistVersionThree(versionService);
-		mockData.persistVersionThreeOldInterpreter(versionService);
 		mockData.persistVersionTwo(versionService);
 
 	}
@@ -47,7 +46,7 @@ public class VersionServiceTest extends AbstractServiceTest
 	public void testSelectByTranslationId()
 	{
 		List<Version> versions = versionService.selectByTranslationId(TEST_TRANSLATION_ID);
-		Assert.assertEquals(versions.size(), 3);
+		Assert.assertEquals(versions.size(), 2);
 
 		mockData.validateAllVersions(versions);
 	}
@@ -106,7 +105,7 @@ public class VersionServiceTest extends AbstractServiceTest
 	public void testSelectAllVersions()
 	{
 		List<Version> versions = versionService.selectAllVersions();
-		Assert.assertEquals(versions.size(), 3);
+		Assert.assertEquals(versions.size(), 2);
 
 		mockData.validateAllVersions(versions);
 	}
@@ -114,6 +113,10 @@ public class VersionServiceTest extends AbstractServiceTest
 	@Test
 	public void testUpdate()
 	{
+		mockData.modifyVersion(versionService);
 
+		Version modifiedVersion = versionService.selectLatestVersionForTranslation(TEST_TRANSLATION_ID);
+
+		mockData.validateModifiedVersion(modifiedVersion);
 	}
 }
