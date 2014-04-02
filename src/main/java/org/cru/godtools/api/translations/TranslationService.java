@@ -58,14 +58,6 @@ public class TranslationService
                 .executeUpdate();
     }
 
-    public void update(Translation translation)
-    {
-        sqlConnection.createQuery(TranslationQueries.update)
-                .addParameter("id", translation.getId())
-                .addParameter("packageId", translation.getPackageId())
-                .addParameter("languageId", translation.getLanguageId())
-                .executeUpdate();
-    }
 
     public static class TranslationQueries
     {
@@ -73,7 +65,6 @@ public class TranslationService
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
         public static final String insert = "INSERT INTO translations(id, language_id, package_id) VALUES(:id, :languageId, :packageId)";
-        public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId WHERE id = :id";
     }
 
 }
