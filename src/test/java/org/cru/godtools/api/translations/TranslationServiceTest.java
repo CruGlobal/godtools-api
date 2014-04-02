@@ -1,10 +1,8 @@
 package org.cru.godtools.api.translations;
 
-import org.cru.godtools.api.database.SqlConnectionProducer;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.PackageService;
-import org.cru.godtools.tests.UnittestDatabaseBuilder;
-import org.sql2o.Connection;
+import org.cru.godtools.tests.AbstractServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -15,12 +13,10 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class TranslationServiceTest
+public class TranslationServiceTest extends AbstractServiceTest
 {
-	UnittestDatabaseBuilder builder;
 	TranslationServiceTestMockDataService mockData;
 
-	Connection sqlConnection;
 	TranslationService translationService;
 
 	public static final UUID TEST_TRANSLATION_ID =UUID.randomUUID();
@@ -30,10 +26,8 @@ public class TranslationServiceTest
 	@BeforeClass()
 	public void setup()
 	{
-		builder = new UnittestDatabaseBuilder();
-		builder.build();
+		super.setup();
 
-		sqlConnection = SqlConnectionProducer.getTestSqlConnection();
 		translationService = new TranslationService(sqlConnection);
 
 		mockData = new TranslationServiceTestMockDataService();

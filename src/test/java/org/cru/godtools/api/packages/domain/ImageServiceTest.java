@@ -1,8 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.database.SqlConnectionProducer;
-import org.cru.godtools.tests.UnittestDatabaseBuilder;
+import org.cru.godtools.tests.AbstractServiceTest;
 import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -15,12 +14,10 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/1/14.
  */
-public class ImageServiceTest
+public class ImageServiceTest extends AbstractServiceTest
 {
-	UnittestDatabaseBuilder builder;
 	ImageServiceTestMockDataService mockData;
 
-	Connection sqlConnection;
 	ImageService imageService;
 
 	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
@@ -30,10 +27,8 @@ public class ImageServiceTest
 	@BeforeClass()
 	public void setup()
 	{
-		builder = new UnittestDatabaseBuilder();
-		builder.build();
+		super.setup();
 
-		sqlConnection = SqlConnectionProducer.getTestSqlConnection();
 		imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
 
 		mockData = new ImageServiceTestMockDataService();

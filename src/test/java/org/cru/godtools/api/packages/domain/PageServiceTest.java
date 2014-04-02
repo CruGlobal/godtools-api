@@ -1,7 +1,6 @@
 package org.cru.godtools.api.packages.domain;
 
-import org.cru.godtools.api.database.SqlConnectionProducer;
-import org.cru.godtools.tests.UnittestDatabaseBuilder;
+import org.cru.godtools.tests.AbstractServiceTest;
 import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -13,12 +12,10 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class PageServiceTest
+public class PageServiceTest extends AbstractServiceTest
 {
-	UnittestDatabaseBuilder builder;
 	PageServiceTestMockDataService mockData;
 
-	Connection sqlConnection;
 	PageService pageService;
 
 	public static final UUID TEST_PAGE_ID = UUID.randomUUID();
@@ -27,10 +24,8 @@ public class PageServiceTest
 	@BeforeClass
 	public void setup()
 	{
-		builder = new UnittestDatabaseBuilder();
-		builder.build();
+		super.setup();
 
-		sqlConnection = SqlConnectionProducer.getTestSqlConnection();
 		pageService = new PageService(sqlConnection);
 
 		mockData = new PageServiceTestMockDataService();

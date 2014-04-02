@@ -1,10 +1,8 @@
 package org.cru.godtools.api.languages;
 
-import org.cru.godtools.api.database.SqlConnectionProducer;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
-import org.cru.godtools.tests.UnittestDatabaseBuilder;
-import org.sql2o.Connection;
+import org.cru.godtools.tests.AbstractServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -15,12 +13,10 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class LanguageServiceTest
+public class LanguageServiceTest extends AbstractServiceTest
 {
-	UnittestDatabaseBuilder builder;
 	LanguageServiceTestMockDataService mockData;
 
-	Connection sqlConnection;
     LanguageService languageService;
 
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
@@ -29,10 +25,8 @@ public class LanguageServiceTest
 	@BeforeClass()
 	public void setup()
 	{
-		builder = new UnittestDatabaseBuilder();
-		builder.build();
+		super.setup();;
 
-		sqlConnection = SqlConnectionProducer.getTestSqlConnection();
 		languageService = new LanguageService(sqlConnection);
 
 		mockData = new LanguageServiceTestMockDataService();
