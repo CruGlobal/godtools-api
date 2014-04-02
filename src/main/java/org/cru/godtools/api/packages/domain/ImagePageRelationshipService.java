@@ -1,11 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
-import com.google.common.collect.Sets;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,26 +36,9 @@ public class ImagePageRelationshipService
                 .executeAndFetch(ImagePageRelationship.class);
     }
 
-    public void delete(UUID id)
-    {
-        sqlConnection.createQuery(ImagePageRelationshipQueries.deleteById)
-                .addParameter("id", id)
-                .executeUpdate();
-    }
-
-    public void delete(UUID pageId, UUID imageId)
-    {
-        sqlConnection.createQuery(ImagePageRelationshipQueries.deleteByPageIdImageId)
-                .addParameter("pageId", pageId)
-                .addParameter("imageId", imageId)
-                .executeUpdate();
-    }
-
     public static class ImagePageRelationshipQueries
     {
         public static final String selectByPageId = "SELECT * FROM page_images where page_id = :pageId";
         public static final String insert = "INSERT into page_images(id, page_id, image_id) VALUES(:id, :pageId, :imageId)";
-        public static final String deleteById = "DELETE FROM page_images WHERE id = :id";
-        public static final String deleteByPageIdImageId = "DELETE FROM page_images WHERE page_id = :pageId AND image_id = :imageId";
     }
 }
