@@ -120,7 +120,6 @@
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
             <version>3.0.6.Final</version>
-            <!--required to run DB migration... -->
             <scope>provided</scope>
         </dependency>
 
