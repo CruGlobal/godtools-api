@@ -70,6 +70,7 @@ public class ImageService
 
 		return images;
 	}
+
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)

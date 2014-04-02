@@ -1,6 +1,6 @@
 package org.cru.godtools.api.database;
 
-import com.google.common.base.Throwables;
+
 import org.cru.godtools.properties.GodToolsProperties;
 import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
@@ -11,6 +11,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import java.net.URL;
 import java.sql.SQLException;
 
 /**
@@ -19,42 +20,18 @@ import java.sql.SQLException;
 @RequestScoped
 public class SqlConnectionProducer
 {
-
-    private Connection sqlConnection;
-
     @Inject GodToolsProperties properties;
 
     @Produces
     public Connection getSqlConnection()
     {
-        Connection sqlConnection = new Connection(getSql2o());
+        return new Connection(getSql2o());
 
-//        try
-        {
-//            sqlConnection.getJdbcConnection().setAutoCommit(false);
-        }
-//        catch(SQLException e)
-        { /*come on... really*/
-//            Throwables.propagate(e);
-        }
-
-        return sqlConnection;
     }
 
-    public Connection getTestSqlConnection()
+    public static Connection getTestSqlConnection()
     {
-        Connection sqlConnection = new Connection(new Sql2o("jdbc:postgresql://localhost/godtools","godtoolsuser","godtoolsuser",QuirksMode.PostgreSQL));
-
-        try
-        {
-            sqlConnection.getJdbcConnection().setAutoCommit(false);
-        }
-        catch(SQLException e)
-        { /*come on... really*/
-            Throwables.propagate(e);
-        }
-
-        return sqlConnection;
+        return new Connection(new Sql2o("jdbc:postgresql://localhost/godtoolstest", "godtoolsuser", "godtoolsuser", QuirksMode.PostgreSQL));
     }
 
     private Sql2o getSql2o()
@@ -65,10 +42,5 @@ public class SqlConnectionProducer
                 QuirksMode.PostgreSQL);
     }
 
-    @PreDestroy
-    public void returnSqlConnection(Connection sqlConnection)
-    {
-        sqlConnection.commit();
-    }
 
 }
