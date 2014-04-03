@@ -49,7 +49,5 @@ public class V0_7__migrate_pages implements JdbcMigration
                 }
             }
         }
-
-        sqlConnection.commit();
     }
 }

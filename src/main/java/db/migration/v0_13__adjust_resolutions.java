@@ -28,12 +28,6 @@ public class v0_13__adjust_resolutions implements JdbcMigration
                 littleBrotherImage.setResolution("Medium");
                 imageService.update(littleBrotherImage);
             }
-            else
-            {
-                int x=0;
-            }
         }
-
-        sqlConnection.commit();
     }
 }

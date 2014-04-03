@@ -34,8 +34,7 @@ public class v0_11__setup_thumbnails implements JdbcMigration
                 versionService.update(version);
             }
         }
-        sqlConnection.commit();
-    }
+	}
 
 }
 

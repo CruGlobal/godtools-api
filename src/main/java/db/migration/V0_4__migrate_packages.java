@@ -29,7 +29,5 @@ public class V0_4__migrate_packages implements JdbcMigration
             PackageService packageService = new PackageService(sqlConnection);
             packageService.insert(gtPackage);
         }
-
-        sqlConnection.commit();
     }
 }

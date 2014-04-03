@@ -58,7 +58,5 @@ public class V0_9__setup_page_images implements JdbcMigration
 
             pageService.update(page);
         }
-
-        sqlConnection.commit();
     }
 }

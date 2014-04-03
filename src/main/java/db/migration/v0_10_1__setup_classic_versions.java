@@ -63,8 +63,6 @@ public class v0_10_1__setup_classic_versions implements JdbcMigration
                 }
             }
         }
-
-        sqlConnection.commit();
     }
 
     private Page createFakePage(Version version, LanguageCode languageCode)

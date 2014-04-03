@@ -44,7 +44,5 @@ public class V0_5__migrate_languages_translations implements JdbcMigration
                 translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
             }
         }
-
-        sqlConnection.commit();
     }
 }

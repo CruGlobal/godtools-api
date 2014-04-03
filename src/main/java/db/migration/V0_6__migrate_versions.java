@@ -50,7 +50,5 @@ public class V0_6__migrate_versions implements JdbcMigration
             }
 
         }
-
-        sqlConnection.commit();
     }
 }

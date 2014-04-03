@@ -72,7 +72,5 @@ public class V0_8__migrate_images implements JdbcMigration
             image.setResolution("High");
             imageService.insert(image);
         }
-
-        sqlConnection.commit();
     }
 }

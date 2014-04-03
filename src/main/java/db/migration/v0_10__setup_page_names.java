@@ -27,6 +27,8 @@ public class v0_10__setup_page_names implements JdbcMigration
 
         for(Version version : versionService.selectAllVersions())
         {
+			if(version.getPackageStructure() == null) continue;
+
             for(Element pageElement : XmlDocumentSearchUtilities.findElementsWithAttribute(version.getPackageStructure(), "page", "filename"))
             {
                 Page referencedPage = pageService.selectByFilename(pageElement.getAttribute("filename"));
@@ -37,7 +39,5 @@ public class v0_10__setup_page_names implements JdbcMigration
             }
             versionService.update(version);
         }
-
-        sqlConnection.commit();
     }
 }
