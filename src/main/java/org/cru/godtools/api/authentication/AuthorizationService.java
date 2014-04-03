@@ -21,7 +21,7 @@ public class AuthorizationService
         this.clock = clock;
     }
 
-    public void authorizeUser(String authTokenParam, String authTokenHeader)
+    public void checkAuthorization(String authTokenParam, String authTokenHeader)
     {
         String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
 
@@ -35,8 +35,19 @@ public class AuthorizationService
         if(authRecord == null || !authRecord.isCurrentlyActive(clock.currentDateTime())) throw new UnauthorizedException();
     }
 
+	public void recordNewAuthorization(AuthenticationRecord authenticationRecord)
+	{
+		sqlConnection.createQuery(AuthenticationQueries.insert)
+				.addParameter("id", authenticationRecord.getId())
+				.addParameter("username", authenticationRecord.getUsername())
+				.addParameter("grantedTimestamp", clock.currentDateTime())
+				.addParameter("authToken", authenticationRecord.getAuthToken())
+				.executeUpdate();
+	}
+
     private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
+		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token) VALUES(:id, :username, :grantedTimestamp, :authToken)";
     }
 }

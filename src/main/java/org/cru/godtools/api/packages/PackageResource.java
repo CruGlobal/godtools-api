@@ -5,14 +5,7 @@ import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,7 +36,7 @@ public class PackageResource
                                 @HeaderParam("authorization") String authTokenHeader,
                                 @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
-        authService.authorizeUser(authTokenParam, authTokenHeader);
+        authService.checkAuthorization(authTokenParam, authTokenHeader);
 
         return packageProcess
                 .forLanguage(languageCode)

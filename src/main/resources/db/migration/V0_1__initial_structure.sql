@@ -60,4 +60,12 @@ CREATE TABLE page_images (
   id uuid NOT NULL PRIMARY KEY,
   page_id uuid REFERENCES pages(id),
   image_id uuid REFERENCES images(id)
-)
+);
+
+CREATE TABLE auth_tokens(
+  id uuid not null primary key,
+  username text,
+  auth_token text,
+  granted_timestamp timestamp with time zone,
+  revoked_timestamp timestamp with time zone
+);

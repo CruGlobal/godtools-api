@@ -17,7 +17,7 @@ public class AuthenticationRecord
 
     public boolean isCurrentlyActive(DateTime currentTime)
     {
-        if(currentTime.isAfter(grantedTimestamp))
+        if(!currentTime.isBefore(grantedTimestamp))
         {
             if(revokedTimestamp == null || currentTime.isBefore(revokedTimestamp)) return true;
         }
