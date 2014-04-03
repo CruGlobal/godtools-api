@@ -2,6 +2,7 @@ package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -49,11 +50,30 @@ public class PackageResource
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes("multipart/form-data")
     @Produces(MediaType.APPLICATION_XML)
-    public Response createNewPackage(@HeaderParam("authentication") String authCode)
+    public Response createNewPackage(@HeaderParam("authorization") String authTokenHeader,
+									 @QueryParam("authorization") String authTokenParam,
+									 MultipartFormDataInput input)
     {
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
+		NewPackagePostData newPackagePostData = new NewPackagePostData(input);
+
+		for(NewPackage newPackage : newPackagePostData.newPackageSet)
+		{
+			System.out.println("Found a package!");
+			for(String key : newPackage.keySet())
+			{
+				System.out.println("Including file: " + key);
+			}
+		}
+		/*
+		- consume zip file
+		- identify contents.xml
+		- parse packages
+
+		 */
         return Response.created(null).build();
     }
 

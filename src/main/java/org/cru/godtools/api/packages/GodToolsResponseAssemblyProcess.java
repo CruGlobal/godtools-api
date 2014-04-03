@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Logic to take a single or multiple GodTools package(s) and convert it/them into a javax.ws.rs.core.Response.
+ * Logic to take a single or multiple GodTools package(s) and xmlToStream it/them into a javax.ws.rs.core.Response.
  *
  * The content is zipped into a zip file by using a ZipOutputStream
  *
@@ -106,7 +106,7 @@ public class GodToolsResponseAssemblyProcess
             throw new NotFoundException();
         }
 
-        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.convert(createContentsFile(packages));
+        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.xmlToStream(createContentsFile(packages));
         bundledStream.close();
 
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))

@@ -19,7 +19,7 @@ public class UncaughtExceptionMapper implements ExceptionMapper<ApplicationExcep
     {
         Throwable actualException = unwrapApplicationException(applicationException);
 
-		if(actualException.getClass().isAssignableFrom(ResourceNotFoundException.class))
+		if(actualException instanceof ResourceNotFoundException)
 		{
 			ResourceNotFoundException notFoundException = (ResourceNotFoundException) actualException;
 			return Response
