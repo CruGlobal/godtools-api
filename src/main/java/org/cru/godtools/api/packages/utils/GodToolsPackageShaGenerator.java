@@ -11,7 +11,7 @@ import java.security.MessageDigest;
  */
 public class GodToolsPackageShaGenerator
 {
-    public String calculateHash(Document xmlFile)
+    public static String calculateHash(Document xmlFile)
     {
         try
         {
@@ -29,7 +29,7 @@ public class GodToolsPackageShaGenerator
         }
     }
 
-    public String calculateHash(byte[] image)
+    public static String calculateHash(byte[] image)
     {
         try
         {

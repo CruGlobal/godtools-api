@@ -31,7 +31,7 @@ public class v0_10__setup_page_names implements JdbcMigration
 
             for(Element pageElement : XmlDocumentSearchUtilities.findElementsWithAttribute(version.getPackageStructure(), "page", "filename"))
             {
-                Page referencedPage = pageService.selectByFilename(pageElement.getAttribute("filename"));
+                Page referencedPage = pageService.selectByFilenameAndVersionId(pageElement.getAttribute("filename"), version.getId());
                 if(referencedPage != null)
                 {
                     pageElement.setAttribute("filename", referencedPage.getPageHash() + ".xml");

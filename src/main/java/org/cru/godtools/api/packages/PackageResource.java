@@ -25,7 +25,7 @@ public class PackageResource
 {
 
     @Inject
-	GodToolsResponseBuilder packageProcess;
+	GodToolsGETResponseBuilder packageProcess;
     @Inject
     AuthorizationService authService;
 

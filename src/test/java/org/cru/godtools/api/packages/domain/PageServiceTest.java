@@ -53,7 +53,7 @@ public class PageServiceTest extends AbstractServiceTest
 	@Test
 	public void testSelectByFilename()
 	{
-		Page page = pageService.selectByFilename("page.xml");
+		Page page = pageService.selectByFilenameAndVersionId("page.xml", TEST_VERSION_ID);
 
 		mockData.validatePage(page);
 	}

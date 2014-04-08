@@ -1,8 +1,9 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.packages.GodToolsResponseBuilder;
+import org.cru.godtools.api.packages.GodToolsGETResponseBuilder;
 import org.cru.godtools.api.packages.domain.Version;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Created by ryancarlson on 4/8/14.
@@ -28,7 +30,10 @@ public class TranslationResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsResponseBuilder responseBuilder;
+	GodToolsGETResponseBuilder responseBuilder;
+	@Inject
+	GodToolsPOSTResponseBuilder postResponseBuilder;
+
 
 	@GET
 	@Path("/{language}")
@@ -75,31 +80,30 @@ public class TranslationResource
 	}
 
 	@POST
+	@Path("/{language}/{package}")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.APPLICATION_XML)
-	public Response createNewTranslation(@HeaderParam("authorization") String authTokenHeader,
+	public Response createNewTranslation(@PathParam("language") String languageCode,
+										 @PathParam("package") String packageCode,
+										 @HeaderParam("authorization") String authTokenHeader,
 										 @QueryParam("authorization") String authTokenParam,
-										 MultipartFormDataInput input)
+										 MultipartFormDataInput input) throws URISyntaxException
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
 		NewTranslationPostData newPackagePostData = new NewTranslationPostData(input);
 
-		for(NewTranslation newPackage : newPackagePostData.getNewPackageSet())
+		for(NewTranslation newTranslation : newPackagePostData.getNewPackageSet())
 		{
-			System.out.println("Found a package!");
-			for(String key : newPackage.keySet())
-			{
-				System.out.println("Including file: " + key);
-			}
+			return postResponseBuilder
+					.setPackageCode(packageCode)
+					.setLanguageCode(languageCode)
+					.loadVersion()
+					.saveTranslation(newTranslation)
+					.buildResponse();
 		}
-		/*
-		- consume zip file
-		- identify contents.xml
-		- parse packages
 
-		 */
-		return Response.created(null).build();
+		return Response.accepted().build();
 	}
 
 	@PUT

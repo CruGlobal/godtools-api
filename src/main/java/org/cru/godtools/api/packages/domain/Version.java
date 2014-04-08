@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.w3c.dom.Document;
 
@@ -33,6 +34,16 @@ public class Version
         setReleased(released);
         setMinimumInterpreterVersion(1);
     }
+
+	public void setDraftVersionNumber(Version latestVersion)
+	{
+		setVersionNumber(latestVersion.getVersionNumber() + 1);
+	}
+
+	public void calculateHash()
+	{
+		setPackageStructureHash(GodToolsPackageShaGenerator.calculateHash(getPackageStructure()));
+	}
 
     public UUID getId()
     {

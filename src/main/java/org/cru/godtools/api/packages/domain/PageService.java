@@ -36,11 +36,12 @@ public class PageService
                 .executeAndFetchFirst(Page.class);
     }
 
-    public Page selectByFilename(String filename)
+    public Page selectByFilenameAndVersionId(String filename, UUID versionId)
     {
-        return sqlConnection.createQuery(PageQueries.selectByFilename)
+        return sqlConnection.createQuery(PageQueries.selectByFilenameAndVersionId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("filename", filename)
+				.addParameter("versionId", versionId)
                 .executeAndFetchFirst(Page.class);
     }
 
@@ -89,6 +90,6 @@ public class PageService
                 "(:id, :versionId, :filename, :ordinal, :xmlContent, :description, :pageHash)";
         public static final String update = "UPDATE pages SET version_id = :versionId, filename = :filename, ordinal = :ordinal, xml_content = :xmlContent,"
                 + "description = :description, page_hash = :pageHash WHERE id = :id";
-        public static String selectByFilename = "SELECT * FROM pages where filename = :filename";
+        public static String selectByFilenameAndVersionId = "SELECT * FROM pages WHERE filename = :filename AND version_id = :versionId";
     }
 }

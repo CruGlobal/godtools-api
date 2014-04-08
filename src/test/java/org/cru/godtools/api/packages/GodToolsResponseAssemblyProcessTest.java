@@ -16,7 +16,7 @@ import java.io.IOException;
 public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServiceTest
 {
 
-	GodToolsResponseBuilder responseAssemblyProcess;
+	GodToolsGETResponseBuilder responseAssemblyProcess;
 
 	@BeforeClass
 	@Override
@@ -24,7 +24,7 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	{
 		super.setup();
 
-		responseAssemblyProcess = new GodToolsResponseBuilder(godToolsPackageService, new FileZipper());
+		responseAssemblyProcess = new GodToolsGETResponseBuilder(godToolsPackageService, new FileZipper());
 	}
 
 	@Test

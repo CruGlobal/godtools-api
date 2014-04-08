@@ -1,6 +1,7 @@
 package org.cru.godtools.api.languages;
 
 import com.google.common.base.Strings;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import java.util.UUID;
 
@@ -23,6 +24,13 @@ public class Language
         if(!Strings.isNullOrEmpty(subculture)) path = path + "_" + subculture;
         return path;
     }
+
+	public void setFromLanguageCode(LanguageCode languageCode)
+	{
+		setCode(languageCode.getLanguageCode());
+		setLocale(languageCode.getLocaleCode());
+		setSubculture(languageCode.getSubculture());
+	}
 
     public UUID getId()
     {

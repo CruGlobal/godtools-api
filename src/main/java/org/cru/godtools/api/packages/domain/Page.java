@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
 import org.w3c.dom.Document;
 
 import java.util.UUID;
@@ -17,7 +18,12 @@ public class Page
     private String filename;
     private String pageHash;
 
-    public UUID getId()
+	public void calculateHash()
+	{
+		setPageHash(GodToolsPackageShaGenerator.calculateHash(getXmlContent()));
+	}
+
+	public UUID getId()
     {
         return id;
     }
@@ -86,4 +92,5 @@ public class Page
     {
         this.pageHash = pageHash;
     }
+
 }
