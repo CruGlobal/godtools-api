@@ -34,8 +34,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
 								  PageService pageService,
 								  ImageService imageService)
     {
-		super(packageService,versionService,translationService,languageService,pageService);
-        this.imageService = imageService;
+		super(packageService,versionService,translationService,languageService,pageService, imageService);
     }
 
 	/**

@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
@@ -14,6 +15,7 @@ import org.w3c.dom.Document;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ public class GodToolsTranslationService
 	protected TranslationService translationService;
 	protected LanguageService languageService;
 	protected PageService pageService;
+	protected ImageService imageService;
 
 	public GodToolsTranslationService(){}
 
@@ -35,13 +38,15 @@ public class GodToolsTranslationService
 								  VersionService versionService,
 								  TranslationService translationService,
 								  LanguageService languageService,
-								  PageService pageService)
+								  PageService pageService,
+								  ImageService imageService)
 	{
 		this.packageService = packageService;
 		this.versionService = versionService;
 		this.translationService = translationService;
 		this.languageService = languageService;
 		this.pageService = pageService;
+		this.imageService = imageService;
 	}
 
 	/**
@@ -131,28 +136,47 @@ public class GodToolsTranslationService
 		return version;
 	}
 
-
-	public void saveDraftPage(Document document, String filename, Version currentDraftVersion)
+	public Map<String, Image> getImagesForVersion(Version version)
 	{
-		Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
+		Map<String, Image> images = Maps.newHashMap();
 
-		if(draftPage != null)
+		for(Image image : imageService.selectImagesForAllPages(pageService.selectByVersionId(version.getId()), PixelDensity.HIGH))
 		{
-			draftPage.setXmlContent(document);
-			draftPage.calculateHash();
-
-			pageService.update(draftPage);
+			images.put(image.getFilename(), image);
 		}
-		else
-		{
-			Page newDraftPage = new Page();
-			newDraftPage.setId(UUID.randomUUID());
-			newDraftPage.setVersionId(currentDraftVersion.getId());
-			newDraftPage.setFilename(filename);
-			newDraftPage.setXmlContent(document);
-			newDraftPage.calculateHash();
 
-			pageService.insert(newDraftPage);
+		return images;
+	}
+
+	public void saveDraftPages(NewTranslation newTranslation, Version currentDraftVersion, Map<String, Image> currentTranslationImages)
+	{
+		for(String filename : newTranslation.keySet())
+		{
+			Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
+
+			if(draftPage != null)
+			{
+				draftPage.setXmlContent(newTranslation.get(filename));
+				draftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+				draftPage.calculateHash();
+
+				pageService.update(draftPage);
+			}
+			else
+			{
+				Page newDraftPage = new Page();
+				newDraftPage.setId(UUID.randomUUID());
+				newDraftPage.setVersionId(currentDraftVersion.getId());
+				newDraftPage.setFilename(filename);
+
+				pageService.insert(newDraftPage);
+
+				newDraftPage.setXmlContent(newTranslation.get(filename));
+				newDraftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+				newDraftPage.calculateHash();
+
+				pageService.update(newDraftPage);
+			}
 		}
 	}
 
