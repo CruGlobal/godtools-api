@@ -89,7 +89,6 @@ public class VersionService
                 .addParameter("id", version.getId())
                 .addParameter("versionNumber", version.getVersionNumber())
                 .addParameter("released", version.isReleased())
-                .addParameter("packageId", version.getPackageId())
                 .addParameter("translationId", version.getTranslationId())
                 .addParameter("minimumInterpreterVersion", version.getMinimumInterpreterVersion())
                 .addParameter("packageStructure", version.getPackageStructure())
@@ -110,7 +109,6 @@ public class VersionService
                 .addParameter("id", version.getId())
                 .addParameter("versionNumber", version.getVersionNumber())
                 .addParameter("released", version.isReleased())
-                .addParameter("packageId", version.getPackageId())
                 .addParameter("translationId", version.getTranslationId())
                 .addParameter("minimumInterpreterVersion", version.getMinimumInterpreterVersion())
                 .addParameter("packageStructure", version.getPackageStructure())
@@ -122,10 +120,10 @@ public class VersionService
     {
         public static final String selectByTranslationId = "SELECT * FROM versions WHERE translation_id = :translationId";
         public static String selectByTranslationIdVersionNumber = "SELECT * FROM versions WHERE translation_id = :translationId AND version_number = :versionNumber";
-        public static final String insert = "INSERT INTO versions(id, version_number, released, package_id, translation_id, minimum_interpreter_version, package_structure, package_structure_hash) " +
-                "VALUES(:id, :versionNumber, :released, :packageId, :translationId, :minimumInterpreterVersion, :packageStructure, :packageStructureHash)";
+        public static final String insert = "INSERT INTO versions(id, version_number, released, translation_id, minimum_interpreter_version, package_structure, package_structure_hash) " +
+                "VALUES(:id, :versionNumber, :released, :translationId, :minimumInterpreterVersion, :packageStructure, :packageStructureHash)";
         public static final String selectAll = "SELECT * FROM versions";
-        public static final String update = "UPDATE versions SET version_number = :versionNumber, released = :released, package_id = :packageId, " +
+        public static final String update = "UPDATE versions SET version_number = :versionNumber, released = :released, " +
                 "translation_id = :translationId, minimum_interpreter_version = :minimumInterpreterVersion, package_structure = :packageStructure, " +
                 "package_structure_hash = :packageStructureHash WHERE id = :id";
     }

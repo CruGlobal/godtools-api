@@ -17,7 +17,6 @@ public class VersionServiceTestMockDataService
 		version.setId(VersionServiceTest.TEST_VERSION_THREE_ID);
 		version.setVersionNumber(3);
 		version.setMinimumInterpreterVersion(3);
-		version.setPackageId(VersionServiceTest.TEST_PACKAGE_ID);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
 		version.setPackageStructureHash("afsdfhsd");
@@ -33,7 +32,6 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(versionThree.getMinimumInterpreterVersion(), (Integer)3);
 		Assert.assertEquals(versionThree.getVersionNumber(), (Integer)3);
 		Assert.assertEquals(versionThree.getPackageStructureHash(), "afsdfhsd");
-		Assert.assertEquals(versionThree.getPackageId(), VersionServiceTest.TEST_PACKAGE_ID);
 		Assert.assertEquals(versionThree.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertFalse(versionThree.isReleased());
 	}
@@ -44,7 +42,6 @@ public class VersionServiceTestMockDataService
 		version.setId(VersionServiceTest.TEST_VERSION_TWO_ID);
 		version.setVersionNumber(2);
 		version.setMinimumInterpreterVersion(2);
-		version.setPackageId(VersionServiceTest.TEST_PACKAGE_ID);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
 		version.setPackageStructureHash("fhdsadsv");
@@ -60,7 +57,6 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(versionTwo.getMinimumInterpreterVersion(), (Integer)2);
 		Assert.assertEquals(versionTwo.getVersionNumber(), (Integer)2);
 		Assert.assertEquals(versionTwo.getPackageStructureHash(), "fhdsadsv");
-		Assert.assertEquals(versionTwo.getPackageId(), VersionServiceTest.TEST_PACKAGE_ID);
 		Assert.assertEquals(versionTwo.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertTrue(versionTwo.isReleased());
 	}
@@ -97,7 +93,6 @@ public class VersionServiceTestMockDataService
 		version.setId(VersionServiceTest.TEST_VERSION_THREE_ID);
 		version.setVersionNumber(3);
 		version.setMinimumInterpreterVersion(3);
-		version.setPackageId(VersionServiceTest.TEST_PACKAGE_ID);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
 		version.setPackageStructureHash("adgsdfss");
@@ -113,7 +108,6 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(modifiedVersion.getMinimumInterpreterVersion(), (Integer)3);
 		Assert.assertEquals(modifiedVersion.getVersionNumber(), (Integer)3);
 		Assert.assertEquals(modifiedVersion.getPackageStructureHash(), "adgsdfss");
-		Assert.assertEquals(modifiedVersion.getPackageId(), VersionServiceTest.TEST_PACKAGE_ID);
 		Assert.assertEquals(modifiedVersion.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertTrue(modifiedVersion.isReleased());
 	}

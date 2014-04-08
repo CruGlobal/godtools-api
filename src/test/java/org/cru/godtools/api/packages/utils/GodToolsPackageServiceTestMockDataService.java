@@ -68,7 +68,6 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		Version version = new Version();
 		version.setId(GodToolsPackageServiceTest.VERSION_ID);
-		version.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
 		version.setTranslationId(GodToolsPackageServiceTest.TRANSLATION_ID);
 		version.setVersionNumber(1);
 		version.setMinimumInterpreterVersion(1);

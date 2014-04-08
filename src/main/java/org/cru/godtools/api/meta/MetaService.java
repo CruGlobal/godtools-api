@@ -96,7 +96,7 @@ public class MetaService
         for(Translation translation : translations)
         {
             Version version = versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion);
-            Package gtPackage = packageService.selectById(version.getPackageId());
+            Package gtPackage = packageService.selectById(translation.getPackageId());
 
             metaLanguage.withPackage(gtPackage.getName(), gtPackage.getCode(), version.getVersionNumber());
         }

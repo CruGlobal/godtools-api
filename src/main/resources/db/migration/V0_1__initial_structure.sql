@@ -23,7 +23,6 @@ CREATE TABLE versions (
   id uuid NOT NULL PRIMARY KEY,
   version_number integer NOT NULL,
   released boolean DEFAULT false,
-  package_id uuid REFERENCES packages(id),
   translation_id uuid REFERENCES translations(id),
   minimum_interpreter_version integer,
   package_structure xml,

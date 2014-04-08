@@ -13,7 +13,6 @@ public class Version
     UUID id;
     Integer versionNumber;
     boolean released;
-    UUID packageId;
     UUID translationId;
     Integer minimumInterpreterVersion;
     Document packageStructure;
@@ -24,10 +23,9 @@ public class Version
 
     }
 
-    public Version(Package gtPackage, Translation translation, Integer versionNumber, boolean released)
+    public Version(Translation translation, Integer versionNumber, boolean released)
     {
         setId(UUID.randomUUID());
-        setPackageId(gtPackage.getId());
         setTranslationId(translation.getId());
         setVersionNumber(versionNumber);
         setReleased(released);
@@ -62,16 +60,6 @@ public class Version
     public void setReleased(boolean released)
     {
         this.released = released;
-    }
-
-    public UUID getPackageId()
-    {
-        return packageId;
-    }
-
-    public void setPackageId(UUID packageId)
-    {
-        this.packageId = packageId;
     }
 
     public UUID getTranslationId()

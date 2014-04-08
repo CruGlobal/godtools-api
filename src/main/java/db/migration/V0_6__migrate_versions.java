@@ -40,7 +40,7 @@ public class V0_6__migrate_versions implements JdbcMigration
             {
                 Language language = languageService.selectLanguageById(translation.getLanguageId());
 
-                Version version = new Version(gtPackage, translation, 1, true);
+                Version version = new Version(translation, 1, true);
 
                 version.setPackageStructure(packageDirectory.getPackageDescriptorXml(language));
                 version.setPackageStructureHash(new GodToolsPackageShaGenerator().calculateHash(version.getPackageStructure()));
