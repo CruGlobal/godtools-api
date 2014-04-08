@@ -139,6 +139,8 @@ public class GodToolsTranslationService
 		if(draftPage != null)
 		{
 			draftPage.setXmlContent(document);
+			draftPage.calculateHash();
+
 			pageService.update(draftPage);
 		}
 		else
