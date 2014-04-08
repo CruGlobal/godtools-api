@@ -6,8 +6,8 @@ import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.Translation;
-import org.cru.godtools.api.translations.TranslationService;
+import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;

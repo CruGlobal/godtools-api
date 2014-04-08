@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
 import org.w3c.dom.Document;
@@ -33,7 +34,7 @@ public class FileZipper
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPackageFile(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+    public void zipPackageFile(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
         zipFile(godToolsPackage.getPackageXml(), godToolsPackage.getPackageXmlHash() + ".xml", zipOutputStream);
     }
@@ -48,7 +49,7 @@ public class FileZipper
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream) throws Exception
+    public void zipPageFiles(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws Exception
     {
         for(Page page : godToolsPackage.getPageFiles())
         {

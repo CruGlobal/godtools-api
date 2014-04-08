@@ -30,13 +30,13 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	@Test
 	public void testBuildResponse() throws IOException
 	{
-		Response response = responseAssemblyProcess.atRevisionNumber(1)
-				.compressed(false)
-				.forLanguage("en")
-				.forPackage("kgp")
-				.atRevisionNumber(1)
-				.forMinimumInterpreterVersion(1)
-				.withPixelDensity(PixelDensity.getEnum("High"))
+		Response response = responseAssemblyProcess.setRevisionNumber(1)
+				.setCompressed(false)
+				.setLanguageCode("en")
+				.setPackageCode("kgp")
+				.setRevisionNumber(1)
+				.setMinimumInterpreterVersion(1)
+				.setPixelDensity(PixelDensity.getEnum("High"))
 				.buildResponse();
 
 		Assert.assertNotNull(response);

@@ -4,7 +4,8 @@ import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.GodToolsPackageServiceTestMockDataService;
-import org.cru.godtools.api.translations.TranslationService;
+import org.cru.godtools.api.translations.GodToolsTranslationService;
+import org.cru.godtools.api.translations.domain.TranslationService;
 
 import java.util.UUID;
 
@@ -38,13 +39,9 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		PageService pageService = new PageService(sqlConnection);
 		ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
 		ImageService imageService = new ImageService(sqlConnection, imagePageRelationshipService);
+		GodToolsTranslationService godToolsTranslationService = new GodToolsTranslationService(packageService, versionService, translationService, languageService, pageService);
 
-		godToolsPackageService = new GodToolsPackageService(packageService,
-				versionService,
-				translationService,
-				languageService,
-				pageService,
-				imageService);
+		godToolsPackageService = new GodToolsPackageService(godToolsTranslationService,imageService);
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 

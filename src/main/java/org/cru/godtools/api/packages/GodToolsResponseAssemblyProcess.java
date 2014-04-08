@@ -7,6 +7,7 @@ import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
+import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,7 +33,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class GodToolsResponseAssemblyProcess
 {
-    IGodToolsPackageService packageService;
+    GodToolsPackageService packageService;
     FileZipper fileZipper;
 
     String packageCode;
@@ -43,7 +44,7 @@ public class GodToolsResponseAssemblyProcess
     PixelDensity pixelDensity;
 
     @Inject
-    public GodToolsResponseAssemblyProcess(IGodToolsPackageService packageService,
+    public GodToolsResponseAssemblyProcess(GodToolsPackageService packageService,
                                            FileZipper fileZipper)
     {
         this.packageService = packageService;
@@ -174,7 +175,7 @@ public class GodToolsResponseAssemblyProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsPackage godToolsPackage : packages)
+            for(GodToolsTranslation godToolsPackage : packages)
             {
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
