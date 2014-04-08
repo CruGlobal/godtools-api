@@ -1,9 +1,8 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.packages.GodToolsGETResponseBuilder;
+import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
 import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.inject.Inject;
@@ -30,9 +29,9 @@ public class TranslationResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsGETResponseBuilder responseBuilder;
+	GodToolsPackageRetrievalProcess packageRetrievalProcess;
 	@Inject
-	GodToolsPOSTResponseBuilder postResponseBuilder;
+	GodToolsTranslationUpdateProcess translationUpdateProcess;
 
 
 	@GET
@@ -47,7 +46,7 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return responseBuilder
+		return packageRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
@@ -69,7 +68,7 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return responseBuilder
+		return packageRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
@@ -95,7 +94,7 @@ public class TranslationResource
 
 		for(NewTranslation newTranslation : newPackagePostData.getNewPackageSet())
 		{
-			return postResponseBuilder
+			return translationUpdateProcess
 					.setPackageCode(packageCode)
 					.setLanguageCode(languageCode)
 					.loadVersion()

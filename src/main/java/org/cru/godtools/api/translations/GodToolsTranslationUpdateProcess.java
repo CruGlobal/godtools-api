@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by ryancarlson on 4/8/14.
  */
-public class GodToolsPOSTResponseBuilder
+public class GodToolsTranslationUpdateProcess
 {
 	private GodToolsPackageService godToolsPackageService;
 
@@ -26,24 +26,24 @@ public class GodToolsPOSTResponseBuilder
 	private List<Page> currentDraftPages;
 
 	@Inject
-	public GodToolsPOSTResponseBuilder(GodToolsPackageService godToolsPackageService)
+	public GodToolsTranslationUpdateProcess(GodToolsPackageService godToolsPackageService)
 	{
 		this.godToolsPackageService = godToolsPackageService;
 	}
 
-	public GodToolsPOSTResponseBuilder setPackageCode(String packageCode)
+	public GodToolsTranslationUpdateProcess setPackageCode(String packageCode)
 	{
 		this.packageCode = packageCode;
 		return this;
 	}
 
-	public GodToolsPOSTResponseBuilder setLanguageCode(String languageCode)
+	public GodToolsTranslationUpdateProcess setLanguageCode(String languageCode)
 	{
 		this.languageCode = new LanguageCode(languageCode);
 		return this;
 	}
 
-	public GodToolsPOSTResponseBuilder loadVersion()
+	public GodToolsTranslationUpdateProcess loadVersion()
 	{
 		try
 		{
@@ -57,8 +57,7 @@ public class GodToolsPOSTResponseBuilder
 		return this;
 	}
 
-
-	public GodToolsPOSTResponseBuilder saveTranslation(NewTranslation newTranslation)
+	public GodToolsTranslationUpdateProcess saveTranslation(NewTranslation newTranslation)
 	{
 		for(String filename : newTranslation.keySet())
 		{

@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
-public class GodToolsGETResponseBuilder
+public class GodToolsPackageRetrievalProcess
 {
     GodToolsPackageService packageService;
     FileZipper fileZipper;
@@ -46,50 +46,50 @@ public class GodToolsGETResponseBuilder
 	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
 
     @Inject
-    public GodToolsGETResponseBuilder(GodToolsPackageService packageService, FileZipper fileZipper)
+    public GodToolsPackageRetrievalProcess(GodToolsPackageService packageService, FileZipper fileZipper)
     {
         this.packageService = packageService;
         this.fileZipper = fileZipper;
     }
 
-    public GodToolsGETResponseBuilder setPackageCode(String packageCode)
+    public GodToolsPackageRetrievalProcess setPackageCode(String packageCode)
     {
         this.packageCode = packageCode;
         return this;
     }
 
-    public GodToolsGETResponseBuilder setLanguageCode(String languageCode)
+    public GodToolsPackageRetrievalProcess setLanguageCode(String languageCode)
     {
         this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
-    public GodToolsGETResponseBuilder setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
+    public GodToolsPackageRetrievalProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
-    public GodToolsGETResponseBuilder setVersionNumber(Integer revisionNumber)
+    public GodToolsPackageRetrievalProcess setVersionNumber(Integer revisionNumber)
     {
         this.revisionNumber = revisionNumber;
         return this;
     }
 
-    public GodToolsGETResponseBuilder setCompressed(boolean compressed)
+    public GodToolsPackageRetrievalProcess setCompressed(boolean compressed)
     {
         this.compressed = compressed;
         return this;
     }
 
 
-    public GodToolsGETResponseBuilder setPixelDensity(PixelDensity pixelDensity)
+    public GodToolsPackageRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
         this.pixelDensity = pixelDensity;
         return this;
     }
 
-	public GodToolsGETResponseBuilder loadTranslations()
+	public GodToolsPackageRetrievalProcess loadTranslations()
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
@@ -103,7 +103,7 @@ public class GodToolsGETResponseBuilder
 		return this;
 	}
 
-	public GodToolsGETResponseBuilder loadPackages()
+	public GodToolsPackageRetrievalProcess loadPackages()
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
