@@ -68,17 +68,17 @@ public class GodToolsTranslationService
 				packageCode);
 	}
 
-	private Version getVersion(Integer revisionNumber, Integer minimumInterpreterVersion, Translation translation)
+	private Version getVersion(Integer versionNumber, Integer minimumInterpreterVersion, Translation translation)
 	{
 		if(minimumInterpreterVersion == null)
 		{
-			return revisionNumber != null ? versionService.selectSpecificVersionForTranslation(translation.getId(), revisionNumber)
-					: versionService.selectLatestVersionForTranslation(translation.getId());
+			return versionNumber.equals(Version.LATEST_VERSION_NUMBER) ? versionService.selectLatestVersionForTranslation(translation.getId()) :
+					versionService.selectSpecificVersionForTranslation(translation.getId(), versionNumber);
 		}
 		else
 		{
-			return revisionNumber != null ? versionService.selectSpecificVersionForTranslation(translation.getId(), revisionNumber, minimumInterpreterVersion)
-					: versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion);
+			return versionNumber.equals(Version.LATEST_VERSION_NUMBER) ? versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion) :
+					versionService.selectSpecificVersionForTranslation(translation.getId(), versionNumber, minimumInterpreterVersion);
 		}
 	}
 
@@ -87,13 +87,10 @@ public class GodToolsTranslationService
 	 *
 	 *
 	 * @param languageCode
-	 * @param revisionNumber
 	 * @return
 
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode,
-													   Integer revisionNumber,
-													   Integer minimumInterpreterVersion)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, Integer minimumInterpreterVersion)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -105,7 +102,7 @@ public class GodToolsTranslationService
 			try
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), revisionNumber, minimumInterpreterVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), Version.LATEST_VERSION_NUMBER, minimumInterpreterVersion));
 			}
 			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
 			catch(NotFoundException e){ continue; }

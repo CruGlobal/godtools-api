@@ -93,7 +93,7 @@ public class GodToolsResponseBuilder
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, revisionNumber, minimumInterpreterVersion));
+			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
 		}
 		else
 		{
@@ -107,7 +107,7 @@ public class GodToolsResponseBuilder
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
 		}
 		else
 		{

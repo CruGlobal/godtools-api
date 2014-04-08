@@ -10,6 +10,8 @@ import java.util.UUID;
  */
 public class Version
 {
+	public static final Integer LATEST_VERSION_NUMBER = -13528;
+
     UUID id;
     Integer versionNumber;
     boolean released;

@@ -53,7 +53,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
                                       Integer minimumInterpreterVersion,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber,minimumInterpreterVersion);
+		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion);
 
         return new GodToolsPackage(godToolsTranslation.getPackageXml(),
 				godToolsTranslation.getPageFiles(),
@@ -73,16 +73,14 @@ public class GodToolsPackageService extends GodToolsTranslationService
      *
      *
      * @param languageCode
-     * @param revisionNumber
      * @return
 
      */
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
-                                                       Integer revisionNumber,
                                                        Integer minimumInterpreterVersion,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = getTranslationsForLanguage(languageCode, revisionNumber, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = getTranslationsForLanguage(languageCode, minimumInterpreterVersion);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

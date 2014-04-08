@@ -4,6 +4,7 @@ import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.GodToolsResponseBuilder;
 import org.cru.godtools.api.packages.NewPackage;
 import org.cru.godtools.api.packages.NewPackagePostData;
+import org.cru.godtools.api.packages.domain.Version;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.inject.Inject;
@@ -38,7 +39,6 @@ public class TranslationResource
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 									@QueryParam("compressed") String compressed,
-									@QueryParam("revision-number") Integer revisionNumber,
 									@HeaderParam("authorization") String authTokenHeader,
 									@QueryParam("authorization") String authTokenParam) throws IOException
 	{
@@ -48,7 +48,6 @@ public class TranslationResource
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setRevisionNumber(revisionNumber)
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -72,7 +71,7 @@ public class TranslationResource
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setRevisionNumber(revisionNumber)
+				.setRevisionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
 				.loadTranslations()
 				.buildResponse();
 	}
