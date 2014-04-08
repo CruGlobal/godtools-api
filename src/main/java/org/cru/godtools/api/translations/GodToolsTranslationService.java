@@ -19,11 +19,13 @@ import java.util.Set;
  */
 public class GodToolsTranslationService
 {
-	PackageService packageService;
-	VersionService versionService;
-	TranslationService translationService;
-	LanguageService languageService;
-	PageService pageService;
+	protected PackageService packageService;
+	protected VersionService versionService;
+	protected TranslationService translationService;
+	protected LanguageService languageService;
+	protected PageService pageService;
+
+	public GodToolsTranslationService(){}
 
 	@Inject
 	public GodToolsTranslationService(PackageService packageService,

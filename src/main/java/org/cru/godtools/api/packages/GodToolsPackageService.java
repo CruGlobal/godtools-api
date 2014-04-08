@@ -2,12 +2,14 @@ package org.cru.godtools.api.packages;
 
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -20,20 +22,23 @@ import java.util.Set;
  */
 
 @Default
-public class GodToolsPackageService
+public class GodToolsPackageService extends GodToolsTranslationService
 {
-	GodToolsTranslationService godToolsTranslationService;
 	ImageService imageService;
 
     @Inject
-    public GodToolsPackageService(GodToolsTranslationService godToolsTranslationService,
-                                  ImageService imageService)
+    public GodToolsPackageService(PackageService packageService,
+								  VersionService versionService,
+								  TranslationService translationService,
+								  LanguageService languageService,
+								  PageService pageService,
+								  ImageService imageService)
     {
-		this.godToolsTranslationService = godToolsTranslationService;
+		super(packageService,versionService,translationService,languageService,pageService);
         this.imageService = imageService;
     }
 
-    /**
+	/**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
      *
      *
@@ -48,7 +53,7 @@ public class GodToolsPackageService
                                       Integer minimumInterpreterVersion,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, revisionNumber,minimumInterpreterVersion);
+		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber,minimumInterpreterVersion);
 
         return new GodToolsPackage(godToolsTranslation.getPackageXml(),
 				godToolsTranslation.getPageFiles(),
@@ -77,7 +82,7 @@ public class GodToolsPackageService
                                                        Integer minimumInterpreterVersion,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, revisionNumber, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = getTranslationsForLanguage(languageCode, revisionNumber, minimumInterpreterVersion);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

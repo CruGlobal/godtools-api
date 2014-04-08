@@ -24,7 +24,7 @@ public class PackageResource
 {
 
     @Inject
-    GodToolsResponseAssemblyProcess packageProcess;
+	GodToolsResponseBuilder packageProcess;
     @Inject
     AuthorizationService authService;
 
@@ -48,6 +48,7 @@ public class PackageResource
                 .setRevisionNumber(revisionNumber)
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.loadPackages()
                 .buildResponse();
     }
 
@@ -73,6 +74,7 @@ public class PackageResource
 				.setRevisionNumber(revisionNumber)
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.loadPackages()
 				.buildResponse();
 	}
 }

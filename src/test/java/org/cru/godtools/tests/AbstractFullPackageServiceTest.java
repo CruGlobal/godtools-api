@@ -39,9 +39,8 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		PageService pageService = new PageService(sqlConnection);
 		ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
 		ImageService imageService = new ImageService(sqlConnection, imagePageRelationshipService);
-		GodToolsTranslationService godToolsTranslationService = new GodToolsTranslationService(packageService, versionService, translationService, languageService, pageService);
 
-		godToolsPackageService = new GodToolsPackageService(godToolsTranslationService,imageService);
+		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 

@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
-public class GodToolsResponseAssemblyProcess
+public class GodToolsResponseBuilder
 {
     GodToolsPackageService packageService;
     FileZipper fileZipper;
@@ -43,71 +43,100 @@ public class GodToolsResponseAssemblyProcess
     boolean compressed;
     PixelDensity pixelDensity;
 
+	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
+
     @Inject
-    public GodToolsResponseAssemblyProcess(GodToolsPackageService packageService,
-                                           FileZipper fileZipper)
+    public GodToolsResponseBuilder(GodToolsPackageService packageService, FileZipper fileZipper)
     {
         this.packageService = packageService;
         this.fileZipper = fileZipper;
     }
 
-    public GodToolsResponseAssemblyProcess setPackageCode(String packageCode)
+    public GodToolsResponseBuilder setPackageCode(String packageCode)
     {
         this.packageCode = packageCode;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess setLanguageCode(String languageCode)
+    public GodToolsResponseBuilder setLanguageCode(String languageCode)
     {
         this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
+    public GodToolsResponseBuilder setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess setRevisionNumber(Integer revisionNumber)
+    public GodToolsResponseBuilder setRevisionNumber(Integer revisionNumber)
     {
         this.revisionNumber = revisionNumber;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess setCompressed(boolean compressed)
+    public GodToolsResponseBuilder setCompressed(boolean compressed)
     {
         this.compressed = compressed;
         return this;
     }
 
 
-    public GodToolsResponseAssemblyProcess setPixelDensity(PixelDensity pixelDensity)
+    public GodToolsResponseBuilder setPixelDensity(PixelDensity pixelDensity)
     {
         this.pixelDensity = pixelDensity;
         return this;
     }
 
+	public GodToolsResponseBuilder loadTranslations()
+	{
+		if(Strings.isNullOrEmpty(packageCode))
+		{
+			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, revisionNumber, minimumInterpreterVersion));
+		}
+		else
+		{
+			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion));
+		}
+
+		return this;
+	}
+
+	public GodToolsResponseBuilder loadPackages()
+	{
+		if(Strings.isNullOrEmpty(packageCode))
+		{
+			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+		}
+		else
+		{
+			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+		}
+
+		return this;
+	}
+
     public Response buildResponse() throws IOException
     {
         if(compressed)
         {
-            return buildZippedResponse(loadPackages(languageCode, packageCode));
+            return buildZippedResponse();
         }
         else
         {
-            return buildXmlContentsResponse(loadPackages(languageCode, packageCode));
+            return buildXmlContentsResponse();
         }
     }
 
-    private Response buildXmlContentsResponse(Set<GodToolsPackage> packages) throws IOException
+    private Response buildXmlContentsResponse() throws IOException
     {
-        if(packages.isEmpty())
+        if(this.godToolsPackages.isEmpty())
         {
             throw new NotFoundException();
         }
 
-        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.xmlToStream(createContentsFile(packages));
+        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.xmlToStream(createContentsFile());
         bundledStream.close();
 
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
@@ -115,13 +144,13 @@ public class GodToolsResponseAssemblyProcess
                 .build();
     }
 
-    private Response buildZippedResponse(Set<GodToolsPackage> packages) throws IOException
+    private Response buildZippedResponse() throws IOException
     {
-        if(packages.isEmpty()) return Response.status(404).build();
+        if(godToolsPackages.isEmpty()) return Response.status(404).build();
 
         ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
 
-        createZipFolder(new ZipOutputStream(bundledStream), packages);
+        createZipFolder(new ZipOutputStream(bundledStream));
         bundledStream.close();
 
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
@@ -129,34 +158,25 @@ public class GodToolsResponseAssemblyProcess
                 .build();
     }
 
-    private Set<GodToolsPackage> loadPackages(LanguageCode languageCode, String packageCode)
-    {
-        if(Strings.isNullOrEmpty(packageCode))
-        {
-            return packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity);
-        }
-        else
-        {
-            return Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
-        }
-    }
-
-    private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages)
+    private void createZipFolder(ZipOutputStream zipOutputStream)
     {
         try
         {
             PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
 
-            for(GodToolsPackage godToolsPackage : packages)
+            for(GodToolsTranslation godToolsTranslation : godToolsPackages)
             {
-                fileZipper.zipPackageFile(godToolsPackage, zipOutputStream);
+                fileZipper.zipPackageFile(godToolsTranslation, zipOutputStream);
 
-                fileZipper.zipPageFiles(godToolsPackage, zipOutputStream);
+                fileZipper.zipPageFiles(godToolsTranslation, zipOutputStream);
 
-                fileZipper.zipImageFiles(godToolsPackage, zipOutputStream, imagesAlreadyZipped);
+				if(godToolsTranslation instanceof GodToolsPackage)
+				{
+					fileZipper.zipImageFiles((GodToolsPackage) godToolsTranslation, zipOutputStream, imagesAlreadyZipped);
+				}
             }
 
-            fileZipper.zipContentsFile(createContentsFile(packages), zipOutputStream);
+            fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
 
             zipOutputStream.close();
         }
@@ -166,7 +186,7 @@ public class GodToolsResponseAssemblyProcess
         }
     }
 
-    private Document createContentsFile(Set<GodToolsPackage> packages)
+    private Document createContentsFile()
     {
         try
         {
@@ -175,7 +195,7 @@ public class GodToolsResponseAssemblyProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsPackage : packages)
+            for(GodToolsTranslation godToolsPackage : godToolsPackages)
             {
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", godToolsPackage.getPackageCode());

@@ -16,7 +16,7 @@ import java.io.IOException;
 public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServiceTest
 {
 
-	GodToolsResponseAssemblyProcess responseAssemblyProcess;
+	GodToolsResponseBuilder responseAssemblyProcess;
 
 	@BeforeClass
 	@Override
@@ -24,7 +24,7 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	{
 		super.setup();
 
-		responseAssemblyProcess = new GodToolsResponseAssemblyProcess(godToolsPackageService, new FileZipper());
+		responseAssemblyProcess = new GodToolsResponseBuilder(godToolsPackageService, new FileZipper());
 	}
 
 	@Test
@@ -37,6 +37,7 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 				.setRevisionNumber(1)
 				.setMinimumInterpreterVersion(1)
 				.setPixelDensity(PixelDensity.getEnum("High"))
+				.loadPackages()
 				.buildResponse();
 
 		Assert.assertNotNull(response);
