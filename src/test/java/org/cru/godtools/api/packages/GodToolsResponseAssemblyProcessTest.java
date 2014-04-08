@@ -30,11 +30,11 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	@Test
 	public void testBuildResponse() throws IOException
 	{
-		Response response = responseAssemblyProcess.setRevisionNumber(1)
+		Response response = responseAssemblyProcess.setVersionNumber(1)
 				.setCompressed(false)
 				.setLanguageCode("en")
 				.setPackageCode("kgp")
-				.setRevisionNumber(1)
+				.setVersionNumber(1)
 				.setMinimumInterpreterVersion(1)
 				.setPixelDensity(PixelDensity.getEnum("High"))
 				.loadPackages()

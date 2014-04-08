@@ -70,7 +70,7 @@ public class GodToolsResponseBuilder
         return this;
     }
 
-    public GodToolsResponseBuilder setRevisionNumber(Integer revisionNumber)
+    public GodToolsResponseBuilder setVersionNumber(Integer revisionNumber)
     {
         this.revisionNumber = revisionNumber;
         return this;

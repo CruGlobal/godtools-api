@@ -2,8 +2,6 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.GodToolsResponseBuilder;
-import org.cru.godtools.api.packages.NewPackage;
-import org.cru.godtools.api.packages.NewPackagePostData;
 import org.cru.godtools.api.packages.domain.Version;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -71,7 +69,7 @@ public class TranslationResource
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setRevisionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
+				.setVersionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -85,9 +83,9 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		NewPackagePostData newPackagePostData = new NewPackagePostData(input);
+		NewTranslationPostData newPackagePostData = new NewTranslationPostData(input);
 
-		for(NewPackage newPackage : newPackagePostData.getNewPackageSet())
+		for(NewTranslation newPackage : newPackagePostData.getNewPackageSet())
 		{
 			System.out.println("Found a package!");
 			for(String key : newPackage.keySet())

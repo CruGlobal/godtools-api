@@ -46,7 +46,7 @@ public class PackageResource
         return packageProcess
                 .setLanguageCode(languageCode)
                 .setCompressed(Boolean.parseBoolean(compressed))
-                .setRevisionNumber(revisionNumber)
+                .setVersionNumber(revisionNumber)
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()
@@ -72,7 +72,7 @@ public class PackageResource
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setRevisionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
+				.setVersionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()

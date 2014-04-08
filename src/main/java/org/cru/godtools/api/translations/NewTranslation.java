@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api.translations;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -19,11 +19,11 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by ryancarlson on 4/3/14.
  */
-public class NewPackage implements Map<String,Document>
+public class NewTranslation implements Map<String,Document>
 {
 	Map<String, Document> files;
 
-	public NewPackage(InputPart inputPart)
+	public NewTranslation(InputPart inputPart)
 	{
 		files = Maps.newHashMap();
 

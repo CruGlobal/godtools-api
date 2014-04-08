@@ -1,7 +1,8 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api.translations;
 
 
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.translations.NewTranslation;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
@@ -10,12 +11,12 @@ import java.util.*;
 /**
  * Created by ryancarlson on 4/3/14.
  */
-public class NewPackagePostData implements Set<NewPackage>
+public class NewTranslationPostData implements Set<NewTranslation>
 {
-	Set<NewPackage> newPackageSet;
+	Set<NewTranslation> newPackageSet;
 
 
-	public NewPackagePostData(MultipartFormDataInput formDataInput)
+	public NewTranslationPostData(MultipartFormDataInput formDataInput)
 	{
 		newPackageSet = Sets.newHashSet();
 
@@ -25,12 +26,12 @@ public class NewPackagePostData implements Set<NewPackage>
 		{
 			for (InputPart inputPart : formDataMap.get(filename))
 			{
-				newPackageSet.add(new NewPackage(inputPart));
+				newPackageSet.add(new NewTranslation(inputPart));
 			}
 		}
 	}
 
-	public Set<NewPackage> getNewPackageSet()
+	public Set<NewTranslation> getNewPackageSet()
 	{
 		return newPackageSet;
 	}
@@ -54,7 +55,7 @@ public class NewPackagePostData implements Set<NewPackage>
 	}
 
 	@Override
-	public Iterator<NewPackage> iterator()
+	public Iterator<NewTranslation> iterator()
 	{
 		return newPackageSet.iterator();
 	}
@@ -72,7 +73,7 @@ public class NewPackagePostData implements Set<NewPackage>
 	}
 
 	@Override
-	public boolean add(NewPackage newPackage)
+	public boolean add(NewTranslation newPackage)
 	{
 		return newPackageSet.add(newPackage);
 	}
@@ -90,7 +91,7 @@ public class NewPackagePostData implements Set<NewPackage>
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends NewPackage> c)
+	public boolean addAll(Collection<? extends NewTranslation> c)
 	{
 		return newPackageSet.addAll(c);
 	}
