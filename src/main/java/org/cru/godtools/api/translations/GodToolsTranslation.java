@@ -1,15 +1,11 @@
 package org.cru.godtools.api.translations;
 
-import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.w3c.dom.Document;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * Created by ryancarlson on 3/18/14.
@@ -32,7 +28,7 @@ public class GodToolsTranslation
         this.pageFiles = pageFiles;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
-        this.packageXmlHash = new GodToolsPackageShaGenerator().calculateHash(packageXml);
+        this.packageXmlHash = ShaGenerator.calculateHash(packageXml);
     }
 
     public Document getPackageXml()

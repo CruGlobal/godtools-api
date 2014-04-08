@@ -9,8 +9,12 @@ import java.security.MessageDigest;
 /**
  * Created by ryancarlson on 3/18/14.
  */
-public class GodToolsPackageShaGenerator
+public class ShaGenerator
 {
+	private ShaGenerator()
+	{
+
+	}
     public static String calculateHash(Document xmlFile)
     {
         try

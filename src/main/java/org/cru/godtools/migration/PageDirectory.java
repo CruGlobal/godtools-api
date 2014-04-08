@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -40,8 +40,6 @@ public class PageDirectory
 
     public List<Page> buildPages(Version version) throws URISyntaxException, ParserConfigurationException, SAXException, IOException
     {
-        GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
-
         File directory = getDirectory();
         List<Page> pages = Lists.newArrayList();
 
@@ -54,7 +52,7 @@ public class PageDirectory
                 page.setVersionId(version.getId());
                 page.setFilename(file.getName());
                 page.setXmlContent(getPageXml(file));
-                page.setPageHash(shaGenerator.calculateHash(page.getXmlContent()));
+                page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
                 pages.add(page);
             }
         }
@@ -64,8 +62,6 @@ public class PageDirectory
 
     public List<Image> buildImages() throws URISyntaxException, IOException
     {
-        GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
-
         File directory = getDirectory();
         List<Image> images = Lists.newArrayList();
 
@@ -79,7 +75,7 @@ public class PageDirectory
                     image.setId(UUID.randomUUID());
                     image.setFilename(buildFileName(imageFile.getName()));
                     image.setImageContent(ImageReader.read(imageFile));
-                    image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+                    image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
                     image.setResolution("High");
                     images.add(image);
                 }

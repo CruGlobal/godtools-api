@@ -5,7 +5,7 @@ import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.ImageReader;
@@ -60,7 +60,6 @@ public class V0_8__migrate_images implements JdbcMigration
 
         URL url = this.getClass().getResource("/data/SnuffyPackages/shared");
         File sharedDirectory = new File(url.toURI());
-        GodToolsPackageShaGenerator shaGenerator = new GodToolsPackageShaGenerator();
 
         for(File sharedImage : sharedDirectory.listFiles())
         {
@@ -68,7 +67,7 @@ public class V0_8__migrate_images implements JdbcMigration
             image.setId(UUID.randomUUID());
             image.setFilename(sharedImage.getName());
             image.setImageContent(ImageReader.read(sharedImage));
-            image.setImageHash(shaGenerator.calculateHash(image.getImageContent()));
+            image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
             image.setResolution("High");
             imageService.insert(image);
         }

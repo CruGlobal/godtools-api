@@ -25,7 +25,7 @@ public class GodToolsPackageShaGeneratorTest
 		Document testFile = XmlDocumentFromFile.get("/test_file_1.xml");
 
 		Assert.assertNotNull(testFile);
-		Assert.assertEquals(new GodToolsPackageShaGenerator().calculateHash(testFile), "89795d3c74cb8b1bc0211bc13413ba258e81ac3c");
+		Assert.assertEquals(ShaGenerator.calculateHash(testFile), "89795d3c74cb8b1bc0211bc13413ba258e81ac3c");
 	}
 
 	@Test
@@ -34,7 +34,7 @@ public class GodToolsPackageShaGeneratorTest
 
 		byte[] imageBytes = ImageReader.read(new File(this.getClass().getResource("/test_image_1.png").toURI()));
 
-		Assert.assertEquals(new GodToolsPackageShaGenerator().calculateHash(imageBytes), "60b4fcbdfdd834a39bdcedf987a66c5f42a9143a");
+		Assert.assertEquals(ShaGenerator.calculateHash(imageBytes), "60b4fcbdfdd834a39bdcedf987a66c5f42a9143a");
 
 	}
 }

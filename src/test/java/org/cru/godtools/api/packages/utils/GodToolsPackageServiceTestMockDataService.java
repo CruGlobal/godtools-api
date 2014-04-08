@@ -3,7 +3,6 @@ package org.cru.godtools.api.packages.utils;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
@@ -73,7 +72,7 @@ public class GodToolsPackageServiceTestMockDataService
 		version.setMinimumInterpreterVersion(1);
 		version.setReleased(true);
 		version.setPackageStructure(XmlDocumentFromFile.get("/test_file_1.xml"));
-		version.setPackageStructureHash(new GodToolsPackageShaGenerator().calculateHash(version.getPackageStructure()));
+		version.setPackageStructureHash(ShaGenerator.calculateHash(version.getPackageStructure()));
 
 		versionService.insert(version);
 	}
@@ -86,7 +85,7 @@ public class GodToolsPackageServiceTestMockDataService
 		page.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
 		page.setFilename("test_file_1.xml");
 		page.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
-		page.setPageHash(new GodToolsPackageShaGenerator().calculateHash(page.getXmlContent()));
+		page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
 
 		pageService.insert(page);
 	}
@@ -98,7 +97,7 @@ public class GodToolsPackageServiceTestMockDataService
 		image.setResolution("High");
 		image.setFilename("test_image_1.png");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
-		image.setImageHash(new GodToolsPackageShaGenerator().calculateHash(image.getImageContent()));
+		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
 	}
@@ -119,7 +118,7 @@ public class GodToolsPackageServiceTestMockDataService
 
 		Assert.assertEquals(englishKgpPackage.getLanguageCode(), "en");
 		Assert.assertEquals(englishKgpPackage.getPackageCode(), "kgp");
-		Assert.assertEquals(englishKgpPackage.getPackageXmlHash(), new GodToolsPackageShaGenerator().calculateHash(englishKgpPackage.getPackageXml()));
+		Assert.assertEquals(englishKgpPackage.getPackageXmlHash(), ShaGenerator.calculateHash(englishKgpPackage.getPackageXml()));
 
 		Assert.assertEquals(englishKgpPackage.getImages().size(), 1);
 		Assert.assertEquals(englishKgpPackage.getImages().iterator().next().getId(), GodToolsPackageServiceTest.IMAGE_ID);
