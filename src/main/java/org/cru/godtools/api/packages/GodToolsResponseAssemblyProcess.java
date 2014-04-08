@@ -50,38 +50,38 @@ public class GodToolsResponseAssemblyProcess
         this.fileZipper = fileZipper;
     }
 
-    public GodToolsResponseAssemblyProcess forPackage(String packageCode)
+    public GodToolsResponseAssemblyProcess setPackageCode(String packageCode)
     {
         this.packageCode = packageCode;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess forLanguage(String languageCode)
+    public GodToolsResponseAssemblyProcess setLanguageCode(String languageCode)
     {
         this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess forMinimumInterpreterVersion(Integer minimumInterpreterVersion)
+    public GodToolsResponseAssemblyProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess atRevisionNumber(Integer revisionNumber)
+    public GodToolsResponseAssemblyProcess setRevisionNumber(Integer revisionNumber)
     {
         this.revisionNumber = revisionNumber;
         return this;
     }
 
-    public GodToolsResponseAssemblyProcess compressed(boolean compressed)
+    public GodToolsResponseAssemblyProcess setCompressed(boolean compressed)
     {
         this.compressed = compressed;
         return this;
     }
 
 
-    public GodToolsResponseAssemblyProcess withPixelDensity(PixelDensity pixelDensity)
+    public GodToolsResponseAssemblyProcess setPixelDensity(PixelDensity pixelDensity)
     {
         this.pixelDensity = pixelDensity;
         return this;
@@ -130,16 +130,14 @@ public class GodToolsResponseAssemblyProcess
 
     private Set<GodToolsPackage> loadPackages(LanguageCode languageCode, String packageCode)
     {
-        Set<GodToolsPackage> packages;
         if(Strings.isNullOrEmpty(packageCode))
         {
-            packages = packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity);
+            return packageService.getPackagesForLanguage(languageCode, revisionNumber, minimumInterpreterVersion, pixelDensity);
         }
         else
         {
-            packages = Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+            return Sets.newHashSet(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
         }
-        return packages;
     }
 
     private void createZipFolder(ZipOutputStream zipOutputStream, Set<GodToolsPackage> packages)

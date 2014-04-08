@@ -14,6 +14,7 @@ public class NewPackagePostData implements Set<NewPackage>
 {
 	Set<NewPackage> newPackageSet;
 
+
 	public NewPackagePostData(MultipartFormDataInput formDataInput)
 	{
 		newPackageSet = Sets.newHashSet();
@@ -27,6 +28,11 @@ public class NewPackagePostData implements Set<NewPackage>
 				newPackageSet.add(new NewPackage(inputPart));
 			}
 		}
+	}
+
+	public Set<NewPackage> getNewPackageSet()
+	{
+		return newPackageSet;
 	}
 
 	@Override
