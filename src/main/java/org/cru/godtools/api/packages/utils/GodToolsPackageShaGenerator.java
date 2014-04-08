@@ -16,7 +16,7 @@ public class GodToolsPackageShaGenerator
         try
         {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.convert(xmlFile);
+            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.xmlToStream(xmlFile);
 
             messageDigest.update(byteStream.toByteArray());
 

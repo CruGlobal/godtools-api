@@ -5,17 +5,15 @@ import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.GodToolsPackageShaGenerator;
-import org.cru.godtools.api.translations.Translation;
-import org.cru.godtools.api.translations.TranslationService;
+import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
 import org.cru.godtools.api.packages.domain.Package;
-import org.w3c.dom.Document;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/21/14.

@@ -1,7 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
 
-import org.cru.godtools.api.translations.TranslationService;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.cru.godtools.tests.AbstractServiceTest;
 import org.testng.Assert;

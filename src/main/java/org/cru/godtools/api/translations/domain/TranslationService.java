@@ -1,4 +1,4 @@
-package org.cru.godtools.api.translations;
+package org.cru.godtools.api.translations.domain;
 
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;

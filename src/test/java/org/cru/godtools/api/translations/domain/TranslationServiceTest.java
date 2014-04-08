@@ -1,4 +1,4 @@
-package org.cru.godtools.api.translations;
+package org.cru.godtools.api.translations.domain;
 
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.PackageService;

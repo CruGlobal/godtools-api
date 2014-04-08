@@ -5,8 +5,12 @@ import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -20,49 +24,57 @@ public class PackageResource
 {
 
     @Inject
-    GodToolsResponseAssemblyProcess packageProcess;
+	GodToolsResponseBuilder packageProcess;
     @Inject
     AuthorizationService authService;
 
     @GET
+	@Path("/{language}")
     @Produces({"application/zip", "application/xml"})
-    public Response getPackages(@QueryParam("language") String languageCode,
-                                @QueryParam("package") String packageCode,
-                                @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-                                @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-                                @QueryParam("compressed") String compressed,
-                                @QueryParam("revision-number") Integer revisionNumber,
-                                @QueryParam("density") String desiredPixelDensity,
-                                @HeaderParam("authorization") String authTokenHeader,
-                                @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
+    public Response getAllPackagesForLanguage(@PathParam("language") String languageCode,
+											  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+											  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+											  @QueryParam("compressed") String compressed,
+											  @QueryParam("revision-number") Integer revisionNumber,
+											  @QueryParam("density") String desiredPixelDensity,
+											  @HeaderParam("authorization") String authTokenHeader,
+											  @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
         authService.checkAuthorization(authTokenParam, authTokenHeader);
 
         return packageProcess
-                .forLanguage(languageCode)
-                .forPackage(packageCode)
-                .compressed(Boolean.parseBoolean(compressed))
-                .atRevisionNumber(revisionNumber)
-                .withPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
-                .forMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+                .setLanguageCode(languageCode)
+                .setCompressed(Boolean.parseBoolean(compressed))
+                .setRevisionNumber(revisionNumber)
+                .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
+                .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.loadPackages()
                 .buildResponse();
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_XML)
-    @Produces(MediaType.APPLICATION_XML)
-    public Response createNewPackage(@HeaderParam("authentication") String authCode)
-    {
+	@GET
+	@Path("/{language}/{package}")
+	@Produces({"application/zip", "application/xml"})
+	public Response getPackage(@PathParam("language") String languageCode,
+							   @PathParam("package") String packageCode,
+							   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							   @QueryParam("compressed") String compressed,
+							   @QueryParam("revision-number") Integer revisionNumber,
+							   @QueryParam("density") String desiredPixelDensity,
+							   @HeaderParam("authorization") String authTokenHeader,
+							   @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
+	{
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-        return Response.created(null).build();
-    }
-
-    @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    public Response updatePackage(@QueryParam("finished") String isFinished,
-                                  @HeaderParam("authentication") String authCode)
-    {
-
-        return Response.noContent().build();
-    }
+		return packageProcess
+				.setLanguageCode(languageCode)
+				.setPackageCode(packageCode)
+				.setCompressed(Boolean.parseBoolean(compressed))
+				.setRevisionNumber(revisionNumber)
+				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
+				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.loadPackages()
+				.buildResponse();
+	}
 }

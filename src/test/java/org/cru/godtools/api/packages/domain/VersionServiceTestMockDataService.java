@@ -1,7 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
-import org.cru.godtools.api.translations.Translation;
-import org.cru.godtools.api.translations.TranslationService;
+import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.testng.Assert;
 
 import java.util.List;
