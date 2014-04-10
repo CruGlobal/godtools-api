@@ -56,12 +56,12 @@ public class GodToolsPackageService extends GodToolsTranslationService
 				godToolsTranslation.getPageFiles(),
                 languageCode.toString(),
                 packageCode,
-				getImages());
+				getImages(packageCode));
     }
 
-    private List<Image> getImages()
+    private List<Image> getImages(String packageCode)
     {
-        return imageService.selectByPackageId(null);
+        return imageService.selectByPackageId(packageService.selectByCode(packageCode).getId());
     }
 
 
@@ -83,7 +83,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			godToolsPackages.add(new GodToolsPackage(godToolsTranslation, getImages()));
+			godToolsPackages.add(new GodToolsPackage(godToolsTranslation, getImages(godToolsTranslation.getPackageCode())));
 		}
 
         return godToolsPackages;

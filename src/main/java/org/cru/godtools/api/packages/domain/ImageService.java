@@ -56,6 +56,7 @@ public class ImageService
     {
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
+				.addParameter("packageId", image.getPackageId())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
@@ -67,6 +68,7 @@ public class ImageService
     {
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
+				.addParameter("packageId", image.getPackageId())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
@@ -80,7 +82,7 @@ public class ImageService
 		public static final String selectByPackageId = "SELECT * FROM images where package_id = :packageId";
         public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
         public static final String selectRetinaFiles = "SELECT * FROM images where filename like '%2x%'";
-        public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash, resolution) VALUES(:id, :imageContent, :filename, :imageHash, :resolution)";
-        public static final String update = "UPDATE images SET image_content = :imageContent, filename = :filename, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
+        public static final String insert = "INSERT INTO images(id, package_id, image_content, filename, image_hash, resolution) VALUES(:id, :packageId, :imageContent, :filename, :imageHash, :resolution)";
+        public static final String update = "UPDATE images SET package_id = :packageId, image_content = :imageContent, filename = :filename, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
     }
 }

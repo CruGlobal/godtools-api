@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages.utils;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
@@ -93,6 +94,7 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		Image image = new Image();
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
+		image.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
 		image.setResolution("High");
 		image.setFilename("test_image_1.png");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
