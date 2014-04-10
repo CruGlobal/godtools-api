@@ -136,18 +136,6 @@ public class GodToolsTranslationService
 		return version;
 	}
 
-	public Map<String, Image> getImagesForVersion(Version version)
-	{
-		Map<String, Image> images = Maps.newHashMap();
-
-		for(Image image : imageService.selectImagesForAllPages(pageService.selectByVersionId(version.getId()), PixelDensity.HIGH))
-		{
-			images.put(image.getFilename(), image);
-		}
-
-		return images;
-	}
-
 	public void saveDraftPages(NewTranslation newTranslation, Version currentDraftVersion, Map<String, Image> currentTranslationImages)
 	{
 		for(String filename : newTranslation.keySet())

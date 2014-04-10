@@ -98,7 +98,6 @@ public class TranslationResource
 					.setPackageCode(packageCode)
 					.setLanguageCode(languageCode)
 					.loadVersion()
-					.loadImages()
 					.saveTranslation(newTranslation)
 					.buildResponse();
 		}

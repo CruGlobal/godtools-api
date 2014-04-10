@@ -52,25 +52,6 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-	public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
-	{
-		Set<Image> images = Sets.newHashSet();
-
-		return images;
-	}
-
-	public Set<Image> selectImagesForAllPages(List<Page> pages, PixelDensity pixelDensity)
-	{
-		Set<Image> images = Sets.newHashSet();
-
-		for(Page page : pages)
-		{
-			images.addAll(selectImagesByPageId(page.getId(), pixelDensity));
-		}
-
-		return images;
-	}
-
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)

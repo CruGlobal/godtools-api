@@ -57,13 +57,6 @@ public class GodToolsTranslationUpdateProcess
 		return this;
 	}
 
-	public GodToolsTranslationUpdateProcess loadImages()
-	{
-		currentTranslationImages = godToolsTranslationService.getImagesForVersion(currentDraftVersion);
-
-		return this;
-	}
-
 	public GodToolsTranslationUpdateProcess saveTranslation(NewTranslation newTranslation)
 	{
 		currentDraftVersion.setPackageStructure(newTranslation.getPackageFile());
