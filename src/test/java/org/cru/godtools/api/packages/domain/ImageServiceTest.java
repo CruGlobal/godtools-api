@@ -29,14 +29,13 @@ public class ImageServiceTest extends AbstractServiceTest
 	{
 		super.setup();
 
-		imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
+		imageService = new ImageService(sqlConnection);
 
 		mockData = new ImageServiceTestMockDataService();
 
 		mockData.persistImage(imageService);
 		mockData.persistRetinaImage(imageService);
 		mockData.persistPage(new PageService(sqlConnection));
-		mockData.persistImagePageRelationships(new ImagePageRelationshipService(sqlConnection));
 	}
 
 	@Test
@@ -102,7 +101,7 @@ public class ImageServiceTest extends AbstractServiceTest
 
 		try
 		{
-			ImageService nonAutoCommitImageService = new ImageService(nonAutoCommitSqlConnection1, null);
+			ImageService nonAutoCommitImageService = new ImageService(nonAutoCommitSqlConnection1);
 
 			mockData.modifyImage(nonAutoCommitImageService);
 			mockData.validateModifiedImage(nonAutoCommitImageService.selectById(TEST_IMAGE_ID));

@@ -22,7 +22,7 @@ public class GodToolsPackageServiceTestMockDataService
 							   PackageService packageService,
 							   TranslationService translationService,
 							   VersionService versionService,
-							   PageService pageService, ImageService imageService, ImagePageRelationshipService imagePageRelationshipService)
+							   PageService pageService, ImageService imageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
@@ -30,7 +30,6 @@ public class GodToolsPackageServiceTestMockDataService
 		persistVersion(versionService);
 		persistPage(pageService);
 		persistImage(imageService);
-		persistImagePageRelationship(imagePageRelationshipService);
 	}
 
 	private void persistLanguage(LanguageService languageService)
@@ -100,16 +99,6 @@ public class GodToolsPackageServiceTestMockDataService
 		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
-	}
-
-	private void persistImagePageRelationship(ImagePageRelationshipService imagePageRelationshipService)
-	{
-		ImagePageRelationship imagePageRelationship = new ImagePageRelationship();
-		imagePageRelationship.setId(GodToolsPackageServiceTest.IMAGE_PAGE_RELATIONSHIP_ID);
-		imagePageRelationship.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
-		imagePageRelationship.setPageId(GodToolsPackageServiceTest.PAGE_ID);
-
-		imagePageRelationshipService.insert(imagePageRelationship);
 	}
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)

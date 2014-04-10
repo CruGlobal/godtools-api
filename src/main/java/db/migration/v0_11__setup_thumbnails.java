@@ -18,7 +18,7 @@ public class v0_11__setup_thumbnails implements JdbcMigration
     public void migrate(Connection connection) throws Exception
     {
         org.sql2o.Connection sqlConnection = MigrationProcess.getSql2oConnection();
-		ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
+		ImageService imageService = new ImageService(sqlConnection);
         VersionService versionService = new VersionService(sqlConnection);
 
         for(Version version : versionService.selectAllVersions())

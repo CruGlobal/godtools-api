@@ -1,11 +1,7 @@
 package db.migration;
 
-import com.google.common.collect.Lists;
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import com.sun.imageio.plugins.png.PNGImageReaderSpi;
 import org.cru.godtools.api.packages.domain.Image;
-import org.cru.godtools.api.packages.domain.ImagePageRelationship;
-import org.cru.godtools.api.packages.domain.ImagePageRelationshipService;
 import org.cru.godtools.api.packages.domain.ImageService;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.PageService;
@@ -27,8 +23,7 @@ public class V0_9__setup_page_images implements JdbcMigration
         org.sql2o.Connection sqlConnection = MigrationProcess.getSql2oConnection();
 
         PageService pageService = new PageService(sqlConnection);
-		ImageService imageService = new ImageService(sqlConnection, new ImagePageRelationshipService(sqlConnection));
-        ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
+		ImageService imageService = new ImageService(sqlConnection);
 
         for(Page page : pageService.selectAllPages())
         {
@@ -37,7 +32,6 @@ public class V0_9__setup_page_images implements JdbcMigration
                 String filename = element.getAttribute("backgroundimage");
                 Image image = imageService.selectByFilename(filename);
                 element.setAttribute("backgroundimage", image.getImageHash() + ".png");
-                imagePageRelationshipService.insert(new ImagePageRelationship(page, image));
             }
 
             for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(page.getXmlContent(), "page", "watermark"))
@@ -45,7 +39,6 @@ public class V0_9__setup_page_images implements JdbcMigration
                 String filename = element.getAttribute("watermark");
                 Image image = imageService.selectByFilename(filename);
                 element.setAttribute("watermark", image.getImageHash() + ".png");
-                imagePageRelationshipService.insert(new ImagePageRelationship(page, image));
             }
 
             for(Element element : XmlDocumentSearchUtilities.findElements(page.getXmlContent(), "image"))
@@ -53,7 +46,6 @@ public class V0_9__setup_page_images implements JdbcMigration
                 String filename = element.getTextContent();
                 Image image = imageService.selectByFilename(filename);
                 element.setTextContent(image.getImageHash() + ".png");
-                imagePageRelationshipService.insert(new ImagePageRelationship(page, image));
             }
 
             pageService.update(page);

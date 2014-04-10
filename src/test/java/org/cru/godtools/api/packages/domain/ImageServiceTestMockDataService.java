@@ -53,23 +53,6 @@ public class ImageServiceTestMockDataService
 		pageService.insert(page);
 	}
 
-	public void persistImagePageRelationships(ImagePageRelationshipService imagePageRelationshipService)
-	{
-		ImagePageRelationship imagePageRelationship = new ImagePageRelationship();
-		imagePageRelationship.setId(UUID.randomUUID());
-		imagePageRelationship.setPageId(ImageServiceTest.TEST_PAGE_ID);
-		imagePageRelationship.setImageId(ImageServiceTest.TEST_IMAGE_ID);
-
-		imagePageRelationshipService.insert(imagePageRelationship);
-
-		ImagePageRelationship retinaImagePageRelationship = new ImagePageRelationship();
-		retinaImagePageRelationship.setId(UUID.randomUUID());
-		retinaImagePageRelationship.setPageId(ImageServiceTest.TEST_PAGE_ID);
-		retinaImagePageRelationship.setImageId(ImageServiceTest.TEST_RETINA_IMAGE_ID);
-
-		imagePageRelationshipService.insert(retinaImagePageRelationship);
-	}
-
 	public void validateImage(Image image)
 	{
 		Assert.assertNotNull(image);
