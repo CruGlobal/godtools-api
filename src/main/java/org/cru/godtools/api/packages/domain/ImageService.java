@@ -14,13 +14,11 @@ import java.util.UUID;
 public class ImageService
 {
     Connection sqlConnection;
-	ImagePageRelationshipService imagePageRelationshipService;
 
     @Inject
-    public ImageService(Connection sqlConnection, ImagePageRelationshipService imagePageRelationshipService)
+    public ImageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-		this.imagePageRelationshipService = imagePageRelationshipService;
     }
 
     public List<Image> selectRetinaFiles()
@@ -49,12 +47,6 @@ public class ImageService
 	public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
 	{
 		Set<Image> images = Sets.newHashSet();
-
-		for(ImagePageRelationship relationship : imagePageRelationshipService.selectByPageId(pageId, pixelDensity))
-		{
-			Image image = selectById(relationship.getImageId());
-			if(image != null && image.getResolution().equalsIgnoreCase(pixelDensity.toString())) images.add(image);
-		}
 
 		return images;
 	}
