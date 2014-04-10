@@ -65,36 +65,6 @@ public class ImageServiceTest extends AbstractServiceTest
 	}
 
 	@Test
-	public void testSelectImagesByPageId()
-	{
-		Set<Image> retinaImages = imageService.selectImagesByPageId(TEST_PAGE_ID, PixelDensity.getEnum("High"));
-
-		Assert.assertEquals(retinaImages.size(), 1);
-
-		mockData.validateRetinaImage(retinaImages.iterator().next());
-
-		Set<Image> images = imageService.selectImagesByPageId(TEST_PAGE_ID, PixelDensity.getEnum("Medium"));
-
-		Assert.assertEquals(images.size(), 1);
-
-		mockData.validateImage(images.iterator().next());
-
-	}
-
-	@Test
-	public void testSelectAllImagesForPages()
-	{
-		PageService pageService = new PageService(sqlConnection);
-		List pages = Lists.newArrayList(pageService.selectById(TEST_PAGE_ID));
-
-		Set<Image> retinaImages = imageService.selectImagesForAllPages(pages, PixelDensity.getEnum("High"));
-
-		Assert.assertEquals(retinaImages.size(), 1);
-
-		mockData.validateRetinaImage(retinaImages.iterator().next());
-	}
-
-	@Test
 	public void testUpdate() throws Exception
 	{
 		Connection nonAutoCommitSqlConnection1 = sqlConnection.getSql2o().beginTransaction();

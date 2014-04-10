@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
@@ -14,26 +15,26 @@ import java.util.Set;
  */
 public class GodToolsPackage extends GodToolsTranslation
 {
-	private Set<Image> images = Sets.newHashSet();
+	private List<Image> images = Lists.newArrayList();
 
-	public GodToolsPackage(GodToolsTranslation godToolsTranslation, Set<Image> images)
+	public GodToolsPackage(GodToolsTranslation godToolsTranslation, List<Image> images)
 	{
 		super(godToolsTranslation.getPackageXml(),godToolsTranslation.getPageFiles(), godToolsTranslation.getLanguageCode(),godToolsTranslation.getPackageCode());
 		this.images = images;
 	}
 
-	public GodToolsPackage(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode, Set<Image> images)
+	public GodToolsPackage(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode, List<Image> images)
 	{
 		super(packageXml, pageFiles, languageCode, packageCode);
 		this.images = images;
 	}
 
-	public Set<Image> getImages()
+	public List<Image> getImages()
 	{
 		return images;
 	}
 
-	public void setImages(Set<Image> images)
+	public void setImages(List<Image> images)
 	{
 		this.images = images;
 	}

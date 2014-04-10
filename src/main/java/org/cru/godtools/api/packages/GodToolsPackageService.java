@@ -24,8 +24,6 @@ import java.util.Set;
 @Default
 public class GodToolsPackageService extends GodToolsTranslationService
 {
-	ImageService imageService;
-
     @Inject
     public GodToolsPackageService(PackageService packageService,
 								  VersionService versionService,
@@ -58,12 +56,12 @@ public class GodToolsPackageService extends GodToolsTranslationService
 				godToolsTranslation.getPageFiles(),
                 languageCode.toString(),
                 packageCode,
-				getImages(pixelDensity, godToolsTranslation.getPageFiles()));
+				getImages());
     }
 
-    private Set<Image> getImages(PixelDensity pixelDensity, List<Page> pages)
+    private List<Image> getImages()
     {
-        return imageService.selectImagesForAllPages(pages, pixelDensity);
+        return imageService.selectByPackageId(null);
     }
 
 
@@ -85,7 +83,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			godToolsPackages.add(new GodToolsPackage(godToolsTranslation, getImages(pixelDensity, godToolsTranslation.getPageFiles())));
+			godToolsPackages.add(new GodToolsPackage(godToolsTranslation, getImages()));
 		}
 
         return godToolsPackages;
