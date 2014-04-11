@@ -1,7 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.packages.GodToolsPackageService;
-import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
@@ -10,25 +10,25 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ryancarlson on 4/8/14.
  */
 public class GodToolsTranslationUpdateProcess
 {
-	private GodToolsPackageService godToolsPackageService;
+	private GodToolsTranslationService godToolsTranslationService;
 
 	private String packageCode;
 	private LanguageCode languageCode;
 
 	private Version currentDraftVersion;
-	private List<Page> currentDraftPages;
+	private Map<String, Image> currentTranslationImages;
 
 	@Inject
-	public GodToolsTranslationUpdateProcess(GodToolsPackageService godToolsPackageService)
+	public GodToolsTranslationUpdateProcess(GodToolsPackageService godToolsTranslationService)
 	{
-		this.godToolsPackageService = godToolsPackageService;
+		this.godToolsTranslationService = godToolsTranslationService;
 	}
 
 	public GodToolsTranslationUpdateProcess setPackageCode(String packageCode)
@@ -47,33 +47,24 @@ public class GodToolsTranslationUpdateProcess
 	{
 		try
 		{
-			currentDraftVersion = godToolsPackageService.getCurrentDraftVersion(packageCode,languageCode);
+			currentDraftVersion = godToolsTranslationService.getCurrentDraftVersion(packageCode,languageCode);
 
 		}
 		catch(ResourceNotFoundException e)
 		{
-			currentDraftVersion = godToolsPackageService.createNewVersion(packageCode, languageCode);
+			currentDraftVersion = godToolsTranslationService.createNewVersion(packageCode, languageCode);
 		}
 		return this;
 	}
 
 	public GodToolsTranslationUpdateProcess saveTranslation(NewTranslation newTranslation)
 	{
-		for(String filename : newTranslation.keySet())
-		{
-			if(!filename.contains("/"))
-			{
-				currentDraftVersion.setPackageStructure(newTranslation.get(filename));
-			}
-			else
-			{
-				godToolsPackageService.saveDraftPage(newTranslation.get(filename), filename, currentDraftVersion);
-			}
-		}
+		currentDraftVersion.setPackageStructure(newTranslation.getPackageFile());
+		godToolsTranslationService.saveDraftPages(newTranslation, currentDraftVersion, currentTranslationImages);
 
 		currentDraftVersion.calculateHash();
 
-		godToolsPackageService.updateVersion(currentDraftVersion);
+		godToolsTranslationService.updateVersion(currentDraftVersion);
 
 		return this;
 	}

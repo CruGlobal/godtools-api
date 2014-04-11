@@ -25,7 +25,6 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	public static final UUID VERSION_ID = UUID.randomUUID();
 	public static final UUID PAGE_ID = UUID.randomUUID();
 	public static final UUID IMAGE_ID = UUID.randomUUID();
-	public static final UUID IMAGE_PAGE_RELATIONSHIP_ID = UUID.randomUUID();
 
 	@Override
 	public void setup()
@@ -37,8 +36,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		TranslationService translationService = new TranslationService(sqlConnection);
 		VersionService versionService = new VersionService(sqlConnection);
 		PageService pageService = new PageService(sqlConnection);
-		ImagePageRelationshipService imagePageRelationshipService = new ImagePageRelationshipService(sqlConnection);
-		ImageService imageService = new ImageService(sqlConnection, imagePageRelationshipService);
+		ImageService imageService = new ImageService(sqlConnection);
 
 		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
@@ -49,8 +47,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 				translationService,
 				versionService,
 				pageService,
-				imageService,
-				imagePageRelationshipService);
+				imageService);
 	}
 
 }

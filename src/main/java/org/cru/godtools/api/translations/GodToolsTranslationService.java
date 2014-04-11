@@ -9,11 +9,11 @@ import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
-import org.w3c.dom.Document;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -131,28 +131,35 @@ public class GodToolsTranslationService
 		return version;
 	}
 
-
-	public void saveDraftPage(Document document, String filename, Version currentDraftVersion)
+	public void saveDraftPages(NewTranslation newTranslation, Version currentDraftVersion, Map<String, Image> currentTranslationImages)
 	{
-		Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
-
-		if(draftPage != null)
+		for(String filename : newTranslation.keySet())
 		{
-			draftPage.setXmlContent(document);
-			draftPage.calculateHash();
+			Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
 
-			pageService.update(draftPage);
-		}
-		else
-		{
-			Page newDraftPage = new Page();
-			newDraftPage.setId(UUID.randomUUID());
-			newDraftPage.setVersionId(currentDraftVersion.getId());
-			newDraftPage.setFilename(filename);
-			newDraftPage.setXmlContent(document);
-			newDraftPage.calculateHash();
+			if(draftPage != null)
+			{
+				draftPage.setXmlContent(newTranslation.get(filename));
+				draftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+				draftPage.calculateHash();
 
-			pageService.insert(newDraftPage);
+				pageService.update(draftPage);
+			}
+			else
+			{
+				Page newDraftPage = new Page();
+				newDraftPage.setId(UUID.randomUUID());
+				newDraftPage.setVersionId(currentDraftVersion.getId());
+				newDraftPage.setFilename(filename);
+
+				pageService.insert(newDraftPage);
+
+				newDraftPage.setXmlContent(newTranslation.get(filename));
+				newDraftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+				newDraftPage.calculateHash();
+
+				pageService.update(newDraftPage);
+			}
 		}
 	}
 

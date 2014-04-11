@@ -27,15 +27,23 @@ public class ImageReader
 		}
 	}
 
-    public static byte[] read(File imageFile) throws IOException
+    public static byte[] read(File imageFile)
     {
-        BufferedImage bufferedImage = ImageIO.read(imageFile);
+		try
+		{
+			BufferedImage bufferedImage = ImageIO.read(imageFile);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        ImageIO.write(bufferedImage, "png", bos);
-        bos.flush();
+			ImageIO.write(bufferedImage, "png", bos);
+			bos.flush();
 
-        return bos.toByteArray();
+			return bos.toByteArray();
+		}
+		catch(IOException e)
+		{
+			Throwables.propagate(e);
+			return null;
+		}
     }
 }

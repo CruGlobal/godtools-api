@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages.utils;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
@@ -22,7 +23,7 @@ public class GodToolsPackageServiceTestMockDataService
 							   PackageService packageService,
 							   TranslationService translationService,
 							   VersionService versionService,
-							   PageService pageService, ImageService imageService, ImagePageRelationshipService imagePageRelationshipService)
+							   PageService pageService, ImageService imageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
@@ -30,7 +31,6 @@ public class GodToolsPackageServiceTestMockDataService
 		persistVersion(versionService);
 		persistPage(pageService);
 		persistImage(imageService);
-		persistImagePageRelationship(imagePageRelationshipService);
 	}
 
 	private void persistLanguage(LanguageService languageService)
@@ -95,21 +95,10 @@ public class GodToolsPackageServiceTestMockDataService
 		Image image = new Image();
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
 		image.setResolution("High");
-		image.setFilename("test_image_1.png");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
-	}
-
-	private void persistImagePageRelationship(ImagePageRelationshipService imagePageRelationshipService)
-	{
-		ImagePageRelationship imagePageRelationship = new ImagePageRelationship();
-		imagePageRelationship.setId(GodToolsPackageServiceTest.IMAGE_PAGE_RELATIONSHIP_ID);
-		imagePageRelationship.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
-		imagePageRelationship.setPageId(GodToolsPackageServiceTest.PAGE_ID);
-
-		imagePageRelationshipService.insert(imagePageRelationship);
 	}
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)

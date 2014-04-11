@@ -14,20 +14,11 @@ import java.util.UUID;
 public class ImageService
 {
     Connection sqlConnection;
-	ImagePageRelationshipService imagePageRelationshipService;
 
     @Inject
-    public ImageService(Connection sqlConnection, ImagePageRelationshipService imagePageRelationshipService)
+    public ImageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-		this.imagePageRelationshipService = imagePageRelationshipService;
-    }
-
-    public List<Image> selectRetinaFiles()
-    {
-        return sqlConnection.createQuery(ImageQueries.selectRetinaFiles)
-                .setAutoDeriveColumnNames(true)
-                .executeAndFetch(Image.class);
     }
 
     public Image selectById(UUID id)
@@ -38,37 +29,12 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-    public Image selectByFilename(String filename)
-    {
-        return sqlConnection.createQuery(ImageQueries.selectByFilename)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("filename", filename)
-                .executeAndFetchFirst(Image.class);
-    }
-
-	public Set<Image> selectImagesByPageId(UUID pageId, PixelDensity pixelDensity)
+	public Image selectByHash(String imageHash)
 	{
-		Set<Image> images = Sets.newHashSet();
-
-		for(ImagePageRelationship relationship : imagePageRelationshipService.selectByPageId(pageId, pixelDensity))
-		{
-			Image image = selectById(relationship.getImageId());
-			if(image != null && image.getResolution().equalsIgnoreCase(pixelDensity.toString())) images.add(image);
-		}
-
-		return images;
-	}
-
-	public Set<Image> selectImagesForAllPages(List<Page> pages, PixelDensity pixelDensity)
-	{
-		Set<Image> images = Sets.newHashSet();
-
-		for(Page page : pages)
-		{
-			images.addAll(selectImagesByPageId(page.getId(), pixelDensity));
-		}
-
-		return images;
+		return sqlConnection.createQuery(ImageQueries.selectByHash)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("imageHash", imageHash)
+				.executeAndFetchFirst(Image.class);
 	}
 
     public void update(Image image)
@@ -76,7 +42,6 @@ public class ImageService
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -87,7 +52,6 @@ public class ImageService
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -96,9 +60,9 @@ public class ImageService
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
-        public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
-        public static final String selectRetinaFiles = "SELECT * FROM images where filename like '%2x%'";
-        public static final String insert = "INSERT INTO images(id, image_content, filename, image_hash, resolution) VALUES(:id, :imageContent, :filename, :imageHash, :resolution)";
-        public static final String update = "UPDATE images SET image_content = :imageContent, filename = :filename, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
-    }
+		public static final String selectByHash = "SELECT * FROM images WHERE image_hash = :imageHash";
+        public static final String insert = "INSERT INTO images(id, image_content, image_hash, resolution) VALUES(:id, :imageContent, :imageHash, :resolution)";
+        public static final String update = "UPDATE images SET image_content = :imageContent, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
+
+	}
 }

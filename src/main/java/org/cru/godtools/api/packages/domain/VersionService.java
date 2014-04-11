@@ -96,13 +96,6 @@ public class VersionService
                 .executeUpdate();
     }
 
-    public List<Version> selectAllVersions()
-    {
-        return sqlConnection.createQuery(VersionQueries.selectAll)
-                .setAutoDeriveColumnNames(true)
-                .executeAndFetch(Version.class);
-    }
-
     public void update(Version version)
     {
         sqlConnection.createQuery(VersionQueries.update)

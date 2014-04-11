@@ -9,7 +9,6 @@ public class Image
 {
     private UUID id;
     private byte[] imageContent;
-    private String filename;
     private String imageHash;
     private String resolution;
 
@@ -23,7 +22,7 @@ public class Image
         this.id = id;
     }
 
-    public byte[] getImageContent()
+	public byte[] getImageContent()
     {
         return imageContent;
     }
@@ -31,16 +30,6 @@ public class Image
     public void setImageContent(byte[] imageContent)
     {
         this.imageContent = imageContent;
-    }
-
-    public String getFilename()
-    {
-        return filename;
-    }
-
-    public void setFilename(String filename)
-    {
-        this.filename = filename;
     }
 
     public String getImageHash()

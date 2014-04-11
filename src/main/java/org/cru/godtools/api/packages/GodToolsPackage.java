@@ -1,10 +1,14 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.domain.Image;
+import org.cru.godtools.api.packages.domain.ImageService;
 import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.List;
 import java.util.Set;
@@ -14,27 +18,47 @@ import java.util.Set;
  */
 public class GodToolsPackage extends GodToolsTranslation
 {
-	private Set<Image> images = Sets.newHashSet();
+	private List<Image> images = Lists.newArrayList();
 
-	public GodToolsPackage(GodToolsTranslation godToolsTranslation, Set<Image> images)
+	public GodToolsPackage(GodToolsTranslation godToolsTranslation)
 	{
 		super(godToolsTranslation.getPackageXml(),godToolsTranslation.getPageFiles(), godToolsTranslation.getLanguageCode(),godToolsTranslation.getPackageCode());
-		this.images = images;
 	}
 
-	public GodToolsPackage(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode, Set<Image> images)
+	public GodToolsPackage(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode)
 	{
 		super(packageXml, pageFiles, languageCode, packageCode);
-		this.images = images;
 	}
 
-	public Set<Image> getImages()
+	public List<Image> getImages()
 	{
 		return images;
 	}
 
-	public void setImages(Set<Image> images)
+	public void setImages(ImageService imageService)
 	{
-		this.images = images;
+		for(Page page : pageFiles)
+		{
+			for(String imageHash : page.getReferencedImageHashSet())
+			{
+
+				Image image = imageService.selectByHash(imageHash);
+				if(image == null)
+				{
+					System.out.println("Couldn't find..." + imageHash);
+				}
+				images.add(image);
+			}
+		}
+
+		addThumbnails(imageService);
+	}
+
+	private void addThumbnails(ImageService imageService)
+	{
+		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(packageXml, "page", "thumb"))
+		{
+			images.add(imageService.selectByHash((element.getAttribute("thumb").replace(".png", ""))));
+		}
 	}
 }

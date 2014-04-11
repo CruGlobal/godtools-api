@@ -89,32 +89,6 @@ public class PackageDirectory
         return languages;
     }
 
-    public List<Image> buildIcons() throws URISyntaxException, IOException
-    {
-        File directory = getDirectory();
-
-        List<Image> images = Lists.newArrayList();
-
-        for(File file : directory.listFiles())
-        {
-            if(file.isDirectory() && file.getName().equalsIgnoreCase("icons"))
-            {
-                for(File imageFile : file.listFiles())
-                {
-                Image image = new Image();
-                image.setId(UUID.randomUUID());
-                image.setFilename(imageFile.getName());
-                image.setImageContent(ImageReader.read(imageFile));
-                image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
-                image.setResolution("High");
-                images.add(image);
-                }
-            }
-        }
-
-        return images;
-    }
-
     public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
     {
         String path = "/data/SnuffyPackages/" + packageCode + "/";
