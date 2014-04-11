@@ -47,16 +47,6 @@ public class ImageServiceTest extends AbstractServiceTest
 	}
 
 	@Test
-	public void testSelectRetinaImages()
-	{
-		List<Image> retinaImages = imageService.selectRetinaFiles();
-
-		Assert.assertEquals(retinaImages.size(), 1);
-
-		mockData.validateRetinaImage(retinaImages.get(0));
-	}
-
-	@Test
 	public void testUpdate() throws Exception
 	{
 		Connection nonAutoCommitSqlConnection1 = sqlConnection.getSql2o().beginTransaction();

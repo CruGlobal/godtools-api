@@ -21,13 +21,6 @@ public class ImageService
         this.sqlConnection = sqlConnection;
     }
 
-    public List<Image> selectRetinaFiles()
-    {
-        return sqlConnection.createQuery(ImageQueries.selectRetinaFiles)
-                .setAutoDeriveColumnNames(true)
-                .executeAndFetch(Image.class);
-    }
-
     public Image selectById(UUID id)
     {
         return sqlConnection.createQuery(ImageQueries.selectById)
@@ -36,21 +29,11 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-	public List<Image> selectByPackageId(UUID packageId)
-	{
-		return sqlConnection.createQuery(ImageQueries.selectByPackageId)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("packageId", packageId)
-				.executeAndFetch(Image.class);
-	}
-
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
-				.addParameter("packageId", image.getPackageId())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -60,9 +43,7 @@ public class ImageService
     {
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
-				.addParameter("packageId", image.getPackageId())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("filename", image.getFilename())
                 .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -71,10 +52,7 @@ public class ImageService
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
-		public static final String selectByPackageId = "SELECT * FROM images where package_id = :packageId";
-        public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
-        public static final String selectRetinaFiles = "SELECT * FROM images where filename like '%2x%'";
-        public static final String insert = "INSERT INTO images(id, package_id, image_content, filename, image_hash, resolution) VALUES(:id, :packageId, :imageContent, :filename, :imageHash, :resolution)";
-        public static final String update = "UPDATE images SET package_id = :packageId, image_content = :imageContent, filename = :filename, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
+        public static final String insert = "INSERT INTO images(id, image_content, image_hash, resolution) VALUES(:id, :packageId, :imageContent, :imageHash, :resolution)";
+        public static final String update = "UPDATE images SET image_content = :imageContent, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
     }
 }

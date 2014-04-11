@@ -18,8 +18,8 @@ public class v0_13__adjust_resolutions implements JdbcMigration
         org.sql2o.Connection sqlConnection = MigrationProcess.getSql2oConnection();
 		ImageService imageService = new ImageService(sqlConnection);
 
-        for(Image retinaBigBrotherImage : imageService.selectRetinaFiles())
-        {
+//        for(Image retinaBigBrotherImage : imageService.selectRetinaFiles())
+//        {
 //            Image littleBrotherImage = imageService.selectByFilename(retinaBigBrotherImage.getFilename().replace("@2x", ""));
 //
 //            if(littleBrotherImage != null)
@@ -27,6 +27,6 @@ public class v0_13__adjust_resolutions implements JdbcMigration
 //                littleBrotherImage.setResolution("Medium");
 //                imageService.update(littleBrotherImage);
 //            }
-        }
+//        }
     }
 }

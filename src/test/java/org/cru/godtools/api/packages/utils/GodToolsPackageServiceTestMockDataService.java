@@ -94,9 +94,7 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		Image image = new Image();
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
-		image.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
 		image.setResolution("High");
-		image.setFilename("test_image_1.png");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 

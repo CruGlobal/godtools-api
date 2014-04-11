@@ -8,7 +8,6 @@ import java.util.UUID;
 public class Image
 {
     private UUID id;
-	private UUID packageId;
     private byte[] imageContent;
     private String imageHash;
     private String resolution;
@@ -23,16 +22,6 @@ public class Image
         this.id = id;
     }
 
-	public UUID getPackageId()
-	{
-		return packageId;
-	}
-
-	public void setPackageId(UUID packageId)
-	{
-		this.packageId = packageId;
-	}
-
 	public byte[] getImageContent()
     {
         return imageContent;
@@ -41,16 +30,6 @@ public class Image
     public void setImageContent(byte[] imageContent)
     {
         this.imageContent = imageContent;
-    }
-
-    public String getFilename()
-    {
-        return filename;
-    }
-
-    public void setFilename(String filename)
-    {
-        this.filename = filename;
     }
 
     public String getImageHash()

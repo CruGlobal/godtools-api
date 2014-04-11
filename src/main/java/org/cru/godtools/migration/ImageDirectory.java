@@ -45,7 +45,6 @@ public class ImageDirectory
 		{
 			Image image = new Image();
 			image.setId(UUID.randomUUID());
-			image.setFilename(file.getName());
 			image.setImageContent(ImageReader.read(file));
 			image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 			image.setResolution("High");
@@ -64,11 +63,10 @@ public class ImageDirectory
 		{
 			Image image = new Image();
 			image.setId(UUID.randomUUID());
-			image.setFilename(file.getName());
 			image.setImageContent(ImageReader.read(file));
 			image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 			image.setResolution("High");
-			images.put(image.getFilename(), image);
+			images.put(file.getName(), image);
 		}
 
 		return images;

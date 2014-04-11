@@ -61,7 +61,8 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
     private List<Image> getImages(String packageCode)
     {
-        return imageService.selectByPackageId(packageService.selectByCode(packageCode).getId());
+		return null;
+//        return imageService.selectByPackageId(packageService.selectByCode(packageCode).getId());
     }
 
 
