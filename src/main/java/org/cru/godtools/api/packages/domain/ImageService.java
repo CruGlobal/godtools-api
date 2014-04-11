@@ -44,14 +44,6 @@ public class ImageService
 				.executeAndFetch(Image.class);
 	}
 
-    public Image selectByFilename(String filename)
-    {
-        return sqlConnection.createQuery(ImageQueries.selectByFilename)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("filename", filename)
-                .executeAndFetchFirst(Image.class);
-    }
-
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)

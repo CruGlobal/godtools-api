@@ -20,13 +20,13 @@ public class v0_13__adjust_resolutions implements JdbcMigration
 
         for(Image retinaBigBrotherImage : imageService.selectRetinaFiles())
         {
-            Image littleBrotherImage = imageService.selectByFilename(retinaBigBrotherImage.getFilename().replace("@2x", ""));
-
-            if(littleBrotherImage != null)
-            {
-                littleBrotherImage.setResolution("Medium");
-                imageService.update(littleBrotherImage);
-            }
+//            Image littleBrotherImage = imageService.selectByFilename(retinaBigBrotherImage.getFilename().replace("@2x", ""));
+//
+//            if(littleBrotherImage != null)
+//            {
+//                littleBrotherImage.setResolution("Medium");
+//                imageService.update(littleBrotherImage);
+//            }
         }
     }
 }

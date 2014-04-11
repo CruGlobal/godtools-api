@@ -47,14 +47,6 @@ public class ImageServiceTest extends AbstractServiceTest
 	}
 
 	@Test
-	public void testSelectByFilename()
-	{
-		Image image = imageService.selectByFilename("image.png");
-
-		mockData.validateImage(image);
-	}
-
-	@Test
 	public void testSelectRetinaImages()
 	{
 		List<Image> retinaImages = imageService.selectRetinaFiles();

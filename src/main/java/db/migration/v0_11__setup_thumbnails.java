@@ -25,11 +25,11 @@ public class v0_11__setup_thumbnails implements JdbcMigration
         {
             for(Element pageElement : XmlDocumentSearchUtilities.findElementsWithAttribute(version.getPackageStructure(),"page", "thumb"))
             {
-                Image referencedThumbnail = imageService.selectByFilename(pageElement.getAttribute("thumb"));
-                if(referencedThumbnail != null)
-                {
-                    pageElement.setAttribute("thumb", referencedThumbnail.getImageHash() + ".png");
-                }
+//                Image referencedThumbnail = imageService.selectByFilename(pageElement.getAttribute("thumb"));
+//                if(referencedThumbnail != null)
+//                {
+//                    pageElement.setAttribute("thumb", referencedThumbnail.getImageHash() + ".png");
+//                }
 
                 versionService.update(version);
             }
