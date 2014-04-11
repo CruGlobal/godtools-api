@@ -31,7 +31,28 @@ public class LanguageCode
                 (Strings.isNullOrEmpty(getSubculture()) ? "" : "_" + getSubculture());
     }
 
-    public String getLanguageCode()
+	@Override
+	public int hashCode()
+	{
+		if(providedLanguageCode != null) return 31 * providedLanguageCode.hashCode();
+		else return 31;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj == null) return false;
+		if(! (obj instanceof LanguageCode)) return false;
+
+		LanguageCode languageCode = (LanguageCode) obj;
+
+		if(providedLanguageCode == null && languageCode.providedLanguageCode != null) return false;
+		if(providedLanguageCode == null && languageCode.providedLanguageCode == null) return true;
+
+		return languageCode.providedLanguageCode.equals(providedLanguageCode);
+	}
+
+	public String getLanguageCode()
     {
         String[] languageCodeParts = providedLanguageCode.split("_");
 

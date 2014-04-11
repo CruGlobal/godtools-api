@@ -13,7 +13,6 @@ public class KnownGodtoolsPackages
 
     static
     {
-        packageNames.add("cwg");
         packageNames.add("fourlaws");
         packageNames.add("kgp");
         packageNames.add("satisfied");

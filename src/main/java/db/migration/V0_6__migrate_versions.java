@@ -7,6 +7,7 @@ import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.EstonianLanguageCode;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
@@ -39,6 +40,8 @@ public class V0_6__migrate_versions implements JdbcMigration
             for(Translation translation : translations)
             {
                 Language language = languageService.selectLanguageById(translation.getLanguageId());
+
+				new EstonianLanguageCode().addHeartbeatSubculture(language);
 
                 Version version = new Version(translation, 1, true);
 

@@ -10,6 +10,7 @@ import org.cru.godtools.api.packages.domain.VersionService;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.EstonianLanguageCode;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PageDirectory;
@@ -40,6 +41,9 @@ public class V0_7__migrate_pages implements JdbcMigration
             for(Translation translation : translationsForPackage)
             {
                 Language languageForTranslation = languageService.selectLanguageById(translation.getLanguageId());
+
+				new EstonianLanguageCode().addHeartbeatSubculture(languageForTranslation);
+
                 PageDirectory pageDirectory = new PageDirectory(packageCode, languageForTranslation.getPath());
 
                 for(Page page : pageDirectory.buildPages(versionService.selectLatestVersionForTranslation(translation.getId())))

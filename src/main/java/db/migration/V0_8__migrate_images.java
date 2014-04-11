@@ -8,6 +8,7 @@ import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.EstonianLanguageCode;
 import org.cru.godtools.migration.ImageDirectory;
 import org.cru.godtools.migration.ImageReader;
 import org.cru.godtools.migration.ImagesImageDirectory;
@@ -48,7 +49,8 @@ public class V0_8__migrate_images implements JdbcMigration
             for(Translation translation : translationsForPackage)
             {
                 final Language languageForTranslation = languageService.selectLanguageById(translation.getLanguageId());
-				if("classic".equalsIgnoreCase(languageForTranslation.getSubculture())) continue;
+
+				new EstonianLanguageCode().addHeartbeatSubculture(languageForTranslation);
 
 				ImagesImageDirectory imagesDirectory = new ImagesImageDirectory("/data/SnuffyPackages/" + packageCode + "/" + languageForTranslation.getPath());
 

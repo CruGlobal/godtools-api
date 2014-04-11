@@ -8,6 +8,7 @@ import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.EstonianLanguageCode;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.ThumbsImageDirectory;
@@ -43,7 +44,7 @@ public class v0_10__setup_package_xml implements JdbcMigration
 			{
 				Language languageForCurrentTranslation = languageService.selectLanguageById(translation.getLanguageId());
 
-				if("classic".equalsIgnoreCase(languageForCurrentTranslation.getSubculture())) continue;
+				new EstonianLanguageCode().addHeartbeatSubculture(languageForCurrentTranslation);
 
 				for(Version version : versionService.selectByTranslationId(translation.getId()))
 				{
