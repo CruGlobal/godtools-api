@@ -1,6 +1,5 @@
 package org.cru.godtools.api.translations;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
@@ -10,7 +9,6 @@ import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
-import org.w3c.dom.Document;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;

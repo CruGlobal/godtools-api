@@ -45,7 +45,6 @@ public class Page
 		}
 	}
 
-
 	public void calculateHash()
 	{
 		setPageHash(ShaGenerator.calculateHash(getXmlContent()));
@@ -89,6 +88,7 @@ public class Page
     public void setXmlContent(Document xmlContent)
     {
         this.xmlContent = xmlContent;
+
     }
 
     public String getDescription()

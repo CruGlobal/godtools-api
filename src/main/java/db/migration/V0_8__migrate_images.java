@@ -8,16 +8,22 @@ import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.ImageDirectory;
 import org.cru.godtools.migration.ImageReader;
+import org.cru.godtools.migration.ImagesImageDirectory;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
 import org.cru.godtools.migration.PageDirectory;
+import org.cru.godtools.migration.ThumbsImageDirectory;
 
+import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -41,34 +47,59 @@ public class V0_8__migrate_images implements JdbcMigration
 
             for(Translation translation : translationsForPackage)
             {
-                Language languageForTranslation = languageService.selectLanguageById(translation.getLanguageId());
-                PageDirectory pageDirectory = new PageDirectory(packageCode, languageForTranslation.getPath());
+                final Language languageForTranslation = languageService.selectLanguageById(translation.getLanguageId());
+				if("classic".equalsIgnoreCase(languageForTranslation.getSubculture())) continue;
 
-                for(Image image : pageDirectory.buildImages())
-                {
-                    imageService.insert(image);
-                }
-            }
+				ImagesImageDirectory imagesDirectory = new ImagesImageDirectory("/data/SnuffyPackages/" + packageCode + "/" + languageForTranslation.getPath());
 
-            PackageDirectory packageDirectory = new PackageDirectory(packageCode);
+				try
+				{
+					for (Image image : imagesDirectory.getImagesSet())
+					{
+						imageService.insert(image);
+					}
+				}
+				catch(NullPointerException npe)
+				{
+					System.out.println("Skipping directory: " + imagesDirectory.getPath());
+				}
 
-            for(Image icon : packageDirectory.buildIcons())
-            {
-                imageService.insert(icon);
-            }
-        }
+				ThumbsImageDirectory thumbsDirectory = new ThumbsImageDirectory("/data/SnuffyPackages/" + packageCode + "/" + languageForTranslation.getPath());
 
-        URL url = this.getClass().getResource("/data/SnuffyPackages/shared");
-        File sharedDirectory = new File(url.toURI());
+				try
+				{
+					for(Image image : thumbsDirectory.getImagesSet())
+					{
+						imageService.insert(image);
+					}
+				}
+				catch(NullPointerException npe)
+				{
+					System.out.println("Skipping directory: " + thumbsDirectory.getPath());
+				}
+			}
 
-        for(File sharedImage : sharedDirectory.listFiles())
+			ImageDirectory iconImageDirectory = new ImageDirectory("/data/SnuffyPackages/" + packageCode + "/icons");
+
+			try
+			{
+				for (Image icon : iconImageDirectory.getImagesSet())
+				{
+					imageService.insert(icon);
+				}
+			}
+			catch(NullPointerException npe)
+			{
+				System.out.println("Skipping directory: " + iconImageDirectory.getPath());
+			}
+
+
+		}
+
+		ImageDirectory sharedImagesDirectory = new ImageDirectory("/data/SnuffyPackages/shared");
+
+        for(Image image : sharedImagesDirectory.getImagesSet())
         {
-            Image image = new Image();
-            image.setId(UUID.randomUUID());
-            image.setFilename(sharedImage.getName());
-            image.setImageContent(ImageReader.read(sharedImage));
-            image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
-            image.setResolution("High");
             imageService.insert(image);
         }
     }

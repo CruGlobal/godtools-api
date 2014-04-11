@@ -1,6 +1,8 @@
 package org.cru.godtools.migration;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.cru.godtools.api.packages.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.Version;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -29,13 +32,11 @@ import java.util.UUID;
 public class PageDirectory
 {
 
-    private String packageCode;
-    private String translationPath;
+	private String path;
 
     public PageDirectory(String packageCode, String translationPath)
     {
-        this.packageCode = packageCode;
-        this.translationPath = translationPath;
+		this.path = "/data/SnuffyPackages/" + packageCode + "/" + translationPath;
     }
 
     public List<Page> buildPages(Version version) throws URISyntaxException, ParserConfigurationException, SAXException, IOException
@@ -52,7 +53,8 @@ public class PageDirectory
                 page.setVersionId(version.getId());
                 page.setFilename(file.getName());
                 page.setXmlContent(getPageXml(file));
-                page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
+				page.replaceImageNamesWithImageHashes(getAllAvailableImagesByFilenameMap());
+                page.calculateHash();
                 pages.add(page);
             }
         }
@@ -60,49 +62,29 @@ public class PageDirectory
         return pages;
     }
 
-    public List<Image> buildImages() throws URISyntaxException, IOException
+    private File getDirectory()
     {
-        File directory = getDirectory();
-        List<Image> images = Lists.newArrayList();
-
-        for(File file : directory.listFiles())
-        {
-            if(file.isDirectory())
-            {
-                for(File imageFile : file.listFiles())
-                {
-                    Image image = new Image();
-                    image.setId(UUID.randomUUID());
-                    image.setFilename(buildFileName(imageFile.getName()));
-                    image.setImageContent(ImageReader.read(imageFile));
-                    image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
-                    image.setResolution("High");
-                    images.add(image);
-                }
-            }
-        }
-
-        return images;
+		try
+		{
+			URL url = this.getClass().getResource(path);
+			return new File(url.toURI());
+		}
+		catch(Exception e)
+		{
+			Throwables.propagate(e);
+			return null;
+		}
     }
 
-    private File getDirectory() throws URISyntaxException
-    {
-        URL url = this.getClass().getResource("/data/SnuffyPackages/" + packageCode + "/" + translationPath);
-        return new File(url.toURI());
-    }
+	private Map<String, Image> getAllAvailableImagesByFilenameMap()
+	{
+		return ImageDirectory.getCombinedImageByFilenameMap(new ThumbsImageDirectory(path), new ImagesImageDirectory(path), new ImageDirectory("/data/SnuffyPackages/shared"));
+	}
+
 
     private Document getPageXml(File pageFile) throws IOException, SAXException, ParserConfigurationException
     {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         return builder.parse(pageFile);
-    }
-
-    private String buildFileName(String filename )
-    {
-        if(translationPath.contains("classic"))
-        {
-            return packageCode + "_" + translationPath + "_" + filename;
-        }
-        return filename;
     }
 }
