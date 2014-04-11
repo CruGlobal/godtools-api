@@ -49,10 +49,8 @@ CREATE TABLE image_resolutions (
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
-  package_id uuid REFERENCES packages(id),
   resolution text REFERENCES image_resolutions(resolution),
   image_content bytea,
-  filename text,
   image_hash text
 );
 

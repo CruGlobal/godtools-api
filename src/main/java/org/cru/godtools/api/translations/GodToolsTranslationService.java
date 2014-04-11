@@ -27,7 +27,6 @@ public class GodToolsTranslationService
 	protected TranslationService translationService;
 	protected LanguageService languageService;
 	protected PageService pageService;
-	protected ImageService imageService;
 
 	public GodToolsTranslationService(){}
 
@@ -36,15 +35,13 @@ public class GodToolsTranslationService
 								  VersionService versionService,
 								  TranslationService translationService,
 								  LanguageService languageService,
-								  PageService pageService,
-								  ImageService imageService)
+								  PageService pageService)
 	{
 		this.packageService = packageService;
 		this.versionService = versionService;
 		this.translationService = translationService;
 		this.languageService = languageService;
 		this.pageService = pageService;
-		this.imageService = imageService;
 	}
 
 	/**

@@ -29,6 +29,14 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
+	public Image selectByHash(String imageHash)
+	{
+		return sqlConnection.createQuery(ImageQueries.selectByHash)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("imageHash", imageHash)
+				.executeAndFetchFirst(Image.class);
+	}
+
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
@@ -52,7 +60,9 @@ public class ImageService
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
-        public static final String insert = "INSERT INTO images(id, image_content, image_hash, resolution) VALUES(:id, :packageId, :imageContent, :imageHash, :resolution)";
+		public static final String selectByHash = "SELECT * FROM images WHERE image_hash = :imageHash";
+        public static final String insert = "INSERT INTO images(id, image_content, image_hash, resolution) VALUES(:id, :imageContent, :imageHash, :resolution)";
         public static final String update = "UPDATE images SET image_content = :imageContent, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
-    }
+
+	}
 }

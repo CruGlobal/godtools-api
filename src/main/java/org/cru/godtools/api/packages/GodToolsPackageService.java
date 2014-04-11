@@ -24,7 +24,10 @@ import java.util.Set;
 @Default
 public class GodToolsPackageService extends GodToolsTranslationService
 {
-    @Inject
+	private ImageService imageService;
+
+
+	@Inject
     public GodToolsPackageService(PackageService packageService,
 								  VersionService versionService,
 								  TranslationService translationService,
@@ -32,7 +35,8 @@ public class GodToolsPackageService extends GodToolsTranslationService
 								  PageService pageService,
 								  ImageService imageService)
     {
-		super(packageService,versionService,translationService,languageService,pageService, imageService);
+		super(packageService,versionService,translationService,languageService,pageService);
+		this.imageService = imageService;
     }
 
 	/**
@@ -52,19 +56,15 @@ public class GodToolsPackageService extends GodToolsTranslationService
     {
 		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion);
 
-        return new GodToolsPackage(godToolsTranslation.getPackageXml(),
+        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation.getPackageXml(),
 				godToolsTranslation.getPageFiles(),
                 languageCode.toString(),
-                packageCode,
-				getImages(packageCode));
-    }
+                packageCode);
 
-    private List<Image> getImages(String packageCode)
-    {
-		return null;
-//        return imageService.selectByPackageId(packageService.selectByCode(packageCode).getId());
-    }
+		godToolsPackage.setImages(imageService);
 
+		return godToolsPackage;
+    }
 
     /**
      * Retrieves all packages for specified language at specified revision
@@ -84,9 +84,11 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			godToolsPackages.add(new GodToolsPackage(godToolsTranslation, getImages(godToolsTranslation.getPackageCode())));
+			GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
+			godToolsPackage.setImages(imageService);
+			godToolsPackages.add(godToolsPackage);
 		}
 
-        return godToolsPackages;
+		return godToolsPackages;
     }
 }

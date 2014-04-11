@@ -1,11 +1,13 @@
 package org.cru.godtools.api.packages.domain;
 
+import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -43,6 +45,28 @@ public class Page
 			Image image = currentTranslationImages.get(filename);
 			element.setTextContent(image.getImageHash() + ".png");
 		}
+	}
+
+	public Set<String> getReferencedImageHashSet()
+	{
+		Set<String> referencedImages = Sets.newHashSet();
+
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
+		{
+			referencedImages.add(element.getAttribute("backgroundimage").replace(".png", ""));
+		}
+
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
+		{
+			referencedImages.add(element.getAttribute("watermark").replace(".png", ""));
+		}
+
+		for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
+		{
+			referencedImages.add(element.getTextContent().replace(".png", ""));
+		}
+
+		return referencedImages;
 	}
 
 	public void calculateHash()
