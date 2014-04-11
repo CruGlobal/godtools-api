@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by ryancarlson on 3/14/14.
  */
 
-@Path("/meta")
+@Path("/meta/{language}{package : (/package)?}")
 public class MetaResource
 {
 
@@ -26,8 +26,8 @@ public class MetaResource
 
     @GET
     @Produces(MediaType.APPLICATION_XML)
-    public Response getMetaInfo(@QueryParam("language") String languageCode,
-                                @QueryParam("package") String packageCode,
+    public Response getMetaInfo(@PathParam("language") String languageCode,
+                                @PathParam("package") String packageCode,
                                 @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
                                 @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
                                 @QueryParam("authorization") String authCodeParam,
