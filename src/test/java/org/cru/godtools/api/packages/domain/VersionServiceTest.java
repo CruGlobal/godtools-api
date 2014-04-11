@@ -102,15 +102,6 @@ public class VersionServiceTest extends AbstractServiceTest
 	}
 
 	@Test
-	public void testSelectAllVersions()
-	{
-		List<Version> versions = versionService.selectAllVersions();
-		Assert.assertEquals(versions.size(), 2);
-
-		mockData.validateAllVersions(versions);
-	}
-
-	@Test
 	public void testUpdate()
 	{
 		mockData.modifyVersion(versionService);

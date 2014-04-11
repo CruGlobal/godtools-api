@@ -10,7 +10,6 @@ public class Image
     private UUID id;
 	private UUID packageId;
     private byte[] imageContent;
-    private String filename;
     private String imageHash;
     private String resolution;
 
