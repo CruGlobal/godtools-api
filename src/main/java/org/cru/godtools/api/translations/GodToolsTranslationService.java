@@ -1,6 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
@@ -65,6 +66,7 @@ public class GodToolsTranslationService
 
 		return new GodToolsTranslation(version.getPackageStructure(),
 				pages,
+				version,
 				languageCode.toString(),
 				packageCode);
 	}
@@ -135,28 +137,27 @@ public class GodToolsTranslationService
 	{
 		for(String filename : newTranslation.keySet())
 		{
-			Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
+//			Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
 
-			if(draftPage != null)
-			{
-				draftPage.setXmlContent(newTranslation.get(filename));
-				draftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
-				draftPage.calculateHash();
-
-				pageService.update(draftPage);
-			}
-			else
+//			if(draftPage != null)
+//			{
+//				draftPage.setXmlContent(newTranslation.get(filename));
+//				draftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+//				draftPage.calculateHash();
+//
+//				pageService.update(draftPage);
+//			}
+//			else
 			{
 				Page newDraftPage = new Page();
 				newDraftPage.setId(UUID.randomUUID());
 				newDraftPage.setVersionId(currentDraftVersion.getId());
-				newDraftPage.setFilename(filename);
 
 				pageService.insert(newDraftPage);
 
 				newDraftPage.setXmlContent(newTranslation.get(filename));
-				newDraftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
-				newDraftPage.calculateHash();
+//				newDraftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
+//				newDraftPage.calculateHash();
 
 				pageService.update(newDraftPage);
 			}

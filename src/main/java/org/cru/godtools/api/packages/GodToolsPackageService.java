@@ -1,19 +1,18 @@
 package org.cru.godtools.api.packages;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
-import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -58,10 +57,11 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
         GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation.getPackageXml(),
 				godToolsTranslation.getPageFiles(),
+				godToolsTranslation.getCurrentVersion(),
                 languageCode.toString(),
                 packageCode);
 
-		godToolsPackage.setImages(imageService);
+		godToolsPackage.setImages(loadImages(godToolsPackage));
 
 		return godToolsPackage;
     }
@@ -85,10 +85,15 @@ public class GodToolsPackageService extends GodToolsTranslationService
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
 			GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
-			godToolsPackage.setImages(imageService);
+			godToolsPackage.setImages(loadImages(godToolsPackage));
 			godToolsPackages.add(godToolsPackage);
 		}
 
 		return godToolsPackages;
     }
+
+	private List<Image> loadImages(GodToolsPackage godToolsPackage)
+	{
+		return imageService.selectyByVersionId(godToolsPackage.getCurrentVersion().getId());
+	}
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by ryancarlson on 3/14/14.
  */
 
-@Path("/meta/{language}{package : (/package)?}")
+@Path("/meta/{language}/{package : (/package)?}")
 public class MetaResource
 {
 

@@ -32,10 +32,8 @@ CREATE TABLE versions (
 CREATE TABLE pages (
   id uuid NOT NULL PRIMARY KEY,
   version_id uuid REFERENCES versions(id),
-  ordinal integer,
   xml_content xml,
   description text,
-  filename text,
   page_hash text
 );
 
@@ -46,12 +44,17 @@ CREATE TABLE image_resolutions (
   UNIQUE(resolution)
 );
 
-
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
   resolution text REFERENCES image_resolutions(resolution),
   image_content bytea,
   image_hash text
+);
+
+CREATE TABLE referenced_images (
+  image_id uuid REFERENCES images(id),
+  page_id uuid REFERENCES pages(id),
+  version_id uuid REFERENCES versions(id)
 );
 
 CREATE TABLE auth_tokens(

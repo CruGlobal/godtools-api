@@ -1,9 +1,17 @@
 package org.cru.godtools.api.packages.domain;
 
+import com.google.common.collect.Sets;
+import org.cru.godtools.api.images.ImageLookup;
+import org.cru.godtools.api.packages.PageLookup;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.awt.image.BufferedImage;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -34,6 +42,44 @@ public class Version
         setReleased(released);
         setMinimumInterpreterVersion(1);
     }
+
+	public void replacePageNamesWithPageHashes(PageLookup pageLookup)
+	{
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getPackageStructure(), "page", "filename"))
+		{
+			String filename = element.getAttribute("filename");
+			Document xmlPage = pageLookup.findByFilename(filename);
+			element.setAttribute("filename", ShaGenerator.calculateHash(xmlPage) + ".xml");
+		}
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getPackageStructure(), "about", "filename"))
+		{
+			String filename = element.getAttribute("filename");
+			Document xmlPage = pageLookup.findByFilename(filename);
+			element.setAttribute("filename", ShaGenerator.calculateHash(xmlPage) + ".xml");
+		}
+	}
+
+	public void replaceThumbnailNamesWithImageHashes(ImageLookup imageLookup)
+	{
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getPackageStructure(), "page", "thumb"))
+		{
+			String filename = element.getAttribute("thumb");
+			BufferedImage image = imageLookup.findByFilename(filename);
+			element.setAttribute("thumb", ShaGenerator.calculateHash(image) + ".xml");
+		}
+	}
+
+	public Set<String> getReferencedImages()
+	{
+		Set<String> referencedImages = Sets.newHashSet();
+
+		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getPackageStructure(), "page", "thumb"))
+		{
+			referencedImages.add(element.getAttribute("thumb"));
+		}
+
+		return referencedImages;
+	}
 
 	public void setDraftVersionNumber(Version latestVersion)
 	{

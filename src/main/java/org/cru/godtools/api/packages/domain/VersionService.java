@@ -85,6 +85,8 @@ public class VersionService
 
     public void insert(Version version)
     {
+		version.calculateHash();
+
         sqlConnection.createQuery(VersionQueries.insert)
                 .addParameter("id", version.getId())
                 .addParameter("versionNumber", version.getVersionNumber())
@@ -98,6 +100,8 @@ public class VersionService
 
     public void update(Version version)
     {
+		version.calculateHash();
+
         sqlConnection.createQuery(VersionQueries.update)
                 .addParameter("id", version.getId())
                 .addParameter("versionNumber", version.getVersionNumber())

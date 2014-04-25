@@ -1,8 +1,10 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.testng.Assert;
+import org.w3c.dom.Document;
 
 import java.util.List;
 
@@ -19,7 +21,6 @@ public class VersionServiceTestMockDataService
 		version.setMinimumInterpreterVersion(3);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
-		version.setPackageStructureHash("afsdfhsd");
 		version.setReleased(false);
 
 		versionService.insert(version);
@@ -31,7 +32,7 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(versionThree.getId(), VersionServiceTest.TEST_VERSION_THREE_ID);
 		Assert.assertEquals(versionThree.getMinimumInterpreterVersion(), (Integer)3);
 		Assert.assertEquals(versionThree.getVersionNumber(), (Integer)3);
-		Assert.assertEquals(versionThree.getPackageStructureHash(), "afsdfhsd");
+		Assert.assertEquals(versionThree.getPackageStructureHash(),  ShaGenerator.calculateHash((Document)null));
 		Assert.assertEquals(versionThree.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertFalse(versionThree.isReleased());
 	}
@@ -44,7 +45,6 @@ public class VersionServiceTestMockDataService
 		version.setMinimumInterpreterVersion(2);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
-		version.setPackageStructureHash("fhdsadsv");
 		version.setReleased(true);
 
 		versionService.insert(version);
@@ -56,7 +56,7 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(versionTwo.getId(), VersionServiceTest.TEST_VERSION_TWO_ID);
 		Assert.assertEquals(versionTwo.getMinimumInterpreterVersion(), (Integer)2);
 		Assert.assertEquals(versionTwo.getVersionNumber(), (Integer)2);
-		Assert.assertEquals(versionTwo.getPackageStructureHash(), "fhdsadsv");
+		Assert.assertEquals(versionTwo.getPackageStructureHash(),  ShaGenerator.calculateHash((Document)null));
 		Assert.assertEquals(versionTwo.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertTrue(versionTwo.isReleased());
 	}
@@ -95,7 +95,6 @@ public class VersionServiceTestMockDataService
 		version.setMinimumInterpreterVersion(3);
 		version.setTranslationId(VersionServiceTest.TEST_TRANSLATION_ID);
 		version.setPackageStructure(null);
-		version.setPackageStructureHash("adgsdfss");
 		version.setReleased(true);
 
 		versionService.update(version);
@@ -107,7 +106,7 @@ public class VersionServiceTestMockDataService
 		Assert.assertEquals(modifiedVersion.getId(), VersionServiceTest.TEST_VERSION_THREE_ID);
 		Assert.assertEquals(modifiedVersion.getMinimumInterpreterVersion(), (Integer)3);
 		Assert.assertEquals(modifiedVersion.getVersionNumber(), (Integer)3);
-		Assert.assertEquals(modifiedVersion.getPackageStructureHash(), "adgsdfss");
+		Assert.assertEquals(modifiedVersion.getPackageStructureHash(),  ShaGenerator.calculateHash((Document)null));
 		Assert.assertEquals(modifiedVersion.getTranslationId(), VersionServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertTrue(modifiedVersion.isReleased());
 	}

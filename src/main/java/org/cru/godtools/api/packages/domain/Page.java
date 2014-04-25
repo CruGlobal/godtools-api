@@ -1,11 +1,14 @@
 package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.images.ImageLookup;
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.awt.image.BufferedImage;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -17,53 +20,56 @@ public class Page
 {
     private UUID id;
     private UUID versionId;
-    private Integer ordinal;
     private Document xmlContent;
     private String description;
-    private String filename;
     private String pageHash;
 
-	public void replaceImageNamesWithImageHashes(Map<String, Image> currentTranslationImages)
+	/**
+	 * used only during migration and processing of new packages.  is NOT to be stored in the database!
+	 */
+	private String filename;
+
+	public void replaceImageNamesWithImageHashes(ImageLookup imageLookup)
 	{
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
 			String filename = element.getAttribute("backgroundimage");
-			Image image = currentTranslationImages.get(filename);
-			element.setAttribute("backgroundimage", image.getImageHash() + ".png");
+			BufferedImage image = imageLookup.findByFilename(filename);
+			element.setAttribute("backgroundimage", ShaGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filename = element.getAttribute("watermark");
-			Image image = currentTranslationImages.get(filename);
-			element.setAttribute("watermark", image.getImageHash() + ".png");
+			BufferedImage image = imageLookup.findByFilename(filename);
+			element.setAttribute("watermark", ShaGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filename = element.getTextContent();
-			Image image = currentTranslationImages.get(filename);
-			element.setTextContent(image.getImageHash() + ".png");
+			BufferedImage image = imageLookup.findByFilename(filename);
+			element.setTextContent(ShaGenerator.calculateHash(image) + ".png");
 		}
 	}
 
-	public Set<String> getReferencedImageHashSet()
+	public Set<String> getReferencedImages()
 	{
 		Set<String> referencedImages = Sets.newHashSet();
 
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
-			referencedImages.add(element.getAttribute("backgroundimage").replace(".png", ""));
+			referencedImages.add(element.getAttribute("backgroundimage"));
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
-			referencedImages.add(element.getAttribute("watermark").replace(".png", ""));
+			referencedImages.add(element.getAttribute("watermark"));
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
-			referencedImages.add(element.getTextContent().replace(".png", ""));
+			referencedImages.add(element.getTextContent());
 		}
 
 		return referencedImages;
@@ -94,16 +100,6 @@ public class Page
         this.versionId = versionId;
     }
 
-    public Integer getOrdinal()
-    {
-        return ordinal;
-    }
-
-    public void setOrdinal(Integer ordinal)
-    {
-        this.ordinal = ordinal;
-    }
-
     public Document getXmlContent()
     {
         return xmlContent;
@@ -125,16 +121,6 @@ public class Page
         this.description = description;
     }
 
-    public String getFilename()
-    {
-        return filename;
-    }
-
-    public void setFilename(String filename)
-    {
-        this.filename = filename;
-    }
-
     public String getPageHash()
     {
         return pageHash;
@@ -145,4 +131,13 @@ public class Page
         this.pageHash = pageHash;
     }
 
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
+	}
 }

@@ -1,7 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.packages.GodToolsPackageService;
-import org.cru.godtools.api.packages.domain.Image;
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
@@ -62,7 +62,7 @@ public class GodToolsTranslationUpdateProcess
 		currentDraftVersion.setPackageStructure(newTranslation.getPackageFile());
 		godToolsTranslationService.saveDraftPages(newTranslation, currentDraftVersion, currentTranslationImages);
 
-		currentDraftVersion.calculateHash();
+//		currentDraftVersion.calculateHash();
 
 		godToolsTranslationService.updateVersion(currentDraftVersion);
 

@@ -36,25 +36,15 @@ public class PageService
                 .executeAndFetchFirst(Page.class);
     }
 
-    public Page selectByFilenameAndVersionId(String filename, UUID versionId)
-    {
-        return sqlConnection.createQuery(PageQueries.selectByFilenameAndVersionId)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("filename", filename)
-				.addParameter("versionId", versionId)
-                .executeAndFetchFirst(Page.class);
-    }
-
     public void insert(Page page)
     {
+		page.calculateHash();
+
         sqlConnection.createQuery(PageQueries.insert)
                 .addParameter("id", page.getId())
                 .addParameter("versionId", page.getVersionId())
-                .addParameter("filename", page.getFilename())
-                .addParameter("ordinal", page.getOrdinal())
                 .addParameter("xmlContent", page.getXmlContent())
                 .addParameter("description", page.getDescription())
-                .addParameter("filename", page.getFilename())
                 .addParameter("pageHash", page.getPageHash())
                 .executeUpdate();
     }
@@ -68,14 +58,13 @@ public class PageService
 
     public void update(Page page)
     {
+		page.calculateHash();
+		
         sqlConnection.createQuery(PageQueries.update)
                 .addParameter("id", page.getId())
                 .addParameter("versionId", page.getVersionId())
-                .addParameter("filename", page.getFilename())
-                .addParameter("ordinal", page.getOrdinal())
                 .addParameter("xmlContent", page.getXmlContent())
                 .addParameter("description", page.getDescription())
-                .addParameter("filename", page.getFilename())
                 .addParameter("pageHash", page.getPageHash())
                 .executeUpdate();
     }
@@ -86,10 +75,9 @@ public class PageService
         public static final String selectById = "SELECT * FROM pages WHERE id = :id";
         public static final String selectByVersionId = "SELECT * FROM pages WHERE version_id = :versionId";
         public static final String selectAll = "SELECT * FROM pages";
-        public static final String insert = "INSERT INTO pages(id, version_id, filename, ordinal, xml_content, description, page_hash) VALUES" +
-                "(:id, :versionId, :filename, :ordinal, :xmlContent, :description, :pageHash)";
-        public static final String update = "UPDATE pages SET version_id = :versionId, filename = :filename, ordinal = :ordinal, xml_content = :xmlContent,"
+        public static final String insert = "INSERT INTO pages(id, version_id, xml_content, description, page_hash) VALUES" +
+                "(:id, :versionId, :xmlContent, :description, :pageHash)";
+        public static final String update = "UPDATE pages SET version_id = :versionId, xml_content = :xmlContent,"
                 + "description = :description, page_hash = :pageHash WHERE id = :id";
-        public static String selectByFilenameAndVersionId = "SELECT * FROM pages WHERE filename = :filename AND version_id = :versionId";
-    }
+	}
 }

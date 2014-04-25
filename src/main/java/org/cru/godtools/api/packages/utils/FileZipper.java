@@ -2,7 +2,7 @@ package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.translations.GodToolsTranslation;
-import org.cru.godtools.api.packages.domain.Image;
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
 import org.w3c.dom.Document;
 

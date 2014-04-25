@@ -1,6 +1,8 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.testng.Assert;
+import org.w3c.dom.Document;
 
 /**
  * Created by ryancarlson on 4/2/14.
@@ -11,11 +13,8 @@ public class PageServiceTestMockDataService
 	{
 		Page page = new Page();
 		page.setId(PageServiceTest.TEST_PAGE_ID);
-		page.setOrdinal(0);
 		page.setVersionId(PageServiceTest.TEST_VERSION_ID);
 		page.setDescription("Test Page");
-		page.setFilename("page.xml");
-		page.setPageHash("abalcdsf");
 		page.setXmlContent(null);
 
 		pageService.insert(page);
@@ -25,11 +24,8 @@ public class PageServiceTestMockDataService
 	{
 		Page page = new Page();
 		page.setId(PageServiceTest.TEST_PAGE_ID);
-		page.setOrdinal(1);
 		page.setVersionId(PageServiceTest.TEST_VERSION_ID);
 		page.setDescription("Updated page");
-		page.setFilename("page.xml");
-		page.setPageHash("sdflkjsd");
 		page.setXmlContent(null);
 
 		pageService.update(page);
@@ -49,10 +45,8 @@ public class PageServiceTestMockDataService
 		Assert.assertNotNull(page);
 		Assert.assertEquals(page.getId(), PageServiceTest.TEST_PAGE_ID);
 		Assert.assertEquals(page.getVersionId(), PageServiceTest.TEST_VERSION_ID);
-		Assert.assertEquals(page.getOrdinal(), (Integer)0);
 		Assert.assertEquals(page.getDescription(), "Test Page");
-		Assert.assertEquals(page.getFilename(), "page.xml");
-		Assert.assertEquals(page.getPageHash(), "abalcdsf");
+		Assert.assertEquals(page.getPageHash(), ShaGenerator.calculateHash((Document)null));
 		Assert.assertNull(page.getXmlContent());
 	}
 
@@ -61,10 +55,8 @@ public class PageServiceTestMockDataService
 		Assert.assertNotNull(modifiedPage);
 		Assert.assertEquals(modifiedPage.getId(), PageServiceTest.TEST_PAGE_ID);
 		Assert.assertEquals(modifiedPage.getVersionId(), PageServiceTest.TEST_VERSION_ID);
-		Assert.assertEquals(modifiedPage.getOrdinal(), (Integer)1);
 		Assert.assertEquals(modifiedPage.getDescription(), "Updated page");
-		Assert.assertEquals(modifiedPage.getFilename(), "page.xml");
-		Assert.assertEquals(modifiedPage.getPageHash(), "sdflkjsd");
+		Assert.assertEquals(modifiedPage.getPageHash(), ShaGenerator.calculateHash((Document)null));
 		Assert.assertNull(modifiedPage.getXmlContent());
 	}
 }

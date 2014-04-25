@@ -1,5 +1,9 @@
 package org.cru.godtools.api.packages.utils;
 
+import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.api.images.domain.ImageService;
+import org.cru.godtools.api.images.domain.ReferencedImage;
+import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
@@ -23,7 +27,9 @@ public class GodToolsPackageServiceTestMockDataService
 							   PackageService packageService,
 							   TranslationService translationService,
 							   VersionService versionService,
-							   PageService pageService, ImageService imageService)
+							   PageService pageService,
+							   ImageService imageService,
+							   ReferencedImageService referencedImageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
@@ -31,6 +37,7 @@ public class GodToolsPackageServiceTestMockDataService
 		persistVersion(versionService);
 		persistPage(pageService);
 		persistImage(imageService);
+		persistReferencedImage(referencedImageService);
 	}
 
 	private void persistLanguage(LanguageService languageService)
@@ -81,9 +88,7 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		Page page = new Page();
 		page.setId(GodToolsPackageServiceTest.PAGE_ID);
-		page.setOrdinal(0);
 		page.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
-		page.setFilename("test_file_1.xml");
 		page.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
 		page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
 
@@ -99,6 +104,16 @@ public class GodToolsPackageServiceTestMockDataService
 		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
+	}
+
+	private void  persistReferencedImage(ReferencedImageService referencedImageService)
+	{
+		ReferencedImage referencedImage = new ReferencedImage();
+		referencedImage.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
+		referencedImage.setPageId(GodToolsPackageServiceTest.PAGE_ID);
+		referencedImage.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
+
+		referencedImageService.insert(referencedImage);
 	}
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)

@@ -2,6 +2,7 @@ package org.cru.godtools.api.translations;
 
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.w3c.dom.Document;
 
@@ -18,14 +19,17 @@ public class GodToolsTranslation
 	protected String packageCode;
 	protected String packageXmlHash;
 
+	protected Version currentVersion;
+
     public GodToolsTranslation()
     {
     }
 
-    public GodToolsTranslation(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode)
+    public GodToolsTranslation(Document packageXml, List<Page> pageFiles, Version version, String languageCode, String packageCode)
     {
         this.packageXml = packageXml;
         this.pageFiles = pageFiles;
+		this.currentVersion = version;
         this.languageCode = languageCode;
         this.packageCode = packageCode;
         this.packageXmlHash = ShaGenerator.calculateHash(packageXml);
@@ -81,4 +85,13 @@ public class GodToolsTranslation
         this.packageXmlHash = packageXmlHash;
     }
 
+	public Version getCurrentVersion()
+	{
+		return currentVersion;
+	}
+
+	public void setCurrentVersion(Version currentVersion)
+	{
+		this.currentVersion = currentVersion;
+	}
 }

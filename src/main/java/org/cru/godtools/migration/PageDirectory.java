@@ -2,11 +2,8 @@ package org.cru.godtools.migration;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.cru.godtools.api.packages.domain.Image;
+import org.cru.godtools.api.images.FileSystemImageLookup;
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -20,11 +17,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * Encapsulates logic for a pages directory. (e.g: "Packages/kgp/en_US")
+ * Encapsulates logic for a pages directory. (e.g: "Packages/kgp/en")
  *
  *  - build a list of Pages
  *  - build a list of Images used by a Package
@@ -32,14 +28,26 @@ import java.util.UUID;
 public class PageDirectory
 {
 
-	private String path;
+	private String packageCode;
+	private String languageCode;
 
-    public PageDirectory(String packageCode, String translationPath)
+    public PageDirectory(String packageCode, String languageCode)
     {
-		this.path = "/data/SnuffyPackages/" + packageCode + "/" + translationPath;
+		this.packageCode = packageCode;
+		this.languageCode = languageCode;
     }
 
-    public List<Page> buildPages(Version version) throws URISyntaxException, ParserConfigurationException, SAXException, IOException
+	/**
+	 * Loops through files in the `path`.  If it's an .xml file then it's a page.
+	 *
+	 *
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+    public List<Page> buildPages() throws URISyntaxException, ParserConfigurationException, SAXException, IOException
     {
         File directory = getDirectory();
         List<Page> pages = Lists.newArrayList();
@@ -50,11 +58,8 @@ public class PageDirectory
             {
                 Page page = new Page();
                 page.setId(UUID.randomUUID());
-                page.setVersionId(version.getId());
-                page.setFilename(file.getName());
                 page.setXmlContent(getPageXml(file));
-				page.replaceImageNamesWithImageHashes(getAllAvailableImagesByFilenameMap());
-                page.calculateHash();
+				page.setFilename(file.getName());
                 pages.add(page);
             }
         }
@@ -66,7 +71,7 @@ public class PageDirectory
     {
 		try
 		{
-			URL url = this.getClass().getResource(path);
+			URL url = this.getClass().getResource(getTranslationPath());
 			return new File(url.toURI());
 		}
 		catch(Exception e)
@@ -76,15 +81,21 @@ public class PageDirectory
 		}
     }
 
-	private Map<String, Image> getAllAvailableImagesByFilenameMap()
-	{
-		return ImageDirectory.getCombinedImageByFilenameMap(new ThumbsImageDirectory(path), new ImagesImageDirectory(path), new ImageDirectory("/data/SnuffyPackages/shared"));
-	}
-
-
     private Document getPageXml(File pageFile) throws IOException, SAXException, ParserConfigurationException
     {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         return builder.parse(pageFile);
     }
+
+	private String getTranslationPath()
+	{
+		return "/data/SnuffyPackages/" + packageCode + "/" + languageCode;
+	}
+
+	private String getPackagePath()
+	{
+		return "/data/SnuffyPackages/" + packageCode;
+	}
+
+
 }
