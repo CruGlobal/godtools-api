@@ -47,7 +47,7 @@ public class PageDirectory
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-    public List<Page> buildPages() throws URISyntaxException, ParserConfigurationException, SAXException, IOException
+    public List<Page> buildPages()
     {
         File directory = getDirectory();
         List<Page> pages = Lists.newArrayList();
@@ -81,10 +81,18 @@ public class PageDirectory
 		}
     }
 
-    private Document getPageXml(File pageFile) throws IOException, SAXException, ParserConfigurationException
+    private Document getPageXml(File pageFile)
     {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        return builder.parse(pageFile);
+		try
+		{
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			return builder.parse(pageFile);
+		}
+		catch(Exception e)
+		{
+			Throwables.propagate(e);
+			return null;
+		}
     }
 
 	private String getTranslationPath()

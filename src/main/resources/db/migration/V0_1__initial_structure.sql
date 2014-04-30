@@ -21,13 +21,14 @@ CREATE TABLE translations (
 );
 
 CREATE TABLE translation_elements (
-  id uuid NOT NULL PRIMARY KEY,
-  translation_id uuid REFERENCES translations(id),
+  id uuid NOT NULL,
+  translation_id uuid NOT NULL REFERENCES translations(id),
   base_text text,
   translated_text text,
   element_type text,
   page_name text,
-  display_order integer
+  display_order integer,
+  PRIMARY KEY (id, translation_id)
 );
 
 CREATE TABLE package_structure (

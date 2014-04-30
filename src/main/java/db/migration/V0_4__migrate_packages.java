@@ -1,11 +1,6 @@
 package db.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.images.FileSystemImageLookup;
-import org.cru.godtools.api.images.ImageLookup;
-import org.cru.godtools.api.images.ImageSet;
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.Package;
@@ -17,24 +12,18 @@ import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.packages.domain.PageStructureService;
 import org.cru.godtools.api.packages.domain.TranslationElement;
 import org.cru.godtools.api.packages.domain.TranslationElementService;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.domain.VersionService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.migration.CurrentTranslation;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
 import org.cru.godtools.migration.PageDirectory;
+import org.cru.godtools.migration.TranslatableElements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
@@ -115,38 +104,18 @@ public class V0_4__migrate_packages implements JdbcMigration
 		packageStructure.setXmlContent(packageDirectory.getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
 		packageStructure.setVersion_number(1);
 
-		saveBaseTranslatableElements(packageCode, packageStructure.getXmlContent());
+		TranslatableElements translatableElements = new TranslatableElements(packageCode, "en", packageStructure.getXmlContent(), packageStructure.getXmlContent());
+		translatableElements.save(translationService,
+				languageService,
+				packageService,
+				translationElementService);
 
 		packageStructureService.insert(packageStructure);
 
 		savePageStructures(packageStructure, packageCode);
 	}
 
-	private void saveBaseTranslatableElements(String packageCode, Document xmlContent)
-	{
-		Translation englishTranslation = translationService.selectByLanguageIdPackageId(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
-				packageService.selectByCode(packageCode).getId());
 
-		List<Element> translatableElements = XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, "translate");
-
-		for(Element xmlTranslationElement : translatableElements)
-		{
-			if(Boolean.parseBoolean(xmlTranslationElement.getAttribute("translate")))
-			{
-				UUID translationElementId = UUID.randomUUID();
-				xmlTranslationElement.setAttribute("gtapi-trx-id", translationElementId.toString());
-
-				TranslationElement translationElement = new TranslationElement();
-				translationElement.setId(translationElementId);
-				translationElement.setTranslationId(englishTranslation.getId());
-				translationElement.setBaseText(xmlTranslationElement.getTextContent());
-				translationElement.setTranslatedText(xmlTranslationElement.getTextContent());
-				translationElement.setElementType(xmlTranslationElement.getNodeName());
-
-				translationElementService.insert(translationElement);
-			}
-		}
-	}
 
 	private void savePageStructures(PackageStructure packageStructure, String packageCode) throws Exception
 	{
@@ -160,7 +129,11 @@ public class V0_4__migrate_packages implements JdbcMigration
 			pageStructure.setXmlContent(page.getXmlContent());
 			pageStructure.setPackageStructureId(packageStructure.getId());
 
-			saveBaseTranslatableElements(packageCode, page.getXmlContent());
+			TranslatableElements translatableElements = new TranslatableElements(packageCode, "en", pageStructure.getXmlContent(), pageStructure.getXmlContent());
+			translatableElements.save(translationService,
+					languageService,
+					packageService,
+					translationElementService);
 
 			pageStructureService.insert(pageStructure);
 		}
