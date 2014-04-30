@@ -20,7 +20,7 @@ CREATE TABLE translations (
   version_number integer
 );
 
-CREATE TABLE translatable_elements (
+CREATE TABLE translation_elements (
   id uuid NOT NULL PRIMARY KEY,
   translation_id uuid REFERENCES translations(id),
   base_text text,

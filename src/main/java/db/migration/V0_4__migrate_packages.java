@@ -15,16 +15,22 @@ import org.cru.godtools.api.packages.domain.PackageStructureService;
 import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.packages.domain.PageStructureService;
+import org.cru.godtools.api.packages.domain.TranslationElement;
+import org.cru.godtools.api.packages.domain.TranslationElementService;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.domain.VersionService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.migration.CurrentTranslation;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
 import org.cru.godtools.migration.PageDirectory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,6 +51,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 	TranslationService translationService = new TranslationService(sqlConnection);
 	PackageStructureService packageStructureService = new PackageStructureService(sqlConnection);
 	PageStructureService pageStructureService = new PageStructureService(sqlConnection);
+	TranslationElementService translationElementService = new TranslationElementService(sqlConnection);
 
 	@Override
     public void migrate(Connection connection) throws Exception
@@ -96,7 +103,6 @@ public class V0_4__migrate_packages implements JdbcMigration
 		}
 	}
 
-
 	private void savePackageStructures(String packageCode) throws Exception
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
@@ -109,9 +115,37 @@ public class V0_4__migrate_packages implements JdbcMigration
 		packageStructure.setXmlContent(packageDirectory.getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
 		packageStructure.setVersion_number(1);
 
+		saveBaseTranslatableElements(packageCode, packageStructure.getXmlContent());
+
 		packageStructureService.insert(packageStructure);
 
 		savePageStructures(packageStructure, packageCode);
+	}
+
+	private void saveBaseTranslatableElements(String packageCode, Document xmlContent)
+	{
+		Translation englishTranslation = translationService.selectByLanguageIdPackageId(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
+				packageService.selectByCode(packageCode).getId());
+
+		List<Element> translatableElements = XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, "translate");
+
+		for(Element xmlTranslationElement : translatableElements)
+		{
+			if(Boolean.parseBoolean(xmlTranslationElement.getAttribute("translate")))
+			{
+				UUID translationElementId = UUID.randomUUID();
+				xmlTranslationElement.setAttribute("gtapi-trx-id", translationElementId.toString());
+
+				TranslationElement translationElement = new TranslationElement();
+				translationElement.setId(translationElementId);
+				translationElement.setTranslationId(englishTranslation.getId());
+				translationElement.setBaseText(xmlTranslationElement.getTextContent());
+				translationElement.setTranslatedText(xmlTranslationElement.getTextContent());
+				translationElement.setElementType(xmlTranslationElement.getNodeName());
+
+				translationElementService.insert(translationElement);
+			}
+		}
 	}
 
 	private void savePageStructures(PackageStructure packageStructure, String packageCode) throws Exception
@@ -125,6 +159,8 @@ public class V0_4__migrate_packages implements JdbcMigration
 			pageStructure.setId(UUID.randomUUID());
 			pageStructure.setXmlContent(page.getXmlContent());
 			pageStructure.setPackageStructureId(packageStructure.getId());
+
+			saveBaseTranslatableElements(packageCode, page.getXmlContent());
 
 			pageStructureService.insert(pageStructure);
 		}

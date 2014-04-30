@@ -13,6 +13,7 @@ public class Translation
     UUID id;
     UUID packageId;
     UUID languageId;
+	Integer versionNumber;
 
     public Translation()
     {
@@ -55,4 +56,15 @@ public class Translation
     {
         this.languageId = languageId;
     }
+
+
+	public Integer getVersionNumber()
+	{
+		return versionNumber;
+	}
+
+	public void setVersionNumber(Integer versionNumber)
+	{
+		this.versionNumber = versionNumber;
+	}
 }
