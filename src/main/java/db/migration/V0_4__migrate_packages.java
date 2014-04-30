@@ -10,6 +10,11 @@ import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.domain.PackageService;
+import org.cru.godtools.api.packages.domain.PackageStructure;
+import org.cru.godtools.api.packages.domain.PackageStructureService;
+import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.api.packages.domain.PageStructure;
+import org.cru.godtools.api.packages.domain.PageStructureService;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.domain.VersionService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
@@ -19,12 +24,14 @@ import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
+import org.cru.godtools.migration.PageDirectory;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
@@ -36,9 +43,8 @@ public class V0_4__migrate_packages implements JdbcMigration
 	LanguageService languageService = new LanguageService(sqlConnection);
 	PackageService packageService = new PackageService(sqlConnection);
 	TranslationService translationService = new TranslationService(sqlConnection);
-	VersionService versionService = new VersionService(sqlConnection);
- 	ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
-	ImageService imageService = new ImageService(sqlConnection, referencedImageService);
+	PackageStructureService packageStructureService = new PackageStructureService(sqlConnection);
+	PageStructureService pageStructureService = new PageStructureService(sqlConnection);
 
 	@Override
     public void migrate(Connection connection) throws Exception
@@ -49,7 +55,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 			savePackage(packageCode);
 			saveLanguages(packageCode);
 			saveTranslations(packageCode);
-//			saveVersions(packageCode);
+			savePackageStructures(packageCode);
 		}
     }
 
@@ -90,29 +96,37 @@ public class V0_4__migrate_packages implements JdbcMigration
 		}
 	}
 
-	private void saveVersions(String packageCode) throws Exception
+
+	private void savePackageStructures(String packageCode) throws Exception
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
-		List<Translation> translations = translationService.selectByPackageId(gtPackage.getId());
 		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
 
-		for(Translation translation : translations)
+		PackageStructure packageStructure = new PackageStructure();
+
+		packageStructure.setId(UUID.randomUUID());
+		packageStructure.setPackageId(gtPackage.getId());
+		packageStructure.setXmlContent(packageDirectory.getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
+		packageStructure.setVersion_number(1);
+
+		packageStructureService.insert(packageStructure);
+
+		savePageStructures(packageStructure, packageCode);
+	}
+
+	private void savePageStructures(PackageStructure packageStructure, String packageCode) throws Exception
+	{
+		PageDirectory pageDirectory = new PageDirectory(packageCode, "en");
+
+		for(Page page : pageDirectory.buildPages())
 		{
-			Language language = languageService.selectLanguageById(translation.getLanguageId());
+			PageStructure pageStructure = new PageStructure();
 
-			Version version = new Version(translation, 1, true);
+			pageStructure.setId(UUID.randomUUID());
+			pageStructure.setXmlContent(page.getXmlContent());
+			pageStructure.setPackageStructureId(packageStructure.getId());
 
-			version.setPackageStructure(packageDirectory.getPackageDescriptorXml(language));
-
-			ImageSet imageSet = new ImageSet(version.getReferencedImages());
-
-			imageSet.saveImages(imageService, new FileSystemImageLookup("/data/SnuffyPackages/" + packageCode));
-
-			version.replaceThumbnailNamesWithImageHashes(new FileSystemImageLookup("/data/SnuffyPackages/" + packageCode));
-
-			versionService.insert(version);
-
-			imageSet.saveReferencedImages(referencedImageService, version);
+			pageStructureService.insert(pageStructure);
 		}
 	}
 }
