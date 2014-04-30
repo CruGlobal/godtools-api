@@ -16,45 +16,44 @@ CREATE TABLE packages (
 CREATE TABLE translations (
   id uuid NOT NULL PRIMARY KEY,
   package_id uuid REFERENCES packages(id),
-  language_id uuid REFERENCES languages(id)
+  language_id uuid REFERENCES languages(id),
+  version_number integer
 );
 
-CREATE TABLE versions (
+CREATE TABLE translatable_elements (
   id uuid NOT NULL PRIMARY KEY,
-  version_number integer NOT NULL,
-  released boolean DEFAULT false,
   translation_id uuid REFERENCES translations(id),
-  minimum_interpreter_version integer,
-  package_structure xml,
-  package_structure_hash text
+  base_text text,
+  translated_text text,
+  element_type text,
+  page_name text,
+  display_order integer
 );
 
-CREATE TABLE pages (
+CREATE TABLE package_structure (
   id uuid NOT NULL PRIMARY KEY,
-  version_id uuid REFERENCES versions(id),
-  xml_content xml,
-  description text,
-  page_hash text
+  package_id uuid REFERENCES packages(id),
+  version_number integer,
+  xml_content xml
 );
 
-CREATE TABLE image_resolutions (
-  upper_bound integer,
-  lower_bound integer,
-  resolution text,
-  UNIQUE(resolution)
+CREATE TABLE page_structure (
+  id uuid NOT NULL PRIMARY KEY,
+  package_structure_id uuid references package_structure(id),
+  xml_content xml,
+  description text
 );
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
-  resolution text REFERENCES image_resolutions(resolution),
   image_content bytea,
   image_hash text
 );
 
 CREATE TABLE referenced_images (
   image_id uuid REFERENCES images(id),
-  page_id uuid REFERENCES pages(id),
-  version_id uuid REFERENCES versions(id)
+  page_id uuid REFERENCES page_structure(id),
+  translation_id uuid REFERENCES translations(id)
 );
 
 CREATE TABLE auth_tokens(
