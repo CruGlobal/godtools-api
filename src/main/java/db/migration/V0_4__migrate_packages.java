@@ -49,7 +49,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 			savePackage(packageCode);
 			saveLanguages(packageCode);
 			saveTranslations(packageCode);
-			saveVersions(packageCode);
+//			saveVersions(packageCode);
 		}
     }
 
