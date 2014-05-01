@@ -11,7 +11,7 @@ public class PackageStructure
 {
 	private UUID id;
 	private UUID packageId;
-	private Integer version_number;
+	private Integer versionNumber;
 	private Document xmlContent;
 
 	public UUID getId()
@@ -34,14 +34,14 @@ public class PackageStructure
 		this.packageId = packageId;
 	}
 
-	public Integer getVersion_number()
+	public Integer getVersionNumber()
 	{
-		return version_number;
+		return versionNumber;
 	}
 
-	public void setVersion_number(Integer version_number)
+	public void setVersionNumber(Integer versionNumber)
 	{
-		this.version_number = version_number;
+		this.versionNumber = versionNumber;
 	}
 
 	public Document getXmlContent()

@@ -141,7 +141,7 @@ public class PackageDirectory
 		packageStructure.setId(UUID.randomUUID());
 		packageStructure.setPackageId(gtPackage.getId());
 		packageStructure.setXmlContent(getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
-		packageStructure.setVersion_number(1);
+		packageStructure.setVersionNumber(1);
 
 		Map<UUID, Document> packageStructures = Maps.newHashMap();
 
@@ -160,6 +160,7 @@ public class PackageDirectory
 	public void savePageStructures()
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
 		Map<UUID, Iterator<Page>> pageDirectoryMap = Maps.newHashMap();
 		PageDirectory baseEnglishPageDirectory = new PageDirectory(packageCode, "en");
@@ -174,7 +175,7 @@ public class PackageDirectory
 			PageStructure pageStructure = new PageStructure();
 
 			pageStructure.setId(UUID.randomUUID());
-//			pageStructure.setPackageStructureId();
+			pageStructure.setPackageStructureId(packageStructure.getId());
 			pageStructure.setXmlContent(baseEnglishPage.getXmlContent());
 
 			Map<UUID, Document> translatablePageMap = Maps.newHashMap();
