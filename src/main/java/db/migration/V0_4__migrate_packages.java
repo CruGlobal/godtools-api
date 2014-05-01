@@ -48,10 +48,19 @@ public class V0_4__migrate_packages implements JdbcMigration
 
         for(String packageCode : KnownGodtoolsPackages.packageNames)
         {
+			PackageDirectory packageDirectory = new PackageDirectory(packageCode,
+					packageService,
+					languageService,
+					translationService,
+					translationElementService,
+					packageStructureService,
+					pageStructureService);
+
 			savePackage(packageCode);
 			saveLanguages(packageCode);
 			saveTranslations(packageCode);
-			savePackageStructures(packageCode);
+			packageDirectory.savePackageStructures();
+			packageDirectory.savePageStructures();
 		}
     }
 
@@ -62,7 +71,6 @@ public class V0_4__migrate_packages implements JdbcMigration
 
 		packageService.insert(gtPackage);
 	}
-
 
 	private void saveLanguages(String packageCode) throws Exception
 	{
@@ -89,53 +97,6 @@ public class V0_4__migrate_packages implements JdbcMigration
 		{
 			Language retrievedLanguage = languageService.selectByLanguageCode(LanguageCode.fromLanguage(language));
 			translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
-		}
-	}
-
-	private void savePackageStructures(String packageCode) throws Exception
-	{
-		Package gtPackage = packageService.selectByCode(packageCode);
-		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
-
-		PackageStructure packageStructure = new PackageStructure();
-
-		packageStructure.setId(UUID.randomUUID());
-		packageStructure.setPackageId(gtPackage.getId());
-		packageStructure.setXmlContent(packageDirectory.getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
-		packageStructure.setVersion_number(1);
-
-		TranslatableElements translatableElements = new TranslatableElements(packageCode, "en", packageStructure.getXmlContent(), packageStructure.getXmlContent());
-		translatableElements.save(translationService,
-				languageService,
-				packageService,
-				translationElementService);
-
-		packageStructureService.insert(packageStructure);
-
-		savePageStructures(packageStructure, packageCode);
-	}
-
-
-
-	private void savePageStructures(PackageStructure packageStructure, String packageCode) throws Exception
-	{
-		PageDirectory pageDirectory = new PageDirectory(packageCode, "en");
-
-		for(Page page : pageDirectory.buildPages())
-		{
-			PageStructure pageStructure = new PageStructure();
-
-			pageStructure.setId(UUID.randomUUID());
-			pageStructure.setXmlContent(page.getXmlContent());
-			pageStructure.setPackageStructureId(packageStructure.getId());
-
-			TranslatableElements translatableElements = new TranslatableElements(packageCode, "en", pageStructure.getXmlContent(), pageStructure.getXmlContent());
-			translatableElements.save(translationService,
-					languageService,
-					packageService,
-					translationElementService);
-
-			pageStructureService.insert(pageStructure);
 		}
 	}
 }

@@ -1,16 +1,14 @@
 package org.cru.godtools.migration;
 
-import com.google.common.base.Strings;
-import org.cru.godtools.api.languages.LanguageService;
+import com.google.common.collect.Maps;
 import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
-import org.cru.godtools.api.translations.domain.Translation;
-import org.cru.godtools.api.translations.domain.TranslationService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -18,55 +16,65 @@ import java.util.UUID;
  */
 public class TranslatableElements
 {
-	private String packageCode;
-	private String languageCode;
-	private Document targetTranslationXmlContent;
 	private Document baseTranslationXmlContent;
+	private Map<UUID, Document> xmlDocumentMap;
 
-	public TranslatableElements(String packageCode, String languageCode, Document targetTranslationXmlContent, Document baseTranslationXmlContent)
+	public TranslatableElements(Document baseTranslationXmlContent, Map<UUID, Document> xmlDocumentMap)
 	{
-		this.packageCode = packageCode;
-		this.languageCode = languageCode;
-		this.targetTranslationXmlContent = targetTranslationXmlContent;
 		this.baseTranslationXmlContent = baseTranslationXmlContent;
+		this.xmlDocumentMap = xmlDocumentMap;
 	}
 
-	public void save(TranslationService translationService, LanguageService languageService, PackageService packageService, TranslationElementService translationElementService)
+	public void save(TranslationElementService translationElementService)
 	{
-
-		Translation englishTranslation = translationService.selectByLanguageIdPackageId(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
-				packageService.selectByCode(packageCode).getId());
-
-		Translation targetTranslation = translationService.selectByLanguageIdPackageId(languageService.selectByLanguageCode(new LanguageCode(languageCode)).getId(),
-				packageService.selectByCode(packageCode).getId());
-
-		List<Element> targetTranslationElements = XmlDocumentSearchUtilities.findElementsWithAttribute(targetTranslationXmlContent, "translate");
 		List<Element> baseTranslationElements = XmlDocumentSearchUtilities.findElementsWithAttribute(baseTranslationXmlContent, "translate");
 
-		if(targetTranslationElements.size() != baseTranslationElements.size())
+		Map<UUID, Iterator<Element>> translationXmlElementIteratorSet = Maps.newHashMap();
+
+		for(UUID translationId : xmlDocumentMap.keySet())
 		{
-			//argh
+			translationXmlElementIteratorSet.put(translationId, XmlDocumentSearchUtilities.findElementsWithAttribute(xmlDocumentMap.get(translationId), "translate").iterator());
 		}
 
-		for(int i = 0; i < baseTranslationElements.size() && i < targetTranslationElements.size(); i++)
+		for(Element baseTranslationElement : baseTranslationElements)
 		{
-			Element baseXmlElement = baseTranslationElements.get(i);
-			Element targetXmlElement = targetTranslationElements.get(i);
-
-			if(Boolean.parseBoolean(targetXmlElement.getAttribute("translate")))
+			if(Boolean.parseBoolean(baseTranslationElement.getAttribute("translate")))
 			{
-				UUID translationElementId = !Strings.isNullOrEmpty(baseXmlElement.getAttribute("gtapi-trx-id")) ? UUID.fromString(baseXmlElement.getAttribute("gtapi-trx-id")) : UUID.randomUUID();
-				targetXmlElement.setAttribute("gtapi-trx-id", translationElementId.toString());
+				UUID elementId = UUID.randomUUID();
+				baseTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
 
-				TranslationElement translationElement = new TranslationElement();
-				translationElement.setId(translationElementId);
-				translationElement.setTranslationId(targetTranslation.getId());
-				translationElement.setBaseText(baseXmlElement.getTextContent());
-				translationElement.setTranslatedText(targetXmlElement.getTextContent());
-				translationElement.setElementType(targetXmlElement.getNodeName());
-				translationElement.setDisplayOrder(i);
+				for (UUID translationId : translationXmlElementIteratorSet.keySet())
+				{
+					if(!translationXmlElementIteratorSet.get(translationId).hasNext())
+					{
+						System.out.println("Warning, missing element!");
+						System.out.println("Translation: " + translationId);
+						System.out.println("Element: " + elementId);
+						System.out.println("************************************");
+					}
+					else
+					{
+						Element targetTranslationElement = translationXmlElementIteratorSet.get(translationId).next();
 
-				translationElementService.insert(translationElement);
+						if(!targetTranslationElement.getNodeName().equalsIgnoreCase(baseTranslationElement.getNodeName()))
+						{
+							System.out.println("Warning, node name mismatch!");
+							System.out.println("Translation: " + translationId);
+							System.out.println("Element: " + elementId);
+							System.out.println("************************************");
+						}
+
+						TranslationElement translationElement = new TranslationElement();
+						translationElement.setId(elementId);
+						translationElement.setTranslationId(translationId);
+						translationElement.setBaseText(baseTranslationElement.getTextContent());
+						translationElement.setTranslatedText(targetTranslationElement.getTextContent());
+						translationElement.setElementType(baseTranslationElement.getNodeName());
+//					translationElement.setDisplayOrder(iterator.);
+
+						translationElementService.insert(translationElement);
+					}
+				}
 			}
 		}
 	}
