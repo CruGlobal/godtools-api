@@ -150,7 +150,7 @@ public class PackageDirectory
 			packageStructures.put(translation.getId(), getPackageDescriptorXml(languageService.selectLanguageById(translation.getLanguageId())));
 		}
 
-		TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(), packageStructures);
+		TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(), gtPackage.getName(), packageStructures);
 
 		translatableElements.save(translationElementService);
 
@@ -184,7 +184,7 @@ public class PackageDirectory
 				translatablePageMap.put(translationId, pageDirectoryMap.get(translationId).next().getXmlContent());
 			}
 
-			TranslatableElements translatableElements = new TranslatableElements(baseEnglishPage.getXmlContent(), translatablePageMap);
+			TranslatableElements translatableElements = new TranslatableElements(baseEnglishPage.getXmlContent(), baseEnglishPage.getFilename(), translatablePageMap);
 			translatableElements.save(translationElementService);
 
 			pageStructureService.insert(pageStructure);

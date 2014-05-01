@@ -17,11 +17,13 @@ import java.util.UUID;
 public class TranslatableElements
 {
 	private Document baseTranslationXmlContent;
+	private String filename;
 	private Map<UUID, Document> xmlDocumentMap;
 
-	public TranslatableElements(Document baseTranslationXmlContent, Map<UUID, Document> xmlDocumentMap)
+	public TranslatableElements(Document baseTranslationXmlContent, String filename, Map<UUID, Document> xmlDocumentMap)
 	{
 		this.baseTranslationXmlContent = baseTranslationXmlContent;
+		this.filename = filename;
 		this.xmlDocumentMap = xmlDocumentMap;
 	}
 
@@ -36,11 +38,14 @@ public class TranslatableElements
 			translationXmlElementIteratorSet.put(translationId, XmlDocumentSearchUtilities.findElementsWithAttribute(xmlDocumentMap.get(translationId), "translate").iterator());
 		}
 
+		int elementNumber = 0;
+
 		for(Element baseTranslationElement : baseTranslationElements)
 		{
 			if(Boolean.parseBoolean(baseTranslationElement.getAttribute("translate")))
 			{
 				UUID elementId = UUID.randomUUID();
+
 				baseTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
 
 				for (UUID translationId : translationXmlElementIteratorSet.keySet())
@@ -70,11 +75,13 @@ public class TranslatableElements
 						translationElement.setBaseText(baseTranslationElement.getTextContent());
 						translationElement.setTranslatedText(targetTranslationElement.getTextContent());
 						translationElement.setElementType(baseTranslationElement.getNodeName());
-//					translationElement.setDisplayOrder(iterator.);
+						translationElement.setPageName(filename);
+						translationElement.setDisplayOrder(elementNumber);
 
 						translationElementService.insert(translationElement);
 					}
 				}
+				elementNumber++;
 			}
 		}
 	}
