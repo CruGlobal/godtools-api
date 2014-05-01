@@ -74,7 +74,7 @@ public class PackageDirectory
 
         for(File nextFile : directory.listFiles())
         {
-            if(nextFile.isFile() && nextFile.getName().endsWith(".xml"))
+            if(nextFile.isFile() && nextFile.getName().equalsIgnoreCase("en.xml"))
             {
                 Package gtPackage = new Package();
 
