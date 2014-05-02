@@ -47,21 +47,21 @@ public class V0_4__migrate_packages implements JdbcMigration
     {
 
         for(String packageCode : KnownGodtoolsPackages.packageNames)
-        {
-			PackageDirectory packageDirectory = new PackageDirectory(packageCode,
-					packageService,
-					languageService,
-					translationService,
-					translationElementService,
-					packageStructureService,
-					pageStructureService);
+	{
+		PackageDirectory packageDirectory = new PackageDirectory(packageCode,
+				packageService,
+				languageService,
+				translationService,
+				translationElementService,
+				packageStructureService,
+				pageStructureService);
 
-			savePackage(packageCode);
-			saveLanguages(packageCode);
-			saveTranslations(packageCode);
-			packageDirectory.savePackageStructures();
-			packageDirectory.savePageStructures();
-		}
+		savePackage(packageCode);
+		saveLanguages(packageCode);
+		saveTranslations(packageCode);
+		packageDirectory.savePackageStructures();
+		packageDirectory.savePageStructures();
+	}
     }
 
 	private void savePackage(String packageCode) throws Exception
