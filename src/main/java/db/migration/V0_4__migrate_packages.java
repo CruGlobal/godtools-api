@@ -43,26 +43,26 @@ public class V0_4__migrate_packages implements JdbcMigration
 	TranslationElementService translationElementService = new TranslationElementService(sqlConnection);
 
 	@Override
-    public void migrate(Connection connection) throws Exception
-    {
-
-        for(String packageCode : KnownGodtoolsPackages.packageNames)
+	public void migrate(Connection connection) throws Exception
 	{
-		PackageDirectory packageDirectory = new PackageDirectory(packageCode,
-				packageService,
-				languageService,
-				translationService,
-				translationElementService,
-				packageStructureService,
-				pageStructureService);
 
-		savePackage(packageCode);
-		saveLanguages(packageCode);
-		saveTranslations(packageCode);
-		packageDirectory.savePackageStructures();
-		packageDirectory.savePageStructures();
+		for(String packageCode : KnownGodtoolsPackages.packageNames)
+		{
+			PackageDirectory packageDirectory = new PackageDirectory(packageCode,
+					packageService,
+					languageService,
+					translationService,
+					translationElementService,
+					packageStructureService,
+					pageStructureService);
+
+			savePackage(packageCode);
+			saveLanguages(packageCode);
+			saveTranslations(packageCode);
+			packageDirectory.savePackageStructures();
+			packageDirectory.savePageStructures();
+		}
 	}
-    }
 
 	private void savePackage(String packageCode) throws Exception
 	{
@@ -96,7 +96,10 @@ public class V0_4__migrate_packages implements JdbcMigration
 		for(Language language : languages)
 		{
 			Language retrievedLanguage = languageService.selectByLanguageCode(LanguageCode.fromLanguage(language));
-			translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
+			Translation translation = new Translation(packageService.selectByCode(packageCode), retrievedLanguage);
+			translation.setVersionNumber(1);
+
+			translationService.insert(translation);
 		}
 	}
 }

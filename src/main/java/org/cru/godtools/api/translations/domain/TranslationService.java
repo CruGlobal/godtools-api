@@ -55,6 +55,7 @@ public class TranslationService
                 .addParameter("id", translation.getId())
                 .addParameter("packageId", translation.getPackageId())
                 .addParameter("languageId", translation.getLanguageId())
+				.addParameter("versionNumber", translation.getVersionNumber())
                 .executeUpdate();
     }
 
@@ -64,7 +65,7 @@ public class TranslationService
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
-        public static final String insert = "INSERT INTO translations(id, language_id, package_id) VALUES(:id, :languageId, :packageId)";
+        public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number) VALUES(:id, :languageId, :packageId, :versionNumber)";
     }
 
 }

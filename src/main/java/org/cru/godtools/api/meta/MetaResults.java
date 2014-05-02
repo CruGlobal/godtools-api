@@ -30,10 +30,9 @@ public class MetaResults implements java.io.Serializable
 
     }
 
-    public MetaResults withLanguage(MetaLanguage metaLanguage)
+    public void addLanguage(MetaLanguage metaLanguage)
     {
         languages.add(metaLanguage);
-        return this;
     }
 
     @XmlElement(name = "language")
