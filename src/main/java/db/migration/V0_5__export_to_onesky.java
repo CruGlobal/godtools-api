@@ -25,8 +25,6 @@ public class V0_5__export_to_onesky implements JdbcMigration
 	LanguageService languageService = new LanguageService(sqlConnection);
 	PackageService packageService = new PackageService(sqlConnection);
 	TranslationService translationService = new TranslationService(sqlConnection);
-	PackageStructureService packageStructureService = new PackageStructureService(sqlConnection);
-	PageStructureService pageStructureService = new PageStructureService(sqlConnection);
 	TranslationElementService translationElementService = new TranslationElementService(sqlConnection);
 
 	OneSkyDataService oneSkyDataService = new OneSkyDataService(translationElementService, languageService, packageService, translationService);
@@ -41,9 +39,8 @@ public class V0_5__export_to_onesky implements JdbcMigration
 
 			for(String pageName : translationElementMultimap.keySet())
 			{
-				phraseCollectionsEndpoint.importPhraseCollections("25945", pageName, translationElementMultimap.get(pageName));
+				phraseCollectionsEndpoint.importPhraseCollections("26080", pageName, translationElementMultimap.get(pageName));
 			}
 		}
 	}
-
 }
