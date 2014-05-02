@@ -37,7 +37,7 @@ public class PhraseCollections
 			ObjectNode entity = addAuthentication(buildPhraseCollection(pageName, translationElement));
 			String stringEntity = new ObjectMapper().writeValueAsString(entity);
 			Response response = target.request().post(Entity.json(stringEntity));
-			response = response;
+			System.out.println("Response: " + response.getStatus() + " ID: " + translationElement.getId());
 		}
 	}
 
@@ -100,19 +100,32 @@ public class PhraseCollections
 
 	private ObjectNode buildPhrase(TranslationElement translationElement)
 	{
+		ObjectNode lengthLimit = buildLengthLimit(translationElement);
+
+		ObjectNode elementDetails = buildElementDetails(translationElement, lengthLimit);
+
+		return elementDetails;
+	}
+
+	private ObjectNode buildElementDetails(TranslationElement translationElement, ObjectNode lengthLimit)
+	{
 		ObjectNode elementDetails = new ObjectNode(JsonNodeFactory.instance);
-		ObjectNode lengthLimit = new ObjectNode(JsonNodeFactory.instance);
+
 
 		elementDetails.put("string", translationElement.getBaseText());
-		elementDetails.put("description", translationElement.getPageName() + "_" + translationElement.getElementType());
 
+		elementDetails.put("description", translationElement.getPageName() + "_" + translationElement.getElementType());
+		elementDetails.put("length_limit", lengthLimit);
+		return elementDetails;
+	}
+
+	private ObjectNode buildLengthLimit(TranslationElement translationElement)
+	{
+		ObjectNode lengthLimit = new ObjectNode(JsonNodeFactory.instance);
 		lengthLimit.put("type", "absolute");
 		lengthLimit.put("value", String.valueOf(translationElement.getBaseText().length()));
 		lengthLimit.put("is_exceed_allowed", "true");
-
-		elementDetails.put("length_limit", lengthLimit);
-
-		return elementDetails;
+		return lengthLimit;
 	}
 
 }
