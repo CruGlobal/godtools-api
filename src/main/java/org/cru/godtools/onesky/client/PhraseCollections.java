@@ -2,6 +2,7 @@ package org.cru.godtools.onesky.client;
 
 import com.google.common.base.Throwables;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.godtools.api.packages.domain.TranslationElement;
@@ -11,7 +12,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,14 +28,16 @@ public class PhraseCollections
 	public static final String SUB_PATH = "/phrase-collections";
 
 
-	public void importPhraseCollections(String projectId, String pageName, Collection<TranslationElement> translationElementList)
+	public void importPhraseCollections(String projectId, String pageName, Collection<TranslationElement> translationElementList) throws Exception
 	{
-		WebTarget target = buildTarget(projectId);
 
 		for(TranslationElement translationElement : translationElementList)
 		{
+			WebTarget target = buildTarget(projectId);
 			ObjectNode entity = addAuthentication(buildPhraseCollection(pageName, translationElement));
-			Response response = target.request().post(Entity.json(entity));
+			String stringEntity = new ObjectMapper().writeValueAsString(entity);
+			Response response = target.request().post(Entity.json(stringEntity));
+			response = response;
 		}
 	}
 
@@ -49,7 +54,7 @@ public class PhraseCollections
 		json.put("timestamp", epoch);
 		try
 		{
-			json.put("dev_hash", new String(MessageDigest.getInstance("MD5").digest(new String(String.valueOf(epoch) + "").getBytes())));
+			json.put("dev_hash", createDevHash(epoch));
 		}
 		catch(Exception e)
 		{
@@ -57,6 +62,23 @@ public class PhraseCollections
 		}
 
 		return json;
+	}
+
+	private String createDevHash(long millisSinceEpoch) throws NoSuchAlgorithmException, UnsupportedEncodingException
+	{
+		MessageDigest md5 = MessageDigest.getInstance("MD5");
+		String millisSinceEpochString = String.valueOf(millisSinceEpoch);
+		String millisAndSecretKey = millisSinceEpochString + "";
+		byte[] md5Hash = md5.digest(millisAndSecretKey.getBytes("UTF-8"));
+
+		StringBuilder sb = new StringBuilder(2 * md5Hash.length);
+		for(byte b : md5Hash)
+		{
+			sb.append(String.format("%02x", b&0xff));
+		}
+
+
+		return sb.toString();
 	}
 
 	private ObjectNode buildPhraseCollection(String pageName, TranslationElement translationElement)
@@ -86,7 +108,7 @@ public class PhraseCollections
 
 		lengthLimit.put("type", "absolute");
 		lengthLimit.put("value", String.valueOf(translationElement.getBaseText().length()));
-		lengthLimit.put("is_exceed_allowed", true);
+		lengthLimit.put("is_exceed_allowed", "true");
 
 		elementDetails.put("length_limit", lengthLimit);
 

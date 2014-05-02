@@ -38,7 +38,7 @@ public class OneSkyDataService
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
 
-		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order");
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order desc");
 
 		Multimap<String, TranslationElement> translationElementMultimap = ArrayListMultimap.create();
 
