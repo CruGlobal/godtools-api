@@ -13,6 +13,7 @@ import org.cru.godtools.api.translations.domain.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,6 @@ public class GodToolsPackageService extends GodToolsTranslationService
 								  PageService pageService,
 								  ImageService imageService)
     {
-		super(packageService,versionService,translationService,languageService,pageService);
 		this.imageService = imageService;
     }
 
@@ -49,17 +49,13 @@ public class GodToolsPackageService extends GodToolsTranslationService
      */
     public GodToolsPackage getPackage(LanguageCode languageCode,
                                       String packageCode,
-                                      Integer revisionNumber,
+                                      BigDecimal revisionNumber,
                                       Integer minimumInterpreterVersion,
                                       PixelDensity pixelDensity)
     {
 		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion);
 
-        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation.getPackageXml(),
-				godToolsTranslation.getPageFiles(),
-				godToolsTranslation.getCurrentVersion(),
-                languageCode.toString(),
-                packageCode);
+        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
 
 		godToolsPackage.setImages(loadImages(godToolsPackage));
 
@@ -94,6 +90,6 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
 	private List<Image> loadImages(GodToolsPackage godToolsPackage)
 	{
-		return imageService.selectyByVersionId(godToolsPackage.getCurrentVersion().getId());
+		return Lists.newArrayList();
 	}
 }

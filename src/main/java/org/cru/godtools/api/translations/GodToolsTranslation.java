@@ -1,7 +1,10 @@
 package org.cru.godtools.api.translations;
 
 import com.google.common.collect.Lists;
+import org.cru.godtools.api.packages.domain.PackageStructure;
 import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.api.packages.domain.PageStructure;
+import org.cru.godtools.api.packages.domain.TranslationElement;
 import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.w3c.dom.Document;
@@ -13,85 +16,49 @@ import java.util.List;
  */
 public class GodToolsTranslation
 {
-    protected Document packageXml;
-	protected List<Page> pageFiles = Lists.newArrayList();
-	protected String languageCode;
-	protected String packageCode;
-	protected String packageXmlHash;
+	PackageStructure packageStructure;
+	List<PageStructure> pageStructureList;
+	List<TranslationElement> translationElementList;
 
-	protected Version currentVersion;
 
     public GodToolsTranslation()
     {
     }
 
-    public GodToolsTranslation(Document packageXml, List<Page> pageFiles, Version version, String languageCode, String packageCode)
-    {
-        this.packageXml = packageXml;
-        this.pageFiles = pageFiles;
-		this.currentVersion = version;
-        this.languageCode = languageCode;
-        this.packageCode = packageCode;
-        this.packageXmlHash = ShaGenerator.calculateHash(packageXml);
-    }
-
-    public Document getPackageXml()
-    {
-        return packageXml;
-    }
-
-    public void setPackageXml(Document packageXml)
-    {
-        this.packageXml = packageXml;
-    }
-
-    public List<Page> getPageFiles()
-    {
-        return pageFiles;
-    }
-
-    public void setPageFiles(List<Page> pageFiles)
-    {
-        this.pageFiles = pageFiles;
-    }
-
-    public String getLanguageCode()
-    {
-        return languageCode;
-    }
-
-    public void setLanguageCode(String languageCode)
-    {
-        this.languageCode = languageCode;
-    }
-
-    public String getPackageCode()
-    {
-        return packageCode;
-    }
-
-    public void setPackageCode(String packageCode)
-    {
-        this.packageCode = packageCode;
-    }
-
-    public String getPackageXmlHash()
-    {
-        return packageXmlHash;
-    }
-
-    public void setPackageXmlHash(String packageXmlHash)
-    {
-        this.packageXmlHash = packageXmlHash;
-    }
-
-	public Version getCurrentVersion()
+	public GodToolsTranslation(PackageStructure packageStructure, List<PageStructure> pageStructureList, List<TranslationElement> translationElementList)
 	{
-		return currentVersion;
+		this.packageStructure = packageStructure;
+		this.pageStructureList = pageStructureList;
+		this.translationElementList = translationElementList;
 	}
 
-	public void setCurrentVersion(Version currentVersion)
+	public PackageStructure getPackageStructure()
 	{
-		this.currentVersion = currentVersion;
+		return packageStructure;
+	}
+
+	public void setPackageStructure(PackageStructure packageStructure)
+	{
+		this.packageStructure = packageStructure;
+	}
+
+	public List<PageStructure> getPageStructureList()
+	{
+		return pageStructureList;
+	}
+
+	public void setPageStructureList(List<PageStructure> pageStructureList)
+	{
+		this.pageStructureList = pageStructureList;
+	}
+
+	public List<TranslationElement> getTranslationElementList()
+	{
+		return translationElementList;
+	}
+
+	public void setTranslationElementList(List<TranslationElement> translationElementList)
+	{
+		this.translationElementList = translationElementList;
 	}
 }

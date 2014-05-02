@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -19,7 +20,7 @@ import java.util.UUID;
  */
 public class Version
 {
-	public static final Integer LATEST_VERSION_NUMBER = -13528;
+	public static final BigDecimal LATEST_VERSION_NUMBER = new BigDecimal(-13528.1234);
 
     UUID id;
     Integer versionNumber;

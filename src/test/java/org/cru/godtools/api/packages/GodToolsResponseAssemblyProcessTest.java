@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 4/2/14.
@@ -30,11 +31,10 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	@Test
 	public void testBuildResponse() throws IOException
 	{
-		Response response = responseAssemblyProcess.setVersionNumber(1)
+		Response response = responseAssemblyProcess.setVersionNumber(new BigDecimal(1))
 				.setCompressed(false)
 				.setLanguageCode("en")
 				.setPackageCode("kgp")
-				.setVersionNumber(1)
 				.setMinimumInterpreterVersion(1)
 				.setPixelDensity(PixelDensity.getEnum("High"))
 				.loadPackages()

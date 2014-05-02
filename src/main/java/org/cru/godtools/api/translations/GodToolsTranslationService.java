@@ -13,6 +13,7 @@ import org.cru.godtools.api.utilities.ResourceNotFoundException;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,10 +25,11 @@ import java.util.UUID;
 public class GodToolsTranslationService
 {
 	protected PackageService packageService;
-	protected VersionService versionService;
 	protected TranslationService translationService;
 	protected LanguageService languageService;
-	protected PageService pageService;
+	protected PackageStructureService packageStructureService;
+	protected PageStructureService pageStructureService;
+	protected TranslationElementService translationElementService;
 
 	public GodToolsTranslationService(){}
 
@@ -36,13 +38,16 @@ public class GodToolsTranslationService
 								  VersionService versionService,
 								  TranslationService translationService,
 								  LanguageService languageService,
-								  PageService pageService)
+								  PackageStructureService packageStructureService,
+								  PageStructureService pageStructureService,
+								  TranslationElementService translationElementService)
 	{
 		this.packageService = packageService;
-		this.versionService = versionService;
 		this.translationService = translationService;
 		this.languageService = languageService;
-		this.pageService = pageService;
+		this.packageStructureService = packageStructureService;
+		this.pageStructureService = pageStructureService;
+		this.translationElementService = translationElementService;
 	}
 
 	/**
@@ -51,24 +56,22 @@ public class GodToolsTranslationService
 	 *
 	 * @param languageCode
 	 * @param packageCode
-	 * @param revisionNumber
+	 * @param versionNumber
 	 * @return
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
 									  String packageCode,
-									  Integer revisionNumber,
+									  BigDecimal versionNumber,
 									  Integer minimumInterpreterVersion)
 	{
-		Translation translation = getTranslation(packageCode, languageCode);
+		Translation translation = getTranslation(packageCode, languageCode, versionNumber);
+		Package gtPackage = getPackage(packageCode);
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		Version version = getVersion(revisionNumber, minimumInterpreterVersion, translation);
-		List<Page> pages = pageService.selectByVersionId(version.getId());
 
-		return new GodToolsTranslation(version.getPackageStructure(),
-				pages,
-				version,
-				languageCode.toString(),
-				packageCode);
+		return null;
 	}
 
 	/**
@@ -100,153 +103,16 @@ public class GodToolsTranslationService
 		return translations;
 	}
 
-	public Version getCurrentDraftVersion(String packageCode, LanguageCode languageCode)
-	{
-		Version latestVersion = versionService.selectLatestVersionForTranslation(getOrCreateTranslation(packageCode, languageCode).getId());
-		if(latestVersion.isReleased()) throw new ResourceNotFoundException(Version.class);
-		else return latestVersion;
-	}
-
-	/**
-	 * Used to create a new translation version in "draft" status.
-	 */
-	public Version createNewVersion(String packageCode, LanguageCode languageCode)
-	{
-		Translation translation = getOrCreateTranslation(packageCode, languageCode);
-		Version version = new Version();
-		version.setId(UUID.randomUUID());
-		version.setReleased(false);
-		version.setTranslationId(translation.getId());
-		version.setMinimumInterpreterVersion(1);  //TODO: yeah figure this out sometime
-
-		try
-		{
-			version.setDraftVersionNumber(versionService.selectLatestVersionForTranslation(translation.getId()));
-		}
-		catch(ResourceNotFoundException e)
-		{
-			version.setVersionNumber(1);
-		}
-
-		versionService.insert(version);
-
-		return version;
-	}
-
-	public void saveDraftPages(NewTranslation newTranslation, Version currentDraftVersion, Map<String, Image> currentTranslationImages)
-	{
-		for(String filename : newTranslation.keySet())
-		{
-//			Page draftPage = pageService.selectByFilenameAndVersionId(filename, currentDraftVersion.getId());
-
-//			if(draftPage != null)
-//			{
-//				draftPage.setXmlContent(newTranslation.get(filename));
-//				draftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
-//				draftPage.calculateHash();
-//
-//				pageService.update(draftPage);
-//			}
-//			else
-			{
-				Page newDraftPage = new Page();
-				newDraftPage.setId(UUID.randomUUID());
-				newDraftPage.setVersionId(currentDraftVersion.getId());
-
-				pageService.insert(newDraftPage);
-
-				newDraftPage.setXmlContent(newTranslation.get(filename));
-//				newDraftPage.replaceImageNamesWithImageHashes(currentTranslationImages);
-//				newDraftPage.calculateHash();
-
-				pageService.update(newDraftPage);
-			}
-		}
-	}
-
-	/**
-	 * Used to update a translation version which has not yet been pushed live
-	 */
-	public void updateVersion(Version currentDraftVersion)
-	{
-		versionService.update(currentDraftVersion);
-	}
-
-	private Translation getTranslation(String packageCode, LanguageCode languageCode)
+	private Translation getTranslation(String packageCode, LanguageCode languageCode, BigDecimal versionNumber)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		return translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
+		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), versionNumber.remainder(BigDecimal.ONE).intValue());
 	}
 
-	private Translation getOrCreateTranslation(String packageCode, LanguageCode languageCode)
+	private Package getPackage(String packageCode)
 	{
-		Language language = getOrCreateLanguage(languageCode);
-		Package gtPackage = getOrCreatePackage(packageCode);
-
-		try
-		{
-			return getTranslation(packageCode, languageCode);
-		}
-		catch(ResourceNotFoundException e)
-		{
-			Translation newTranslation = new Translation();
-			newTranslation.setId(UUID.randomUUID());
-			newTranslation.setPackageId(gtPackage.getId());
-			newTranslation.setLanguageId(language.getId());
-			translationService.insert(newTranslation);
-
-			return newTranslation;
-		}
+		return packageService.selectByCode(packageCode);
 	}
-
-	private Package getOrCreatePackage(String packageCode)
-	{
-		try
-		{
-			return packageService.selectByCode(packageCode);
-		}
-		catch(ResourceNotFoundException e)
-		{
-			Package gtPackage = new Package();
-			gtPackage.setId(UUID.randomUUID());
-			gtPackage.setCode(packageCode);
-			packageService.insert(gtPackage);
-
-			return gtPackage;
-		}
-	}
-
-	private Version getVersion(Integer versionNumber, Integer minimumInterpreterVersion, Translation translation)
-	{
-		if(minimumInterpreterVersion == null)
-		{
-			return versionNumber.equals(Version.LATEST_VERSION_NUMBER) ? versionService.selectLatestVersionForTranslation(translation.getId()) :
-					versionService.selectSpecificVersionForTranslation(translation.getId(), versionNumber);
-		}
-		else
-		{
-			return versionNumber.equals(Version.LATEST_VERSION_NUMBER) ? versionService.selectLatestVersionForTranslation(translation.getId(), minimumInterpreterVersion) :
-					versionService.selectSpecificVersionForTranslation(translation.getId(), versionNumber, minimumInterpreterVersion);
-		}
-	}
-
-	private Language getOrCreateLanguage(LanguageCode languageCode)
-	{
-		try
-		{
-			return languageService.selectByLanguageCode(languageCode);
-		}
-		catch(ResourceNotFoundException e)
-		{
-			Language newLanguage = new Language();
-			newLanguage.setId(UUID.randomUUID());
-			newLanguage.setFromLanguageCode(languageCode);
-			languageService.insert(newLanguage);
-
-			return newLanguage;
-		}
-	}
-
 }

@@ -18,6 +18,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 
 /**
@@ -30,8 +31,7 @@ public class TranslationResource
 	AuthorizationService authService;
 	@Inject
 	GodToolsPackageRetrievalProcess packageRetrievalProcess;
-	@Inject
-	GodToolsTranslationUpdateProcess translationUpdateProcess;
+
 
 
 	@GET
@@ -62,7 +62,7 @@ public class TranslationResource
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								   @QueryParam("compressed") String compressed,
-								   @QueryParam("revision-number") Integer revisionNumber,
+								   @QueryParam("revision-number") BigDecimal versionNumber,
 								   @HeaderParam("authorization") String authTokenHeader,
 								   @QueryParam("authorization") String authTokenParam) throws IOException
 	{
@@ -73,7 +73,7 @@ public class TranslationResource
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
+				.setVersionNumber(versionNumber == null ? Version.LATEST_VERSION_NUMBER : versionNumber)
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -94,12 +94,12 @@ public class TranslationResource
 
 		for(NewTranslation newTranslation : newPackagePostData.getNewPackageSet())
 		{
-			return translationUpdateProcess
-					.setPackageCode(packageCode)
-					.setLanguageCode(languageCode)
-					.loadVersion()
-					.saveTranslation(newTranslation)
-					.buildResponse();
+//			return translationUpdateProcess
+//					.setPackageCode(packageCode)
+//					.setLanguageCode(languageCode)
+//					.loadVersion()
+//					.saveTranslation(newTranslation)
+//					.buildResponse();
 		}
 
 		return Response.accepted().build();

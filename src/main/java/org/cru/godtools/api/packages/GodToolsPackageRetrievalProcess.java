@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
@@ -39,7 +40,7 @@ public class GodToolsPackageRetrievalProcess
     String packageCode;
     LanguageCode languageCode;
     Integer minimumInterpreterVersion;
-    Integer revisionNumber;
+    BigDecimal versionNumber;
     boolean compressed;
     PixelDensity pixelDensity;
 
@@ -70,9 +71,9 @@ public class GodToolsPackageRetrievalProcess
         return this;
     }
 
-    public GodToolsPackageRetrievalProcess setVersionNumber(Integer revisionNumber)
+    public GodToolsPackageRetrievalProcess setVersionNumber(BigDecimal revisionNumber)
     {
-        this.revisionNumber = revisionNumber;
+        this.versionNumber = revisionNumber;
         return this;
     }
 
@@ -97,7 +98,7 @@ public class GodToolsPackageRetrievalProcess
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion));
+			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, versionNumber, minimumInterpreterVersion));
 		}
 
 		return this;
@@ -111,7 +112,7 @@ public class GodToolsPackageRetrievalProcess
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, versionNumber, minimumInterpreterVersion, pixelDensity));
 		}
 
 		return this;

@@ -21,16 +21,11 @@ public class GodToolsPackage extends GodToolsTranslation
 
 	public GodToolsPackage(GodToolsTranslation godToolsTranslation)
 	{
-		super(godToolsTranslation.getPackageXml(),
-				godToolsTranslation.getPageFiles(),
-				godToolsTranslation.getCurrentVersion(),
-				godToolsTranslation.getLanguageCode(),
-				godToolsTranslation.getPackageCode());
+
 	}
 
-	public GodToolsPackage(Document packageXml, List<Page> pageFiles, Version version, String languageCode, String packageCode)
+	public GodToolsPackage(Document packageXml, List<Page> pageFiles, String languageCode, String packageCode)
 	{
-		super(packageXml, pageFiles, version, languageCode, packageCode);
 	}
 
 	public List<Image> getImages()
