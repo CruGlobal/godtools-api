@@ -177,6 +177,7 @@ public class PackageDirectory
 			pageStructure.setId(UUID.randomUUID());
 			pageStructure.setPackageStructureId(packageStructure.getId());
 			pageStructure.setXmlContent(baseEnglishPage.getXmlContent());
+			pageStructure.setFilename(baseEnglishPage.getFilename());
 
 			Map<UUID, Document> translatablePageMap = Maps.newHashMap();
 

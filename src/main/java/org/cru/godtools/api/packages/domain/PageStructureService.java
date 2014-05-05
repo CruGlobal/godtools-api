@@ -34,12 +34,13 @@ public class PageStructureService
 				.addParameter("packageStructureId", pageStructure.getPackageStructureId())
 				.addParameter("xmlContent", pageStructure.getXmlContent())
 				.addParameter("description", pageStructure.getDescription())
+				.addParameter("filename", pageStructure.getFilename())
 				.executeUpdate();
 	}
 
 	public static final class PageStructureQueries
 	{
 		public static final String selectByPackageStructureId = "SELECT * FROM page_structures WHERE package_structure_id = :packageStructureId";
-		public static final String insert = "INSERT INTO page_structure(id, package_structure_id, xml_content, description) VALUES(:id, :packageStructureId, :xmlContent, :description)";
+		public static final String insert = "INSERT INTO page_structure(id, package_structure_id, xml_content, description, filename) VALUES(:id, :packageStructureId, :xmlContent, :description, :filename)";
 	}
 }

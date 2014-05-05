@@ -16,6 +16,7 @@ public class PageStructure
 	private UUID packageStructureId;
 	private Document xmlContent;
 	private String description;
+	private String filename;
 
 	public void setTranslatedFields(Map<UUID, TranslationElement> mapOfTranslationElements)
 	{
@@ -75,4 +76,13 @@ public class PageStructure
 		this.description = description;
 	}
 
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
+	}
 }
