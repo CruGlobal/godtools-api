@@ -13,6 +13,7 @@ public class Package
     String name;
     String code;
     UUID defaultLanguageId;
+	Integer oneskyProjectId;
 
     public UUID getId()
     {
@@ -53,4 +54,14 @@ public class Package
     {
         this.defaultLanguageId = defaultLanguageId;
     }
+
+	public Integer getOneskyProjectId()
+	{
+		return oneskyProjectId;
+	}
+
+	public void setOneskyProjectId(Integer oneskyProjectId)
+	{
+		this.oneskyProjectId = oneskyProjectId;
+	}
 }

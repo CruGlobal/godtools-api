@@ -8,8 +8,6 @@ import org.cru.godtools.properties.GodToolsProperties;
 import org.cru.godtools.properties.GodToolsPropertiesFactory;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
@@ -21,19 +19,21 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 /**
+ *
+ * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/file.md
+ *
+ *
  * Created by ryancarlson on 5/1/14.
  */
 public class FileClient
 {
-	public static final String ROOT = "https://platform.api.onesky.io/1";
-	public static final String PATH = "/projects";
 	public static final String SUB_PATH = "/files";
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
 	public void uploadFile(String projectId, String pageName, Collection<TranslationElement> translationElementList) throws Exception
 	{
-		WebTarget target = buildTarget(projectId);
+		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 
 		MultipartFormDataOutput upload = buildMultipartFormDataOutput();
 		upload.addFormData("file", new ObjectMapper().writeValueAsString(buildFile(translationElementList)), MediaType.MULTIPART_FORM_DATA_TYPE, pageName);
@@ -47,12 +47,6 @@ public class FileClient
 		System.out.println("*****************************************");
 	}
 
-	private WebTarget buildTarget(String projectId)
-	{
-		Client client = ClientBuilder.newBuilder().build();
-		return client.target(ROOT + PATH + "/" + projectId + SUB_PATH);
-	}
-
 	private MultipartFormDataOutput buildMultipartFormDataOutput() throws Exception
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
@@ -60,26 +54,10 @@ public class FileClient
 		MultipartFormDataOutput upload = new MultipartFormDataOutput();
 		upload.addFormData("api_key", properties.get("oneskyApiKey"), MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("timestamp", String.valueOf(timestamp), MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("dev_hash", createDevHash(timestamp), MediaType.MULTIPART_FORM_DATA_TYPE);
+		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.MULTIPART_FORM_DATA_TYPE);
 
 		return upload;
-	}
-
-	private String createDevHash(long millisSinceEpoch) throws NoSuchAlgorithmException, UnsupportedEncodingException
-	{
-		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		String millisSinceEpochString = String.valueOf(millisSinceEpoch);
-		String millisAndSecretKey = millisSinceEpochString + properties.get("oneskySecretKey");
-		byte[] md5Hash = md5.digest(millisAndSecretKey.getBytes("UTF-8"));
-
-		StringBuilder sb = new StringBuilder(2 * md5Hash.length);
-		for(byte b : md5Hash)
-		{
-			sb.append(String.format("%02x", b&0xff));
-		}
-
-		return sb.toString();
 	}
 
 	private ObjectNode buildFile(Collection<TranslationElement> translationElementList)

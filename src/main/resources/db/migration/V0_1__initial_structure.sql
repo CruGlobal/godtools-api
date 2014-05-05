@@ -10,7 +10,8 @@ CREATE TABLE packages (
   id uuid NOT NULL PRIMARY KEY,
   name text,
   code text,
-  default_language_id uuid REFERENCES languages(id)
+  default_language_id uuid REFERENCES languages(id),
+  onesky_project_id integer
 );
 
 CREATE TABLE translations (
