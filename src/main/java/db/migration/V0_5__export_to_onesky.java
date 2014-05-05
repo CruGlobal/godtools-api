@@ -5,13 +5,11 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
-import org.cru.godtools.onesky.client.PhraseCollections;
+import org.cru.godtools.onesky.client.FileClient;
 
 import java.sql.Connection;
 
@@ -35,11 +33,11 @@ public class V0_5__export_to_onesky implements JdbcMigration
 		for(String packageCode : KnownGodtoolsPackages.packageNames)
 		{
 			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(packageCode, new LanguageCode("en"));
-			PhraseCollections phraseCollectionsEndpoint = new PhraseCollections();
+			FileClient phraseCollectionsEndpoint = new FileClient();
 
 			for(String pageName : translationElementMultimap.keySet())
 			{
-				phraseCollectionsEndpoint.importPhraseCollections("26080", pageName, translationElementMultimap.get(pageName));
+				phraseCollectionsEndpoint.uploadFile("26073", pageName, translationElementMultimap.get(pageName));
 			}
 		}
 	}
