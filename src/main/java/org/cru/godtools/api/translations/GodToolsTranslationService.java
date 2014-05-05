@@ -131,6 +131,8 @@ public class GodToolsTranslationService
 			pageStructure.setTranslatedFields(mapOfTranslationElements);
 		}
 
+		packageStructure.replacePageNamesWithPageHashes(createMapOfPageStructures(pageStructures));
+
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
 
@@ -147,5 +149,17 @@ public class GodToolsTranslationService
 		}
 
 		return translationElementMap;
+	}
+
+	private Map<String, PageStructure> createMapOfPageStructures(List<PageStructure> pageStructureList)
+	{
+		Map<String, PageStructure> pageStructureMap = Maps.newHashMap();
+
+		for(PageStructure pageStructure : pageStructureList)
+		{
+			pageStructureMap.put(pageStructure.getFilename(), pageStructure);
+		}
+
+		return pageStructureMap;
 	}
 }

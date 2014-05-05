@@ -1,9 +1,11 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +36,20 @@ public class PackageStructure
 			}
 		}
 	}
+
+	public void replacePageNamesWithPageHashes(Map<String, PageStructure> pageStructures)
+	{
+		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
+		{
+			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(pageElement.getAttribute("filename") + ".xml").getXmlContent()) + ".xml");
+		}
+
+		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
+		{
+			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(pageElement.getAttribute("filename") + ".xml").getXmlContent()) + ".xml");
+		}
+	}
+
 
 	public UUID getId()
 	{
@@ -74,4 +90,5 @@ public class PackageStructure
 	{
 		this.xmlContent = xmlContent;
 	}
+
 }

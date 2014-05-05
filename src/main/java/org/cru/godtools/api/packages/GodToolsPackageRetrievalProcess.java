@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
@@ -198,12 +199,12 @@ public class GodToolsPackageRetrievalProcess
 
             for(GodToolsTranslation godToolsPackage : godToolsPackages)
             {
-//                Element resourceElement = contents.createElement("resource");
-//                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
-//                resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
-//                resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
+                Element resourceElement = contents.createElement("resource");
+                resourceElement.setAttribute("package", packageCode);
+                resourceElement.setAttribute("language", languageCode.toString());
+                resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
 
-//                rootElement.appendChild(resourceElement);
+                rootElement.appendChild(resourceElement);
             }
             return contents;
         }
