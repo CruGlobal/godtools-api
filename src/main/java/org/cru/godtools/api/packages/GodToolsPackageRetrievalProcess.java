@@ -198,12 +198,12 @@ public class GodToolsPackageRetrievalProcess
 
             for(GodToolsTranslation godToolsPackage : godToolsPackages)
             {
-                Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
-                resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
-                resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
+//                Element resourceElement = contents.createElement("resource");
+//                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
+//                resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
+//                resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
 
-                rootElement.appendChild(resourceElement);
+//                rootElement.appendChild(resourceElement);
             }
             return contents;
         }

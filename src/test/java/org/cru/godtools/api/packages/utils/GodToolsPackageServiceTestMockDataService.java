@@ -118,16 +118,6 @@ public class GodToolsPackageServiceTestMockDataService
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)
 	{
-		Assert.assertNotNull(englishKgpPackage);
 
-		Assert.assertEquals(englishKgpPackage.getLanguageCode(), "en");
-		Assert.assertEquals(englishKgpPackage.getPackageCode(), "kgp");
-		Assert.assertEquals(englishKgpPackage.getPackageXmlHash(), ShaGenerator.calculateHash(englishKgpPackage.getPackageXml()));
-
-		Assert.assertEquals(englishKgpPackage.getImages().size(), 1);
-		Assert.assertEquals(englishKgpPackage.getImages().iterator().next().getId(), GodToolsPackageServiceTest.IMAGE_ID);
-
-		Assert.assertEquals(englishKgpPackage.getPageFiles().size(), 1);
-		Assert.assertEquals(englishKgpPackage.getPageFiles().get(0).getId(), GodToolsPackageServiceTest.PAGE_ID);
 	}
 }
