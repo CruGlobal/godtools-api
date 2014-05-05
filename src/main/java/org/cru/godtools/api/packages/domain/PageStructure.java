@@ -1,7 +1,10 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -13,6 +16,24 @@ public class PageStructure
 	private UUID packageStructureId;
 	private Document xmlContent;
 	private String description;
+
+	public void setTranslatedFields(Map<UUID, TranslationElement> mapOfTranslationElements)
+	{
+		for(Element translatableElement : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "gtapi-trx-id"))
+		{
+			try
+			{
+				if (mapOfTranslationElements.containsKey(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))))
+				{
+					translatableElement.setTextContent(mapOfTranslationElements.get(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))).getTranslatedText());
+				}
+			}
+			catch(IllegalArgumentException e)
+			{
+				System.out.println("Invalid UUID... oh well.  Move along");
+			}
+		}
+	}
 
 	public UUID getId()
 	{
@@ -53,4 +74,5 @@ public class PageStructure
 	{
 		this.description = description;
 	}
+
 }

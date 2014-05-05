@@ -1,7 +1,11 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,6 +18,7 @@ public class Package
     String code;
     UUID defaultLanguageId;
 	Integer oneskyProjectId;
+
 
     public UUID getId()
     {

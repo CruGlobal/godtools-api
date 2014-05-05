@@ -18,19 +18,10 @@ public class GodToolsTranslation
 {
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
-	List<TranslationElement> translationElementList;
-
 
     public GodToolsTranslation()
     {
     }
-
-	public GodToolsTranslation(PackageStructure packageStructure, List<PageStructure> pageStructureList, List<TranslationElement> translationElementList)
-	{
-		this.packageStructure = packageStructure;
-		this.pageStructureList = pageStructureList;
-		this.translationElementList = translationElementList;
-	}
 
 	public PackageStructure getPackageStructure()
 	{
@@ -50,15 +41,5 @@ public class GodToolsTranslation
 	public void setPageStructureList(List<PageStructure> pageStructureList)
 	{
 		this.pageStructureList = pageStructureList;
-	}
-
-	public List<TranslationElement> getTranslationElementList()
-	{
-		return translationElementList;
-	}
-
-	public void setTranslationElementList(List<TranslationElement> translationElementList)
-	{
-		this.translationElementList = translationElementList;
 	}
 }

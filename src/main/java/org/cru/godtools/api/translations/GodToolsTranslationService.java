@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.languages.Language;
@@ -7,9 +8,12 @@ import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -35,7 +39,6 @@ public class GodToolsTranslationService
 
 	@Inject
 	public GodToolsTranslationService(PackageService packageService,
-								  VersionService versionService,
 								  TranslationService translationService,
 								  LanguageService languageService,
 								  PackageStructureService packageStructureService,
@@ -70,8 +73,7 @@ public class GodToolsTranslationService
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-
-		return null;
+		return assembleGodToolsTranslation(packageStructure, pageStructures, translationElementList);
 	}
 
 	/**
@@ -114,5 +116,36 @@ public class GodToolsTranslationService
 	private Package getPackage(String packageCode)
 	{
 		return packageService.selectByCode(packageCode);
+	}
+
+	private GodToolsTranslation assembleGodToolsTranslation(PackageStructure packageStructure, List<PageStructure> pageStructures, List<TranslationElement> translationElementList)
+	{
+		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
+
+		Map<UUID, TranslationElement> mapOfTranslationElements = createMapOfTranslationElements(translationElementList);
+
+		packageStructure.setTranslatedFields(mapOfTranslationElements);
+
+		for(PageStructure pageStructure : pageStructures)
+		{
+			pageStructure.setTranslatedFields(mapOfTranslationElements);
+		}
+
+		godToolsTranslation.setPackageStructure(packageStructure);
+		godToolsTranslation.setPageStructureList(pageStructures);
+
+		return godToolsTranslation;
+	}
+
+	private Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)
+	{
+		Map<UUID, TranslationElement> translationElementMap = Maps.newHashMap();
+
+		for(TranslationElement translationElement : translationElementList)
+		{
+			translationElementMap.put(translationElement.getId(), translationElement);
+		}
+
+		return translationElementMap;
 	}
 }
