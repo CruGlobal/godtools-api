@@ -1,5 +1,6 @@
 package org.cru.godtools.onesky.client;
 
+import com.google.common.base.Throwables;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cru.godtools.properties.GodToolsProperties;
@@ -17,7 +18,7 @@ public class TranslationClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
-	public TranslationResults export(Integer projectId, String locale, String pageName) throws Exception
+	public TranslationResults export(Integer projectId, String locale, String pageName)
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
 				.queryParam("locale", locale)
@@ -29,7 +30,7 @@ public class TranslationClient
 		return TranslationResults.createFromResponse(target.request().get());
 	}
 
-	public TranslationStatus getStatus(Integer projectId, String locale, String pageName) throws Exception
+	public TranslationStatus getStatus(Integer projectId, String locale, String pageName)
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
 				.queryParam("locale", locale)
@@ -40,13 +41,21 @@ public class TranslationClient
 		return TranslationStatus.createFromResponse(target.request().get());
 	}
 
-	private WebTarget addAuthentication(WebTarget target) throws Exception
+	private WebTarget addAuthentication(WebTarget target)
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
 
-		 return target.queryParam("api_key", properties.get("oneskyApiKey"))
-						.queryParam("timestamp", timestamp)
-						.queryParam("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")));
+		try
+		{
+			return target.queryParam("api_key", properties.get("oneskyApiKey"))
+					.queryParam("timestamp", timestamp)
+					.queryParam("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String) properties.get("oneskySecretKey")));
+		}
+		catch(Exception e)
+		{
+			Throwables.propagate(e);
+			return null;
+		}
 	}
 
 

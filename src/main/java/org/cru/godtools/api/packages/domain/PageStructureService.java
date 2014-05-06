@@ -19,6 +19,15 @@ public class PageStructureService
 		this.sqlConnection = sqlConnection;
 	}
 
+	public PageStructure selectByid(UUID id)
+	{
+		return sqlConnection.createQuery(PageStructureQueries.selectById)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("id", id)
+				.executeAndFetchFirst(PageStructure.class);
+
+	}
+
 	public List<PageStructure> selectByPackageStructureId(UUID packageStructureId)
 	{
 		return sqlConnection.createQuery(PageStructureQueries.selectByPackageStructureId)
@@ -40,6 +49,7 @@ public class PageStructureService
 
 	public static final class PageStructureQueries
 	{
+		public static final String selectById = "SELECT * FROM page_structure WHERE id = :id";
 		public static final String selectByPackageStructureId = "SELECT * FROM page_structure WHERE package_structure_id = :packageStructureId";
 		public static final String insert = "INSERT INTO page_structure(id, package_structure_id, xml_content, description, filename) VALUES(:id, :packageStructureId, :xmlContent, :description, :filename)";
 	}

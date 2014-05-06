@@ -5,6 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 5/6/14.
@@ -13,7 +14,7 @@ public class TranslationStatus
 {
 	private int statusCode;
 	private String filename;
-	private int percentCompleted;
+	private BigDecimal percentCompleted;
 	private int stringCount;
 	private int wordCount;
 
@@ -26,7 +27,7 @@ public class TranslationStatus
 		{
 			translationStatus.setStatusCode(metaResponse.get("meta").get("status").asInt());
 			translationStatus.setFilename(metaResponse.get("data").get("file_name").asText());
-			translationStatus.setPercentCompleted(Integer.parseInt(metaResponse.get("data").get("progress").asText().replaceAll("%","")));
+			translationStatus.setPercentCompleted(new BigDecimal(metaResponse.get("data").get("progress").asText().replaceAll("%","")));
 			translationStatus.setStringCount(metaResponse.get("data").get("string_count").asInt());
 			translationStatus.setWordCount(metaResponse.get("data").get("word_count").asInt());
 
@@ -72,12 +73,12 @@ public class TranslationStatus
 		this.filename = filename;
 	}
 
-	public int getPercentCompleted()
+	public BigDecimal getPercentCompleted()
 	{
 		return percentCompleted;
 	}
 
-	public void setPercentCompleted(int percentCompleted)
+	public void setPercentCompleted(BigDecimal percentCompleted)
 	{
 		this.percentCompleted = percentCompleted;
 	}

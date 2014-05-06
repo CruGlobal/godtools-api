@@ -47,6 +47,16 @@ CREATE TABLE page_structure (
   filename text
 );
 
+CREATE TABLE translation_status (
+  page_structure_id uuid,
+  translation_id uuid,
+  percent_completed decimal,
+  string_count integer,
+  word_count integer,
+  last_updated timestamp,
+  PRIMARY KEY(page_structure_id, translation_id)
+);
+
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
   image_content bytea,

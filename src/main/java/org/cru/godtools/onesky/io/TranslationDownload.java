@@ -1,11 +1,12 @@
 package org.cru.godtools.onesky.io;
 
 import com.google.common.collect.Multimap;
+import org.ccci.util.time.Clock;
 import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.api.packages.domain.TranslationElement;
 import org.cru.godtools.onesky.client.TranslationClient;
 import org.cru.godtools.onesky.client.TranslationResults;
-import org.cru.godtools.onesky.domain.TranslationStatusService;
+import org.cru.godtools.onesky.domain.TranslationStatus;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -18,44 +19,64 @@ public class TranslationDownload
 {
 	private OneSkyDataService oneSkyDataService;
 	private TranslationClient translationClient;
-	private TranslationStatusService translationStatusService;
+	private Clock clock;
 
 	@Inject
-	public TranslationDownload(OneSkyDataService oneSkyDataService, TranslationClient translationClient, TranslationStatusService translationStatusService)
+	public TranslationDownload(OneSkyDataService oneSkyDataService, TranslationClient translationClient, Clock clock)
 	{
 		this.oneSkyDataService = oneSkyDataService;
 		this.translationClient = translationClient;
-		this.translationStatusService = translationStatusService;
+		this.clock = clock;
 	}
 
-	public void doDownload(UUID translationId)
+	public void doDownload(UUID translationId, UUID pageStructureId, boolean force)
 	{
-		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
+		org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
 
-		for(String pageName : translationElementMultimap.keySet())
+		if(force || isDownloadRequired(oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId), remoteTranslationStatus))
 		{
-			try
-			{
-				TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
-																					oneSkyDataService.getLocale(translationId),
-																					pageName);
+			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
 
-				for(TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
+			for (String pageName : translationElementMultimap.keySet())
+			{
+				try
 				{
-					if(translationResults.containsKey(localTranslationElement.getId()))
+					TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
+							oneSkyDataService.getLocale(translationId),
+							pageName);
+
+					for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
 					{
-						localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
+						if (translationResults.containsKey(localTranslationElement.getId()))
+						{
+							localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
+						}
 					}
+				} catch (Exception e)
+				{
+					e.printStackTrace();
 				}
 			}
-			catch(Exception e)
-			{
-				e.printStackTrace();;
-			}
+
+			oneSkyDataService.saveTranslationElements(translationElementMultimap);
+			oneSkyDataService.updateLocalTranslationStatuses(translationId, remoteTranslationStatus);
 		}
+	}
 
-		oneSkyDataService.saveTranslationElements(translationElementMultimap);
+	private boolean isDownloadRequired(TranslationStatus localTranslationStatus, org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus)
+	{
+		//if we're less than one hour from the last update, then don't bother querying the endpoint
+		if(clock.currentDateTime().isBefore(localTranslationStatus.getLastUpdated().plusHours(1))) return false;
 
-//		translationStatusService...
+		return remoteTranslationStatus.getPercentCompleted().compareTo(localTranslationStatus.getPercentCompleted()) == 0 &&
+				remoteTranslationStatus.getWordCount() == localTranslationStatus.getWordCount() &&
+				remoteTranslationStatus.getStringCount() == localTranslationStatus.getStringCount();
+	}
+
+	private org.cru.godtools.onesky.client.TranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
+	{
+		return translationClient.getStatus(oneSkyDataService.getOneskyProjectId(translationId),
+				oneSkyDataService.getLocale(translationId),
+				oneSkyDataService.getPageFilename(pageStructureId));
 	}
 }

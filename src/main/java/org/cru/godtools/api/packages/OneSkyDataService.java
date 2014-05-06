@@ -2,13 +2,13 @@ package org.cru.godtools.api.packages;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import org.cru.godtools.api.languages.Language;
+import org.ccci.util.time.Clock;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.onesky.domain.TranslationStatus;
+import org.cru.godtools.onesky.domain.TranslationStatusService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -19,18 +19,25 @@ import java.util.UUID;
  */
 public class OneSkyDataService
 {
-	TranslationElementService translationElementService;
-	TranslationService translationService;
-	PackageService packageService;
-	LanguageService languageService;
+	private TranslationElementService translationElementService;
+	private TranslationService translationService;
+	private TranslationStatusService translationStatusService;
+	private PackageService packageService;
+	private LanguageService languageService;
+	private PageStructureService pageStructureService;
+
+	private Clock clock;
 
 	@Inject
-	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, PackageService packageService, LanguageService languageService)
+	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, TranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
 	{
 		this.translationElementService = translationElementService;
 		this.translationService = translationService;
+		this.translationStatusService = translationStatusService;
 		this.packageService = packageService;
 		this.languageService = languageService;
+		this.pageStructureService = pageStructureService;
+		this.clock = clock;
 	}
 
 	public Multimap<String, TranslationElement> getTranslationElements(UUID translationId)
@@ -60,6 +67,20 @@ public class OneSkyDataService
 		}
 	}
 
+	public void updateLocalTranslationStatuses(UUID translationId, org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus)
+	{
+		translationStatusService.updateAllRelatedToTranslations(translationId,
+				remoteTranslationStatus.getPercentCompleted(),
+				remoteTranslationStatus.getStringCount(),
+				remoteTranslationStatus.getWordCount(),
+				clock.currentDateTime());
+	}
+
+	public TranslationStatus getLocalTranslationStatus(UUID translationId, UUID pageStructureId)
+	{
+		return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructureId);
+	}
+
 	public Integer getOneskyProjectId(UUID translationId)
 	{
 		Translation translation = translationService.selectById(translationId);
@@ -72,5 +93,10 @@ public class OneSkyDataService
 		Translation translation = translationService.selectById(translationId);
 
 		return languageService.selectLanguageById(translation.getLanguageId()).getPath();
+	}
+
+	public String getPageFilename(UUID pageStructureId)
+	{
+		return pageStructureService.selectByid(pageStructureId).getFilename();
 	}
 }
