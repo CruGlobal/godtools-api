@@ -12,6 +12,7 @@ import org.cru.godtools.api.translations.domain.TranslationService;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 5/2/14.
@@ -19,24 +20,22 @@ import java.util.List;
 public class OneSkyDataService
 {
 	TranslationElementService translationElementService;
-	LanguageService languageService;
-	PackageService packageService;
 	TranslationService translationService;
+	PackageService packageService;
+	LanguageService languageService;
 
 	@Inject
-	public OneSkyDataService(TranslationElementService translationElementService, LanguageService languageService, PackageService packageService, TranslationService translationService)
+	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, PackageService packageService, LanguageService languageService)
 	{
 		this.translationElementService = translationElementService;
-		this.languageService = languageService;
-		this.packageService = packageService;
 		this.translationService = translationService;
+		this.packageService = packageService;
+		this.languageService = languageService;
 	}
 
-	public Multimap<String, TranslationElement> getTranslationElements(String packageCode, LanguageCode languageCode)
+	public Multimap<String, TranslationElement> getTranslationElements(UUID translationId)
 	{
-		Package gtPackage = packageService.selectByCode(packageCode);
-		Language language = languageService.selectByLanguageCode(languageCode);
-		Translation translation = translationService.selectByLanguageIdPackageId(language.getId(), gtPackage.getId());
+		Translation translation = translationService.selectById(translationId);
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order desc");
 
@@ -48,5 +47,30 @@ public class OneSkyDataService
 		}
 
 		return translationElementMultimap;
+	}
+
+	public void saveTranslationElements(Multimap<String, TranslationElement> translationElementMultimap)
+	{
+		for(String pageName : translationElementMultimap.keySet())
+		{
+			for(TranslationElement translationElement : translationElementMultimap.get(pageName))
+			{
+				translationElementService.update(translationElement);
+			}
+		}
+	}
+
+	public Integer getOneskyProjectId(UUID translationId)
+	{
+		Translation translation = translationService.selectById(translationId);
+
+		return packageService.selectById(translation.getPackageId()).getOneskyProjectId();
+	}
+
+	public String getLocale(UUID translationId)
+	{
+		Translation translation = translationService.selectById(translationId);
+
+		return languageService.selectLanguageById(translation.getLanguageId()).getPath();
 	}
 }

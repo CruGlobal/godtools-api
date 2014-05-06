@@ -21,6 +21,14 @@ public class TranslationService
         this.sqlConnection = sqlConnection;
     }
 
+	public Translation selectById(UUID id)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectById)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("id", id)
+				.executeAndFetchFirst(Translation.class);
+	}
+
     public List<Translation> selectByLanguageId(UUID languageId)
     {
         return sqlConnection.createQuery(TranslationQueries.selectByLanguageId)
@@ -77,6 +85,7 @@ public class TranslationService
 
     public static class TranslationQueries
     {
+		public static final String selectById = "SELECT * FROM translations WHERE id = :id";
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";

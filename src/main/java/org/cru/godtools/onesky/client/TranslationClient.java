@@ -17,7 +17,7 @@ public class TranslationClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
-	public JsonNode exportTranslation(Integer projectId, String locale, String pageName) throws Exception
+	public TranslationResults export(Integer projectId, String locale, String pageName) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
 				.queryParam("locale", locale)
@@ -26,7 +26,18 @@ public class TranslationClient
 
 		target = addAuthentication(target);
 
-		return parseResponse(target.request().get());
+		return TranslationResults.createFromResponse(target.request().get());
+	}
+
+	public TranslationStatus getStatus(Integer projectId, String locale, String pageName) throws Exception
+	{
+		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
+				.queryParam("locale", locale)
+				.queryParam("file_name", pageName);
+
+		target = addAuthentication(target);
+
+		return TranslationStatus.createFromResponse(target.request().get());
 	}
 
 	private WebTarget addAuthentication(WebTarget target) throws Exception
@@ -38,8 +49,5 @@ public class TranslationClient
 						.queryParam("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")));
 	}
 
-	private JsonNode parseResponse(Response response) throws Exception
-	{
-		return new ObjectMapper().readTree(response.readEntity(String.class));
-	}
+
 }

@@ -55,10 +55,25 @@ public class TranslationElementService
 				.executeUpdate();
 	}
 
+	public void update(TranslationElement translationElement)
+	{
+		sqlConnection.createQuery(TranslationElementQueries.update)
+				.addParameter("id", translationElement.getId())
+				.addParameter("translationId", translationElement.getTranslationId())
+				.addParameter("baseText", translationElement.getBaseText())
+				.addParameter("translatedText", translationElement.getTranslatedText())
+				.addParameter("elementType", translationElement.getElementType())
+				.addParameter("pageName", translationElement.getPageName())
+				.addParameter("displayOrder", translationElement.getDisplayOrder())
+				.executeUpdate();
+	}
+
 	public static class TranslationElementQueries
 	{
+		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
 		public static final String insert = "INSERT INTO translation_elements(id, translation_id, base_text, translated_text, element_type, page_name, display_order) " +
 			"VALUES(:id, :translationId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";
-		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
+		public static final String update = "UPDATE translation_elements SET translation_id = :translationId, base_text = :baseText, translated_text = :translatedText, " +
+				"element_type = :elementType, page_name = :pageName, display_order = :displayOrder WHERE id = :id";
 	}
 }
