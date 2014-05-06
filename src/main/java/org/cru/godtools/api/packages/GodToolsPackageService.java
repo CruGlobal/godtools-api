@@ -28,15 +28,11 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
 
 	@Inject
-    public GodToolsPackageService(PackageService packageService,
-								  VersionService versionService,
-								  TranslationService translationService,
-								  LanguageService languageService,
-								  PageService pageService,
-								  ImageService imageService)
-    {
+	public GodToolsPackageService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ImageService imageService)
+	{
+		super(packageService, translationService, languageService, packageStructureService, pageStructureService, translationElementService);
 		this.imageService = imageService;
-    }
+	}
 
 	/**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.

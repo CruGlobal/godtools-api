@@ -40,7 +40,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
 		ImageService imageService = new ImageService(sqlConnection, referencedImageService);
 
-		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
+//		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 

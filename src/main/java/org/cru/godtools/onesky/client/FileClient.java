@@ -31,7 +31,7 @@ public class FileClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
-	public void uploadFile(String projectId, String pageName, Collection<TranslationElement> translationElementList) throws Exception
+	public void uploadFile(Integer projectId, String pageName, Collection<TranslationElement> translationElementList) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 

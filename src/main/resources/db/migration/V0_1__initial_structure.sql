@@ -43,7 +43,8 @@ CREATE TABLE page_structure (
   id uuid NOT NULL PRIMARY KEY,
   package_structure_id uuid references package_structure(id),
   xml_content xml,
-  description text
+  description text,
+  filename text
 );
 
 CREATE TABLE images (

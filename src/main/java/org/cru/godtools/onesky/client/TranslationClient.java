@@ -17,7 +17,7 @@ public class TranslationClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
-	public JsonNode exportTranslation(String projectId, String locale, String pageName) throws Exception
+	public JsonNode exportTranslation(Integer projectId, String locale, String pageName) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
 				.queryParam("locale", locale)

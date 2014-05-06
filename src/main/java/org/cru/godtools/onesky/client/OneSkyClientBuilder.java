@@ -15,7 +15,7 @@ public class OneSkyClientBuilder
 	public static final String ROOT = "https://platform.api.onesky.io/1";
 	public static final String PATH = "/projects";
 
-	public static WebTarget buildTarget(String projectId, String subPath)
+	public static WebTarget buildTarget(Integer projectId, String subPath)
 	{
 		Client client = ClientBuilder.newBuilder().build();
 		return client.target(ROOT + PATH + "/" + projectId + subPath);

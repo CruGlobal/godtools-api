@@ -46,9 +46,9 @@ public class V0_4__migrate_packages implements JdbcMigration
 	public void migrate(Connection connection) throws Exception
 	{
 
-		for(String packageCode : KnownGodtoolsPackages.packageNames)
+		for(Package gtPackage : KnownGodtoolsPackages.packages)
 		{
-			PackageDirectory packageDirectory = new PackageDirectory(packageCode,
+			PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode(),
 					packageService,
 					languageService,
 					translationService,
@@ -56,20 +56,22 @@ public class V0_4__migrate_packages implements JdbcMigration
 					packageStructureService,
 					pageStructureService);
 
-			savePackage(packageCode);
-			saveLanguages(packageCode);
-			saveTranslations(packageCode);
+			savePackage(gtPackage);
+			saveLanguages(gtPackage.getCode());
+			saveTranslations(gtPackage.getCode());
 			packageDirectory.savePackageStructures();
 			packageDirectory.savePageStructures();
 		}
 	}
 
-	private void savePackage(String packageCode) throws Exception
+	private void savePackage(Package gtPackage) throws Exception
 	{
-		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
-		Package gtPackage = packageDirectory.buildPackage();
+		PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode());
+		Package packageCreatedFromDirectory = packageDirectory.buildPackage();
 
-		packageService.insert(gtPackage);
+		packageCreatedFromDirectory.setOneskyProjectId(gtPackage.getOneskyProjectId());
+
+		packageService.insert(packageCreatedFromDirectory);
 	}
 
 	private void saveLanguages(String packageCode) throws Exception

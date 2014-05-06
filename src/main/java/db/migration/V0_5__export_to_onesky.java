@@ -5,6 +5,7 @@ import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.api.packages.domain.*;
+import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
@@ -30,14 +31,14 @@ public class V0_5__export_to_onesky implements JdbcMigration
 	@Override
 	public void migrate(Connection connection) throws Exception
 	{
-		for(String packageCode : KnownGodtoolsPackages.packageNames)
+		for(Package gtPackage : KnownGodtoolsPackages.packages)
 		{
-			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(packageCode, new LanguageCode("en"));
+			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(gtPackage.getCode(), new LanguageCode("en"));
 			FileClient phraseCollectionsEndpoint = new FileClient();
 
 			for(String pageName : translationElementMultimap.keySet())
 			{
-				phraseCollectionsEndpoint.uploadFile("26073", pageName, translationElementMultimap.get(pageName));
+				phraseCollectionsEndpoint.uploadFile(gtPackage.getOneskyProjectId(), pageName, translationElementMultimap.get(pageName));
 			}
 		}
 	}

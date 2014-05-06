@@ -46,7 +46,7 @@ public class PackageService
                 .addParameter("code", godToolsPackage.getCode())
                 .addParameter("name", godToolsPackage.getName())
                 .addParameter("defaultLanguageId", godToolsPackage.getDefaultLanguageId())
-				.addParameter("oneskyPackageId", godToolsPackage.getOneskyProjectId())
+				.addParameter("oneskyProjectId", godToolsPackage.getOneskyProjectId())
                 .executeUpdate();
     }
 
@@ -55,6 +55,6 @@ public class PackageService
     {
         public static final String selectById = "SELECT * FROM packages WHERE id = :id";
         public static final String selectByCode = "SELECT * FROM packages WHERE code = :code";
-        public static final String insert = "INSERT INTO packages(id, code, name, default_language_id, onesky_package_id) VALUES(:id, :code, :name, :defaultLanguageId, :oneskyPackageId)";
+        public static final String insert = "INSERT INTO packages(id, code, name, default_language_id, onesky_project_id) VALUES(:id, :code, :name, :defaultLanguageId, :oneskyProjectId)";
     }
 }
