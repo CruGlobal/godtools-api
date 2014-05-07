@@ -69,6 +69,6 @@ public class TranslationStatusService
 		public static final String insert = "INSERT INTO translation_status(translation_id, page_structure_id, percent_completed, string_count, word_count, last_updated) " +
 			"VALUES(:translationId, :pageStructureId, :percentCompleted, :stringCount, :wordCount, :lastUpdated)";
 		public static final String update = "UPDATE translation_status SET percent_completed = :percentCompleted, string_count = :stringCount, word_count = :wordCount, last_updated = :lastUpdated " +
-				"WHERE translation_id = :translationId AND page_structure_id = :pageStructureId)";
+				"WHERE translation_id = :translationId AND page_structure_id = :pageStructureId";
 	}
 }
