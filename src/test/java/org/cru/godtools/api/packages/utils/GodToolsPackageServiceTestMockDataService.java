@@ -26,16 +26,12 @@ public class GodToolsPackageServiceTestMockDataService
 	public void persistPackage(LanguageService languageService,
 							   PackageService packageService,
 							   TranslationService translationService,
-							   VersionService versionService,
-							   PageService pageService,
 							   ImageService imageService,
 							   ReferencedImageService referencedImageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
 		persistTranslation(translationService);
-		persistVersion(versionService);
-		persistPage(pageService);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
 	}
@@ -68,31 +64,6 @@ public class GodToolsPackageServiceTestMockDataService
 		translation.setLanguageId(GodToolsPackageServiceTest.LANGUAGE_ID);
 
 		translationService.insert(translation);
-	}
-
-	private void persistVersion(VersionService versionService)
-	{
-		Version version = new Version();
-		version.setId(GodToolsPackageServiceTest.VERSION_ID);
-		version.setTranslationId(GodToolsPackageServiceTest.TRANSLATION_ID);
-		version.setVersionNumber(1);
-		version.setMinimumInterpreterVersion(1);
-		version.setReleased(true);
-		version.setPackageStructure(XmlDocumentFromFile.get("/test_file_1.xml"));
-		version.setPackageStructureHash(ShaGenerator.calculateHash(version.getPackageStructure()));
-
-		versionService.insert(version);
-	}
-
-	private void persistPage(PageService pageService)
-	{
-		Page page = new Page();
-		page.setId(GodToolsPackageServiceTest.PAGE_ID);
-		page.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
-		page.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
-		page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
-
-		pageService.insert(page);
 	}
 
 	private void persistImage(ImageService imageService)

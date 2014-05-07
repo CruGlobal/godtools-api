@@ -106,7 +106,7 @@ public class GodToolsTranslationService
 			try
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), Version.LATEST_VERSION_NUMBER, minimumInterpreterVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), new BigDecimal(-13241.21), minimumInterpreterVersion));
 			}
 			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
 			catch(NotFoundException e){ continue; }

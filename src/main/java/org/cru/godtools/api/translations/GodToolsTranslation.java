@@ -1,13 +1,7 @@
 package org.cru.godtools.api.translations;
 
-import com.google.common.collect.Lists;
 import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.packages.domain.TranslationElement;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
-import org.w3c.dom.Document;
 
 import java.util.List;
 

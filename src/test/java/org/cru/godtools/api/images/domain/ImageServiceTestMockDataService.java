@@ -1,7 +1,6 @@
 package org.cru.godtools.api.images.domain;
 
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.domain.PageService;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.testng.Assert;
 
@@ -39,14 +38,6 @@ public class ImageServiceTestMockDataService
 		retinaImage.setImageContent("afasfass".getBytes());
 
 		imageService.insert(retinaImage);
-	}
-
-	public void persistPage(PageService pageService)
-	{
-		Page page = new Page();
-		page.setId(ImageServiceTest.TEST_PAGE_ID);
-
-		pageService.insert(page);
 	}
 
 	public void validateImage(Image image)

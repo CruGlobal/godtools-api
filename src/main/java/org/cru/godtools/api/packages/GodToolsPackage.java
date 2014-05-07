@@ -2,13 +2,9 @@ package org.cru.godtools.api.packages;
 
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import java.util.List;
 
