@@ -9,7 +9,7 @@ import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
 import org.cru.godtools.onesky.domain.LocalTranslationStatus;
-import org.cru.godtools.onesky.domain.TranslationStatusService;
+import org.cru.godtools.onesky.domain.LocalTranslationStatusService;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class OneSkyDataService
 {
 	private TranslationElementService translationElementService;
 	private TranslationService translationService;
-	private TranslationStatusService translationStatusService;
+	private LocalTranslationStatusService translationStatusService;
 	private PackageService packageService;
 	private LanguageService languageService;
 	private PageStructureService pageStructureService;
@@ -31,7 +31,7 @@ public class OneSkyDataService
 	private Clock clock;
 
 	@Inject
-	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, TranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
+	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, LocalTranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
 	{
 		this.translationElementService = translationElementService;
 		this.translationService = translationService;

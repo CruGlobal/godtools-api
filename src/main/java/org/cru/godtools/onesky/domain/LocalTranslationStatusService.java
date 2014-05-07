@@ -11,12 +11,12 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 5/6/14.
  */
-public class TranslationStatusService
+public class LocalTranslationStatusService
 {
 	private Connection sqlConnection;
 
 	@Inject
-	public TranslationStatusService(Connection sqlConnection)
+	public LocalTranslationStatusService(Connection sqlConnection)
 	{
 		this.sqlConnection = sqlConnection;
 	}
