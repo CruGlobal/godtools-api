@@ -10,10 +10,11 @@ import java.util.UUID;
  */
 public class Translation
 {
-    UUID id;
-    UUID packageId;
-    UUID languageId;
-	Integer versionNumber;
+	private UUID id;
+	private UUID packageId;
+	private UUID languageId;
+	private Integer versionNumber;
+	private boolean released;
 
     public Translation()
     {
@@ -57,7 +58,6 @@ public class Translation
         this.languageId = languageId;
     }
 
-
 	public Integer getVersionNumber()
 	{
 		return versionNumber;
@@ -66,5 +66,15 @@ public class Translation
 	public void setVersionNumber(Integer versionNumber)
 	{
 		this.versionNumber = versionNumber;
+	}
+
+	public boolean isReleased()
+	{
+		return released;
+	}
+
+	public void setReleased(boolean released)
+	{
+		this.released = released;
 	}
 }

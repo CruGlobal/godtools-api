@@ -120,8 +120,11 @@ public class MetaService
         MetaLanguage metaLanguage = new MetaLanguage(language);
 		metaLanguage.setCode(languageCode);
 
-        metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(getTranslation(language.getId(), gtPackage.getId()), gtPackage));
-
+		Translation translation = getTranslation(language.getId(), gtPackage.getId());
+		if(translation.isReleased())
+		{
+			metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage));
+		}
 		return metaLanguage;
     }
 
@@ -134,6 +137,7 @@ public class MetaService
 
         for(Translation translation : translations)
         {
+			if(!translation.isReleased()) continue;
             Package gtPackage = packageService.selectById(translation.getPackageId());
 
             metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage));

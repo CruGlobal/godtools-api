@@ -124,6 +124,7 @@ public class GodToolsTranslationService
 		newTranslation.setLanguageId(getOrCreateLanguage(languageCode).getId());
 		newTranslation.setPackageId(gtPackage.getId());
 		newTranslation.setVersionNumber(0);
+		newTranslation.setReleased(false);
 
 		translationService.insert(newTranslation);
 
