@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 /**
  * Created by ryancarlson on 5/6/14.
  */
-public class TranslationStatus
+public class OneSkyTranslationStatus
 {
 	private int statusCode;
 	private String filename;
@@ -18,25 +18,25 @@ public class TranslationStatus
 	private int stringCount;
 	private int wordCount;
 
-	public static TranslationStatus createFromResponse(Response response)
+	public static OneSkyTranslationStatus createFromResponse(Response response)
 	{
-		TranslationStatus translationStatus = new TranslationStatus();
-		JsonNode metaResponse = translationStatus.getResponseEntity(response);
+		OneSkyTranslationStatus oneSkyTranslationStatus = new OneSkyTranslationStatus();
+		JsonNode metaResponse = oneSkyTranslationStatus.getResponseEntity(response);
 
 		if(response.getStatus() == 200)
 		{
-			translationStatus.setStatusCode(metaResponse.get("meta").get("status").asInt());
-			translationStatus.setFilename(metaResponse.get("data").get("file_name").asText());
-			translationStatus.setPercentCompleted(new BigDecimal(metaResponse.get("data").get("progress").asText().replaceAll("%","")));
-			translationStatus.setStringCount(metaResponse.get("data").get("string_count").asInt());
-			translationStatus.setWordCount(metaResponse.get("data").get("word_count").asInt());
+			oneSkyTranslationStatus.setStatusCode(metaResponse.get("meta").get("status").asInt());
+			oneSkyTranslationStatus.setFilename(metaResponse.get("data").get("file_name").asText());
+			oneSkyTranslationStatus.setPercentCompleted(new BigDecimal(metaResponse.get("data").get("progress").asText().replaceAll("%","")));
+			oneSkyTranslationStatus.setStringCount(metaResponse.get("data").get("string_count").asInt());
+			oneSkyTranslationStatus.setWordCount(metaResponse.get("data").get("word_count").asInt());
 
-			return translationStatus;
+			return oneSkyTranslationStatus;
 		}
 		else
 		{
-			translationStatus.setStatusCode(502);
-			return translationStatus;
+			oneSkyTranslationStatus.setStatusCode(response.getStatus());
+			return oneSkyTranslationStatus;
 		}
 	}
 

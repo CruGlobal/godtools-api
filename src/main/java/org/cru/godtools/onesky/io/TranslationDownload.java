@@ -4,9 +4,10 @@ import com.google.common.collect.Multimap;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.api.packages.domain.TranslationElement;
+import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
 import org.cru.godtools.onesky.client.TranslationClient;
 import org.cru.godtools.onesky.client.TranslationResults;
-import org.cru.godtools.onesky.domain.TranslationStatus;
+import org.cru.godtools.onesky.domain.LocalTranslationStatus;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -31,9 +32,9 @@ public class TranslationDownload
 
 	public void doDownload(UUID translationId, UUID pageStructureId, boolean force)
 	{
-		org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
+		OneSkyTranslationStatus oneskyTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
 
-		if(force || isDownloadRequired(oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId), remoteTranslationStatus))
+		if(force || isDownloadRequired(oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId), oneskyTranslationStatus))
 		{
 			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
 
@@ -59,21 +60,21 @@ public class TranslationDownload
 			}
 
 			oneSkyDataService.saveTranslationElements(translationElementMultimap);
-			oneSkyDataService.updateLocalTranslationStatuses(translationId, remoteTranslationStatus);
+			oneSkyDataService.updateLocalTranslationStatuses(translationId, oneskyTranslationStatus);
 		}
 	}
 
-	private boolean isDownloadRequired(TranslationStatus localTranslationStatus, org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus)
+	private boolean isDownloadRequired(LocalTranslationStatus localTranslationStatus, OneSkyTranslationStatus oneSkyTranslationStatus)
 	{
 		//if we're less than one hour from the last update, then don't bother querying the endpoint
 		if(clock.currentDateTime().isBefore(localTranslationStatus.getLastUpdated().plusHours(1))) return false;
 
-		return remoteTranslationStatus.getPercentCompleted().compareTo(localTranslationStatus.getPercentCompleted()) == 0 &&
-				remoteTranslationStatus.getWordCount() == localTranslationStatus.getWordCount() &&
-				remoteTranslationStatus.getStringCount() == localTranslationStatus.getStringCount();
+		return oneSkyTranslationStatus.getPercentCompleted().compareTo(localTranslationStatus.getPercentCompleted()) == 0 &&
+				oneSkyTranslationStatus.getWordCount() == localTranslationStatus.getWordCount() &&
+				oneSkyTranslationStatus.getStringCount() == localTranslationStatus.getStringCount();
 	}
 
-	private org.cru.godtools.onesky.client.TranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
+	private OneSkyTranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
 	{
 		return translationClient.getStatus(oneSkyDataService.getOneskyProjectId(translationId),
 				oneSkyDataService.getLocale(translationId),

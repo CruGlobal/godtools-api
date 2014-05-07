@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 5/6/14.
  */
-public class TranslationStatus
+public class LocalTranslationStatus
 {
 	private UUID pageStructureId;
 	private UUID translationId;

@@ -10,6 +10,7 @@ import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -28,11 +29,19 @@ public class GodToolsPackageService extends GodToolsTranslationService
 
 
 	@Inject
-	public GodToolsPackageService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ImageService imageService)
+	public GodToolsPackageService(PackageService packageService,
+								  TranslationService translationService,
+								  LanguageService languageService,
+								  PackageStructureService packageStructureService,
+								  PageStructureService pageStructureService,
+								  TranslationElementService translationElementService,
+								  TranslationDownload translationDownload,
+								  ImageService imageService)
 	{
-		super(packageService, translationService, languageService, packageStructureService, pageStructureService, translationElementService);
+		super(packageService, translationService, languageService, packageStructureService, pageStructureService, translationElementService, translationDownload);
 		this.imageService = imageService;
 	}
+
 
 	/**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.

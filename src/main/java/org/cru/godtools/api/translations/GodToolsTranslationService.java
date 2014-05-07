@@ -12,6 +12,7 @@ import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
+import org.cru.godtools.onesky.io.TranslationDownload;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -35,15 +36,12 @@ public class GodToolsTranslationService
 	protected PageStructureService pageStructureService;
 	protected TranslationElementService translationElementService;
 
+	private TranslationDownload translationDownload;
+
 	public GodToolsTranslationService(){}
 
 	@Inject
-	public GodToolsTranslationService(PackageService packageService,
-								  TranslationService translationService,
-								  LanguageService languageService,
-								  PackageStructureService packageStructureService,
-								  PageStructureService pageStructureService,
-								  TranslationElementService translationElementService)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, TranslationDownload translationDownload)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -51,6 +49,7 @@ public class GodToolsTranslationService
 		this.packageStructureService = packageStructureService;
 		this.pageStructureService = pageStructureService;
 		this.translationElementService = translationElementService;
+		this.translationDownload = translationDownload;
 	}
 
 	/**
@@ -71,9 +70,20 @@ public class GodToolsTranslationService
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
+
+		updateTranslationsFromOnesky(translation, pageStructures);
+
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
 		return assembleGodToolsTranslation(packageStructure, pageStructures, translationElementList);
+	}
+
+	private void updateTranslationsFromOnesky(Translation translation, List<PageStructure> pageStructures)
+	{
+		for(PageStructure pageStructure : pageStructures)
+		{
+			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
+		}
 	}
 
 	/**

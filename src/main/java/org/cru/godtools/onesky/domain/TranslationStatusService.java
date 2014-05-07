@@ -21,24 +21,24 @@ public class TranslationStatusService
 		this.sqlConnection = sqlConnection;
 	}
 
-	public TranslationStatus selectByTranslationIdPageStructureId(UUID translationId, UUID pageStructureId)
+	public LocalTranslationStatus selectByTranslationIdPageStructureId(UUID translationId, UUID pageStructureId)
 	{
 		return sqlConnection.createQuery(TranslationStatusQueries.selectByTranslationIdPageStructureId)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("translationId", translationId)
 				.addParameter("pageStructureId", pageStructureId)
-				.executeAndFetchFirst(TranslationStatus.class);
+				.executeAndFetchFirst(LocalTranslationStatus.class);
 	}
 
-	public List<TranslationStatus> selectByTranslationId(UUID translationId)
+	public List<LocalTranslationStatus> selectByTranslationId(UUID translationId)
 	{
 		return sqlConnection.createQuery(TranslationStatusQueries.selectByTranslationId)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("translationId", translationId)
-				.executeAndFetch(TranslationStatus.class);
+				.executeAndFetch(LocalTranslationStatus.class);
 	}
 
-	public void insert(TranslationStatus translationStatus)
+	public void insert(LocalTranslationStatus translationStatus)
 	{
 		sqlConnection.createQuery(TranslationStatusQueries.insert)
 				.addParameter("translationId", translationStatus.getTranslationId())
@@ -50,15 +50,15 @@ public class TranslationStatusService
 				.executeUpdate();
 	}
 
-	public void update(TranslationStatus translationStatus)
+	public void update(LocalTranslationStatus localTranslationStatus)
 	{
 		sqlConnection.createQuery(TranslationStatusQueries.update)
-				.addParameter("translationId", translationStatus.getTranslationId())
-				.addParameter("pageStructureId", translationStatus.getPageStructureId())
-				.addParameter("percentCompleted", translationStatus.getPercentCompleted())
-				.addParameter("stringCount", translationStatus.getStringCount())
-				.addParameter("wordCount", translationStatus.getWordCount())
-				.addParameter("lastUpdated", translationStatus.getLastUpdated())
+				.addParameter("translationId", localTranslationStatus.getTranslationId())
+				.addParameter("pageStructureId", localTranslationStatus.getPageStructureId())
+				.addParameter("percentCompleted", localTranslationStatus.getPercentCompleted())
+				.addParameter("stringCount", localTranslationStatus.getStringCount())
+				.addParameter("wordCount", localTranslationStatus.getWordCount())
+				.addParameter("lastUpdated", localTranslationStatus.getLastUpdated())
 				.executeUpdate();
 	}
 

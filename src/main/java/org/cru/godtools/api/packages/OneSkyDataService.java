@@ -7,7 +7,8 @@ import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.onesky.domain.TranslationStatus;
+import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
+import org.cru.godtools.onesky.domain.LocalTranslationStatus;
 import org.cru.godtools.onesky.domain.TranslationStatusService;
 
 import javax.inject.Inject;
@@ -67,16 +68,16 @@ public class OneSkyDataService
 		}
 	}
 
-	public void updateLocalTranslationStatuses(UUID translationId, org.cru.godtools.onesky.client.TranslationStatus remoteTranslationStatus)
+	public void updateLocalTranslationStatuses(UUID translationId, OneSkyTranslationStatus oneSkyTranslationStatus)
 	{
 		translationStatusService.updateAllRelatedToTranslations(translationId,
-				remoteTranslationStatus.getPercentCompleted(),
-				remoteTranslationStatus.getStringCount(),
-				remoteTranslationStatus.getWordCount(),
+				oneSkyTranslationStatus.getPercentCompleted(),
+				oneSkyTranslationStatus.getStringCount(),
+				oneSkyTranslationStatus.getWordCount(),
 				clock.currentDateTime());
 	}
 
-	public TranslationStatus getLocalTranslationStatus(UUID translationId, UUID pageStructureId)
+	public LocalTranslationStatus getLocalTranslationStatus(UUID translationId, UUID pageStructureId)
 	{
 		return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructureId);
 	}

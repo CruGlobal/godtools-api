@@ -1,13 +1,10 @@
 package org.cru.godtools.onesky.client;
 
 import com.google.common.base.Throwables;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.cru.godtools.properties.GodToolsProperties;
 import org.cru.godtools.properties.GodToolsPropertiesFactory;
 
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 
 /**
  * Created by ryancarlson on 5/5/14.
@@ -30,15 +27,15 @@ public class TranslationClient
 		return TranslationResults.createFromResponse(target.request().get());
 	}
 
-	public TranslationStatus getStatus(Integer projectId, String locale, String pageName)
+	public OneSkyTranslationStatus getStatus(Integer projectId, String locale, String pageName)
 	{
-		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
+		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH + "/status")
 				.queryParam("locale", locale)
 				.queryParam("file_name", pageName);
 
 		target = addAuthentication(target);
 
-		return TranslationStatus.createFromResponse(target.request().get());
+		return OneSkyTranslationStatus.createFromResponse(target.request().get());
 	}
 
 	private WebTarget addAuthentication(WebTarget target)
