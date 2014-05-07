@@ -34,11 +34,11 @@ public class TranslationDownload
 	{
 		LocalTranslationStatus localTranslationStatus = oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId);
 
-		if (force || (isDownloadRequiredBasedOnLastUpdatedTime(localTranslationStatus)))
+		if (force || localTranslationStatus == null || (isDownloadRequiredBasedOnLastUpdatedTime(localTranslationStatus)))
 		{
 			OneSkyTranslationStatus oneSkyTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
 
-			if (force || isDownloadRequiredBasedOnUpdatedRemoteTranslations(localTranslationStatus, oneSkyTranslationStatus))
+			if (force || localTranslationStatus == null || isDownloadRequiredBasedOnUpdatedRemoteTranslations(localTranslationStatus, oneSkyTranslationStatus))
 			{
 				Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
 				String pageName = oneSkyDataService.getPageFilename(pageStructureId);
@@ -48,6 +48,8 @@ public class TranslationDownload
 					TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
 							oneSkyDataService.getLocale(translationId),
 							pageName);
+
+					if(translationResults.getStatusCode() != 200) return;
 
 					for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
 					{
@@ -69,9 +71,6 @@ public class TranslationDownload
 
 	private boolean isDownloadRequiredBasedOnLastUpdatedTime(LocalTranslationStatus localTranslationStatus)
 	{
-		//if there's no record of querying OneSky, then yes, assume we want to update.
-		if (localTranslationStatus == null) return true;
-
 		//if we're less than one hour from the last update, then don't bother querying the endpoint
 		return clock.currentDateTime().isAfter(localTranslationStatus.getLastUpdated().plusHours(1));
 	}

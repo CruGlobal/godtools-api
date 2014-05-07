@@ -2,14 +2,19 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
+import org.cru.godtools.api.packages.GodToolsPackageService;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,7 +29,8 @@ public class TranslationResource
 	AuthorizationService authService;
 	@Inject
 	GodToolsPackageRetrievalProcess packageRetrievalProcess;
-
+	@Inject
+	GodToolsPackageService godToolsTranslationService;
 
 
 	@GET
@@ -71,4 +77,19 @@ public class TranslationResource
 				.buildResponse();
 	}
 
+	@POST
+	@Path("/{language}/{package}")
+	public Response createTranslation(@PathParam("language") String languageCode,
+									  @PathParam("package") String packageCode,
+									  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+									  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+									  @HeaderParam("authorization") String authTokenHeader,
+									  @QueryParam("authorization") String authTokenParam)
+	{
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
+
+		godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
+
+		return Response.accepted().build();
+	}
 }

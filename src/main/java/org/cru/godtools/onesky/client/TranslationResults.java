@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public class TranslationResults extends ForwardingMap<UUID, String>
 {
-
+	int statusCode;
 	Map<UUID, String> translatedStringsMap;
 
 	@Override
@@ -28,17 +28,20 @@ public class TranslationResults extends ForwardingMap<UUID, String>
 	public static TranslationResults createFromResponse(Response response)
 	{
 		TranslationResults translationResults = new TranslationResults();
-		translationResults.translatedStringsMap = Maps.newHashMap();
-
-		//this extra step is required b/c i want the keys stored as UUID.  I don't trust Jackson to convert the String ID
-		//to a UUID, b/c I don't think UUID has a valueOf or String constructor.  I could work.. just haven't tried.
-		Map<String, String> stringMapOfJsonReturnedFromApi = translationResults.parseResponse(response);
-
-		for(String translationElementIdAsString : stringMapOfJsonReturnedFromApi.keySet())
+		translationResults.statusCode = response.getStatus();
+		if(response.getStatus() == 200)
 		{
-			translationResults.translatedStringsMap.put(UUID.fromString(translationElementIdAsString), stringMapOfJsonReturnedFromApi.get(translationElementIdAsString));
-		}
+			translationResults.translatedStringsMap = Maps.newHashMap();
 
+			//this extra step is required b/c i want the keys stored as UUID.  I don't trust Jackson to convert the String ID
+			//to a UUID, b/c I don't think UUID has a valueOf or String constructor.  I could work.. just haven't tried.
+			Map<String, String> stringMapOfJsonReturnedFromApi = translationResults.parseResponse(response);
+
+			for (String translationElementIdAsString : stringMapOfJsonReturnedFromApi.keySet())
+			{
+				translationResults.translatedStringsMap.put(UUID.fromString(translationElementIdAsString), stringMapOfJsonReturnedFromApi.get(translationElementIdAsString));
+			}
+		}
 		return translationResults;
 	}
 
@@ -55,5 +58,15 @@ public class TranslationResults extends ForwardingMap<UUID, String>
 			Throwables.propagate(e);
 			return null;
 		}
+	}
+
+	public int getStatusCode()
+	{
+		return statusCode;
+	}
+
+	public void setStatusCode(int statusCode)
+	{
+		this.statusCode = statusCode;
 	}
 }

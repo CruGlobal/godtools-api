@@ -115,6 +115,42 @@ public class GodToolsTranslationService
 		return translations;
 	}
 
+	public Translation setupNewTranslation(LanguageCode languageCode, String packageCode)
+	{
+		Package gtPackage = getPackage(packageCode);
+
+		Translation newTranslation = new Translation();
+		newTranslation.setId(UUID.randomUUID());
+		newTranslation.setLanguageId(getOrCreateLanguage(languageCode).getId());
+		newTranslation.setPackageId(gtPackage.getId());
+		newTranslation.setVersionNumber(0);
+
+		translationService.insert(newTranslation);
+
+		createTranslatableElements(newTranslation, gtPackage);
+
+		return newTranslation;
+	}
+
+	private void createTranslatableElements(Translation newTranslation, Package gtPackage)
+	{
+		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
+		{
+			//don't use the translation we just saved.. hopefully there's another
+			if(translation.getId().equals(newTranslation.getId())) continue;
+
+			for(TranslationElement translationElement : translationElementService.selectByTranslationId(translation.getId()))
+			{
+				translationElement.setTranslationId(newTranslation.getId());
+				translationElement.setTranslatedText(null);
+				translationElementService.insert(translationElement);
+			}
+			return;
+		}
+
+		throw new IllegalStateException("no existing translation to go off of.. better figure this out");
+	}
+
 	private Translation getTranslation(String packageCode, LanguageCode languageCode, BigDecimal versionNumber)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
@@ -126,6 +162,26 @@ public class GodToolsTranslationService
 	private Package getPackage(String packageCode)
 	{
 		return packageService.selectByCode(packageCode);
+	}
+
+	private Language getOrCreateLanguage(LanguageCode languageCode)
+	{
+		try
+		{
+			return languageService.selectByLanguageCode(languageCode);
+		}
+		catch(ResourceNotFoundException e)
+		{
+			/*do nothing*/
+		}
+
+		Language newLanguage = new Language();
+		newLanguage.setId(UUID.randomUUID());
+		//TODO: name is missing
+		newLanguage.setFromLanguageCode(languageCode);
+		languageService.insert(newLanguage);
+
+		return newLanguage;
 	}
 
 	private GodToolsTranslation assembleGodToolsTranslation(PackageStructure packageStructure, List<PageStructure> pageStructures, List<TranslationElement> translationElementList)
