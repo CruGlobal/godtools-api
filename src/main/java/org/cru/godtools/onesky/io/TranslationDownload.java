@@ -32,14 +32,17 @@ public class TranslationDownload
 
 	public void doDownload(UUID translationId, UUID pageStructureId, boolean force)
 	{
-		OneSkyTranslationStatus oneskyTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
+		LocalTranslationStatus localTranslationStatus = oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId);
 
-		if(force || isDownloadRequired(oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId), oneskyTranslationStatus))
+		if (force || (isDownloadRequiredBasedOnLastUpdatedTime(localTranslationStatus)))
 		{
-			Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
+			OneSkyTranslationStatus oneSkyTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
 
-			for (String pageName : translationElementMultimap.keySet())
+			if (force || isDownloadRequiredBasedOnUpdatedRemoteTranslations(localTranslationStatus, oneSkyTranslationStatus))
 			{
+				Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
+				String pageName = oneSkyDataService.getPageFilename(pageStructureId);
+
 				try
 				{
 					TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
@@ -57,18 +60,24 @@ public class TranslationDownload
 				{
 					e.printStackTrace();
 				}
-			}
 
-			oneSkyDataService.saveTranslationElements(translationElementMultimap);
-			oneSkyDataService.updateLocalTranslationStatuses(translationId, oneskyTranslationStatus);
+				oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
+				oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus);
+			}
 		}
 	}
 
-	private boolean isDownloadRequired(LocalTranslationStatus localTranslationStatus, OneSkyTranslationStatus oneSkyTranslationStatus)
+	private boolean isDownloadRequiredBasedOnLastUpdatedTime(LocalTranslationStatus localTranslationStatus)
 	{
-		//if we're less than one hour from the last update, then don't bother querying the endpoint
-		if(clock.currentDateTime().isBefore(localTranslationStatus.getLastUpdated().plusHours(1))) return false;
+		//if there's no record of querying OneSky, then yes, assume we want to update.
+		if (localTranslationStatus == null) return true;
 
+		//if we're less than one hour from the last update, then don't bother querying the endpoint
+		return clock.currentDateTime().isAfter(localTranslationStatus.getLastUpdated().plusHours(1));
+	}
+
+	private boolean isDownloadRequiredBasedOnUpdatedRemoteTranslations(LocalTranslationStatus localTranslationStatus, OneSkyTranslationStatus oneSkyTranslationStatus)
+	{
 		return oneSkyTranslationStatus.getPercentCompleted().compareTo(localTranslationStatus.getPercentCompleted()) == 0 &&
 				oneSkyTranslationStatus.getWordCount() == localTranslationStatus.getWordCount() &&
 				oneSkyTranslationStatus.getStringCount() == localTranslationStatus.getStringCount();

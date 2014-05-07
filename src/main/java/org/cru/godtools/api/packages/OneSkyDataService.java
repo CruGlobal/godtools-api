@@ -12,6 +12,7 @@ import org.cru.godtools.onesky.domain.LocalTranslationStatus;
 import org.cru.godtools.onesky.domain.TranslationStatusService;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,24 +58,24 @@ public class OneSkyDataService
 		return translationElementMultimap;
 	}
 
-	public void saveTranslationElements(Multimap<String, TranslationElement> translationElementMultimap)
+	public void saveTranslationElements(Collection<TranslationElement> translationElementList)
 	{
-		for(String pageName : translationElementMultimap.keySet())
+		for(TranslationElement translationElement : translationElementList)
 		{
-			for(TranslationElement translationElement : translationElementMultimap.get(pageName))
-			{
-				translationElementService.update(translationElement);
-			}
+			translationElementService.update(translationElement);
 		}
 	}
 
-	public void updateLocalTranslationStatuses(UUID translationId, OneSkyTranslationStatus oneSkyTranslationStatus)
+	public void updateLocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus)
 	{
-		translationStatusService.updateAllRelatedToTranslations(translationId,
-				oneSkyTranslationStatus.getPercentCompleted(),
-				oneSkyTranslationStatus.getStringCount(),
-				oneSkyTranslationStatus.getWordCount(),
-				clock.currentDateTime());
+		if(translationStatusService.selectByTranslationIdPageStructureId(translationId,pageStructureId) != null)
+		{
+			translationStatusService.update(new LocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus, clock.currentDateTime()));
+		}
+		else
+		{
+			translationStatusService.insert(new LocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus, clock.currentDateTime()));
+		}
 	}
 
 	public LocalTranslationStatus getLocalTranslationStatus(UUID translationId, UUID pageStructureId)

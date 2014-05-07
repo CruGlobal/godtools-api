@@ -48,8 +48,8 @@ CREATE TABLE page_structure (
 );
 
 CREATE TABLE translation_status (
-  page_structure_id uuid,
-  translation_id uuid,
+  page_structure_id uuid REFERENCES page_structure(id),
+  translation_id uuid REFERENCES translations(id),
   percent_completed decimal,
   string_count integer,
   word_count integer,
