@@ -14,6 +14,7 @@ public class AuthenticationRecord
     String authToken;
     DateTime grantedTimestamp;
     DateTime revokedTimestamp;
+	boolean draftAccess;
 
     public boolean isCurrentlyActive(DateTime currentTime)
     {
@@ -72,4 +73,14 @@ public class AuthenticationRecord
     {
         this.revokedTimestamp = revokedTimestamp;
     }
+
+	public boolean hassDraftAccess()
+	{
+		return draftAccess;
+	}
+
+	public void setDraftAccess(boolean draftAccess)
+	{
+		this.draftAccess = draftAccess;
+	}
 }
