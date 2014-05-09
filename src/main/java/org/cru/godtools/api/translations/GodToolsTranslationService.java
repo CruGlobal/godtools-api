@@ -50,12 +50,12 @@ public class GodToolsTranslationService
 	}
 
 	/**
-	 * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
+	 * Retrieves a specific package in a specific language at a specific version.
 	 *
 	 *
 	 * @param languageCode
 	 * @param packageCode
-	 * @param versionNumber
+	 * @param godToolsVersion
 	 * @return
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
@@ -72,19 +72,11 @@ public class GodToolsTranslationService
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return assembleGodToolsTranslation(packageStructure, pageStructures, translationElementList);
-	}
-
-	private void updateTranslationsFromOnesky(Translation translation, List<PageStructure> pageStructures)
-	{
-		for(PageStructure pageStructure : pageStructures)
-		{
-			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
-		}
+		return GodToolsTranslation.assembleFromComponents(packageStructure, pageStructures, translationElementList);
 	}
 
 	/**
-	 * Retrieves all packages for specified language at specified revision
+	 * Retrieves the latest version of all packages for specified language.
 	 *
 	 *
 	 * @param languageCode
@@ -118,35 +110,16 @@ public class GodToolsTranslationService
 
 		Translation newTranslation = new Translation();
 		newTranslation.setId(UUID.randomUUID());
-		newTranslation.setLanguageId(getOrCreateLanguage(languageCode).getId());
+		newTranslation.setLanguageId(languageService.getOrCreateLanguage(languageCode).getId());
 		newTranslation.setPackageId(gtPackage.getId());
 		newTranslation.setVersionNumber(0);
 		newTranslation.setReleased(false);
 
 		translationService.insert(newTranslation);
 
-		createTranslatableElements(newTranslation, gtPackage);
+		translationElementService.createTranslatableElements(translationService, newTranslation, gtPackage);
 
 		return newTranslation;
-	}
-
-	private void createTranslatableElements(Translation newTranslation, Package gtPackage)
-	{
-		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
-		{
-			//don't use the translation we just saved.. hopefully there's another
-			if(translation.getId().equals(newTranslation.getId())) continue;
-
-			for(TranslationElement translationElement : translationElementService.selectByTranslationId(translation.getId()))
-			{
-				translationElement.setTranslationId(newTranslation.getId());
-				translationElement.setTranslatedText(null);
-				translationElementService.insert(translationElement);
-			}
-			return;
-		}
-
-		throw new IllegalStateException("no existing translation to go off of.. better figure this out");
 	}
 
 	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
@@ -162,68 +135,11 @@ public class GodToolsTranslationService
 		return packageService.selectByCode(packageCode);
 	}
 
-	private Language getOrCreateLanguage(LanguageCode languageCode)
+	private void updateTranslationsFromOnesky(Translation translation, List<PageStructure> pageStructures)
 	{
-		try
-		{
-			return languageService.selectByLanguageCode(languageCode);
-		}
-		catch(ResourceNotFoundException e)
-		{
-			/*do nothing*/
-		}
-
-		Language newLanguage = new Language();
-		newLanguage.setId(UUID.randomUUID());
-		//TODO: name is missing
-		newLanguage.setFromLanguageCode(languageCode);
-		languageService.insert(newLanguage);
-
-		return newLanguage;
-	}
-
-	private GodToolsTranslation assembleGodToolsTranslation(PackageStructure packageStructure, List<PageStructure> pageStructures, List<TranslationElement> translationElementList)
-	{
-		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
-
-		Map<UUID, TranslationElement> mapOfTranslationElements = createMapOfTranslationElements(translationElementList);
-
-		packageStructure.setTranslatedFields(mapOfTranslationElements);
-
 		for(PageStructure pageStructure : pageStructures)
 		{
-			pageStructure.setTranslatedFields(mapOfTranslationElements);
+			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
 		}
-
-		packageStructure.replacePageNamesWithPageHashes(createMapOfPageStructures(pageStructures));
-
-		godToolsTranslation.setPackageStructure(packageStructure);
-		godToolsTranslation.setPageStructureList(pageStructures);
-
-		return godToolsTranslation;
-	}
-
-	private Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)
-	{
-		Map<UUID, TranslationElement> translationElementMap = Maps.newHashMap();
-
-		for(TranslationElement translationElement : translationElementList)
-		{
-			translationElementMap.put(translationElement.getId(), translationElement);
-		}
-
-		return translationElementMap;
-	}
-
-	private Map<String, PageStructure> createMapOfPageStructures(List<PageStructure> pageStructureList)
-	{
-		Map<String, PageStructure> pageStructureMap = Maps.newHashMap();
-
-		for(PageStructure pageStructure : pageStructureList)
-		{
-			pageStructureMap.put(pageStructure.getFilename(), pageStructure);
-		}
-
-		return pageStructureMap;
 	}
 }

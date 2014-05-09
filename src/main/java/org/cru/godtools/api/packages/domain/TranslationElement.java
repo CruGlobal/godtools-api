@@ -1,5 +1,9 @@
 package org.cru.godtools.api.packages.domain;
 
+import com.google.common.collect.Maps;
+
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,6 +18,18 @@ public class TranslationElement
 	private String elementType;
 	private String pageName;
 	private Integer displayOrder;
+
+	public static Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)
+	{
+		Map<UUID, TranslationElement> translationElementMap = Maps.newHashMap();
+
+		for(TranslationElement translationElement : translationElementList)
+		{
+			translationElementMap.put(translationElement.getId(), translationElement);
+		}
+
+		return translationElementMap;
+	}
 
 	public UUID getId()
 	{

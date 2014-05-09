@@ -1,5 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
@@ -20,6 +22,24 @@ public class TranslationElementService
 		this.sqlConnection = sqlConnection;
 	}
 
+	public void createTranslatableElements(TranslationService translationService, Translation newTranslation, Package gtPackage)
+	{
+		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
+		{
+			//don't use the translation we just saved.. hopefully there's another
+			if(translation.getId().equals(newTranslation.getId())) continue;
+
+			for(TranslationElement translationElement : selectByTranslationId(translation.getId()))
+			{
+				translationElement.setTranslationId(newTranslation.getId());
+				translationElement.setTranslatedText(null);
+				insert(translationElement);
+			}
+			return;
+		}
+
+		throw new IllegalStateException("no existing translation to go off of.. better figure this out");
+	}
 	public List<TranslationElement> selectByTranslationId(UUID translationId, String ... orderByFields)
 	{
 		StringBuilder orderByBuilder = null;

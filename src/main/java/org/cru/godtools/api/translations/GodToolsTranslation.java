@@ -2,8 +2,11 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.packages.domain.PackageStructure;
 import org.cru.godtools.api.packages.domain.PageStructure;
+import org.cru.godtools.api.packages.domain.TranslationElement;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/18/14.
@@ -16,6 +19,27 @@ public class GodToolsTranslation
     public GodToolsTranslation()
     {
     }
+
+	public static GodToolsTranslation assembleFromComponents(PackageStructure packageStructure, List<PageStructure> pageStructures, List<TranslationElement> translationElementList)
+	{
+		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
+
+		Map<UUID, TranslationElement> mapOfTranslationElements = TranslationElement.createMapOfTranslationElements(translationElementList);
+
+		packageStructure.setTranslatedFields(mapOfTranslationElements);
+
+		for(PageStructure pageStructure : pageStructures)
+		{
+			pageStructure.setTranslatedFields(mapOfTranslationElements);
+		}
+
+		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructures));
+
+		godToolsTranslation.setPackageStructure(packageStructure);
+		godToolsTranslation.setPageStructureList(pageStructures);
+
+		return godToolsTranslation;
+	}
 
 	public PackageStructure getPackageStructure()
 	{

@@ -1,9 +1,11 @@
 package org.cru.godtools.api.packages.domain;
 
+import com.google.common.collect.Maps;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +36,18 @@ public class PageStructure
 				System.out.println("Invalid UUID... oh well.  Move along");
 			}
 		}
+	}
+
+	public static  Map<String, PageStructure> createMapOfPageStructures(List<PageStructure> pageStructureList)
+	{
+		Map<String, PageStructure> pageStructureMap = Maps.newHashMap();
+
+		for(PageStructure pageStructure : pageStructureList)
+		{
+			pageStructureMap.put(pageStructure.getFilename(), pageStructure);
+		}
+
+		return pageStructureMap;
 	}
 
 	public UUID getId()
