@@ -69,7 +69,8 @@ public class GodToolsTranslationService
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
 
-		updateTranslationsFromOnesky(translation, pageStructures);
+		//draft translations are always updated
+		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures);
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
@@ -140,6 +141,25 @@ public class GodToolsTranslationService
 		return newTranslation;
 	}
 
+	public void updateTranslationsFromTranslationTool(LanguageCode languageCode, String packageCode)
+	{
+		Translation translation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION);
+		Package gtPackage = getPackage(packageCode);
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
+
+		updateTranslationFromTranslationTool(translation, pageStructures);
+	}
+
+	private void updateTranslationFromTranslationTool(Translation translation, List<PageStructure> pageStructures)
+	{
+		for(PageStructure pageStructure : pageStructures)
+		{
+			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
+		}
+	}
+
+
 	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
@@ -151,13 +171,5 @@ public class GodToolsTranslationService
 	private Package getPackage(String packageCode)
 	{
 		return packageService.selectByCode(packageCode);
-	}
-
-	private void updateTranslationsFromOnesky(Translation translation, List<PageStructure> pageStructures)
-	{
-		for(PageStructure pageStructure : pageStructures)
-		{
-			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
-		}
 	}
 }

@@ -12,6 +12,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -96,5 +97,20 @@ public class TranslationResource
 		godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
 
 		return Response.accepted().build();
+	}
+
+	@PUT
+	@Path("/{language}/{package}")
+	public Response updateTranslation(@PathParam("language") String languageCode,
+									  @PathParam("package") String packageCode,
+									  @HeaderParam("authorization") String authTokenHeader,
+									  @QueryParam("authorization") String authTokenParam)
+	{
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
+
+		godToolsTranslationService.updateTranslationsFromTranslationTool(new LanguageCode(languageCode), packageCode);
+
+		return Response.noContent().build();
 	}
 }
