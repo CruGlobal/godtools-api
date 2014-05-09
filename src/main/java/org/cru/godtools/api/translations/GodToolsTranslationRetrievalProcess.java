@@ -103,11 +103,11 @@ public class GodToolsTranslationRetrievalProcess
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts, minimumInterpreterVersion));
 		}
 		else
 		{
-			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, includeDrafts, minimumInterpreterVersion));
 		}
 
 		return this;

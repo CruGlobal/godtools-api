@@ -4,18 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
-import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -50,9 +46,10 @@ public class GodToolsPackageService
                                       String packageCode,
                                       GodToolsVersion godToolsVersion,
                                       Integer minimumInterpreterVersion,
+									  boolean includeDrafts,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion);
+		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, includeDrafts, minimumInterpreterVersion);
 
         GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
 
@@ -71,9 +68,10 @@ public class GodToolsPackageService
      */
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
                                                        Integer minimumInterpreterVersion,
+													   boolean includeDrafts,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts, minimumInterpreterVersion);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

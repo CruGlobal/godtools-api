@@ -9,6 +9,7 @@ import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.inject.Inject;
@@ -53,14 +54,16 @@ public class GodToolsTranslationService
 	 * @param languageCode
 	 * @param packageCode
 	 * @param godToolsVersion
+	 * @param includeDrafts
 	 * @return
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
-									  String packageCode,
-									  GodToolsVersion godToolsVersion,
-									  Integer minimumInterpreterVersion)
+											  String packageCode,
+											  GodToolsVersion godToolsVersion,
+											  boolean includeDrafts,
+											  Integer minimumInterpreterVersion)
 	{
-		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion);
+		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion, includeDrafts);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
@@ -78,10 +81,11 @@ public class GodToolsTranslationService
 	 *
 	 *
 	 * @param languageCode
+	 * @param includeDrafts
 	 * @return
 
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, Integer minimumInterpreterVersion)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, boolean includeDrafts, Integer minimumInterpreterVersion)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -93,7 +97,7 @@ public class GodToolsTranslationService
 			try
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION, minimumInterpreterVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION, includeDrafts, minimumInterpreterVersion));
 			}
 			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
 			catch(NotFoundException e){ continue; }
@@ -106,7 +110,7 @@ public class GodToolsTranslationService
 	{
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
-		Translation latestVersionExistingTranslation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION);
+		Translation latestVersionExistingTranslation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION, true);
 
 		int nextVersionNumber;
 
@@ -139,7 +143,7 @@ public class GodToolsTranslationService
 
 	public void updateTranslationsFromTranslationTool(LanguageCode languageCode, String packageCode)
 	{
-		Translation translation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION);
+		Translation translation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION, true);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
@@ -155,12 +159,16 @@ public class GodToolsTranslationService
 		}
 	}
 
-	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
+	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion, boolean includeDrafts)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
+		Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
+
+		if(!(includeDrafts || translation.isReleased())) throw new ResourceNotFoundException(Translation.class);
+
+		return translation;
 	}
 
 	private Package getPackage(String packageCode)
