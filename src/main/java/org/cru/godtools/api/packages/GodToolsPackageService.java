@@ -6,6 +6,7 @@ import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
@@ -54,11 +55,11 @@ public class GodToolsPackageService extends GodToolsTranslationService
      */
     public GodToolsPackage getPackage(LanguageCode languageCode,
                                       String packageCode,
-                                      BigDecimal revisionNumber,
+                                      GodToolsVersion godToolsVersion,
                                       Integer minimumInterpreterVersion,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion);
+		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion);
 
         GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
 

@@ -7,6 +7,7 @@ import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
@@ -42,7 +43,7 @@ public class GodToolsTranslationRetrievalProcess
     String packageCode;
     LanguageCode languageCode;
     Integer minimumInterpreterVersion;
-    BigDecimal versionNumber;
+    GodToolsVersion godToolsVersion;
     boolean compressed;
     PixelDensity pixelDensity;
 
@@ -73,9 +74,9 @@ public class GodToolsTranslationRetrievalProcess
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setVersionNumber(BigDecimal revisionNumber)
+    public GodToolsTranslationRetrievalProcess setVersionNumber(GodToolsVersion godToolsVersion)
     {
-        this.versionNumber = revisionNumber;
+        this.godToolsVersion = godToolsVersion;
         return this;
     }
 
@@ -100,7 +101,7 @@ public class GodToolsTranslationRetrievalProcess
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, versionNumber, minimumInterpreterVersion));
+			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
 		}
 
 		return this;
@@ -114,7 +115,7 @@ public class GodToolsTranslationRetrievalProcess
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, versionNumber, minimumInterpreterVersion, pixelDensity));
+			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, pixelDensity));
 		}
 
 		return this;

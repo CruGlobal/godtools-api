@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
@@ -26,7 +27,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackage()
 	{
-		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp",  new BigDecimal(1), 1, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp",  new GodToolsVersion(new BigDecimal(1)), 1, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKgpPackage);
 	}
@@ -43,7 +44,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackageNoMinimumInterpreterSpecified()
 	{
-		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", new BigDecimal(1), null, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", new GodToolsVersion(new BigDecimal(1)), null, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKpgPackage);
 	}

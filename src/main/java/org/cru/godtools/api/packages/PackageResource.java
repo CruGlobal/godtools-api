@@ -2,6 +2,7 @@ package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -46,7 +47,7 @@ public class PackageResource
         return packageRetievalProcess
                 .setLanguageCode(languageCode)
                 .setCompressed(Boolean.parseBoolean(compressed))
-                .setVersionNumber(versionNumber)
+                .setVersionNumber(new GodToolsVersion(versionNumber))
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()
@@ -72,7 +73,7 @@ public class PackageResource
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(versionNumber == null ? new BigDecimal(-13241.21) : versionNumber)
+				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()

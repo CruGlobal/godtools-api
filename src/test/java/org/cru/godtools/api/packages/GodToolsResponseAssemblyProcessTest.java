@@ -2,6 +2,7 @@ package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -31,7 +32,7 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	@Test
 	public void testBuildResponse() throws IOException
 	{
-		Response response = responseAssemblyProcess.setVersionNumber(new BigDecimal(1))
+		Response response = responseAssemblyProcess.setVersionNumber(new GodToolsVersion(new BigDecimal(1)))
 				.setCompressed(false)
 				.setLanguageCode("en")
 				.setPackageCode("kgp")

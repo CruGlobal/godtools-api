@@ -3,6 +3,7 @@ package org.cru.godtools.api.translations;
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
 import org.cru.godtools.api.packages.GodToolsPackageService;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import javax.inject.Inject;
@@ -72,7 +73,7 @@ public class TranslationResource
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(versionNumber == null ? new BigDecimal(-13241.21) : versionNumber)
+				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.loadTranslations()
 				.buildResponse();
 	}

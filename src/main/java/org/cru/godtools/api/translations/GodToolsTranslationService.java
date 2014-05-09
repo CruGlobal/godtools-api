@@ -2,19 +2,16 @@ package org.cru.godtools.api.translations;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.cru.godtools.onesky.io.TranslationDownload;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -63,10 +60,10 @@ public class GodToolsTranslationService
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
 									  String packageCode,
-									  BigDecimal versionNumber,
+									  GodToolsVersion godToolsVersion,
 									  Integer minimumInterpreterVersion)
 	{
-		Translation translation = getTranslation(packageCode, languageCode, versionNumber);
+		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
@@ -106,7 +103,7 @@ public class GodToolsTranslationService
 			try
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), new BigDecimal(-13241.21), minimumInterpreterVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION, minimumInterpreterVersion));
 			}
 			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
 			catch(NotFoundException e){ continue; }
@@ -152,12 +149,12 @@ public class GodToolsTranslationService
 		throw new IllegalStateException("no existing translation to go off of.. better figure this out");
 	}
 
-	private Translation getTranslation(String packageCode, LanguageCode languageCode, BigDecimal versionNumber)
+	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), versionNumber.remainder(BigDecimal.ONE).intValue());
+		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion.getTranslationVersion());
 	}
 
 	private Package getPackage(String packageCode)
