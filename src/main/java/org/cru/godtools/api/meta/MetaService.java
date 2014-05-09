@@ -168,6 +168,8 @@ public class MetaService
 
 	private Translation getTranslation(UUID languageId, UUID packageId)
 	{
-		return translationService.selectByLanguageIdPackageId(languageId, packageId);
+		List<Translation> translationList = translationService.selectByLanguageIdPackageId(languageId, packageId);
+
+		return translationList.get(0);
 	}
 }

@@ -45,17 +45,13 @@ public class TranslationService
                 .executeAndFetch(Translation.class);
     }
 
-    public Translation selectByLanguageIdPackageId(UUID languageId, UUID packageId)
+    public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId)
     {
-        Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
+        return sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("packageId", packageId)
                 .addParameter("languageId", languageId)
-                .executeAndFetchFirst(Translation.class);
-
-        if(translation == null) throw new ResourceNotFoundException(Translation.class);
-
-        return translation;
+                .executeAndFetch(Translation.class);
     }
 
 	public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, Integer versionNumber)
