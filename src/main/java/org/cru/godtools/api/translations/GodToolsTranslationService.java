@@ -1,6 +1,5 @@
 package org.cru.godtools.api.translations;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
@@ -10,15 +9,12 @@ import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -155,10 +151,9 @@ public class GodToolsTranslationService
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-			translationDownload.doDownload(translation.getId(), pageStructure.getId(), false);
+			translationDownload.doDownload(translation.getId(), pageStructure.getId());
 		}
 	}
-
 
 	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{

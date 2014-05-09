@@ -30,56 +30,33 @@ public class TranslationDownload
 		this.clock = clock;
 	}
 
-	public void doDownload(UUID translationId, UUID pageStructureId, boolean force)
+	public void doDownload(UUID translationId, UUID pageStructureId)
 	{
-		LocalTranslationStatus localTranslationStatus = oneSkyDataService.getLocalTranslationStatus(translationId, pageStructureId);
+		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
+		String pageName = oneSkyDataService.getPageFilename(pageStructureId);
 
-		if (force || localTranslationStatus == null || (isDownloadRequiredBasedOnLastUpdatedTime(localTranslationStatus)))
+		try
 		{
-			OneSkyTranslationStatus oneSkyTranslationStatus = getRemoteTranslationStatus(translationId, pageStructureId);
+			TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
+					oneSkyDataService.getLocale(translationId),
+					pageName);
 
-			if (force || localTranslationStatus == null || isDownloadRequiredBasedOnUpdatedRemoteTranslations(localTranslationStatus, oneSkyTranslationStatus))
+			if(translationResults.getStatusCode() != 200) return;
+
+			for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
 			{
-				Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
-				String pageName = oneSkyDataService.getPageFilename(pageStructureId);
-
-				try
+				if (translationResults.containsKey(localTranslationElement.getId()))
 				{
-					TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
-							oneSkyDataService.getLocale(translationId),
-							pageName);
-
-					if(translationResults.getStatusCode() != 200) return;
-
-					for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
-					{
-						if (translationResults.containsKey(localTranslationElement.getId()))
-						{
-							localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
-						}
-					}
-				} catch (Exception e)
-				{
-					e.printStackTrace();
+					localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
 				}
-
-				oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
-				oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus);
 			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-	}
 
-	private boolean isDownloadRequiredBasedOnLastUpdatedTime(LocalTranslationStatus localTranslationStatus)
-	{
-		//if we're less than one hour from the last update, then don't bother querying the endpoint
-		return clock.currentDateTime().isAfter(localTranslationStatus.getLastUpdated().plusHours(1));
-	}
-
-	private boolean isDownloadRequiredBasedOnUpdatedRemoteTranslations(LocalTranslationStatus localTranslationStatus, OneSkyTranslationStatus oneSkyTranslationStatus)
-	{
-		return oneSkyTranslationStatus.getPercentCompleted().compareTo(localTranslationStatus.getPercentCompleted()) == 0 &&
-				oneSkyTranslationStatus.getWordCount() == localTranslationStatus.getWordCount() &&
-				oneSkyTranslationStatus.getStringCount() == localTranslationStatus.getStringCount();
+		oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
+		oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, getRemoteTranslationStatus(translationId, pageStructureId));
 	}
 
 	private OneSkyTranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
