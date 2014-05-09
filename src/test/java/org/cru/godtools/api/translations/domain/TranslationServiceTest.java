@@ -2,6 +2,7 @@ package org.cru.godtools.api.translations.domain;
 
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.PackageService;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.tests.AbstractServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -58,8 +59,8 @@ public class TranslationServiceTest extends AbstractServiceTest
 	@Test
 	public void testSelectByLanguageIdPackageId()
 	{
-		Translation translation = translationService.selectByLanguageIdPackageId(TEST_LANGUAGE_ID, TEST_PACKAGE_ID);
+		List<Translation> translation = translationService.selectByLanguageIdPackageId(TEST_LANGUAGE_ID, TEST_PACKAGE_ID);
 
-		mockData.validateTranslation(translation);
+		mockData.validateTranslation(translation.get(0));
 	}
 }

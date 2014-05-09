@@ -100,6 +100,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 			Language retrievedLanguage = languageService.selectByLanguageCode(LanguageCode.fromLanguage(language));
 			Translation translation = new Translation(packageService.selectByCode(packageCode), retrievedLanguage);
 			translation.setVersionNumber(1);
+			translation.setReleased(true);
 
 			translationService.insert(translation);
 		}

@@ -54,16 +54,16 @@ public class MetaService
 	 * @param minimumInterpreterVersion
 	 * @return
 	 */
-    public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion)
+    public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean includeDrafts)
     {
         if(Strings.isNullOrEmpty(languageCode))
         {
-            return getMetaResultsForAllLanguages(packageCode, minimumInterpreterVersion);
+            return getMetaResultsForAllLanguages(packageCode, minimumInterpreterVersion, includeDrafts);
         }
         else
         {
             MetaResults results = new MetaResults();
-			MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion);
+			MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, includeDrafts);
 			results.addLanguage(metaLanguage);
 
 			return results;
@@ -80,12 +80,12 @@ public class MetaService
 	 * @param minimumInterpreterVersion
 	 * @return
 	 */
-    private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion)
+    private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion, boolean includeDrafts)
     {
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
         {
-            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion));
+            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion, includeDrafts));
         }
 
         return results;
@@ -98,13 +98,14 @@ public class MetaService
 	 *
 	 * @param packageCode
 	 * @param minimumInterpreterVersion
+	 * @param includeDrafts
 	 * @return
 	 */
-    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion)
+    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean includeDrafts)
     {
         if(Strings.isNullOrEmpty(packageCode))
         {
-            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion);
+            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion, includeDrafts);
         }
         else
         {
@@ -128,7 +129,7 @@ public class MetaService
 		return metaLanguage;
     }
 
-	private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion)
+	private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean includeDrafts)
     {
         List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
 
@@ -137,10 +138,12 @@ public class MetaService
 
         for(Translation translation : translations)
         {
-			if(!translation.isReleased()) continue;
-            Package gtPackage = packageService.selectById(translation.getPackageId());
+			if(includeDrafts || translation.isReleased())
+			{
+				Package gtPackage = packageService.selectById(translation.getPackageId());
 
-            metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage));
+				metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage));
+			}
         }
 
         return metaLanguage;

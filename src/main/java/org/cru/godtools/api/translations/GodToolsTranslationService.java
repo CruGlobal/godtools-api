@@ -15,6 +15,7 @@ import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -107,12 +108,29 @@ public class GodToolsTranslationService
 	public Translation setupNewTranslation(LanguageCode languageCode, String packageCode)
 	{
 		Package gtPackage = getPackage(packageCode);
+		Language language = languageService.getOrCreateLanguage(languageCode);
+		Translation latestVersionExistingTranslation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION);
+
+		int nextVersionNumber;
+
+		if(latestVersionExistingTranslation == null)
+		{
+			nextVersionNumber = 1;
+		}
+		else if(latestVersionExistingTranslation.isReleased())
+		{
+			nextVersionNumber = latestVersionExistingTranslation.getVersionNumber() + 1;
+		}
+		else
+		{
+			throw new WebApplicationException("A draft version of this translation already exists.  See version " + latestVersionExistingTranslation.getVersionNumber());
+		}
 
 		Translation newTranslation = new Translation();
 		newTranslation.setId(UUID.randomUUID());
-		newTranslation.setLanguageId(languageService.getOrCreateLanguage(languageCode).getId());
+		newTranslation.setLanguageId(language.getId());
 		newTranslation.setPackageId(gtPackage.getId());
-		newTranslation.setVersionNumber(0);
+		newTranslation.setVersionNumber(nextVersionNumber);
 		newTranslation.setReleased(false);
 
 		translationService.insert(newTranslation);
@@ -127,7 +145,7 @@ public class GodToolsTranslationService
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion.getTranslationVersion());
+		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
 	}
 
 	private Package getPackage(String packageCode)

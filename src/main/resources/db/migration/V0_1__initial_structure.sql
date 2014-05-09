@@ -18,7 +18,8 @@ CREATE TABLE translations (
   id uuid NOT NULL PRIMARY KEY,
   package_id uuid REFERENCES packages(id),
   language_id uuid REFERENCES languages(id),
-  version_number integer
+  version_number integer,
+  released boolean
 );
 
 CREATE TABLE translation_elements (

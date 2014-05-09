@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations.domain;
 
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
@@ -54,13 +55,28 @@ public class TranslationService
                 .executeAndFetch(Translation.class);
     }
 
-	public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, Integer versionNumber)
+	public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, GodToolsVersion godToolsVersion)
 	{
+		if(godToolsVersion == GodToolsVersion.LATEST_VERSION)
+		{
+			Translation highestFoundVersionTranslation = null;
+
+			for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+			{
+				if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
+				{
+					highestFoundVersionTranslation = translation;
+				}
+			}
+
+			return highestFoundVersionTranslation;
+		}
+
 		Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageIdVersionNumber)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("packageId", packageId)
 				.addParameter("languageId", languageId)
-				.addParameter("versionNumber", versionNumber)
+				.addParameter("versionNumber", godToolsVersion.getTranslationVersion())
 				.executeAndFetchFirst(Translation.class);
 
 		if(translation == null) throw new ResourceNotFoundException(Translation.class);

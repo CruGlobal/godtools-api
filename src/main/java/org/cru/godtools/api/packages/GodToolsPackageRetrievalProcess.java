@@ -44,6 +44,7 @@ public class GodToolsPackageRetrievalProcess
     Integer minimumInterpreterVersion;
     GodToolsVersion godToolsVersion;
     boolean compressed;
+
     PixelDensity pixelDensity;
 
 	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
@@ -85,26 +86,25 @@ public class GodToolsPackageRetrievalProcess
         return this;
     }
 
-
     public GodToolsPackageRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
         this.pixelDensity = pixelDensity;
         return this;
     }
 
-	public GodToolsPackageRetrievalProcess loadTranslations()
-	{
-		if(Strings.isNullOrEmpty(packageCode))
-		{
-			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
-		}
-		else
-		{
-			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
-		}
-
-		return this;
-	}
+//	public GodToolsPackageRetrievalProcess loadTranslations()
+//	{
+//		if(Strings.isNullOrEmpty(packageCode))
+//		{
+//			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
+//		}
+//		else
+//		{
+//			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
+//		}
+//
+//		return this;
+//	}
 
 	public GodToolsPackageRetrievalProcess loadPackages()
 	{

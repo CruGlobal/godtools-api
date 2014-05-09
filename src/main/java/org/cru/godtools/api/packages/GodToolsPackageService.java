@@ -24,22 +24,16 @@ import java.util.Set;
  */
 
 @Default
-public class GodToolsPackageService extends GodToolsTranslationService
+public class GodToolsPackageService
 {
+	private GodToolsTranslationService godToolsTranslationService;
 	private ImageService imageService;
 
 
 	@Inject
-	public GodToolsPackageService(PackageService packageService,
-								  TranslationService translationService,
-								  LanguageService languageService,
-								  PackageStructureService packageStructureService,
-								  PageStructureService pageStructureService,
-								  TranslationElementService translationElementService,
-								  TranslationDownload translationDownload,
-								  ImageService imageService)
+	public GodToolsPackageService(GodToolsTranslationService godToolsTranslationService,ImageService imageService)
 	{
-		super(packageService, translationService, languageService, packageStructureService, pageStructureService, translationElementService, translationDownload);
+		this.godToolsTranslationService = godToolsTranslationService;
 		this.imageService = imageService;
 	}
 
@@ -50,7 +44,6 @@ public class GodToolsPackageService extends GodToolsTranslationService
      *
      * @param languageCode
      * @param packageCode
-     * @param revisionNumber
      * @return
      */
     public GodToolsPackage getPackage(LanguageCode languageCode,
@@ -59,7 +52,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
                                       Integer minimumInterpreterVersion,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion);
+		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion);
 
         GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
 
@@ -80,7 +73,7 @@ public class GodToolsPackageService extends GodToolsTranslationService
                                                        Integer minimumInterpreterVersion,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = getTranslationsForLanguage(languageCode, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

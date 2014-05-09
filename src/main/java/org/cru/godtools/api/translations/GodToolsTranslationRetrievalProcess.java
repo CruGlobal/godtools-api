@@ -37,7 +37,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class GodToolsTranslationRetrievalProcess
 {
-    GodToolsPackageService packageService;
+    GodToolsTranslationService godToolsTranslationService;
     FileZipper fileZipper;
 
     String packageCode;
@@ -45,14 +45,15 @@ public class GodToolsTranslationRetrievalProcess
     Integer minimumInterpreterVersion;
     GodToolsVersion godToolsVersion;
     boolean compressed;
+	boolean includeDrafts;
     PixelDensity pixelDensity;
 
-	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
+	Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
 
     @Inject
-    public GodToolsTranslationRetrievalProcess(GodToolsPackageService packageService, FileZipper fileZipper)
+    public GodToolsTranslationRetrievalProcess(GodToolsTranslationService godToolsTranslationService, FileZipper fileZipper)
     {
-        this.packageService = packageService;
+        this.godToolsTranslationService = godToolsTranslationService;
         this.fileZipper = fileZipper;
     }
 
@@ -86,6 +87,11 @@ public class GodToolsTranslationRetrievalProcess
         return this;
     }
 
+	public GodToolsTranslationRetrievalProcess setIncludeDrafts(boolean includeDrafts)
+	{
+		this.includeDrafts = includeDrafts;
+		return this;
+	}
 
     public GodToolsTranslationRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
@@ -97,29 +103,29 @@ public class GodToolsTranslationRetrievalProcess
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
 		}
 
 		return this;
 	}
 
-	public GodToolsTranslationRetrievalProcess loadPackages()
-	{
-		if(Strings.isNullOrEmpty(packageCode))
-		{
-			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
-		}
-		else
-		{
-			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, pixelDensity));
-		}
-
-		return this;
-	}
+//	public GodToolsTranslationRetrievalProcess loadPackages()
+//	{
+//		if(Strings.isNullOrEmpty(packageCode))
+//		{
+//			godToolsPackages.addAll(godToolsTranslationService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
+//		}
+//		else
+//		{
+//			godToolsPackages.add(godToolsTranslationService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, pixelDensity));
+//		}
+//
+//		return this;
+//	}
 
     public Response buildResponse() throws IOException
     {
@@ -135,7 +141,7 @@ public class GodToolsTranslationRetrievalProcess
 
     private Response buildXmlContentsResponse() throws IOException
     {
-        if(this.godToolsPackages.isEmpty())
+        if(this.godToolsTranslations.isEmpty())
         {
             throw new NotFoundException();
         }
@@ -150,7 +156,7 @@ public class GodToolsTranslationRetrievalProcess
 
     private Response buildZippedResponse() throws IOException
     {
-        if(godToolsPackages.isEmpty()) return Response.status(404).build();
+        if(godToolsTranslations.isEmpty()) return Response.status(404).build();
 
         ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
 
@@ -168,7 +174,7 @@ public class GodToolsTranslationRetrievalProcess
         {
             PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
 
-            for(GodToolsTranslation godToolsTranslation : godToolsPackages)
+            for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
             {
                 fileZipper.zipPackageFile(godToolsTranslation, zipOutputStream);
 
@@ -199,7 +205,7 @@ public class GodToolsTranslationRetrievalProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsPackage : godToolsPackages)
+            for(GodToolsTranslation godToolsPackage : godToolsTranslations)
             {
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", packageCode);

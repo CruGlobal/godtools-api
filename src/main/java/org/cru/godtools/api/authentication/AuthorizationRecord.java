@@ -7,7 +7,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/26/14.
  */
-public class AuthenticationRecord
+public class AuthorizationRecord
 {
     UUID id;
     String username;
@@ -74,7 +74,7 @@ public class AuthenticationRecord
         this.revokedTimestamp = revokedTimestamp;
     }
 
-	public boolean hassDraftAccess()
+	public boolean hasDraftAccess()
 	{
 		return draftAccess;
 	}

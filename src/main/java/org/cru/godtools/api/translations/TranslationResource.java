@@ -1,6 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.api.authentication.UnauthorizedException;
 import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
 import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
@@ -29,9 +30,9 @@ public class TranslationResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsPackageRetrievalProcess packageRetrievalProcess;
+	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
 	@Inject
-	GodToolsPackageService godToolsTranslationService;
+	GodToolsTranslationService godToolsTranslationService;
 
 
 	@GET
@@ -46,10 +47,11 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return packageRetrievalProcess
+		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
+				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -68,11 +70,12 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return packageRetrievalProcess
+		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
+				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
 				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.loadTranslations()
 				.buildResponse();
@@ -88,6 +91,7 @@ public class TranslationResource
 									  @QueryParam("authorization") String authTokenParam)
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
 		godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
 
