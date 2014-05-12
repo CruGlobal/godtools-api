@@ -1,6 +1,11 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.api.images.domain.ImageService;
+import org.cru.godtools.api.images.domain.ReferencedImage;
+import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
@@ -30,13 +35,13 @@ public class GodToolsTranslationService
 	protected PackageStructureService packageStructureService;
 	protected PageStructureService pageStructureService;
 	protected TranslationElementService translationElementService;
+	protected ReferencedImageService referencedImageService;
+	protected ImageService imageService;
 
 	private TranslationDownload translationDownload;
 
-	public GodToolsTranslationService(){}
-
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, TranslationDownload translationDownload)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, TranslationDownload translationDownload)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -44,6 +49,8 @@ public class GodToolsTranslationService
 		this.packageStructureService = packageStructureService;
 		this.pageStructureService = pageStructureService;
 		this.translationElementService = translationElementService;
+		this.referencedImageService = referencedImageService;
+		this.imageService = imageService;
 		this.translationDownload = translationDownload;
 	}
 
@@ -73,7 +80,7 @@ public class GodToolsTranslationService
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return GodToolsTranslation.assembleFromComponents(packageStructure, pageStructures, translationElementList);
+		return GodToolsTranslation.assembleFromComponents(packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()));
 	}
 
 	/**
@@ -174,5 +181,19 @@ public class GodToolsTranslationService
 	private Package getPackage(String packageCode)
 	{
 		return packageService.selectByCode(packageCode);
+	}
+
+	private List<Image> getImagesUsedInThisPackage(UUID packageStructureId)
+	{
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructureId);
+
+		List<Image> imageList = Lists.newArrayList();
+
+		for(ReferencedImage referencedImage : referencedImages)
+		{
+			imageList.add(imageService.selectById(referencedImage.getImageId()));
+		}
+
+		return imageList;
 	}
 }

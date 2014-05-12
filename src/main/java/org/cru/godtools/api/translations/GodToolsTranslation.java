@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.PackageStructure;
 import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.packages.domain.TranslationElement;
@@ -20,7 +21,10 @@ public class GodToolsTranslation
     {
     }
 
-	public static GodToolsTranslation assembleFromComponents(PackageStructure packageStructure, List<PageStructure> pageStructures, List<TranslationElement> translationElementList)
+	public static GodToolsTranslation assembleFromComponents(PackageStructure packageStructure,
+															 List<PageStructure> pageStructures,
+															 List<TranslationElement> translationElementList,
+															 List<Image> referencedImages)
 	{
 		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
 
@@ -31,9 +35,11 @@ public class GodToolsTranslation
 		for(PageStructure pageStructure : pageStructures)
 		{
 			pageStructure.setTranslatedFields(mapOfTranslationElements);
+			pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(referencedImages));
 		}
 
 		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructures));
+		packageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(referencedImages));
 
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);

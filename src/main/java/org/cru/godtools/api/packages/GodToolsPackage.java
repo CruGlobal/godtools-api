@@ -3,11 +3,8 @@ package org.cru.godtools.api.packages;
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.Page;
 import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.packages.domain.TranslationElement;
 import org.cru.godtools.api.translations.GodToolsTranslation;
-import org.w3c.dom.Document;
 
 import java.util.List;
 
@@ -25,13 +22,6 @@ public class GodToolsPackage
 		GodToolsPackage godToolsPackage = new GodToolsPackage();
 		godToolsPackage.godToolsTranslation = godToolsTranslation;
 		godToolsPackage.images = images;
-
-		godToolsTranslation.getPackageStructure().replaceImageNamesWithImageHashes(Image.createMapOfImages(images));
-
-		for(PageStructure pageStructure : godToolsTranslation.getPageStructureList())
-		{
-			pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(images));
-		}
 
 		return godToolsPackage;
 	}
