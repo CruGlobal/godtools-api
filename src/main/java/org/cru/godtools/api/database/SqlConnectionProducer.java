@@ -18,11 +18,14 @@ public class SqlConnectionProducer
 {
     @Inject GodToolsProperties properties;
 
+	private Connection sqlConnection;
+
     @Produces
     public Connection getSqlConnection()
     {
-        return new Connection(getSql2o());
+		if(sqlConnection == null) sqlConnection = new Connection(getSql2o());
 
+		return sqlConnection;
     }
 
 	public static Connection getMigrationSqlConnection()
