@@ -60,14 +60,14 @@ CREATE TABLE translation_status (
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
-  image_content bytea,
-  image_hash text
+  filename text,
+  resolution text,
+  image_content bytea
 );
 
 CREATE TABLE referenced_images (
   image_id uuid REFERENCES images(id),
-  page_id uuid REFERENCES page_structure(id),
-  translation_id uuid REFERENCES translations(id)
+  package_structure_id uuid REFERENCES package_structures(id)
 );
 
 CREATE TABLE auth_tokens(
@@ -78,3 +78,9 @@ CREATE TABLE auth_tokens(
   revoked_timestamp timestamp with time zone,
   draft_access boolean
 );
+
+CREATE TABLE access_codes(
+  access_code text not null primary key,
+  created_timestamp timestamptz,
+  revoked_timestamp timestamptz
+)
