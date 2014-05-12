@@ -1,7 +1,10 @@
 package org.cru.godtools.api.images.domain;
 
+import com.google.common.collect.Maps;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -14,6 +17,18 @@ public class Image
 	private String filename;
     private byte[] imageContent;
     private String resolution;
+
+	public static Map<String, Image> createMapOfImages(List<Image> imageList)
+	{
+		Map<String, Image> imageMap = Maps.newHashMap();
+
+		for(Image image : imageList)
+		{
+			imageMap.put(image.getFilename(), image);
+		}
+
+		return imageMap;
+	}
 
     public UUID getId()
     {

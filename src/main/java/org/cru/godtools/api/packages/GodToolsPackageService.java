@@ -50,17 +50,15 @@ public class GodToolsPackageService
                                       Integer minimumInterpreterVersion,
 									  boolean includeDrafts,
                                       PixelDensity pixelDensity)
-    {
-        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslationService.getTranslation(languageCode,
+	{
+		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode,
 				packageCode,
 				godToolsVersion,
 				includeDrafts,
-				minimumInterpreterVersion));
+				minimumInterpreterVersion);
 
-		godToolsPackage.setImages(loadImages(godToolsPackage));
-
-		return godToolsPackage;
-    }
+		return GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure()));
+	}
 
     /**
      * Retrieves all packages for specified language at specified revision
@@ -81,17 +79,15 @@ public class GodToolsPackageService
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
-			godToolsPackage.setImages(loadImages(godToolsPackage));
-			godToolsPackages.add(godToolsPackage);
+			godToolsPackages.add(GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure())));
 		}
 
 		return godToolsPackages;
     }
 
-	private List<Image> loadImages(GodToolsPackage godToolsPackage)
+	private List<Image> loadImages(PackageStructure packageStructure)
 	{
-		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(godToolsPackage.getPackageStructure().getId());
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId());
 
 		List<Image> imageList = Lists.newArrayList();
 

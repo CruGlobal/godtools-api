@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.UUID;
 
 import static org.cru.godtools.migration.KnownGodtoolsPackages.packages;
 
@@ -42,46 +43,45 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 
 			for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(packageStructure.getXmlContent(), "page", "thumb"))
 			{
-				Image image = imageService.selectByPackageNameAndFilename(gtPackage.getCode(), element.getAttribute("thumb"));
-				saveImage(packageStructure, image);
+				saveImage(gtPackage.getCode(), element.getAttribute("thumb"), packageStructure.getId());
 			}
 
 			for(PageStructure pageStructure : pageStructureList)
 			{
 				for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "backgroundimage"))
 				{
-					Image image = imageService.selectByPackageNameAndFilename(gtPackage.getCode(), element.getAttribute("backgroundimage"));
-
-					saveImage(packageStructure, image);
+					saveImage(gtPackage.getCode(), element.getAttribute("backgroundimage"), packageStructure.getId());
 				}
 
 				for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "watermark"))
 				{
-					Image image = imageService.selectByPackageNameAndFilename(gtPackage.getCode(), element.getAttribute("watermark"));
-
-					saveImage(packageStructure, image);
+					saveImage(gtPackage.getCode(), element.getAttribute("watermark"), packageStructure.getId());
 				}
 
 				for(Element element : XmlDocumentSearchUtilities.findElements(pageStructure.getXmlContent(), "image"))
 				{
-					Image image = imageService.selectByPackageNameAndFilename(gtPackage.getCode(), element.getTextContent());
-
-					saveImage(packageStructure, image);
+					saveImage(gtPackage.getCode(), element.getTextContent(), packageStructure.getId());
 				}
 			}
 		}
-
 	}
 
-	private void saveImage(PackageStructure packageStructure, Image image)
+	private void saveImage(String packageCode, String filename, UUID packageStructureId)
 	{
+		Image image = imageService.selectByPackageNameAndFilename(packageCode, filename);
+
+		if(image == null)
+		{
+			image = imageService.selectByPackageNameAndFilename("shared", filename);
+		}
 		if(image != null)
 		{
 			ReferencedImage referencedImage = new ReferencedImage();
 			referencedImage.setImageId(image.getId());
-			referencedImage.setPackageStructureId(packageStructure.getId());
+			referencedImage.setPackageStructureId(packageStructureId);
 
 			referencedImageService.insert(referencedImage);
 		}
+
 	}
 }

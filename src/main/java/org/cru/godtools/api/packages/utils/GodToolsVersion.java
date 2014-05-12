@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by ryancarlson on 5/9/14.
@@ -16,7 +17,7 @@ public class GodToolsVersion
 	public GodToolsVersion(BigDecimal bigDecimalVersion)
 	{
 		packageVersion = bigDecimalVersion.intValue();
-		translationVersion = bigDecimalVersion.remainder(BigDecimal.ONE).intValue();
+		translationVersion = bigDecimalVersion.subtract(bigDecimalVersion.setScale(0, RoundingMode.FLOOR)).movePointRight(bigDecimalVersion.scale()).intValue();
 	}
 
 	public int getPackageVersion()

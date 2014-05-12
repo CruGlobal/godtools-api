@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.domain;
 
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
@@ -52,6 +53,35 @@ public class PackageStructure
 		}
 	}
 
+	public void replaceImageNamesWithImageHashes(Map<String, Image> images)
+	{
+		for(Element pageElement : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "thumb"))
+		{
+			try
+			{
+				String filenameFromXml = pageElement.getAttribute("thumb");
+				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			}
+			catch (NullPointerException npe)
+			{
+				//missing image, life goes on...
+			}
+		}
+
+		for(Element pageElement : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "about", "thumb"))
+		{
+			try
+			{
+				String filenameFromXml = pageElement.getAttribute("thumb");
+				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			}
+			catch(NullPointerException npe)
+			{
+				//missing image, life goes on...
+			}
+		}
+
+	}
 
 	public UUID getId()
 	{
@@ -92,5 +122,4 @@ public class PackageStructure
 	{
 		this.xmlContent = xmlContent;
 	}
-
 }

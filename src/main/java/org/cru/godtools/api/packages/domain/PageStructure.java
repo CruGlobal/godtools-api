@@ -1,6 +1,8 @@
 package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Maps;
+import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,6 +37,27 @@ public class PageStructure
 			{
 				System.out.println("Invalid UUID... oh well.  Move along");
 			}
+		}
+	}
+
+	public void replaceImageNamesWithImageHashes(Map<String, Image> images)
+	{
+		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
+		{
+			String filenameFromXml = element.getAttribute("backgroundimage");
+			element.setAttribute("backgroundimage", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+		}
+
+		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
+		{
+			String filenameFromXml = element.getAttribute("watermark");
+			element.setAttribute("watermark", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+		}
+
+		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
+		{
+			String filenameFromXml = element.getTextContent();
+			element.setTextContent(ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 		}
 	}
 

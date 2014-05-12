@@ -19,19 +19,26 @@ public class GodToolsPackage
 	private GodToolsTranslation godToolsTranslation;
 	private List<Image> images = Lists.newArrayList();
 
-	public GodToolsPackage(GodToolsTranslation godToolsTranslation)
+
+	public static GodToolsPackage assembleFromComponents(GodToolsTranslation godToolsTranslation, List<Image> images)
 	{
-		this.godToolsTranslation = godToolsTranslation;
+		GodToolsPackage godToolsPackage = new GodToolsPackage();
+		godToolsPackage.godToolsTranslation = godToolsTranslation;
+		godToolsPackage.images = images;
+
+		godToolsTranslation.getPackageStructure().replaceImageNamesWithImageHashes(Image.createMapOfImages(images));
+
+		for(PageStructure pageStructure : godToolsTranslation.getPageStructureList())
+		{
+			pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(images));
+		}
+
+		return godToolsPackage;
 	}
 
 	public List<Image> getImages()
 	{
 		return images;
-	}
-
-	public void setImages(List<Image> images)
-	{
-		this.images = images;
 	}
 
 	public void setPageStructureList(List<PageStructure> pageStructureList)
