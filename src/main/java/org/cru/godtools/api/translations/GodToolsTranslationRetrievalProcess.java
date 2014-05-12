@@ -184,12 +184,12 @@ public class GodToolsTranslationRetrievalProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsPackage : godToolsTranslations)
+            for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
             {
                 Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", packageCode);
+                resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
+                resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
 
                 rootElement.appendChild(resourceElement);
             }

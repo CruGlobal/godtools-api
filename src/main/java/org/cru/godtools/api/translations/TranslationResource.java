@@ -65,7 +65,7 @@ public class TranslationResource
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								   @QueryParam("compressed") String compressed,
-								   @QueryParam("revision-number") BigDecimal versionNumber,
+								   @QueryParam("version") BigDecimal versionNumber,
 								   @HeaderParam("authorization") String authTokenHeader,
 								   @QueryParam("authorization") String authTokenParam) throws IOException
 	{

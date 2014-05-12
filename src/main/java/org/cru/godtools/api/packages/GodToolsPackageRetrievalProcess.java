@@ -185,7 +185,7 @@ public class GodToolsPackageRetrievalProcess
             for(GodToolsPackage godToolsPackage : godToolsPackages)
             {
                 Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", packageCode);
+                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
 

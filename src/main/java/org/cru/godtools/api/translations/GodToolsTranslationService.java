@@ -80,7 +80,7 @@ public class GodToolsTranslationService
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return GodToolsTranslation.assembleFromComponents(packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()));
+		return GodToolsTranslation.assembleFromComponents(packageCode, packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()));
 	}
 
 	/**

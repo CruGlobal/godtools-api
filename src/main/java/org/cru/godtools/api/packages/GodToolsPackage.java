@@ -26,6 +26,16 @@ public class GodToolsPackage
 		return godToolsPackage;
 	}
 
+	public String getPackageCode()
+	{
+		return godToolsTranslation.getPackageCode();
+	}
+
+	public void setPackageCode(String packageCode)
+	{
+		godToolsTranslation.setPackageCode(packageCode);
+	}
+
 	public List<Image> getImages()
 	{
 		return images;

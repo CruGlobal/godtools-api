@@ -14,6 +14,7 @@ import java.util.UUID;
  */
 public class GodToolsTranslation
 {
+	String packageCode;
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
 
@@ -21,7 +22,8 @@ public class GodToolsTranslation
     {
     }
 
-	public static GodToolsTranslation assembleFromComponents(PackageStructure packageStructure,
+	public static GodToolsTranslation assembleFromComponents(String packageCode,
+															 PackageStructure packageStructure,
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
 															 List<Image> referencedImages)
@@ -43,8 +45,19 @@ public class GodToolsTranslation
 
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
+		godToolsTranslation.setPackageCode(packageCode);
 
 		return godToolsTranslation;
+	}
+
+	public String getPackageCode()
+	{
+		return packageCode;
+	}
+
+	public void setPackageCode(String packageCode)
+	{
+		this.packageCode = packageCode;
 	}
 
 	public PackageStructure getPackageStructure()
