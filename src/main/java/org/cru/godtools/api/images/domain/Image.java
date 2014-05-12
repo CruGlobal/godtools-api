@@ -10,14 +10,10 @@ import java.util.UUID;
 public class Image
 {
     private UUID id;
+	private String packageName;
+	private String filename;
     private byte[] imageContent;
-    private String imageHash;
     private String resolution;
-
-	public void calculateHash()
-	{
-		setImageHash(ShaGenerator.calculateHash(getImageContent()));
-	}
 
     public UUID getId()
     {
@@ -29,6 +25,26 @@ public class Image
         this.id = id;
     }
 
+	public String getPackageName()
+	{
+		return packageName;
+	}
+
+	public void setPackageName(String packageName)
+	{
+		this.packageName = packageName;
+	}
+
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
+	}
+
 	public byte[] getImageContent()
     {
         return imageContent;
@@ -37,16 +53,6 @@ public class Image
     public void setImageContent(byte[] imageContent)
     {
         this.imageContent = imageContent;
-    }
-
-    public String getImageHash()
-    {
-        return imageHash;
-    }
-
-    public void setImageHash(String imageHash)
-    {
-        this.imageHash = imageHash;
     }
 
     public String getResolution()

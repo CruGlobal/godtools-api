@@ -67,9 +67,11 @@ public class FileZipper
     {
         for(Image image : godToolsPackage.getImages())
         {
-            if(imagesAlreadyZipped.contains(image.getImageHash())) continue;
-            zipImage(image.getImageContent(), image.getImageHash() + ".png", zipOutputStream);
-            imagesAlreadyZipped.add(image.getImageHash());
+			String imageHash = ShaGenerator.calculateHash(image.getImageContent());
+
+			if(imagesAlreadyZipped.contains(imageHash)) continue;
+            zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
+            imagesAlreadyZipped.add(imageHash);
         }
     }
     /**

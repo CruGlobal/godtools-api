@@ -24,7 +24,7 @@ public class ImageServiceTest extends AbstractServiceTest
 	{
 		super.setup();
 
-		imageService = new ImageService(sqlConnection, new ReferencedImageService(sqlConnection));
+		imageService = new ImageService(sqlConnection);
 
 		mockData = new ImageServiceTestMockDataService();
 
@@ -47,7 +47,7 @@ public class ImageServiceTest extends AbstractServiceTest
 
 		try
 		{
-			ImageService nonAutoCommitImageService = new ImageService(sqlConnection, new ReferencedImageService(nonAutoCommitSqlConnection1));
+			ImageService nonAutoCommitImageService = new ImageService(sqlConnection);
 
 			mockData.modifyImage(nonAutoCommitImageService);
 			mockData.validateModifiedImage(nonAutoCommitImageService.selectById(TEST_IMAGE_ID));

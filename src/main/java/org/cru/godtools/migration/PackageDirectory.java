@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -131,6 +132,36 @@ public class PackageDirectory
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         return builder.parse(this.getClass().getResourceAsStream(path));
     }
+
+	public ImageDirectory getSharedImageDirectory() throws URISyntaxException, FileNotFoundException
+	{
+		File thisDirectory = getDirectory();
+
+		for(File possibleSharedDirectory : thisDirectory.listFiles())
+		{
+			if(possibleSharedDirectory.isDirectory() && possibleSharedDirectory.getName().equals("shared"))
+			{
+				return new ImageDirectory(possibleSharedDirectory);
+			}
+		}
+
+		throw new FileNotFoundException("no shared images directory found");
+	}
+
+	public ImageDirectory getIconDirectory() throws URISyntaxException, FileNotFoundException
+	{
+		File thisDirectory = getDirectory();
+
+		for(File possibleSharedDirectory : thisDirectory.listFiles())
+		{
+			if(possibleSharedDirectory.isDirectory() && possibleSharedDirectory.getName().equals("icons"))
+			{
+				return new ImageDirectory(possibleSharedDirectory);
+			}
+		}
+
+		throw new FileNotFoundException("no shared images directory found");
+	}
 
 	public void savePackageStructures() throws Exception
 	{

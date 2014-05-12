@@ -19,35 +19,18 @@ public class ReferencedImageService
 		this.sqlConnection = sqlConnection;
 	}
 
-	public List<ReferencedImage> selectByPageId(UUID pageId)
-	{
-		return sqlConnection.createQuery(ReferencedImageQueries.selectByPageId)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("pageId", pageId)
-				.executeAndFetch(ReferencedImage.class);
-	}
-
-	public List<ReferencedImage> selectByVersionId(UUID versionId)
-	{
-		return sqlConnection.createQuery(ReferencedImageQueries.selectByVersionId)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("versionId", versionId)
-				.executeAndFetch(ReferencedImage.class);
-	}
 
 	public void insert(ReferencedImage referencedImage)
 	{
 		sqlConnection.createQuery(ReferencedImageQueries.insert)
 				.addParameter("imageId", referencedImage.getImageId())
-				.addParameter("versionId", referencedImage.getVersionId())
-				.addParameter("pageId", referencedImage.getPageId())
+				.addParameter("packageStructureId", referencedImage.getPackageStructureId())
 				.executeUpdate();
 	}
 
 	public static class ReferencedImageQueries
 	{
-		public static String insert = "INSERT into referenced_images(image_id, page_id, version_id) VALUES(:imageId, :pageId, :versionId)";
-		public static String selectByPageId = "SELECT * FROM referenced_images WHERE page_id = :pageId";
-		public static String selectByVersionId = "SELECT * FROM referenced_images WHERE version_id = :versionId";
+		public static String insert = "INSERT into referenced_images(image_id, package_structure_id) VALUES(:imageId, :packageStructureId)";
+		public static String selectByPackageStructureId = "SELECT * FROM referenced_images WHERE package_structure_id = :packageStructureId";
 	}
 }

@@ -58,8 +58,7 @@ public class ImageSet
 
 	private Image checkForPhysicalImageAlreadyInDatabase(BufferedImage physicalImage, ImageService imageService)
 	{
-		String hash = ShaGenerator.calculateHash(bufferedImageToByteArray(physicalImage));
-		return imageService.selectByHash(hash);
+		return null;
 	}
 
 	private byte[] bufferedImageToByteArray(BufferedImage bufferedImage)

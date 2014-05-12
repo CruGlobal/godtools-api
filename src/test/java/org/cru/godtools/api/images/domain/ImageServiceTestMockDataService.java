@@ -33,7 +33,6 @@ public class ImageServiceTestMockDataService
 	{
 		Image retinaImage = new Image();
 		retinaImage.setId(ImageServiceTest.TEST_RETINA_IMAGE_ID);
-		retinaImage.setImageHash("abcd4324");
 		retinaImage.setResolution("High");
 		retinaImage.setImageContent("afasfass".getBytes());
 
@@ -44,7 +43,6 @@ public class ImageServiceTestMockDataService
 	{
 		Assert.assertNotNull(image);
 		Assert.assertEquals(image.getId(), ImageServiceTest.TEST_IMAGE_ID);
-		Assert.assertEquals(image.getImageHash(), ShaGenerator.calculateHash("aasdfsdf".getBytes()));
 		Assert.assertEquals(image.getResolution(), "Medium");
 		Assert.assertEquals(image.getImageContent(), "aasdfsdf".getBytes());
 	}
@@ -53,7 +51,6 @@ public class ImageServiceTestMockDataService
 	{
 		Assert.assertNotNull(modifiedImage);
 		Assert.assertEquals(modifiedImage.getId(), ImageServiceTest.TEST_IMAGE_ID);
-		Assert.assertEquals(modifiedImage.getImageHash(), ShaGenerator.calculateHash("sdfasdfasd".getBytes()));
 		Assert.assertEquals(modifiedImage.getResolution(), "Medium");
 		Assert.assertEquals(modifiedImage.getImageContent(), "sdfasdfasd".getBytes());
 	}

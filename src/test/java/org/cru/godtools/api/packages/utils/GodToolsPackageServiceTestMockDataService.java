@@ -72,7 +72,6 @@ public class GodToolsPackageServiceTestMockDataService
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
 		image.setResolution("High");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
-		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
 	}
@@ -81,8 +80,6 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
-		referencedImage.setPageId(GodToolsPackageServiceTest.PAGE_ID);
-		referencedImage.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
 
 		referencedImageService.insert(referencedImage);
 	}

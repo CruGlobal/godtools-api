@@ -8,8 +8,7 @@ import java.util.UUID;
 public class ReferencedImage
 {
 	private UUID imageId;
-	private UUID pageId;
-	private UUID versionId;
+	private UUID packageStructureId;
 
 	public UUID getImageId()
 	{
@@ -21,23 +20,13 @@ public class ReferencedImage
 		this.imageId = imageId;
 	}
 
-	public UUID getPageId()
+	public UUID getPackageStructureId()
 	{
-		return pageId;
+		return packageStructureId;
 	}
 
-	public void setPageId(UUID pageId)
+	public void setPackageStructureId(UUID packageStructureId)
 	{
-		this.pageId = pageId;
-	}
-
-	public UUID getVersionId()
-	{
-		return versionId;
-	}
-
-	public void setVersionId(UUID versionId)
-	{
-		this.versionId = versionId;
+		this.packageStructureId = packageStructureId;
 	}
 }

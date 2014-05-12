@@ -36,7 +36,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		PackageService packageService = new PackageService(sqlConnection);
 		TranslationService translationService = new TranslationService(sqlConnection);
 		ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
-		ImageService imageService = new ImageService(sqlConnection, referencedImageService);
+		ImageService imageService = new ImageService(sqlConnection);
 
 //		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
