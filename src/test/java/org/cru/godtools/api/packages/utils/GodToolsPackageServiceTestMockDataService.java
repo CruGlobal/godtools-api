@@ -26,16 +26,12 @@ public class GodToolsPackageServiceTestMockDataService
 	public void persistPackage(LanguageService languageService,
 							   PackageService packageService,
 							   TranslationService translationService,
-							   VersionService versionService,
-							   PageService pageService,
 							   ImageService imageService,
 							   ReferencedImageService referencedImageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
 		persistTranslation(translationService);
-		persistVersion(versionService);
-		persistPage(pageService);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
 	}
@@ -70,38 +66,12 @@ public class GodToolsPackageServiceTestMockDataService
 		translationService.insert(translation);
 	}
 
-	private void persistVersion(VersionService versionService)
-	{
-		Version version = new Version();
-		version.setId(GodToolsPackageServiceTest.VERSION_ID);
-		version.setTranslationId(GodToolsPackageServiceTest.TRANSLATION_ID);
-		version.setVersionNumber(1);
-		version.setMinimumInterpreterVersion(1);
-		version.setReleased(true);
-		version.setPackageStructure(XmlDocumentFromFile.get("/test_file_1.xml"));
-		version.setPackageStructureHash(ShaGenerator.calculateHash(version.getPackageStructure()));
-
-		versionService.insert(version);
-	}
-
-	private void persistPage(PageService pageService)
-	{
-		Page page = new Page();
-		page.setId(GodToolsPackageServiceTest.PAGE_ID);
-		page.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
-		page.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
-		page.setPageHash(ShaGenerator.calculateHash(page.getXmlContent()));
-
-		pageService.insert(page);
-	}
-
 	private void persistImage(ImageService imageService)
 	{
 		Image image = new Image();
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
 		image.setResolution("High");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
-		image.setImageHash(ShaGenerator.calculateHash(image.getImageContent()));
 
 		imageService.insert(image);
 	}
@@ -110,24 +80,12 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
-		referencedImage.setPageId(GodToolsPackageServiceTest.PAGE_ID);
-		referencedImage.setVersionId(GodToolsPackageServiceTest.VERSION_ID);
 
 		referencedImageService.insert(referencedImage);
 	}
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)
 	{
-		Assert.assertNotNull(englishKgpPackage);
 
-		Assert.assertEquals(englishKgpPackage.getLanguageCode(), "en");
-		Assert.assertEquals(englishKgpPackage.getPackageCode(), "kgp");
-		Assert.assertEquals(englishKgpPackage.getPackageXmlHash(), ShaGenerator.calculateHash(englishKgpPackage.getPackageXml()));
-
-		Assert.assertEquals(englishKgpPackage.getImages().size(), 1);
-		Assert.assertEquals(englishKgpPackage.getImages().iterator().next().getId(), GodToolsPackageServiceTest.IMAGE_ID);
-
-		Assert.assertEquals(englishKgpPackage.getPageFiles().size(), 1);
-		Assert.assertEquals(englishKgpPackage.getPageFiles().get(0).getId(), GodToolsPackageServiceTest.PAGE_ID);
 	}
 }

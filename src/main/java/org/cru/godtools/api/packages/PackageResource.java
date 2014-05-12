@@ -2,7 +2,7 @@ package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.packages.domain.PixelDensity;
-import org.cru.godtools.api.packages.domain.Version;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -15,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -36,7 +37,7 @@ public class PackageResource
 											  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 											  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 											  @QueryParam("compressed") String compressed,
-											  @QueryParam("revision-number") Integer revisionNumber,
+											  @QueryParam("revision-number") BigDecimal versionNumber,
 											  @QueryParam("density") String desiredPixelDensity,
 											  @HeaderParam("authorization") String authTokenHeader,
 											  @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
@@ -46,7 +47,7 @@ public class PackageResource
         return packageRetievalProcess
                 .setLanguageCode(languageCode)
                 .setCompressed(Boolean.parseBoolean(compressed))
-                .setVersionNumber(revisionNumber)
+                .setVersionNumber(new GodToolsVersion(versionNumber))
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()
@@ -61,7 +62,7 @@ public class PackageResource
 							   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 							   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 							   @QueryParam("compressed") String compressed,
-							   @QueryParam("revision-number") Integer revisionNumber,
+							   @QueryParam("revision-number") BigDecimal versionNumber,
 							   @QueryParam("density") String desiredPixelDensity,
 							   @HeaderParam("authorization") String authTokenHeader,
 							   @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
@@ -72,7 +73,7 @@ public class PackageResource
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
+				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()

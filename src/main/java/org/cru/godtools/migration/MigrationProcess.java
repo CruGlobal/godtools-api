@@ -13,9 +13,9 @@ public class MigrationProcess
     {
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser");
-        flyway.setInitVersion("0");
-        flyway.clean();
-        flyway.init();
+        flyway.setInitVersion("0.4");
+		flyway.setTarget(MigrationVersion.fromVersion("0.6"));
+
         flyway.migrate();
     }
 

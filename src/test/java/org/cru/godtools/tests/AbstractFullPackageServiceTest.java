@@ -35,20 +35,16 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		LanguageService languageService = new LanguageService(sqlConnection);
 		PackageService packageService = new PackageService(sqlConnection);
 		TranslationService translationService = new TranslationService(sqlConnection);
-		VersionService versionService = new VersionService(sqlConnection);
-		PageService pageService = new PageService(sqlConnection);
 		ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
-		ImageService imageService = new ImageService(sqlConnection, referencedImageService);
+		ImageService imageService = new ImageService(sqlConnection);
 
-		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
+//		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 
 		mockData.persistPackage(languageService,
 				packageService,
 				translationService,
-				versionService,
-				pageService,
 				imageService,
 				referencedImageService);
 	}

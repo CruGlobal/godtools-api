@@ -7,7 +7,7 @@ public class AuthorizationServiceTestMockDataService
 {
 	public void persistAuthorization(AuthorizationService authorizationService)
 	{
-		AuthenticationRecord authenticationRecord = new AuthenticationRecord();
+		AuthorizationRecord authenticationRecord = new AuthorizationRecord();
 		authenticationRecord.setId(AuthorizationServiceTest.TEST_AUTHORIZATION_ID);
 		authenticationRecord.setAuthToken("a");
 		authenticationRecord.setUsername("unittest-user");

@@ -23,6 +23,27 @@ public class LanguageService
         this.sqlConnection = sqlConnection;
     }
 
+
+	public Language getOrCreateLanguage(LanguageCode languageCode)
+	{
+		try
+		{
+			return selectByLanguageCode(languageCode);
+		}
+		catch(ResourceNotFoundException e)
+		{
+			/*do nothing*/
+		}
+
+		Language newLanguage = new Language();
+		newLanguage.setId(UUID.randomUUID());
+		//TODO: name is missing
+		newLanguage.setFromLanguageCode(languageCode);
+		insert(newLanguage);
+
+		return newLanguage;
+	}
+
     public List<Language> selectAllLanguages()
     {
         return sqlConnection.createQuery(LanguageQueries.selectAll)

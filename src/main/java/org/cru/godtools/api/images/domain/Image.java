@@ -1,7 +1,10 @@
 package org.cru.godtools.api.images.domain;
 
+import com.google.common.collect.Maps;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -10,13 +13,21 @@ import java.util.UUID;
 public class Image
 {
     private UUID id;
+	private String packageName;
+	private String filename;
     private byte[] imageContent;
-    private String imageHash;
     private String resolution;
 
-	public void calculateHash()
+	public static Map<String, Image> createMapOfImages(List<Image> imageList)
 	{
-		setImageHash(ShaGenerator.calculateHash(getImageContent()));
+		Map<String, Image> imageMap = Maps.newHashMap();
+
+		for(Image image : imageList)
+		{
+			imageMap.put(image.getFilename(), image);
+		}
+
+		return imageMap;
 	}
 
     public UUID getId()
@@ -29,6 +40,26 @@ public class Image
         this.id = id;
     }
 
+	public String getPackageName()
+	{
+		return packageName;
+	}
+
+	public void setPackageName(String packageName)
+	{
+		this.packageName = packageName;
+	}
+
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
+	}
+
 	public byte[] getImageContent()
     {
         return imageContent;
@@ -37,16 +68,6 @@ public class Image
     public void setImageContent(byte[] imageContent)
     {
         this.imageContent = imageContent;
-    }
-
-    public String getImageHash()
-    {
-        return imageHash;
-    }
-
-    public void setImageHash(String imageHash)
-    {
-        this.imageHash = imageHash;
     }
 
     public String getResolution()

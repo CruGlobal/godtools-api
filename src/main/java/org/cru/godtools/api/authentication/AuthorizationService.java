@@ -23,19 +23,33 @@ public class AuthorizationService
 
     public void checkAuthorization(String authTokenParam, String authTokenHeader)
     {
-        String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
+		AuthorizationRecord authRecord = getAuthenticationRecord(authTokenParam, authTokenHeader);
 
-        if(Strings.isNullOrEmpty(authToken)) throw new UnauthorizedException();
+        if(authRecord != null && authRecord.isCurrentlyActive(clock.currentDateTime())) return;
 
-        AuthenticationRecord authRecord = sqlConnection.createQuery(AuthenticationQueries.selectByAuthToken)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("authToken", authToken)
-                .executeAndFetchFirst(AuthenticationRecord.class);
-
-        if(authRecord == null || !authRecord.isCurrentlyActive(clock.currentDateTime())) throw new UnauthorizedException();
+		else throw new UnauthorizedException();
     }
 
-	public void recordNewAuthorization(AuthenticationRecord authenticationRecord)
+	public boolean canAccessOrCreateDrafts(String authTokenParam, String authTokenHeader)
+	{
+		AuthorizationRecord authRecord = getAuthenticationRecord(authTokenParam, authTokenHeader);
+
+		return authRecord.hasDraftAccess();
+	}
+
+	private AuthorizationRecord getAuthenticationRecord(String authTokenParam, String authTokenHeader)
+	{
+		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
+
+		if(Strings.isNullOrEmpty(authToken)) throw new UnauthorizedException();
+
+		return sqlConnection.createQuery(AuthenticationQueries.selectByAuthToken)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("authToken", authToken)
+				.executeAndFetchFirst(AuthorizationRecord.class);
+	}
+
+	public void recordNewAuthorization(AuthorizationRecord authenticationRecord)
 	{
 		sqlConnection.createQuery(AuthenticationQueries.insert)
 				.addParameter("id", authenticationRecord.getId())

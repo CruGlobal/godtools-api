@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
@@ -8,6 +9,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -25,7 +27,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackage()
 	{
-		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", 1, 1, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp",  new GodToolsVersion(new BigDecimal(1)), 1, true, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKgpPackage);
 	}
@@ -33,7 +35,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackagesForLanguage()
 	{
-		Set<GodToolsPackage> englishPackages = godToolsPackageService.getPackagesForLanguage(new LanguageCode("en"), 1, PixelDensity.getEnum("High"));
+		Set<GodToolsPackage> englishPackages = godToolsPackageService.getPackagesForLanguage(new LanguageCode("en"), 1, true, PixelDensity.getEnum("High"));
 
 		Assert.assertEquals(englishPackages.size(), 1);
 		mockData.validateEnglishKgpPackage(englishPackages.iterator().next());
@@ -42,7 +44,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackageNoMinimumInterpreterSpecified()
 	{
-		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", 1, null, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", new GodToolsVersion(new BigDecimal(1)), null, true, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKpgPackage);
 	}

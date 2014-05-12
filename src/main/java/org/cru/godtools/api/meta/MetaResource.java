@@ -1,7 +1,17 @@
 package org.cru.godtools.api.meta;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.api.languages.LanguageService;
+import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.domain.*;
+import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.translations.domain.Translation;
+import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ErrorResponse;
+import org.cru.godtools.migration.KnownGodtoolsPackages;
+import org.cru.godtools.onesky.io.TranslationUpload;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -23,6 +33,15 @@ public class MetaResource
     MetaService metaService;
     @Inject
     AuthorizationService authService;
+
+	@Inject
+	PackageService packageService;
+	@Inject
+	TranslationService translationService;
+	@Inject
+	TranslationUpload translationUpload;
+	@Inject
+	private LanguageService languageService;
 
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
@@ -66,7 +85,29 @@ public class MetaResource
 					.build();
 		}
 
-		return Response.ok(metaService.getMetaResults(languageCode, packageCode, interpreterVersion)).build();
+		return Response.ok(metaService.getMetaResults(languageCode,
+				packageCode,
+				interpreterVersion,
+				authService.canAccessOrCreateDrafts(authCodeParam, authCodeHeader))).build();
+	}
+
+	@POST
+	@Path("/uploadAll")
+	public Response temporaryEndpointToUploadAll(@QueryParam("authorization") String authCodeParam,
+												 @HeaderParam("authorization") String authCodeHeader)
+	{
+		authService.checkAuthorization(authCodeParam, authCodeHeader);
+
+		Language english = languageService.selectByLanguageCode(new LanguageCode("en"));
+		for (Package gtPackage : KnownGodtoolsPackages.packages)
+		{
+			for(Translation translation : translationService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId()))
+			{
+				if(translation.getLanguageId().equals(english.getId())) translationUpload.doUpload(translation.getId());
+			}
+		}
+
+		return Response.accepted().build();
 	}
 
 	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)

@@ -1,6 +1,5 @@
 package org.cru.godtools.api.images.domain;
 
-import org.cru.godtools.api.packages.domain.PageService;
 import org.cru.godtools.tests.AbstractServiceTest;
 import org.sql2o.Connection;
 import org.testng.annotations.BeforeClass;
@@ -19,20 +18,18 @@ public class ImageServiceTest extends AbstractServiceTest
 
 	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
-	public static final UUID TEST_PAGE_ID = UUID.randomUUID();
 
 	@BeforeClass()
 	public void setup()
 	{
 		super.setup();
 
-		imageService = new ImageService(sqlConnection, new ReferencedImageService(sqlConnection));
+		imageService = new ImageService(sqlConnection);
 
 		mockData = new ImageServiceTestMockDataService();
 
 		mockData.persistImage(imageService);
 		mockData.persistRetinaImage(imageService);
-		mockData.persistPage(new PageService(sqlConnection));
 	}
 
 	@Test
@@ -50,7 +47,7 @@ public class ImageServiceTest extends AbstractServiceTest
 
 		try
 		{
-			ImageService nonAutoCommitImageService = new ImageService(sqlConnection, new ReferencedImageService(nonAutoCommitSqlConnection1));
+			ImageService nonAutoCommitImageService = new ImageService(sqlConnection);
 
 			mockData.modifyImage(nonAutoCommitImageService);
 			mockData.validateModifiedImage(nonAutoCommitImageService.selectById(TEST_IMAGE_ID));

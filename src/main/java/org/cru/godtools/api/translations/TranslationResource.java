@@ -1,9 +1,11 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.api.authentication.UnauthorizedException;
 import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
-import org.cru.godtools.api.packages.domain.Version;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.cru.godtools.api.packages.GodToolsPackageService;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
+import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -18,7 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 4/8/14.
@@ -29,9 +31,9 @@ public class TranslationResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsPackageRetrievalProcess packageRetrievalProcess;
+	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
 	@Inject
-	GodToolsTranslationUpdateProcess translationUpdateProcess;
+	GodToolsTranslationService godToolsTranslationService;
 
 
 	@GET
@@ -46,10 +48,11 @@ public class TranslationResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return packageRetrievalProcess
+		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
+				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -62,56 +65,52 @@ public class TranslationResource
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								   @QueryParam("compressed") String compressed,
-								   @QueryParam("revision-number") Integer revisionNumber,
+								   @QueryParam("revision-number") BigDecimal versionNumber,
 								   @HeaderParam("authorization") String authTokenHeader,
 								   @QueryParam("authorization") String authTokenParam) throws IOException
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return packageRetrievalProcess
+		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(revisionNumber == null ? Version.LATEST_VERSION_NUMBER : revisionNumber)
+				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
+				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.loadTranslations()
 				.buildResponse();
 	}
 
 	@POST
 	@Path("/{language}/{package}")
-	@Consumes("multipart/form-data")
-	@Produces(MediaType.APPLICATION_XML)
-	public Response createNewTranslation(@PathParam("language") String languageCode,
-										 @PathParam("package") String packageCode,
-										 @HeaderParam("authorization") String authTokenHeader,
-										 @QueryParam("authorization") String authTokenParam,
-										 MultipartFormDataInput input) throws URISyntaxException
+	public Response createTranslation(@PathParam("language") String languageCode,
+									  @PathParam("package") String packageCode,
+									  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+									  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+									  @HeaderParam("authorization") String authTokenHeader,
+									  @QueryParam("authorization") String authTokenParam)
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
-		NewTranslationPostData newPackagePostData = new NewTranslationPostData(input);
-
-		for(NewTranslation newTranslation : newPackagePostData.getNewPackageSet())
-		{
-			return translationUpdateProcess
-					.setPackageCode(packageCode)
-					.setLanguageCode(languageCode)
-					.loadVersion()
-					.saveTranslation(newTranslation)
-					.buildResponse();
-		}
+		godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
 
 		return Response.accepted().build();
 	}
 
 	@PUT
-	@Consumes(MediaType.APPLICATION_XML)
-	public Response updateTranslation(@QueryParam("finished") String isFinished,
-									  @HeaderParam("authentication") String authCode)
+	@Path("/{language}/{package}")
+	public Response updateTranslation(@PathParam("language") String languageCode,
+									  @PathParam("package") String packageCode,
+									  @HeaderParam("authorization") String authTokenHeader,
+									  @QueryParam("authorization") String authTokenParam)
 	{
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
+
+		godToolsTranslationService.updateTranslationsFromTranslationTool(new LanguageCode(languageCode), packageCode);
 
 		return Response.noContent().build();
 	}
-
 }

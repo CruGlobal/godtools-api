@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 3/27/14.
@@ -8,18 +9,20 @@ import javax.xml.bind.annotation.XmlAttribute;
 public class MetaPackage  implements java.io.Serializable
 {
     String code;
-    Integer version;
+	BigDecimal version;
     String name;
+	String status;
 
     public MetaPackage()
     {
     }
 
-    public MetaPackage(String packageName, String packageCode, Integer versionNumber)
+    public MetaPackage(String packageName, String packageCode, BigDecimal versionNumber, boolean isReleased)
     {
         setName(packageName);
         setCode(packageCode);
         setVersion(versionNumber);
+		setStatus(isReleased ? "live" : "draft");
     }
 
     @XmlAttribute
@@ -34,12 +37,12 @@ public class MetaPackage  implements java.io.Serializable
     }
 
     @XmlAttribute
-    public Integer getVersion()
+    public BigDecimal getVersion()
     {
         return version;
     }
 
-    public void setVersion(Integer version)
+    public void setVersion(BigDecimal version)
     {
         this.version = version;
     }
@@ -54,4 +57,15 @@ public class MetaPackage  implements java.io.Serializable
     {
         this.name = name;
     }
+
+	@XmlAttribute()
+	public String getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
 }

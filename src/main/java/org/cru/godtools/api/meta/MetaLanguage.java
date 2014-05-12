@@ -7,6 +7,7 @@ import org.cru.godtools.api.packages.utils.LanguageCode;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -27,10 +28,9 @@ public class MetaLanguage
         setCode(LanguageCode.fromLanguage(language).toString());
     }
 
-    public MetaLanguage withPackage(String packageName, String packageCode, Integer versionNumber)
+    public void addPackage(String packageName, String packageCode, BigDecimal versionNumber, boolean isReleased)
     {
-        packages.add(new MetaPackage(packageName, packageCode, versionNumber));
-        return this;
+        packages.add(new MetaPackage(packageName, packageCode, versionNumber, isReleased));
     }
 
     @XmlAttribute

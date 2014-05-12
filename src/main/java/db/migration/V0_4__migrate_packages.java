@@ -1,28 +1,21 @@
 package db.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.images.FileSystemImageLookup;
-import org.cru.godtools.api.images.ImageLookup;
-import org.cru.godtools.api.images.ImageSet;
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.languages.Language;
 import org.cru.godtools.api.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.packages.domain.PackageService;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.domain.VersionService;
+import org.cru.godtools.api.packages.domain.PackageStructureService;
+import org.cru.godtools.api.packages.domain.PageStructureService;
+import org.cru.godtools.api.packages.domain.TranslationElementService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.migration.MigrationProcess;
 import org.cru.godtools.migration.PackageDirectory;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -36,31 +29,41 @@ public class V0_4__migrate_packages implements JdbcMigration
 	LanguageService languageService = new LanguageService(sqlConnection);
 	PackageService packageService = new PackageService(sqlConnection);
 	TranslationService translationService = new TranslationService(sqlConnection);
-	VersionService versionService = new VersionService(sqlConnection);
- 	ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
-	ImageService imageService = new ImageService(sqlConnection, referencedImageService);
+	PackageStructureService packageStructureService = new PackageStructureService(sqlConnection);
+	PageStructureService pageStructureService = new PageStructureService(sqlConnection);
+	TranslationElementService translationElementService = new TranslationElementService(sqlConnection);
 
 	@Override
-    public void migrate(Connection connection) throws Exception
-    {
-
-        for(String packageCode : KnownGodtoolsPackages.packageNames)
-        {
-			savePackage(packageCode);
-			saveLanguages(packageCode);
-			saveTranslations(packageCode);
-			saveVersions(packageCode);
-		}
-    }
-
-	private void savePackage(String packageCode) throws Exception
+	public void migrate(Connection connection) throws Exception
 	{
-		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
-		Package gtPackage = packageDirectory.buildPackage();
 
-		packageService.insert(gtPackage);
+		for(Package gtPackage : KnownGodtoolsPackages.packages)
+		{
+			PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode(),
+					packageService,
+					languageService,
+					translationService,
+					translationElementService,
+					packageStructureService,
+					pageStructureService);
+
+			savePackage(gtPackage);
+			saveLanguages(gtPackage.getCode());
+			saveTranslations(gtPackage.getCode());
+			packageDirectory.savePackageStructures();
+			packageDirectory.savePageStructures();
+		}
 	}
 
+	private void savePackage(Package gtPackage) throws Exception
+	{
+		PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode());
+		Package packageCreatedFromDirectory = packageDirectory.buildPackage();
+
+		packageCreatedFromDirectory.setOneskyProjectId(gtPackage.getOneskyProjectId());
+
+		packageService.insert(packageCreatedFromDirectory);
+	}
 
 	private void saveLanguages(String packageCode) throws Exception
 	{
@@ -86,33 +89,11 @@ public class V0_4__migrate_packages implements JdbcMigration
 		for(Language language : languages)
 		{
 			Language retrievedLanguage = languageService.selectByLanguageCode(LanguageCode.fromLanguage(language));
-			translationService.insert(new Translation(packageService.selectByCode(packageCode),retrievedLanguage));
-		}
-	}
+			Translation translation = new Translation(packageService.selectByCode(packageCode), retrievedLanguage);
+			translation.setVersionNumber(1);
+			translation.setReleased(true);
 
-	private void saveVersions(String packageCode) throws Exception
-	{
-		Package gtPackage = packageService.selectByCode(packageCode);
-		List<Translation> translations = translationService.selectByPackageId(gtPackage.getId());
-		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
-
-		for(Translation translation : translations)
-		{
-			Language language = languageService.selectLanguageById(translation.getLanguageId());
-
-			Version version = new Version(translation, 1, true);
-
-			version.setPackageStructure(packageDirectory.getPackageDescriptorXml(language));
-
-			ImageSet imageSet = new ImageSet(version.getReferencedImages());
-
-			imageSet.saveImages(imageService, new FileSystemImageLookup("/data/SnuffyPackages/" + packageCode));
-
-			version.replaceThumbnailNamesWithImageHashes(new FileSystemImageLookup("/data/SnuffyPackages/" + packageCode));
-
-			versionService.insert(version);
-
-			imageSet.saveReferencedImages(referencedImageService, version);
+			translationService.insert(translation);
 		}
 	}
 }

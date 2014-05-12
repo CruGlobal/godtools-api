@@ -7,7 +7,6 @@ import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.images.domain.ReferencedImage;
 import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.domain.Version;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 
 import javax.imageio.ImageIO;
@@ -57,28 +56,9 @@ public class ImageSet
 		}
 	}
 
-	public void saveReferencedImages(ReferencedImageService referencedImageService, Page page, Version version)
-	{
-		for(Image savedImage : imageSet)
-		{
-			ReferencedImage referencedImage = new ReferencedImage();
-			referencedImage.setVersionId(version.getId());
-			referencedImage.setPageId(page != null ? page.getId() : null);
-			referencedImage.setImageId(savedImage.getId());
-
-			referencedImageService.insert(referencedImage);
-		}
-	}
-
-	public void saveReferencedImages(ReferencedImageService referencedImageService, Version version)
-	{
-		saveReferencedImages(referencedImageService, null, version);
-	}
-
 	private Image checkForPhysicalImageAlreadyInDatabase(BufferedImage physicalImage, ImageService imageService)
 	{
-		String hash = ShaGenerator.calculateHash(bufferedImageToByteArray(physicalImage));
-		return imageService.selectByHash(hash);
+		return null;
 	}
 
 	private byte[] bufferedImageToByteArray(BufferedImage bufferedImage)

@@ -1,7 +1,6 @@
 package org.cru.godtools.api.images.domain;
 
 import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.domain.PageService;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.testng.Assert;
 
@@ -34,26 +33,16 @@ public class ImageServiceTestMockDataService
 	{
 		Image retinaImage = new Image();
 		retinaImage.setId(ImageServiceTest.TEST_RETINA_IMAGE_ID);
-		retinaImage.setImageHash("abcd4324");
 		retinaImage.setResolution("High");
 		retinaImage.setImageContent("afasfass".getBytes());
 
 		imageService.insert(retinaImage);
 	}
 
-	public void persistPage(PageService pageService)
-	{
-		Page page = new Page();
-		page.setId(ImageServiceTest.TEST_PAGE_ID);
-
-		pageService.insert(page);
-	}
-
 	public void validateImage(Image image)
 	{
 		Assert.assertNotNull(image);
 		Assert.assertEquals(image.getId(), ImageServiceTest.TEST_IMAGE_ID);
-		Assert.assertEquals(image.getImageHash(), ShaGenerator.calculateHash("aasdfsdf".getBytes()));
 		Assert.assertEquals(image.getResolution(), "Medium");
 		Assert.assertEquals(image.getImageContent(), "aasdfsdf".getBytes());
 	}
@@ -62,7 +51,6 @@ public class ImageServiceTestMockDataService
 	{
 		Assert.assertNotNull(modifiedImage);
 		Assert.assertEquals(modifiedImage.getId(), ImageServiceTest.TEST_IMAGE_ID);
-		Assert.assertEquals(modifiedImage.getImageHash(), ShaGenerator.calculateHash("sdfasdfasd".getBytes()));
 		Assert.assertEquals(modifiedImage.getResolution(), "Medium");
 		Assert.assertEquals(modifiedImage.getImageContent(), "sdfasdfasd".getBytes());
 	}

@@ -7,13 +7,14 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/26/14.
  */
-public class AuthenticationRecord
+public class AuthorizationRecord
 {
     UUID id;
     String username;
     String authToken;
     DateTime grantedTimestamp;
     DateTime revokedTimestamp;
+	boolean draftAccess;
 
     public boolean isCurrentlyActive(DateTime currentTime)
     {
@@ -72,4 +73,14 @@ public class AuthenticationRecord
     {
         this.revokedTimestamp = revokedTimestamp;
     }
+
+	public boolean hasDraftAccess()
+	{
+		return draftAccess;
+	}
+
+	public void setDraftAccess(boolean draftAccess)
+	{
+		this.draftAccess = draftAccess;
+	}
 }

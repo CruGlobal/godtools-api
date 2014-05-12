@@ -10,51 +10,64 @@ CREATE TABLE packages (
   id uuid NOT NULL PRIMARY KEY,
   name text,
   code text,
-  default_language_id uuid REFERENCES languages(id)
+  default_language_id uuid REFERENCES languages(id),
+  onesky_project_id integer
 );
 
 CREATE TABLE translations (
   id uuid NOT NULL PRIMARY KEY,
   package_id uuid REFERENCES packages(id),
-  language_id uuid REFERENCES languages(id)
+  language_id uuid REFERENCES languages(id),
+  version_number integer,
+  released boolean
 );
 
-CREATE TABLE versions (
-  id uuid NOT NULL PRIMARY KEY,
-  version_number integer NOT NULL,
-  released boolean DEFAULT false,
-  translation_id uuid REFERENCES translations(id),
-  minimum_interpreter_version integer,
-  package_structure xml,
-  package_structure_hash text
+CREATE TABLE translation_elements (
+  id uuid NOT NULL,
+  translation_id uuid NOT NULL REFERENCES translations(id),
+  base_text text,
+  translated_text text,
+  element_type text,
+  page_name text,
+  display_order integer,
+  PRIMARY KEY (id, translation_id)
 );
 
-CREATE TABLE pages (
+CREATE TABLE package_structure (
   id uuid NOT NULL PRIMARY KEY,
-  version_id uuid REFERENCES versions(id),
+  package_id uuid REFERENCES packages(id),
+  version_number integer,
+  xml_content xml
+);
+
+CREATE TABLE page_structure (
+  id uuid NOT NULL PRIMARY KEY,
+  package_structure_id uuid references package_structure(id),
   xml_content xml,
   description text,
-  page_hash text
+  filename text
 );
 
-CREATE TABLE image_resolutions (
-  upper_bound integer,
-  lower_bound integer,
-  resolution text,
-  UNIQUE(resolution)
+CREATE TABLE translation_status (
+  page_structure_id uuid REFERENCES page_structure(id),
+  translation_id uuid REFERENCES translations(id),
+  percent_completed decimal,
+  string_count integer,
+  word_count integer,
+  last_updated timestamp,
+  PRIMARY KEY(page_structure_id, translation_id)
 );
 
 CREATE TABLE images (
   id uuid NOT NULL PRIMARY KEY,
-  resolution text REFERENCES image_resolutions(resolution),
   image_content bytea,
   image_hash text
 );
 
 CREATE TABLE referenced_images (
   image_id uuid REFERENCES images(id),
-  page_id uuid REFERENCES pages(id),
-  version_id uuid REFERENCES versions(id)
+  page_id uuid REFERENCES page_structure(id),
+  translation_id uuid REFERENCES translations(id)
 );
 
 CREATE TABLE auth_tokens(
@@ -62,5 +75,6 @@ CREATE TABLE auth_tokens(
   username text,
   auth_token text,
   granted_timestamp timestamp with time zone,
-  revoked_timestamp timestamp with time zone
+  revoked_timestamp timestamp with time zone,
+  draft_access boolean
 );

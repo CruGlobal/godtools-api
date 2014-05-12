@@ -5,7 +5,9 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
@@ -20,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
@@ -39,11 +42,12 @@ public class GodToolsPackageRetrievalProcess
     String packageCode;
     LanguageCode languageCode;
     Integer minimumInterpreterVersion;
-    Integer revisionNumber;
+    GodToolsVersion godToolsVersion;
     boolean compressed;
+
     PixelDensity pixelDensity;
 
-	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
+	Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 
     @Inject
     public GodToolsPackageRetrievalProcess(GodToolsPackageService packageService, FileZipper fileZipper)
@@ -70,9 +74,9 @@ public class GodToolsPackageRetrievalProcess
         return this;
     }
 
-    public GodToolsPackageRetrievalProcess setVersionNumber(Integer revisionNumber)
+    public GodToolsPackageRetrievalProcess setVersionNumber(GodToolsVersion godToolsVersion)
     {
-        this.revisionNumber = revisionNumber;
+        this.godToolsVersion = godToolsVersion;
         return this;
     }
 
@@ -82,36 +86,21 @@ public class GodToolsPackageRetrievalProcess
         return this;
     }
 
-
     public GodToolsPackageRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
         this.pixelDensity = pixelDensity;
         return this;
     }
 
-	public GodToolsPackageRetrievalProcess loadTranslations()
-	{
-		if(Strings.isNullOrEmpty(packageCode))
-		{
-			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
-		}
-		else
-		{
-			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion));
-		}
-
-		return this;
-	}
-
 	public GodToolsPackageRetrievalProcess loadPackages()
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
+			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, false, pixelDensity));
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, revisionNumber, minimumInterpreterVersion, pixelDensity));
+			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, false, pixelDensity));
 		}
 
 		return this;
@@ -164,16 +153,14 @@ public class GodToolsPackageRetrievalProcess
         {
             PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
 
-            for(GodToolsTranslation godToolsTranslation : godToolsPackages)
+            for(GodToolsPackage godToolsPackage : godToolsPackages)
             {
-                fileZipper.zipPackageFile(godToolsTranslation, zipOutputStream);
+                fileZipper.zipPackageFile(godToolsPackage.getPackageStructure(), zipOutputStream);
 
-                fileZipper.zipPageFiles(godToolsTranslation, zipOutputStream);
+                fileZipper.zipPageFiles(godToolsPackage.getPageStructureList(), zipOutputStream);
 
-				if(godToolsTranslation instanceof GodToolsPackage)
-				{
-					fileZipper.zipImageFiles((GodToolsPackage) godToolsTranslation, zipOutputStream, imagesAlreadyZipped);
-				}
+				fileZipper.zipImageFiles(godToolsPackage.getImages(), zipOutputStream, imagesAlreadyZipped);
+
             }
 
             fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
@@ -195,12 +182,12 @@ public class GodToolsPackageRetrievalProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsPackage : godToolsPackages)
+            for(GodToolsPackage godToolsPackage : godToolsPackages)
             {
                 Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
-                resourceElement.setAttribute("language", godToolsPackage.getLanguageCode());
-                resourceElement.setAttribute("config", godToolsPackage.getPackageXmlHash() + ".xml");
+                resourceElement.setAttribute("package", packageCode);
+                resourceElement.setAttribute("language", languageCode.toString());
+                resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
 
                 rootElement.appendChild(resourceElement);
             }

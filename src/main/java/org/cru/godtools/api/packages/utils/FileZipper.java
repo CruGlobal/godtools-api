@@ -1,6 +1,8 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.domain.PackageStructure;
+import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.Page;
@@ -14,6 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -27,44 +30,48 @@ public class FileZipper
     /**
      * The package XML is added to the zipOutputStream.
      *
-     * @param godToolsPackage
      * @param zipOutputStream
      * @return
      * @throws IOException
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPackageFile(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+    public void zipPackageFile(PackageStructure packageStructure, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
-        zipFile(godToolsPackage.getPackageXml(), godToolsPackage.getPackageXmlHash() + ".xml", zipOutputStream);
+		Document xmlContent = packageStructure.getXmlContent();
+		zipFile(xmlContent, ShaGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
     }
 
     /**
      * The page XML is added to the zipOutputStream.
      *
-     * @param godToolsPackage
      * @param zipOutputStream
      * @return
      * @throws IOException
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPageFiles(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws Exception
+    public void zipPageFiles(List<PageStructure> pageStructureList, ZipOutputStream zipOutputStream) throws Exception
     {
-        for(Page page : godToolsPackage.getPageFiles())
+        for(PageStructure page : pageStructureList)
         {
-            if(page.getXmlContent() == null) continue;
-            zipFile(page.getXmlContent(), page.getPageHash() + ".xml", zipOutputStream);
+			Document xmlContent = page.getXmlContent();
+
+			if(xmlContent == null) continue;
+
+			zipFile(xmlContent, ShaGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
         }
     }
 
-    public void zipImageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
+    public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
     {
-        for(Image image : godToolsPackage.getImages())
+        for(Image image : images)
         {
-            if(imagesAlreadyZipped.contains(image.getImageHash())) continue;
-            zipImage(image.getImageContent(), image.getImageHash() + ".png", zipOutputStream);
-            imagesAlreadyZipped.add(image.getImageHash());
+			String imageHash = ShaGenerator.calculateHash(image.getImageContent());
+
+			if(imagesAlreadyZipped.contains(imageHash)) continue;
+            zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
+            imagesAlreadyZipped.add(imageHash);
         }
     }
     /**

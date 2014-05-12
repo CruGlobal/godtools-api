@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations.domain;
 
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.sql2o.Connection;
 
@@ -21,6 +22,14 @@ public class TranslationService
         this.sqlConnection = sqlConnection;
     }
 
+	public Translation selectById(UUID id)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectById)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("id", id)
+				.executeAndFetchFirst(Translation.class);
+	}
+
     public List<Translation> selectByLanguageId(UUID languageId)
     {
         return sqlConnection.createQuery(TranslationQueries.selectByLanguageId)
@@ -37,34 +46,64 @@ public class TranslationService
                 .executeAndFetch(Translation.class);
     }
 
-    public Translation selectByLanguageIdPackageId(UUID languageId, UUID packageId)
+    public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId)
     {
-        Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
+        return sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("packageId", packageId)
                 .addParameter("languageId", languageId)
-                .executeAndFetchFirst(Translation.class);
-
-        if(translation == null) throw new ResourceNotFoundException(Translation.class);
-
-        return translation;
+                .executeAndFetch(Translation.class);
     }
+
+	public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, GodToolsVersion godToolsVersion)
+	{
+		if(godToolsVersion == GodToolsVersion.LATEST_VERSION)
+		{
+			Translation highestFoundVersionTranslation = null;
+
+			for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+			{
+				if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
+				{
+					highestFoundVersionTranslation = translation;
+				}
+			}
+
+			return highestFoundVersionTranslation;
+		}
+
+		Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageIdVersionNumber)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("packageId", packageId)
+				.addParameter("languageId", languageId)
+				.addParameter("versionNumber", godToolsVersion.getTranslationVersion())
+				.executeAndFetchFirst(Translation.class);
+
+		if(translation == null) throw new ResourceNotFoundException(Translation.class);
+
+		return translation;
+	}
+
     public void insert(Translation translation)
     {
         sqlConnection.createQuery(TranslationQueries.insert)
                 .addParameter("id", translation.getId())
                 .addParameter("packageId", translation.getPackageId())
                 .addParameter("languageId", translation.getLanguageId())
+				.addParameter("versionNumber", translation.getVersionNumber())
+				.addParameter("released", translation.isReleased())
                 .executeUpdate();
     }
 
 
     public static class TranslationQueries
     {
+		public static final String selectById = "SELECT * FROM translations WHERE id = :id";
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
-        public static final String insert = "INSERT INTO translations(id, language_id, package_id) VALUES(:id, :languageId, :packageId)";
+		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
+        public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, released) VALUES(:id, :languageId, :packageId, :versionNumber, :released)";
     }
 
 }

@@ -4,12 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.languages.LanguageService;
+import org.cru.godtools.api.images.domain.ReferencedImage;
+import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.packages.domain.*;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
-import org.cru.godtools.api.translations.domain.TranslationService;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -21,22 +22,19 @@ import java.util.Set;
  */
 
 @Default
-public class GodToolsPackageService extends GodToolsTranslationService
+public class GodToolsPackageService
 {
+	private GodToolsTranslationService godToolsTranslationService;
 	private ImageService imageService;
-
+	private ReferencedImageService referencedImageService;
 
 	@Inject
-    public GodToolsPackageService(PackageService packageService,
-								  VersionService versionService,
-								  TranslationService translationService,
-								  LanguageService languageService,
-								  PageService pageService,
-								  ImageService imageService)
-    {
-		super(packageService,versionService,translationService,languageService,pageService);
+	public GodToolsPackageService(GodToolsTranslationService godToolsTranslationService,ImageService imageService, ReferencedImageService referencedImageService)
+	{
+		this.godToolsTranslationService = godToolsTranslationService;
 		this.imageService = imageService;
-    }
+		this.referencedImageService = referencedImageService;
+	}
 
 	/**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
@@ -44,27 +42,23 @@ public class GodToolsPackageService extends GodToolsTranslationService
      *
      * @param languageCode
      * @param packageCode
-     * @param revisionNumber
      * @return
      */
     public GodToolsPackage getPackage(LanguageCode languageCode,
                                       String packageCode,
-                                      Integer revisionNumber,
+                                      GodToolsVersion godToolsVersion,
                                       Integer minimumInterpreterVersion,
+									  boolean includeDrafts,
                                       PixelDensity pixelDensity)
-    {
-		GodToolsTranslation godToolsTranslation = getTranslation(languageCode, packageCode, revisionNumber, minimumInterpreterVersion);
+	{
+		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode,
+				packageCode,
+				godToolsVersion,
+				includeDrafts,
+				minimumInterpreterVersion);
 
-        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation.getPackageXml(),
-				godToolsTranslation.getPageFiles(),
-				godToolsTranslation.getCurrentVersion(),
-                languageCode.toString(),
-                packageCode);
-
-		godToolsPackage.setImages(loadImages(godToolsPackage));
-
-		return godToolsPackage;
-    }
+		return GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure()));
+	}
 
     /**
      * Retrieves all packages for specified language at specified revision
@@ -76,24 +70,32 @@ public class GodToolsPackageService extends GodToolsTranslationService
      */
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
                                                        Integer minimumInterpreterVersion,
+													   boolean includeDrafts,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = getTranslationsForLanguage(languageCode, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts, minimumInterpreterVersion);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
-			godToolsPackage.setImages(loadImages(godToolsPackage));
-			godToolsPackages.add(godToolsPackage);
+			godToolsPackages.add(GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure())));
 		}
 
 		return godToolsPackages;
     }
 
-	private List<Image> loadImages(GodToolsPackage godToolsPackage)
+	private List<Image> loadImages(PackageStructure packageStructure)
 	{
-		return imageService.selectyByVersionId(godToolsPackage.getCurrentVersion().getId());
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId());
+
+		List<Image> imageList = Lists.newArrayList();
+
+		for(ReferencedImage referencedImage : referencedImages)
+		{
+			imageList.add(imageService.selectById(referencedImage.getImageId()));
+		}
+
+		return imageList;
 	}
 }

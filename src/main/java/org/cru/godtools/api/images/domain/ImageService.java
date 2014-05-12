@@ -13,14 +13,12 @@ import java.util.UUID;
  */
 public class ImageService
 {
-    Connection sqlConnection;
-	ReferencedImageService referencedImageService;
+    private Connection sqlConnection;
 
     @Inject
-    public ImageService(Connection sqlConnection, ReferencedImageService referencedImageService)
+    public ImageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
-		this.referencedImageService = referencedImageService;
     }
 
     public Image selectById(UUID id)
@@ -31,56 +29,32 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-	public List<Image> selectByPageId(UUID pageId)
+	public Image selectByPackageNameAndFilename(String packageName, String filename)
 	{
-		List<Image> images = Lists.newArrayList();
-		for(ReferencedImage referencedImage : referencedImageService.selectByPageId(pageId))
-		{
-			images.add(selectById(referencedImage.getImageId()));
-		}
-
-		return images;
-	}
-
-	public List<Image> selectyByVersionId(UUID versionId)
-	{
-		List<Image> images = Lists.newArrayList();
-		for(ReferencedImage referencedImage : referencedImageService.selectByVersionId(versionId))
-		{
-			images.add(selectById(referencedImage.getImageId()));
-		}
-
-		return images;
-	}
-
-	public Image selectByHash(String imageHash)
-	{
-		return sqlConnection.createQuery(ImageQueries.selectByHash)
+		return sqlConnection.createQuery(ImageQueries.selectByPackageNameAndFilename)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("imageHash", imageHash)
+				.addParameter("packageName", packageName)
+				.addParameter("filename", filename)
 				.executeAndFetchFirst(Image.class);
 	}
-
     public void update(Image image)
     {
-		image.calculateHash();
-
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
+				.addParameter("packageName", image.getPackageName())
+				.addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
     }
 
     public void insert(Image image)
     {
-		image.calculateHash();
-
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
+				.addParameter("packageName", image.getPackageName())
+				.addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
-                .addParameter("imageHash", image.getImageHash())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
     }
@@ -88,8 +62,8 @@ public class ImageService
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
-		public static final String selectByHash = "SELECT * FROM images WHERE image_hash = :imageHash";
-        public static final String insert = "INSERT INTO images(id, image_content, image_hash, resolution) VALUES(:id, :imageContent, :imageHash, :resolution)";
-        public static final String update = "UPDATE images SET image_content = :imageContent, image_hash = :imageHash, resolution = :resolution WHERE id = :id";
+        public static final String insert = "INSERT INTO images(id, package_name, filename, image_content, resolution) VALUES(:id, :packageName, :filename, :imageContent, :resolution)";
+        public static final String update = "UPDATE images SET filename = :filename, package_name = :packageName, image_content = :imageContent, resolution = :resolution WHERE id = :id";
+		public static final String selectByPackageNameAndFilename = "SELECT * FROM images where filename = :filename AND package_name = :packageName";
 	}
 }

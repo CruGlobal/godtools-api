@@ -1,17 +1,9 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.packages.domain.Version;
-import org.cru.godtools.api.packages.utils.LanguageCode;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -30,10 +22,9 @@ public class MetaResults implements java.io.Serializable
 
     }
 
-    public MetaResults withLanguage(MetaLanguage metaLanguage)
+    public void addLanguage(MetaLanguage metaLanguage)
     {
         languages.add(metaLanguage);
-        return this;
     }
 
     @XmlElement(name = "language")
