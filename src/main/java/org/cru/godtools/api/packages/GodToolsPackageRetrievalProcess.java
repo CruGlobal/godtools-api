@@ -47,7 +47,7 @@ public class GodToolsPackageRetrievalProcess
 
     PixelDensity pixelDensity;
 
-	Set<GodToolsTranslation> godToolsPackages = Sets.newHashSet();
+	Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 
     @Inject
     public GodToolsPackageRetrievalProcess(GodToolsPackageService packageService, FileZipper fileZipper)
@@ -91,20 +91,6 @@ public class GodToolsPackageRetrievalProcess
         this.pixelDensity = pixelDensity;
         return this;
     }
-
-//	public GodToolsPackageRetrievalProcess loadTranslations()
-//	{
-//		if(Strings.isNullOrEmpty(packageCode))
-//		{
-//			godToolsPackages.addAll(packageService.getTranslationsForLanguage(languageCode, minimumInterpreterVersion));
-//		}
-//		else
-//		{
-//			godToolsPackages.add(packageService.getTranslation(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion));
-//		}
-//
-//		return this;
-//	}
 
 	public GodToolsPackageRetrievalProcess loadPackages()
 	{
@@ -167,16 +153,14 @@ public class GodToolsPackageRetrievalProcess
         {
             PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
 
-            for(GodToolsTranslation godToolsTranslation : godToolsPackages)
+            for(GodToolsPackage godToolsPackage : godToolsPackages)
             {
-                fileZipper.zipPackageFile(godToolsTranslation, zipOutputStream);
+                fileZipper.zipPackageFile(godToolsPackage.getPackageStructure(), zipOutputStream);
 
-                fileZipper.zipPageFiles(godToolsTranslation, zipOutputStream);
+                fileZipper.zipPageFiles(godToolsPackage.getPageStructureList(), zipOutputStream);
 
-				if(godToolsTranslation instanceof GodToolsPackage)
-				{
-					fileZipper.zipImageFiles((GodToolsPackage) godToolsTranslation, zipOutputStream, imagesAlreadyZipped);
-				}
+				fileZipper.zipImageFiles(godToolsPackage.getImages(), zipOutputStream, imagesAlreadyZipped);
+
             }
 
             fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
@@ -198,7 +182,7 @@ public class GodToolsPackageRetrievalProcess
             Element rootElement = contents.createElement("content");
             contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsPackage : godToolsPackages)
+            for(GodToolsPackage godToolsPackage : godToolsPackages)
             {
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", packageCode);

@@ -3,6 +3,7 @@ package org.cru.godtools.api.images.domain;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import java.sql.Ref;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,13 @@ public class ReferencedImageService
 		this.sqlConnection = sqlConnection;
 	}
 
+	public List<ReferencedImage> selectByPackageStructureId(UUID packageStructureId)
+	{
+		return sqlConnection.createQuery(ReferencedImageQueries.selectByPackageStructureId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("packageStructureId", packageStructureId)
+				.executeAndFetch(ReferencedImage.class);
+	}
 
 	public void insert(ReferencedImage referencedImage)
 	{

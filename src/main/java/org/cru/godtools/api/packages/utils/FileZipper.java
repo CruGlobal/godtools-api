@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.packages.domain.PackageStructure;
 import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.images.domain.Image;
@@ -15,6 +16,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -28,32 +30,30 @@ public class FileZipper
     /**
      * The package XML is added to the zipOutputStream.
      *
-     * @param godToolsPackage
      * @param zipOutputStream
      * @return
      * @throws IOException
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPackageFile(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+    public void zipPackageFile(PackageStructure packageStructure, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
-		Document xmlContent = godToolsPackage.getPackageStructure().getXmlContent();
+		Document xmlContent = packageStructure.getXmlContent();
 		zipFile(xmlContent, ShaGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
     }
 
     /**
      * The page XML is added to the zipOutputStream.
      *
-     * @param godToolsPackage
      * @param zipOutputStream
      * @return
      * @throws IOException
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPageFiles(GodToolsTranslation godToolsPackage, ZipOutputStream zipOutputStream) throws Exception
+    public void zipPageFiles(List<PageStructure> pageStructureList, ZipOutputStream zipOutputStream) throws Exception
     {
-        for(PageStructure page : godToolsPackage.getPageStructureList())
+        for(PageStructure page : pageStructureList)
         {
 			Document xmlContent = page.getXmlContent();
 
@@ -63,9 +63,9 @@ public class FileZipper
         }
     }
 
-    public void zipImageFiles(GodToolsPackage godToolsPackage, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
+    public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
     {
-        for(Image image : godToolsPackage.getImages())
+        for(Image image : images)
         {
 			String imageHash = ShaGenerator.calculateHash(image.getImageContent());
 

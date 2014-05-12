@@ -113,20 +113,6 @@ public class GodToolsTranslationRetrievalProcess
 		return this;
 	}
 
-//	public GodToolsTranslationRetrievalProcess loadPackages()
-//	{
-//		if(Strings.isNullOrEmpty(packageCode))
-//		{
-//			godToolsPackages.addAll(godToolsTranslationService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
-//		}
-//		else
-//		{
-//			godToolsPackages.add(godToolsTranslationService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, pixelDensity));
-//		}
-//
-//		return this;
-//	}
-
     public Response buildResponse() throws IOException
     {
         if(compressed)
@@ -141,7 +127,7 @@ public class GodToolsTranslationRetrievalProcess
 
     private Response buildXmlContentsResponse() throws IOException
     {
-        if(this.godToolsTranslations.isEmpty())
+        if(godToolsTranslations.isEmpty())
         {
             throw new NotFoundException();
         }
@@ -172,18 +158,11 @@ public class GodToolsTranslationRetrievalProcess
     {
         try
         {
-            PriorityQueue<String> imagesAlreadyZipped = new PriorityQueue<String>();
-
             for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
             {
-                fileZipper.zipPackageFile(godToolsTranslation, zipOutputStream);
+                fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(), zipOutputStream);
 
-                fileZipper.zipPageFiles(godToolsTranslation, zipOutputStream);
-
-				if(godToolsTranslation instanceof GodToolsPackage)
-				{
-					fileZipper.zipImageFiles((GodToolsPackage) godToolsTranslation, zipOutputStream, imagesAlreadyZipped);
-				}
+                fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
             }
 
             fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
@@ -222,5 +201,4 @@ public class GodToolsTranslationRetrievalProcess
             return null;
         }
     }
-
 }

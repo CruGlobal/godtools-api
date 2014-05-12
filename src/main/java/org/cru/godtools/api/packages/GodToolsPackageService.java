@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
+import org.cru.godtools.api.images.domain.ReferencedImage;
+import org.cru.godtools.api.images.domain.ReferencedImageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
@@ -24,15 +26,15 @@ public class GodToolsPackageService
 {
 	private GodToolsTranslationService godToolsTranslationService;
 	private ImageService imageService;
-
+	private ReferencedImageService referencedImageService;
 
 	@Inject
-	public GodToolsPackageService(GodToolsTranslationService godToolsTranslationService,ImageService imageService)
+	public GodToolsPackageService(GodToolsTranslationService godToolsTranslationService,ImageService imageService, ReferencedImageService referencedImageService)
 	{
 		this.godToolsTranslationService = godToolsTranslationService;
 		this.imageService = imageService;
+		this.referencedImageService = referencedImageService;
 	}
-
 
 	/**
      * Retrieves a specific package in a specific language at a specific revision if revision number is passed, or the latest version if null.
@@ -49,9 +51,11 @@ public class GodToolsPackageService
 									  boolean includeDrafts,
                                       PixelDensity pixelDensity)
     {
-		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion, includeDrafts, minimumInterpreterVersion);
-
-        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslation);
+        GodToolsPackage godToolsPackage = new GodToolsPackage(godToolsTranslationService.getTranslation(languageCode,
+				packageCode,
+				godToolsVersion,
+				includeDrafts,
+				minimumInterpreterVersion));
 
 		godToolsPackage.setImages(loadImages(godToolsPackage));
 
@@ -87,6 +91,15 @@ public class GodToolsPackageService
 
 	private List<Image> loadImages(GodToolsPackage godToolsPackage)
 	{
-		return Lists.newArrayList();
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(godToolsPackage.getPackageStructure().getId());
+
+		List<Image> imageList = Lists.newArrayList();
+
+		for(ReferencedImage referencedImage : referencedImages)
+		{
+			imageList.add(imageService.selectById(referencedImage.getImageId()));
+		}
+
+		return imageList;
 	}
 }
