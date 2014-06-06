@@ -67,7 +67,7 @@ CREATE TABLE images (
 
 CREATE TABLE referenced_images (
   image_id uuid REFERENCES images(id),
-  package_structure_id uuid REFERENCES package_structures(id)
+  package_structure_id uuid REFERENCES package_structure(id)
 );
 
 CREATE TABLE auth_tokens(
