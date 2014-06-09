@@ -18,6 +18,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
+ * Contains RESTful endpoints for delivering GodTools "package" resources.
+ *  - "packages" include translation XML files as well as images.
+ *
+ * For more information: https://github.com/CruGlobal/godtools-api/wiki/The-Packages-Endpoint
+ *
  * Created by ryancarlson on 3/14/14.
  */
 
@@ -30,6 +35,22 @@ public class PackageResource
     @Inject
     AuthorizationService authService;
 
+	/**
+	 * GET - get all packages for the language specified by @param languageCode.
+	 *
+	 * @param languageCode
+	 * @param minimumInterpreterVersionParam
+	 * @param minimumInterpreterVersionHeader
+	 * @param compressed
+	 * @param versionNumber
+	 * @param desiredPixelDensity
+	 * @param authTokenHeader
+	 * @param authTokenParam
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
     @GET
 	@Path("/{language}")
     @Produces({"application/zip", "application/xml"})
@@ -54,6 +75,23 @@ public class PackageResource
                 .buildResponse();
     }
 
+	/**
+	 * GET - get all the package specified by @param packageCode for the language specified by @param languageCode.
+	 *
+	 * @param languageCode
+	 * @param packageCode
+	 * @param minimumInterpreterVersionParam
+	 * @param minimumInterpreterVersionHeader
+	 * @param compressed
+	 * @param versionNumber
+	 * @param desiredPixelDensity
+	 * @param authTokenHeader
+	 * @param authTokenParam
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	@GET
 	@Path("/{language}/{package}")
 	@Produces({"application/zip", "application/xml"})

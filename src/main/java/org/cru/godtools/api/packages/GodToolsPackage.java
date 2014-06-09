@@ -9,6 +9,8 @@ import org.cru.godtools.api.translations.GodToolsTranslation;
 import java.util.List;
 
 /**
+ * Contains the XML structure files for a GodTools package and the images associated with the package.
+ *
  * Created by ryancarlson on 4/8/14.
  */
 public class GodToolsPackage

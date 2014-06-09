@@ -29,9 +29,9 @@ import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Logic to take a single or multiple GodTools package(s) and xmlToStream it/them into a javax.ws.rs.core.Response.
+ * Stateful object with logic to take a single or multiple GodTools translations(s) and perform necessary steps to return a javax.ws.rs.core.Response with the translation data.
  *
- * The content is zipped into a zip file by using a ZipOutputStream
+ * If compressed = true, the content is zipped into a zip file by using a ZipOutputStream.
  *
  * Created by ryancarlson on 3/17/14.
  */

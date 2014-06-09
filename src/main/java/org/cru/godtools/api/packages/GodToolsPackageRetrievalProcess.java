@@ -9,7 +9,6 @@ import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
-import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,15 +21,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 /**
- * Logic to take a single or multiple GodTools package(s) and xmlToStream it/them into a javax.ws.rs.core.Response.
+ * Stateful object with logic to take a single or multiple GodTools package(s) and perform necessary steps to return a javax.ws.rs.core.Response with the package data.
  *
- * The content is zipped into a zip file by using a ZipOutputStream
+ * If compressed = true, the content is zipped into a zip file by using a ZipOutputStream.
  *
  * Created by ryancarlson on 3/17/14.
  */
@@ -114,11 +112,11 @@ public class GodToolsPackageRetrievalProcess
         }
         else
         {
-            return buildXmlContentsResponse();
+            return buildNonZippedResponse();
         }
     }
 
-    private Response buildXmlContentsResponse() throws IOException
+    private Response buildNonZippedResponse() throws IOException
     {
         if(this.godToolsPackages.isEmpty())
         {

@@ -25,8 +25,15 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
+ * Service which uses lower-level domain services to assemble XML structure files for a translation of a GodTools translation
+ * and return the results bundled as a GodToolsTranslation.
+ *
+ * There are services for a specific language & package combo, as well as a service which would load all packages
+ * for a language and return them as a Set.
+ *
  * Created by ryancarlson on 4/8/14.
  */
+
 public class GodToolsTranslationService
 {
 	protected PackageService packageService;

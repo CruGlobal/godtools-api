@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
+ * Contains RESTful endpoints for delivering GodTools "translation" resources.
+ *  - "translation" include translation XML files, but not images
+ *
+ * For more information: https://github.com/CruGlobal/godtools-api/wiki/The-Translations-Endpoint
+ *
  * Created by ryancarlson on 4/8/14.
  */
 @Path("/translations")

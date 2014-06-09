@@ -18,6 +18,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Service which uses lower-level domain services to assemble XML structure files and associated images for
+ * a translation of a GodTools package and return the results bundled as a GodToolsPackage.
+ *
+ * There are services for a specific language & package combo, as well as a service which would load all packages
+ * for a language and return them as a Set.
+ *
  * Created by ryancarlson on 3/20/14.
  */
 

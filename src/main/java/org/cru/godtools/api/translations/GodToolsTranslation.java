@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * Contains the XML structure files for a GodTools translation.
+ *
  * Created by ryancarlson on 3/18/14.
  */
 public class GodToolsTranslation
