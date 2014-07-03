@@ -9,9 +9,7 @@ import org.cru.redegg.recording.api.ParameterSanitizer;
 import org.cru.redegg.reporting.errbit.ErrbitConfig;
 
 import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Created by matthewfrederick on 7/3/14.

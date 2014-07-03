@@ -120,7 +120,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.cru</groupId>
+            <groupId>org.ccci</groupId>
             <artifactId>red-egg</artifactId>
             <version>1-SNAPSHOT</version>
         </dependency>
