@@ -1,13 +1,14 @@
 package org.cru.godtools.redegg;
 
 
-
+import org.cru.godtools.properties.GodToolsProperties;
 import com.google.common.collect.ImmutableList;
 import org.cru.redegg.recording.api.NoOpParameterSanitizer;
 import org.cru.redegg.recording.api.ParameterSanitizer;
 import org.cru.redegg.reporting.errbit.ErrbitConfig;
 
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import java.net.URISyntaxException;
 import java.net.URI;
 
@@ -16,6 +17,7 @@ import java.net.URI;
  */
 public class RedEggConfig
 {
+    @Inject GodToolsProperties properties;
 
     @Produces ParameterSanitizer sanitizer = new NoOpParameterSanitizer();
 
