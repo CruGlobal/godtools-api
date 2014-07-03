@@ -1,7 +1,7 @@
-package org.cru.godtools.redegg;
+package org.cru.godtools.RedEggConfig;
 
 
-import org.cru.godtools.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import com.google.common.collect.ImmutableList;
 import org.cru.redegg.recording.api.NoOpParameterSanitizer;
 import org.cru.redegg.recording.api.ParameterSanitizer;
@@ -24,7 +24,7 @@ public class RedEggConfig
     @Produces public ErrbitConfig createConfig() throws URISyntaxException
     {
         ErrbitConfig config = new ErrbitConfig();
-        config.setEndpoint(new URI("https://errors.uscm.org"));
+        config.setEndpoint(new URI(properties.getProperty("errbitEndpoint")));
         config.setKey(properties.getProperty("errbitApiKey"));
         config.setEnvironmentName(properties.getProperty("errbitEnvironment"));
 
