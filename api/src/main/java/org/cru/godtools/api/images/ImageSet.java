@@ -4,10 +4,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImage;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
-import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

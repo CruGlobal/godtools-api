@@ -1,9 +1,6 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.packages.domain.TranslationElement;
 
 import java.util.List;
 import java.util.Map;

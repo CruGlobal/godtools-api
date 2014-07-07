@@ -4,18 +4,13 @@ import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.images.domain.ReferencedImage;
 import org.cru.godtools.api.images.domain.ReferencedImageService;
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.languages.LanguageService;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
-import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.migration.ImageReader;
-import org.cru.godtools.tests.XmlDocumentFromFile;
-import org.testng.Assert;
+import org.cru.godtools.api.utilities.ImageReader;
 
 /**
  * Created by ryancarlson on 4/2/14.

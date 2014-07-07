@@ -2,13 +2,10 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.authentication.UnauthorizedException;
-import org.cru.godtools.api.packages.GodToolsPackageRetrievalProcess;
-import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -17,7 +14,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;

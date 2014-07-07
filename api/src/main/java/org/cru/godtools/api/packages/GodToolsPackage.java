@@ -2,8 +2,6 @@ package org.cru.godtools.api.packages;
 
 import com.google.common.collect.Lists;
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.PageStructure;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 
 import java.util.List;

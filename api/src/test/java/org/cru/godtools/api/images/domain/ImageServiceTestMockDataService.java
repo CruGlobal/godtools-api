@@ -1,7 +1,5 @@
 package org.cru.godtools.api.images.domain;
 
-import org.cru.godtools.api.packages.domain.Page;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 import org.testng.Assert;
 
 /**

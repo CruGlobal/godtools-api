@@ -1,8 +1,6 @@
 package org.cru.godtools.api.translations.domain;
 
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.domain.PackageService;
-import org.cru.godtools.api.packages.utils.GodToolsVersion;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.tests.AbstractServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

@@ -1,7 +1,6 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.xml.sax.SAXException;
 

@@ -1,10 +1,8 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.base.Strings;
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;

@@ -2,9 +2,8 @@ package org.cru.godtools.tests;
 
 import org.cru.godtools.api.images.domain.ImageService;
 import org.cru.godtools.api.images.domain.ReferencedImageService;
-import org.cru.godtools.api.languages.LanguageService;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackageService;
-import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.GodToolsPackageServiceTestMockDataService;
 import org.cru.godtools.api.translations.domain.TranslationService;
 

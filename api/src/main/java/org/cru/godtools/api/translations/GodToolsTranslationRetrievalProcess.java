@@ -3,14 +3,9 @@ package org.cru.godtools.api.translations;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.GodToolsPackageService;
-import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
-import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,8 +18,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 

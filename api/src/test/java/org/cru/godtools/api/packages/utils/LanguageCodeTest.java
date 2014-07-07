@@ -1,6 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
-import org.cru.godtools.api.languages.Language;
+import org.cru.godtools.domain.languages.Language;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

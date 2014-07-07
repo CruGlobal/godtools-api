@@ -1,9 +1,7 @@
 package org.cru.godtools.api.packages;
 
-import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

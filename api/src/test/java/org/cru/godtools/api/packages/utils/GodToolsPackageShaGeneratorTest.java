@@ -1,6 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
-import org.cru.godtools.migration.ImageReader;
+import org.cru.godtools.api.utilities.ImageReader;
 import org.cru.godtools.tests.XmlDocumentFromFile;
 import org.testng.Assert;
 import org.testng.annotations.Test;

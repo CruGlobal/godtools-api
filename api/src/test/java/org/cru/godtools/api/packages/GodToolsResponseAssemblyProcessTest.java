@@ -1,6 +1,5 @@
 package org.cru.godtools.api.packages;
 
-import org.cru.godtools.api.packages.domain.PixelDensity;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.packages.utils.GodToolsVersion;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;

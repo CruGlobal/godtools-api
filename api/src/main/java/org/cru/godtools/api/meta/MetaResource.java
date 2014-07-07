@@ -1,16 +1,11 @@
 package org.cru.godtools.api.meta;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ErrorResponse;
-import org.cru.godtools.migration.KnownGodtoolsPackages;
 import org.cru.godtools.onesky.io.TranslationUpload;
 import org.xml.sax.SAXException;
 
@@ -99,13 +94,13 @@ public class MetaResource
 		authService.checkAuthorization(authCodeParam, authCodeHeader);
 
 		Language english = languageService.selectByLanguageCode(new LanguageCode("en"));
-		for (Package gtPackage : KnownGodtoolsPackages.packages)
-		{
-			for(Translation translation : translationService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId()))
-			{
-				if(translation.getLanguageId().equals(english.getId())) translationUpload.doUpload(translation.getId());
-			}
-		}
+//		for (Package gtPackage : KnownGodtoolsPackages.packages)
+//		{
+//			for(Translation translation : translationService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId()))
+//			{
+//				if(translation.getLanguageId().equals(english.getId())) translationUpload.doUpload(translation.getId());
+//			}
+//		}
 
 		return Response.accepted().build();
 	}

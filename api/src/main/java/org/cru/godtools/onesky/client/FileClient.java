@@ -3,7 +3,6 @@ package org.cru.godtools.onesky.client;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
-import org.cru.godtools.api.packages.domain.TranslationElement;
 import org.cru.godtools.properties.GodToolsProperties;
 import org.cru.godtools.properties.GodToolsPropertiesFactory;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
@@ -13,9 +12,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 /**

@@ -1,9 +1,7 @@
 package org.cru.godtools.api.translations.domain;
 
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.domain.PackageService;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.testng.Assert;
 
 /**

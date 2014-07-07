@@ -3,7 +3,7 @@ package org.cru.godtools.api.packages;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.languages.LanguageService;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.translations.domain.Translation;
 import org.cru.godtools.api.translations.domain.TranslationService;

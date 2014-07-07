@@ -1,11 +1,9 @@
 package org.cru.godtools.api.packages.utils;
 
-import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.translations.GodToolsTranslation;
+import org.ccci.util.ShaGenerator;
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PageStructure;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.Result;

@@ -1,4 +1,4 @@
-package org.cru.godtools.api.languages;
+package org.cru.godtools.domain.languages;
 
 import org.testng.Assert;
 
