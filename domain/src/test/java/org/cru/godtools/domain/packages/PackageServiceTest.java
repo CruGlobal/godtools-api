@@ -1,6 +1,6 @@
-package org.cru.godtools.api.packages.domain;
+package org.cru.godtools.domain.packages;
 
-import org.cru.godtools.tests.AbstractServiceTest;
+import org.cru.godtools.domain.AbstractServiceTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

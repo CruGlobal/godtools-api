@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages.domain;
+package org.cru.godtools.domain.packages;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

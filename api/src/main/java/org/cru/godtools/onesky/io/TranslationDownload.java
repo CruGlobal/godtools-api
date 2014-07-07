@@ -3,6 +3,7 @@ package org.cru.godtools.onesky.io;
 import com.google.common.collect.Multimap;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.packages.OneSkyDataService;
+import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
 import org.cru.godtools.onesky.client.TranslationClient;
 import org.cru.godtools.onesky.client.TranslationResults;

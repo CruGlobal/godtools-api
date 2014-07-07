@@ -1,4 +1,4 @@
-package org.cru.godtools.api.images.domain;
+package org.cru.godtools.domain.images;
 
 import org.testng.Assert;
 

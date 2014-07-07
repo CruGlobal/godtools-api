@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages.domain;
+package org.cru.godtools.domain.packages;
 
 /**
  * Created by ryancarlson on 3/27/14.

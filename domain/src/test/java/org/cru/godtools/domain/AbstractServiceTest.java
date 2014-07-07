@@ -1,6 +1,5 @@
-package org.cru.godtools.tests;
+package org.cru.godtools.domain;
 
-import org.cru.godtools.api.database.SqlConnectionProducer;
 import org.sql2o.Connection;
 
 /**

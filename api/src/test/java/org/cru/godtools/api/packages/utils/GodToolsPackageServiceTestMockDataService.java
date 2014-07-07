@@ -1,16 +1,18 @@
 package org.cru.godtools.api.packages.utils;
 
-import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImage;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.images.ImageService;
+import org.cru.godtools.domain.images.ReferencedImage;
+import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
-import org.cru.godtools.api.translations.domain.Translation;
-import org.cru.godtools.api.translations.domain.TranslationService;
 import org.cru.godtools.api.utilities.ImageReader;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 
 /**
  * Created by ryancarlson on 4/2/14.

@@ -1,6 +1,6 @@
-package org.cru.godtools.api.images.domain;
+package org.cru.godtools.domain.images;
 
-import org.cru.godtools.tests.AbstractServiceTest;
+import org.cru.godtools.domain.AbstractServiceTest;
 import org.sql2o.Connection;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

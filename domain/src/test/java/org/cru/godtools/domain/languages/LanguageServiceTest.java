@@ -1,8 +1,6 @@
 package org.cru.godtools.domain.languages;
 
-import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.utilities.ResourceNotFoundException;
-import org.cru.godtools.tests.AbstractServiceTest;
+import org.cru.godtools.domain.AbstractServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -73,11 +71,11 @@ public class LanguageServiceTest extends AbstractServiceTest
 		mockData.validateLanguage(language2);
 	}
 
-	@Test(expectedExceptions = ResourceNotFoundException.class)
+	@Test()
 	public void testSelectLanguageByCodeNotFound()
 	{
 		LanguageCode languageCode = new LanguageCode("fr");
-		languageService.selectByLanguageCode(languageCode);
+		Assert.assertNull(languageService.selectByLanguageCode(languageCode));
 	}
 
 

@@ -1,7 +1,8 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.packages.utils.GodToolsVersion;
+import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.packages.PixelDensity;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;

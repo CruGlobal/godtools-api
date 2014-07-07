@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import org.ccci.util.ShaGenerator;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.w3c.dom.Document;

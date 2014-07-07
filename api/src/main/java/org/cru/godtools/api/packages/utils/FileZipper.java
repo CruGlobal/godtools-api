@@ -1,7 +1,7 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.ccci.util.ShaGenerator;
-import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.w3c.dom.Document;

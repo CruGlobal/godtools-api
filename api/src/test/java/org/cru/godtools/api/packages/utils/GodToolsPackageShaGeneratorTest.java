@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
+import org.ccci.util.ShaGenerator;
 import org.cru.godtools.api.utilities.ImageReader;
 import org.cru.godtools.tests.XmlDocumentFromFile;
 import org.testng.Assert;

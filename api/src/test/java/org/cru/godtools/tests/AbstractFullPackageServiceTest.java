@@ -1,11 +1,12 @@
 package org.cru.godtools.tests;
 
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
+import org.cru.godtools.domain.images.ImageService;
+import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.packages.utils.GodToolsPackageServiceTestMockDataService;
-import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.translations.TranslationService;
 
 import java.util.UUID;
 
@@ -22,8 +23,6 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	public static final UUID TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID LANGUAGE_ID = UUID.randomUUID();
 	public static final UUID PACKAGE_ID = UUID.randomUUID();
-	public static final UUID VERSION_ID = UUID.randomUUID();
-	public static final UUID PAGE_ID = UUID.randomUUID();
 	public static final UUID IMAGE_ID = UUID.randomUUID();
 
 	@Override
@@ -36,8 +35,6 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		TranslationService translationService = new TranslationService(sqlConnection);
 		ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
 		ImageService imageService = new ImageService(sqlConnection);
-
-//		godToolsPackageService = new GodToolsPackageService(packageService, versionService, translationService, languageService, pageService, imageService);
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 

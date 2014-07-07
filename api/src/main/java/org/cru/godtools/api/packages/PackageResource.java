@@ -1,7 +1,8 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.packages.utils.GodToolsVersion;
+import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.packages.PixelDensity;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;

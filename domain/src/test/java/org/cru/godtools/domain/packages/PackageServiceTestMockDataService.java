@@ -1,6 +1,8 @@
-package org.cru.godtools.api.packages.domain;
+package org.cru.godtools.domain.packages;
 
 import org.testng.Assert;
+
+import java.lang.*;
 
 /**
  * Created by ryancarlson on 4/2/14.
