@@ -11,5 +11,11 @@
 
     <artifactId>godtools-migration</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.cru</groupId>
+            <artifactId>godtools-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
