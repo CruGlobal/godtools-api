@@ -2,7 +2,7 @@ package org.cru.godtools.migration;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.packages.domain.Page;
+import org.cru.godtools.domain.packages.Page;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;

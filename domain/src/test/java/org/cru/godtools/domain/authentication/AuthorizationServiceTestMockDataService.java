@@ -1,4 +1,4 @@
-package org.cru.godtools.api.authentication;
+package org.cru.godtools.domain.authentication;
 
 /**
  * Created by ryancarlson on 4/3/14.

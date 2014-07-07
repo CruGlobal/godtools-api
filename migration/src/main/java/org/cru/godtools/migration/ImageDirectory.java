@@ -1,7 +1,7 @@
 package org.cru.godtools.migration;
 
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.images.domain.Image;
+import org.cru.godtools.domain.images.Image;
 
 import java.io.File;
 import java.net.URISyntaxException;

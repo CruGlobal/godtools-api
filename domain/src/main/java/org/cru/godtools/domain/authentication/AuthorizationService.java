@@ -1,4 +1,4 @@
-package org.cru.godtools.api.authentication;
+package org.cru.godtools.domain.authentication;
 
 import com.google.common.base.Strings;
 import org.ccci.util.time.Clock;

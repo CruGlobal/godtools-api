@@ -1,6 +1,7 @@
 package org.cru.godtools.migration;
 
-import org.cru.godtools.api.packages.utils.LanguageCode;
+
+import org.cru.godtools.domain.languages.LanguageCode;
 
 import java.io.File;
 

@@ -1,7 +1,7 @@
 package org.cru.godtools.api.translations;
 
-import org.cru.godtools.api.authentication.AuthorizationService;
-import org.cru.godtools.api.authentication.UnauthorizedException;
+import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
 

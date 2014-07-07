@@ -1,4 +1,4 @@
-package org.cru.godtools.api.database;
+package org.cru.godtools.database;
 
 
 import org.cru.godtools.properties.GodToolsProperties;

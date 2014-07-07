@@ -1,4 +1,4 @@
-package org.cru.godtools.api.authentication;
+package org.cru.godtools.domain.authentication;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

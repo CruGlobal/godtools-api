@@ -1,14 +1,15 @@
-package db.migration;
+package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.migration.ImageDirectory;
-import org.cru.godtools.migration.MigrationProcess;
-import org.cru.godtools.migration.PackageDirectory;
+import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.images.ImageService;
+import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.translations.TranslationService;
 
 import java.sql.Connection;
 
@@ -33,7 +34,7 @@ public class V0_5__migrate_images implements JdbcMigration
 	@Override
 	public void migrate(Connection connection) throws Exception
 	{
-		for(org.cru.godtools.api.packages.domain.Package gtPackage : packages)
+		for(Package gtPackage : packages)
 		{
 			PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode(),
 					packageService,

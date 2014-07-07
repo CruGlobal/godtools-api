@@ -1,7 +1,7 @@
-package org.cru.godtools.api.authentication;
+package org.cru.godtools.domain.authentication;
 
-import org.cru.godtools.tests.AbstractServiceTest;
-import org.cru.godtools.tests.TestClockImpl;
+import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.domain.TestClockImpl;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

@@ -19,6 +19,14 @@
             <artifactId>godtools-domain</artifactId>
             <version>1.0.0-SNAPSHOT</version> <!-- mvn is being dumb, this should not be required -->
         </dependency>
+
+        <dependency>
+            <groupId>org.cru</groupId>
+            <artifactId>godtools-domain</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

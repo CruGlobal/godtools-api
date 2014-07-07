@@ -1,4 +1,4 @@
-package org.cru.godtools.api.authentication;
+package org.cru.godtools.domain.authentication;
 
 import org.ccci.util.time.Clock;
 import org.joda.time.DateTime;

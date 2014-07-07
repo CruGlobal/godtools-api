@@ -1,6 +1,7 @@
 package org.cru.godtools.migration;
 
-import com.beust.jcommander.internal.Sets;
+import org.cru.godtools.domain.packages.Package;
+import com.google.common.collect.Sets;
 
 import java.util.Set;
 

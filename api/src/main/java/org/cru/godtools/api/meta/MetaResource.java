@@ -1,6 +1,6 @@
 package org.cru.godtools.api.meta;
 
-import org.cru.godtools.api.authentication.AuthorizationService;
+import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;

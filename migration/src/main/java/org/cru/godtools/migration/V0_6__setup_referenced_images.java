@@ -1,17 +1,17 @@
-package db.migration;
+package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.images.domain.ImageService;
-import org.cru.godtools.api.images.domain.ReferencedImage;
-import org.cru.godtools.api.images.domain.ReferencedImageService;
-import org.cru.godtools.api.packages.domain.PackageService;
-import org.cru.godtools.api.packages.domain.PackageStructure;
-import org.cru.godtools.api.packages.domain.PackageStructureService;
-import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.packages.domain.PageStructureService;
-import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
-import org.cru.godtools.migration.MigrationProcess;
+import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.images.ImageService;
+import org.cru.godtools.domain.images.ReferencedImage;
+import org.cru.godtools.domain.images.ReferencedImageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.w3c.dom.Element;
 
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 	@Override
 	public void migrate(Connection connection) throws Exception
 	{
-		for(org.cru.godtools.api.packages.domain.Package gtPackage : packages)
+		for(Package gtPackage : packages)
 		{
 			PackageStructure packageStructure = packageStructureService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId());
 			List<PageStructure> pageStructureList = pageStructureService.selectByPackageStructureId(packageStructure.getId());

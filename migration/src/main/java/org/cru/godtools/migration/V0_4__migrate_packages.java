@@ -1,19 +1,17 @@
-package db.migration;
+package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.api.migration.jdbc.JdbcMigration;
-import org.cru.godtools.api.languages.Language;
-import org.cru.godtools.api.languages.LanguageService;
-import org.cru.godtools.api.packages.domain.Package;
-import org.cru.godtools.api.packages.domain.PackageService;
-import org.cru.godtools.api.packages.domain.PackageStructureService;
-import org.cru.godtools.api.packages.domain.PageStructureService;
-import org.cru.godtools.api.packages.domain.TranslationElementService;
-import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.domain.Translation;
-import org.cru.godtools.api.translations.domain.TranslationService;
-import org.cru.godtools.migration.KnownGodtoolsPackages;
-import org.cru.godtools.migration.MigrationProcess;
-import org.cru.godtools.migration.PackageDirectory;
+
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 
 
 import java.sql.Connection;
