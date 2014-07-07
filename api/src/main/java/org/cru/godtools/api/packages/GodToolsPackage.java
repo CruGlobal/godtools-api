@@ -1,8 +1,10 @@
 package org.cru.godtools.api.packages;
 
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.translations.GodToolsTranslation;
+import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PageStructure;
 
 import java.util.List;
 

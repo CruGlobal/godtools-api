@@ -3,9 +3,10 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.packages.utils.GodToolsVersion;
-import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.ccci.util.ShaGenerator;
+import org.cru.godtools.api.packages.domain.PixelDensity;
+import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -2,8 +2,8 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.authentication.AuthorizationService;
 import org.cru.godtools.api.authentication.UnauthorizedException;
-import org.cru.godtools.api.packages.utils.GodToolsVersion;
-import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.languages.LanguageCode;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

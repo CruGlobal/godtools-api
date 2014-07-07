@@ -2,10 +2,14 @@ package org.cru.godtools.api.meta;
 
 import com.google.common.base.Strings;
 import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.api.packages.utils.LanguageCode;
-import org.cru.godtools.api.translations.domain.Translation;
-import org.cru.godtools.api.translations.domain.TranslationService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
