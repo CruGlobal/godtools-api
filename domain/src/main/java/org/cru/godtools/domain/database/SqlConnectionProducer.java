@@ -1,7 +1,7 @@
-package org.cru.godtools.database;
+package org.cru.godtools.domain.database;
 
 
-import org.cru.godtools.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
 import org.sql2o.Sql2o;
@@ -16,7 +16,8 @@ import javax.inject.Inject;
 @RequestScoped
 public class SqlConnectionProducer
 {
-    @Inject GodToolsProperties properties;
+    @Inject
+	GodToolsProperties properties;
 
 	private Connection sqlConnection;
 

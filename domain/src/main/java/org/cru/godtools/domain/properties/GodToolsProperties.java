@@ -1,4 +1,4 @@
-package org.cru.godtools.properties;
+package org.cru.godtools.domain.properties;
 
 import org.ccci.util.properties.CcciProperties;
 import org.ccci.util.properties.PropertiesWithFallback;

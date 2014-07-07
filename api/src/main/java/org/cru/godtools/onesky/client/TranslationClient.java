@@ -1,8 +1,8 @@
 package org.cru.godtools.onesky.client;
 
 import com.google.common.base.Throwables;
-import org.cru.godtools.properties.GodToolsProperties;
-import org.cru.godtools.properties.GodToolsPropertiesFactory;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 
 import javax.ws.rs.client.WebTarget;
 

@@ -2,6 +2,7 @@ package org.cru.godtools.api.images;
 
 import com.google.common.base.Throwables;
 import org.apache.log4j.Logger;
+import org.cru.godtools.domain.images.ImageLookup;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

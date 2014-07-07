@@ -2,7 +2,7 @@ package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.Flyway;
 import com.googlecode.flyway.core.api.MigrationVersion;
-import org.cru.godtools.database.SqlConnectionProducer;
+import org.cru.godtools.domain.database.SqlConnectionProducer;
 
 /**
  * Created by ryancarlson on 3/21/14.

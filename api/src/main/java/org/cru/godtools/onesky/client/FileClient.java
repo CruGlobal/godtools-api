@@ -4,8 +4,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 import org.cru.godtools.domain.packages.TranslationElement;
-import org.cru.godtools.properties.GodToolsProperties;
-import org.cru.godtools.properties.GodToolsPropertiesFactory;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 import javax.ws.rs.client.Entity;

@@ -1,5 +1,6 @@
 package org.cru.godtools.tests;
 
+import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.images.ImageService;
 import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.LanguageService;

@@ -1,7 +1,7 @@
 package org.cru.godtools.domain;
 
 
-import org.cru.godtools.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
 import org.sql2o.Sql2o;

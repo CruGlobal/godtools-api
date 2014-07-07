@@ -1,4 +1,4 @@
-package org.cru.godtools.properties;
+package org.cru.godtools.domain.properties;
 
 import javax.enterprise.inject.Produces;
 
