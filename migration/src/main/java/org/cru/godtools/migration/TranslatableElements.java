@@ -1,7 +1,6 @@
 package org.cru.godtools.migration;
 
 import com.google.common.collect.Maps;
-import org.cru.godtools.api.packages.domain.*;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

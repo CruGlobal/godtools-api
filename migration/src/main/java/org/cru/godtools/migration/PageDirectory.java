@@ -2,19 +2,12 @@ package org.cru.godtools.migration;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import org.cru.godtools.api.images.FileSystemImageLookup;
 import org.cru.godtools.api.packages.domain.Page;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.File;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
@@ -42,10 +35,10 @@ public class PageDirectory
 	 *
 	 *
 	 * @return
-	 * @throws URISyntaxException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
+	 * @throws java.net.URISyntaxException
+	 * @throws javax.xml.parsers.ParserConfigurationException
+	 * @throws org.xml.sax.SAXException
+	 * @throws java.io.IOException
 	 */
     public List<Page> buildPages()
     {

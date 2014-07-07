@@ -1,8 +1,6 @@
 package org.cru.godtools.migration;
 
 import com.beust.jcommander.internal.Sets;
-import org.cru.godtools.api.packages.domain.*;
-import org.cru.godtools.api.packages.domain.Package;
 
 import java.util.Set;
 
