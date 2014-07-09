@@ -3,8 +3,8 @@ package org.cru.godtools.onesky.client;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.Maps;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
