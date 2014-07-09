@@ -1,8 +1,8 @@
 package org.cru.godtools.onesky.client;
 
 import com.google.common.base.Throwables;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
