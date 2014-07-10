@@ -3,10 +3,11 @@ package org.cru.godtools.api.packages;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import org.ccci.util.ShaGenerator;
+
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PixelDensity;
 import org.w3c.dom.Document;
@@ -185,7 +186,7 @@ public class GodToolsPackageRetrievalProcess
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", ShaGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
+                resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
 
                 rootElement.appendChild(resourceElement);
             }
@@ -197,5 +198,4 @@ public class GodToolsPackageRetrievalProcess
             return null;
         }
     }
-
 }

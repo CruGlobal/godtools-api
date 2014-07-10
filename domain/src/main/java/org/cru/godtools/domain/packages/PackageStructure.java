@@ -1,6 +1,6 @@
 package org.cru.godtools.domain.packages;
 
-import org.ccci.util.ShaGenerator;
+import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,13 +42,13 @@ public class PackageStructure
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 	}
 
@@ -59,7 +59,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch (NullPointerException npe)
 			{
@@ -72,7 +72,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch(NullPointerException npe)
 			{
