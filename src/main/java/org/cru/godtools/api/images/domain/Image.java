@@ -1,7 +1,6 @@
 package org.cru.godtools.api.images.domain;
 
 import com.google.common.collect.Maps;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
 
 import java.util.List;
 import java.util.Map;

@@ -1,12 +1,10 @@
 package org.cru.godtools.api.packages.utils;
 
-import org.cru.godtools.api.packages.GodToolsPackage;
+import org.cru.godtools.api.images.domain.Image;
 import org.cru.godtools.api.packages.domain.PackageStructure;
 import org.cru.godtools.api.packages.domain.PageStructure;
-import org.cru.godtools.api.translations.GodToolsTranslation;
-import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.domain.Page;
 import org.w3c.dom.Document;
+
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -39,7 +37,7 @@ public class FileZipper
     public void zipPackageFile(PackageStructure packageStructure, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
 		Document xmlContent = packageStructure.getXmlContent();
-		zipFile(xmlContent, ShaGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
+		zipFile(xmlContent, GuavaHashGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
     }
 
     /**
@@ -59,7 +57,7 @@ public class FileZipper
 
 			if(xmlContent == null) continue;
 
-			zipFile(xmlContent, ShaGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
+			zipFile(xmlContent, GuavaHashGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
         }
     }
 
@@ -67,7 +65,7 @@ public class FileZipper
     {
         for(Image image : images)
         {
-			String imageHash = ShaGenerator.calculateHash(image.getImageContent());
+			String imageHash = GuavaHashGenerator.calculateHash(image.getImageContent());
 
 			if(imagesAlreadyZipped.contains(imageHash)) continue;
             zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
