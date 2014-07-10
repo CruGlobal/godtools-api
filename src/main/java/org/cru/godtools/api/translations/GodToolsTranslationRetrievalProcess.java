@@ -4,7 +4,11 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.domain.PixelDensity;
-import org.cru.godtools.api.packages.utils.*;
+import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.packages.utils.GodToolsVersion;
+import org.cru.godtools.api.packages.utils.GuavaHashGenerator;
+import org.cru.godtools.api.packages.utils.LanguageCode;
+import org.cru.godtools.api.packages.utils.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -181,7 +185,7 @@ public class GodToolsTranslationRetrievalProcess
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", GuavHashGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
+                resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
 
                 rootElement.appendChild(resourceElement);
             }

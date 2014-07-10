@@ -14,9 +14,9 @@ import java.io.ByteArrayOutputStream;
  * Created by matthewfrederick on 7/10/14.
  * HashCode Generator using Guava libraries
  */
-public class GuavHashGenerator
+public class GuavaHashGenerator
 {
-    private GuavHashGenerator()
+    private GuavaHashGenerator()
     {
     }
 

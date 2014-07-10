@@ -2,7 +2,7 @@ package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.ImageLookup;
-import org.cru.godtools.api.packages.utils.GuavHashGenerator;
+import org.cru.godtools.api.packages.utils.GuavaHashGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,21 +33,21 @@ public class Page
 		{
 			String filename = element.getAttribute("backgroundimage");
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setAttribute("backgroundimage", GuavHashGenerator.calculateHash(image) + ".png");
+			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filename = element.getAttribute("watermark");
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setAttribute("watermark", GuavHashGenerator.calculateHash(image) + ".png");
+			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filename = element.getTextContent();
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setTextContent(GuavHashGenerator.calculateHash(image) + ".png");
+			element.setTextContent(GuavaHashGenerator.calculateHash(image) + ".png");
 		}
 	}
 
@@ -75,7 +75,7 @@ public class Page
 
 	public void calculateHash()
 	{
-		setPageHash(GuavHashGenerator.calculateHash(getXmlContent()));
+		setPageHash(GuavaHashGenerator.calculateHash(getXmlContent()));
 	}
 
 	public UUID getId()

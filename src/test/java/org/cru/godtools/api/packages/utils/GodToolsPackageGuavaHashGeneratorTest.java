@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class GodToolsPackageShaGeneratorTest
+public class GodToolsPackageGuavaHashGeneratorTest
 {
 
     @Test
@@ -24,13 +24,13 @@ public class GodToolsPackageShaGeneratorTest
         Document testFile = XmlDocumentFromFile.get("/test_file_1.xml");
 
         Assert.assertNotNull(testFile);
-        Assert.assertEquals(GuavHashGenerator.calculateHash(testFile), "f9448a4c925e3c45a4f8077c8a5dfce0aeabed38");
+        Assert.assertEquals(GuavaHashGenerator.calculateHash(testFile), "f9448a4c925e3c45a4f8077c8a5dfce0aeabed38");
     }
 
     @Test
     public void testCalculateHashOnImageWithGuava() throws URISyntaxException, IOException
     {
         byte[] imageBytes = ImageReader.read(new File(this.getClass().getResource("/test_image_1.png").toURI()));
-        Assert.assertEquals(GuavHashGenerator.calculateHash(imageBytes), "2499a25070946a302a1aa7c0f401b4c7015d710d");
+        Assert.assertEquals(GuavaHashGenerator.calculateHash(imageBytes), "2499a25070946a302a1aa7c0f401b4c7015d710d");
     }
 }

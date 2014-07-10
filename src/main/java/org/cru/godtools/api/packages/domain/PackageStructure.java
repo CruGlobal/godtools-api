@@ -1,7 +1,7 @@
 package org.cru.godtools.api.packages.domain;
 
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.utils.GuavHashGenerator;
+import org.cru.godtools.api.packages.utils.GuavaHashGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,13 +42,13 @@ public class PackageStructure
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", GuavHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", GuavHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 	}
 
@@ -59,7 +59,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch (NullPointerException npe)
 			{
@@ -72,7 +72,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch(NullPointerException npe)
 			{
