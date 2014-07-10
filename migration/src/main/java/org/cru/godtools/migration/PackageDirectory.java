@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Encapsulates logic for a package directory. (e.g: "Packages/kgp")
+ * Encapsulates logic for a package directory. (e.g: "/Packages/kgp")
  *
  *  - build a Package
  *  - build a list of Languages a Package is translated into
@@ -121,7 +121,7 @@ public class PackageDirectory
 
     public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
     {
-        String path = "/data/SnuffyPackages/" + packageCode + "/";
+        String path = "/Packages/" + packageCode + "/";
         path += language.getCode();
         if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
         if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
@@ -204,7 +204,6 @@ public class PackageDirectory
 			PageStructure pageStructure = new PageStructure();
 
 			pageStructure.setId(UUID.randomUUID());
-			pageStructure.setPackageStructureId(packageStructure.getId());
 			pageStructure.setXmlContent(baseEnglishPage.getXmlContent());
 			pageStructure.setFilename(baseEnglishPage.getFilename());
 
@@ -224,7 +223,7 @@ public class PackageDirectory
 
     private File getDirectory() throws URISyntaxException
     {
-        URL packageFolderUrl = this.getClass().getResource("/data/SnuffyPackages/" + packageCode);
+        URL packageFolderUrl = this.getClass().getResource("/Packages/" + packageCode);
         return new File(packageFolderUrl.toURI());
     }
 

@@ -14,8 +14,8 @@ public class MigrationProcess
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser");
         flyway.setInitVersion("0");
-		flyway.setTarget(MigrationVersion.fromVersion("0.1"));
-
+		flyway.setTarget(MigrationVersion.fromVersion("0.4"));
+		flyway.setLocations("classpath:org.cru.godtools.migration", "classpath:db.migration");
 		flyway.clean();
 		flyway.setInitOnMigrate(true);
         flyway.migrate();

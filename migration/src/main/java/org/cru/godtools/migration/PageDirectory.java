@@ -90,13 +90,7 @@ public class PageDirectory
 
 	private String getTranslationPath()
 	{
-		return "/data/SnuffyPackages/" + packageCode + "/" + languageCode;
+		return "/Packages/" + packageCode + "/" + languageCode;
 	}
-
-	private String getPackagePath()
-	{
-		return "/data/SnuffyPackages/" + packageCode;
-	}
-
 
 }

@@ -18,7 +18,6 @@ public class PageStructure
 {
 	private UUID id;
 	private UUID translationId;
-	private UUID packageStructureId;
 	private Document xmlContent;
 	private String description;
 	private String filename;
@@ -92,16 +91,6 @@ public class PageStructure
 	public void setTranslationId(UUID translationId)
 	{
 		this.translationId = translationId;
-	}
-
-	public UUID getPackageStructureId()
-	{
-		return packageStructureId;
-	}
-
-	public void setPackageStructureId(UUID packageStructureId)
-	{
-		this.packageStructureId = packageStructureId;
 	}
 
 	public Document getXmlContent()
