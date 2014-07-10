@@ -19,19 +19,25 @@ public class MigrationStatus
 		int migratedPackages = countMigratedObject("packages", sqlConnection);
 		int migratedLanguages = countMigratedObject("languages", sqlConnection);
 		int migratedTranslations = countMigratedObject("translations", sqlConnection);
+		int migratedPackageStructures = countMigratedObject("package_structure", sqlConnection);
+		int migratedPageStructures = countMigratedObject("page_structure", sqlConnection);
 
 		int expectedNumberOfMigratedPackages = getExpectedNumberOfMigratedPackages();
 		int expectedNumberOfMigratedLanguages = getExpectedNumberOfMigratedLanguages();
 		int expectedNumberOfMigratedTranslations = getExpectedNumberOfMigratedTranslations();
+		int expectedNumberOfMigratedPackageStructures = expectedNumberOfMigratedPackages; // the same thing really... no need to look it up again. guaranteed 1 to 1.
+		int expectedNumberOfMigratedPageStructures = getExpectedNumberOfMigratedPageStructures();
 
 
 		System.out.println("");
 		System.out.println("******************************************");
 		System.out.println("*  Migration Status Report:");
 		System.out.println("");
-		System.out.println("*    - Migrated packages:     " + migratedPackages + " of " + expectedNumberOfMigratedPackages);
-		System.out.println("*    - Migrated languages:    " + migratedLanguages + " of " + expectedNumberOfMigratedLanguages);
-		System.out.println("*    - Migrated translations: " + migratedTranslations + " of " + expectedNumberOfMigratedTranslations);
+		System.out.println("*    - Migrated packages:           " + migratedPackages + " of " + expectedNumberOfMigratedPackages);
+		System.out.println("*    - Migrated languages:          " + migratedLanguages + " of " + expectedNumberOfMigratedLanguages);
+		System.out.println("*    - Migrated translations:       " + migratedTranslations + " of " + expectedNumberOfMigratedTranslations);
+		System.out.println("*    - Migrated package structures: " + migratedPackageStructures + " of " + expectedNumberOfMigratedPackageStructures);
+		System.out.println("*    - Migrated page structures:    " + migratedPageStructures + " of " + expectedNumberOfMigratedPageStructures);
 		System.out.println("");
 		System.out.println("******************************************");
 		System.out.println("");
@@ -101,6 +107,33 @@ public class MigrationStatus
 				}
 			}
 		}
+		return count;
+	}
+
+
+	private static int getExpectedNumberOfMigratedPageStructures()
+	{
+		File baseDirectory = getBaseDirectory();
+
+		int count = 0;
+
+		for(File packageDirectory : baseDirectory.listFiles())
+		{
+			if(packageDirectory.isDirectory() && !"shared".equals(packageDirectory.getName()))
+			{
+				for(File translationDirectory : packageDirectory.listFiles())
+				{
+					if(translationDirectory.isDirectory() && !"shared".equals(translationDirectory.getName()) && !"icons".equals(translationDirectory.getName()))
+					{
+						for(File page : translationDirectory.listFiles())
+						{
+							if(page.isFile()) count++;
+						}
+					}
+				}
+			}
+		}
+
 		return count;
 	}
 
