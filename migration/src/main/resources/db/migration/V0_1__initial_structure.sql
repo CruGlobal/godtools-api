@@ -40,7 +40,7 @@ CREATE TABLE page_structure (
 CREATE TABLE translation_elements (
   id uuid NOT NULL,
   translation_id uuid NOT NULL REFERENCES translations(id),
-  page_structure_id uuid NOT NULL REFERENCES page_structure(id),
+  page_structure_id uuid REFERENCES page_structure(id),
   base_text text,
   translated_text text,
   element_type text,
