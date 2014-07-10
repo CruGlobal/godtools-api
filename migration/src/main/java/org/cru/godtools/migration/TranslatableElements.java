@@ -1,15 +1,12 @@
 package org.cru.godtools.migration;
 
-import com.google.common.collect.Maps;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -17,73 +14,77 @@ import java.util.UUID;
  */
 public class TranslatableElements
 {
-	private Document baseTranslationXmlContent;
+	private Document baseTranslation;
+	private Document translatedPage;
+	private UUID translationId;
+	private UUID pageStructureId;
 	private String filename;
-	private Map<UUID, Document> xmlDocumentMap;
 
-	public TranslatableElements(Document baseTranslationXmlContent, String filename, Map<UUID, Document> xmlDocumentMap)
+	public TranslatableElements(Document baseTranslation, Document translatedPage, String filename, UUID translationId)
 	{
-		this.baseTranslationXmlContent = baseTranslationXmlContent;
+		this(baseTranslation, translatedPage, filename, translationId, null);
+	}
+	public TranslatableElements(Document baseTranslation, Document translatedPage, String filename, UUID translationId, UUID pageStructureId)
+	{
+		this.baseTranslation = baseTranslation;
+		this.translatedPage = translatedPage;
+		this.translationId = translationId;
 		this.filename = filename;
-		this.xmlDocumentMap = xmlDocumentMap;
+		this.pageStructureId = pageStructureId;
 	}
 
 	public void save(TranslationElementService translationElementService)
 	{
-		List<Element> baseTranslationElements = XmlDocumentSearchUtilities.findElementsWithAttribute(baseTranslationXmlContent, "translate");
-
-		Map<UUID, Iterator<Element>> translationXmlElementIteratorSet = Maps.newHashMap();
-
-		for(UUID translationId : xmlDocumentMap.keySet())
-		{
-			translationXmlElementIteratorSet.put(translationId, XmlDocumentSearchUtilities.findElementsWithAttribute(xmlDocumentMap.get(translationId), "translate").iterator());
-		}
+		List<Element> baseTranslationElements = XmlDocumentSearchUtilities.findElementsWithAttribute(baseTranslation, "translate");
+		List<Element> translatedElements = XmlDocumentSearchUtilities.findElementsWithAttribute(translatedPage, "translate");
 
 		int elementNumber = 0;
 
-		for(Element baseTranslationElement : baseTranslationElements)
+		for (Element baseTranslationElement : baseTranslationElements)
 		{
-			if(Boolean.parseBoolean(baseTranslationElement.getAttribute("translate")))
+			if (Boolean.parseBoolean(baseTranslationElement.getAttribute("translate")))
 			{
 				UUID elementId = UUID.randomUUID();
 
 				baseTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
 
-				for (UUID translationId : translationXmlElementIteratorSet.keySet())
+				Element targetTranslationElement;
+
+				try
 				{
-					if(!translationXmlElementIteratorSet.get(translationId).hasNext())
-					{
-						System.out.println("Warning, missing element!");
-						System.out.println("Translation: " + translationId);
-						System.out.println("Element: " + elementId);
-						System.out.println("************************************");
-					}
-					else
-					{
-						Element targetTranslationElement = translationXmlElementIteratorSet.get(translationId).next();
-
-						if(!targetTranslationElement.getNodeName().equalsIgnoreCase(baseTranslationElement.getNodeName()))
-						{
-							System.out.println("Warning, node name mismatch!");
-							System.out.println("Translation: " + translationId);
-							System.out.println("Element: " + elementId);
-							System.out.println("************************************");
-						}
-
-						TranslationElement translationElement = new TranslationElement();
-						translationElement.setId(elementId);
-						translationElement.setTranslationId(translationId);
-						translationElement.setBaseText(baseTranslationElement.getTextContent());
-						translationElement.setTranslatedText(targetTranslationElement.getTextContent());
-						translationElement.setElementType(baseTranslationElement.getNodeName());
-						translationElement.setPageName(filename);
-						translationElement.setDisplayOrder(elementNumber);
-
-						translationElementService.insert(translationElement);
-					}
+					targetTranslationElement = translatedElements.get(elementNumber);
 				}
-				elementNumber++;
+				catch(IndexOutOfBoundsException e)
+				{
+					System.out.println("Expected element but wasn't there... ");
+					System.out.println("Translation: " + translationId);
+					System.out.println("Page name: " + filename);
+
+					return;
+				}
+
+				if (!targetTranslationElement.getNodeName().equalsIgnoreCase(baseTranslationElement.getNodeName()))
+				{
+					System.out.println("Warning, node name mismatch!");
+					System.out.println("Translation: " + translationId);
+					System.out.println("Page name: " + filename);
+					System.out.println("Element: " + elementId);
+					System.out.println("************************************");
+				}
+
+				TranslationElement translationElement = new TranslationElement();
+				translationElement.setId(elementId);
+				translationElement.setTranslationId(translationId);
+				translationElement.setBaseText(baseTranslationElement.getTextContent());
+				translationElement.setTranslatedText(targetTranslationElement.getTextContent());
+				translationElement.setElementType(baseTranslationElement.getNodeName());
+				translationElement.setPageName(filename);
+				translationElement.setDisplayOrder(elementNumber);
+				translationElement.setPageStructureId(pageStructureId);
+
+				translationElementService.insert(translationElement);
 			}
+			elementNumber++;
 		}
 	}
 }

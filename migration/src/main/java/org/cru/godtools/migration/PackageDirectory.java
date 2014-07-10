@@ -1,6 +1,7 @@
 package org.cru.godtools.migration;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.cru.godtools.domain.languages.Language;
@@ -42,7 +43,9 @@ import java.util.UUID;
  */
 public class PackageDirectory
 {
-    private String packageCode;
+	public static final String DIRECTORY_BASE = "/Packages/";
+
+	private String packageCode;
 
 	private PackageService packageService;
 	private LanguageService languageService;
@@ -51,10 +54,10 @@ public class PackageDirectory
 	private PackageStructureService packageStructureService;
 	private PageStructureService pageStructureService;
 
-    public PackageDirectory(String packageCode)
-    {
-        this.packageCode = packageCode;
-    }
+	public PackageDirectory(String packageCode)
+	{
+		this.packageCode = packageCode;
+	}
 
 	public PackageDirectory(String packageCode, PackageService packageService, LanguageService languageService, TranslationService translationService, TranslationElementService translationElementService, PackageStructureService packageStructureService, PageStructureService pageStructureService)
 	{
@@ -68,68 +71,68 @@ public class PackageDirectory
 	}
 
 	public Package buildPackage() throws Exception
-    {
-        File directory = getDirectory();
+	{
+		File directory = getDirectory();
 
-        for(File nextFile : directory.listFiles())
-        {
-            if(nextFile.isFile() && nextFile.getName().equalsIgnoreCase("en.xml"))
-            {
-                Package gtPackage = new Package();
+		for(File nextFile : directory.listFiles())
+		{
+			if(nextFile.isFile() && nextFile.getName().equalsIgnoreCase("en.xml"))
+			{
+				Package gtPackage = new Package();
 
-                gtPackage.setId(UUID.randomUUID());
-                gtPackage.setName(getPackageName(getPackageDescriptorXml(nextFile)));
-                gtPackage.setCode(packageCode);
+				gtPackage.setId(UUID.randomUUID());
+				gtPackage.setName(getPackageName(getPackageDescriptorXml(nextFile)));
+				gtPackage.setCode(packageCode);
 
-                return gtPackage;
-            }
-        }
+				return gtPackage;
+			}
+		}
 
-        throw new RuntimeException("unable to build package for packageCode: " + packageCode);
-    }
+		throw new RuntimeException("unable to build package for packageCode: " + packageCode);
+	}
 
-    /**
-     * Returns a list of all the languages represented in this package directory.
-     *
-     * @return
-     * @throws Exception
-     */
-    public List<Language> buildLanguages() throws Exception
-    {
-        List<Language> languages = Lists.newArrayList();
-        File directory = getDirectory();
+	/**
+	 * Returns a list of all the languages represented in this package directory.
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Language> buildLanguages() throws Exception
+	{
+		List<Language> languages = Lists.newArrayList();
+		File directory = getDirectory();
 
-        for(File nextFile : directory.listFiles())
-        {
-            if(nextFile.isFile() && nextFile.getName().endsWith(".xml"))
-            {
-                PackageDescriptorFile packageDescriptorFile = new PackageDescriptorFile(nextFile);
+		for(File nextFile : directory.listFiles())
+		{
+			if(nextFile.isFile() && nextFile.getName().endsWith(".xml"))
+			{
+				PackageDescriptorFile packageDescriptorFile = new PackageDescriptorFile(nextFile);
 
-                Language language = new Language();
+				Language language = new Language();
 
-                language.setId(UUID.randomUUID());
-                language.setCode(packageDescriptorFile.getLanguageCode());
-                language.setLocale(packageDescriptorFile.getLocaleCode());
-                language.setSubculture(packageDescriptorFile.getSubculture());
+				language.setId(UUID.randomUUID());
+				language.setCode(packageDescriptorFile.getLanguageCode());
+				language.setLocale(packageDescriptorFile.getLocaleCode());
+				language.setSubculture(packageDescriptorFile.getSubculture());
 
-                languages.add(language);
-            }
-        }
+				languages.add(language);
+			}
+		}
 
-        return languages;
-    }
+		return languages;
+	}
 
-    public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
-    {
-        String path = "/Packages/" + packageCode + "/";
-        path += language.getCode();
-        if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
-        if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
-        path += ".xml";
+	public Document getPackageDescriptorXml(Language language) throws IOException, SAXException, ParserConfigurationException
+	{
+		String path = DIRECTORY_BASE + packageCode + "/";
+		path += language.getCode();
+		if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
+		if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
+		path += ".xml";
 
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        return builder.parse(this.getClass().getResourceAsStream(path));
-    }
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		return builder.parse(this.getClass().getResourceAsStream(path));
+	}
 
 	public ImageDirectory getSharedImageDirectory() throws URISyntaxException, FileNotFoundException
 	{
@@ -172,80 +175,103 @@ public class PackageDirectory
 		packageStructure.setXmlContent(getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
 		packageStructure.setVersionNumber(1);
 
-		Map<UUID, Document> packageStructures = Maps.newHashMap();
-
 		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
 		{
-			packageStructures.put(translation.getId(), getPackageDescriptorXml(languageService.selectLanguageById(translation.getLanguageId())));
+			TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(), packageStructure.getXmlContent(), null, translation.getId());
+			translatableElements.save(translationElementService);
 		}
-
-		TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(), gtPackage.getName(), packageStructures);
-
-		translatableElements.save(translationElementService);
 
 		packageStructureService.insert(packageStructure);
 	}
 
+	/**
+	 * Save a PageStructure for each page in each Translation of a GodTools Package.
+	 */
 	public void savePageStructures()
 	{
+		// load the package out
 		Package gtPackage = packageService.selectByCode(packageCode);
-		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
-		Map<UUID, Iterator<Page>> pageDirectoryMap = Maps.newHashMap();
+		Map<UUID, Iterator<Page>> translationPageDirectoryIteratorMap = Maps.newHashMap();
+
+		// holds a reference to the english translation of the current package in scope
 		PageDirectory baseEnglishPageDirectory = new PageDirectory(packageCode, "en");
 
+		// load the translations we know about
 		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
 		{
-			pageDirectoryMap.put(translation.getId(), new PageDirectory(packageCode, languageService.selectLanguageById(translation.getLanguageId()).getPath()).buildPages().iterator());
+			Language languageRepresentedByTranslation = languageService.selectLanguageById(translation.getLanguageId());
+			// for each translation, load up all the pages from the filesystem and associate an iterator to those pages to the translation
+			translationPageDirectoryIteratorMap.put(translation.getId(), new PageDirectory(packageCode, languageRepresentedByTranslation.getPath()).buildPages().iterator());
 		}
 
-		for(Page baseEnglishPage : baseEnglishPageDirectory.buildPages())
+		// loop through each translation ID
+		for(UUID translationId : translationPageDirectoryIteratorMap.keySet())
 		{
-			PageStructure pageStructure = new PageStructure();
-
-			pageStructure.setId(UUID.randomUUID());
-			pageStructure.setXmlContent(baseEnglishPage.getXmlContent());
-			pageStructure.setFilename(baseEnglishPage.getFilename());
-
-			Map<UUID, Document> translatablePageMap = Maps.newHashMap();
-
-			for(UUID translationId : pageDirectoryMap.keySet())
+			// take the iterator for the pages on the translation and loop through the pages
+			Iterator<Page> i = translationPageDirectoryIteratorMap.get(translationId);
+			for( ; i.hasNext();)
 			{
-				translatablePageMap.put(translationId, pageDirectoryMap.get(translationId).next().getXmlContent());
+				Page translatedPage = i.next();
+
+				// each page gets its own PageStructure
+				PageStructure pageStructure = new PageStructure();
+
+				// initialize the fields we can with data we know
+				pageStructure.setId(UUID.randomUUID());
+				pageStructure.setXmlContent(translatedPage.getXmlContent());
+				pageStructure.setFilename(translatedPage.getFilename());
+				pageStructure.setTranslationId(translationId);
+
+				Page basePage;
+
+				try
+				{
+					 basePage = baseEnglishPageDirectory.getPageByName(translatedPage.getFilename());
+				}
+				catch(FileNotFoundException e)
+				{
+					throw Throwables.propagate(e);
+				}
+
+				pageStructureService.insert(pageStructure);
+
+				TranslatableElements translatableElements = new TranslatableElements(basePage.getXmlContent(),
+						translatedPage.getXmlContent(),
+						translatedPage.getFilename(),
+						translationId,
+						pageStructure.getId());
+
+				translatableElements.save(translationElementService);
 			}
-
-			TranslatableElements translatableElements = new TranslatableElements(baseEnglishPage.getXmlContent(), baseEnglishPage.getFilename(), translatablePageMap);
-			translatableElements.save(translationElementService);
-
-			pageStructureService.insert(pageStructure);
 		}
 	}
 
-    private File getDirectory() throws URISyntaxException
-    {
-        URL packageFolderUrl = this.getClass().getResource("/Packages/" + packageCode);
-        return new File(packageFolderUrl.toURI());
-    }
+	private File getDirectory() throws URISyntaxException
+	{
+		URL packageFolderUrl = this.getClass().getResource(DIRECTORY_BASE + packageCode);
+		return new File(packageFolderUrl.toURI());
+	}
 
-    private Document getPackageDescriptorXml(File packageDescriptor) throws ParserConfigurationException, IOException, SAXException
-    {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	private Document getPackageDescriptorXml(File packageDescriptor) throws ParserConfigurationException, IOException, SAXException
+	{
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-        return builder.parse(packageDescriptor);
-    }
+		return builder.parse(packageDescriptor);
+	}
 
-    private String getPackageName(Document packageDescriptorXml)
-    {
-        NodeList nodes = packageDescriptorXml.getElementsByTagName("packagename");
+	private String getPackageName(Document packageDescriptorXml)
+	{
+		NodeList nodes = packageDescriptorXml.getElementsByTagName("packagename");
 
-        for(int i = 0; i < nodes.getLength(); i++)
-        {
-            if(!Strings.isNullOrEmpty(nodes.item(i).getTextContent()))
-            {
-                return nodes.item(i).getTextContent();
-            }
-        }
+		for(int i = 0; i < nodes.getLength(); i++)
+		{
+			if(!Strings.isNullOrEmpty(nodes.item(i).getTextContent()))
+			{
+				return nodes.item(i).getTextContent();
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

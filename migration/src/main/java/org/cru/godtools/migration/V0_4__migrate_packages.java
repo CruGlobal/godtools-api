@@ -51,8 +51,13 @@ public class V0_4__migrate_packages implements JdbcMigration
 			packageDirectory.savePackageStructures();
 			packageDirectory.savePageStructures();
 		}
+
+		MigrationStatus.verifyMigration(sqlConnection);
 	}
 
+	/**
+	 * Saves package
+	 */
 	private void savePackage(Package gtPackage) throws Exception
 	{
 		PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode());
@@ -63,6 +68,11 @@ public class V0_4__migrate_packages implements JdbcMigration
 		packageService.insert(packageCreatedFromDirectory);
 	}
 
+	/**
+	 * Saves language the first time it is encountered.  So if language is encountered
+	 * on a previous package, it is not saved, nor updated again.
+	 *
+	 */
 	private void saveLanguages(String packageCode) throws Exception
 	{
 		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
@@ -78,6 +88,9 @@ public class V0_4__migrate_packages implements JdbcMigration
 		}
 	}
 
+	/**
+	 * Saves initial translation of each package and language combination
+	 */
 	private void saveTranslations(String packageCode) throws Exception
 	{
 		PackageDirectory packageDirectory = new PackageDirectory(packageCode);
@@ -94,4 +107,5 @@ public class V0_4__migrate_packages implements JdbcMigration
 			translationService.insert(translation);
 		}
 	}
+
 }

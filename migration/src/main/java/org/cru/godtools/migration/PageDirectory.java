@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +61,31 @@ public class PageDirectory
         return pages;
     }
 
+	/**
+	 * Look for a page in this directory with the filename specified by pageName
+	 *
+	 *
+	 */
+	public Page getPageByName(String pageName) throws FileNotFoundException
+	{
+		File directory = getDirectory();
+
+		for(File file : directory.listFiles())
+		{
+			if(file.isFile() && file.getName().equals(pageName))
+			{
+				Page page = new Page();
+				page.setId(UUID.randomUUID());
+				page.setXmlContent(getPageXml(file));
+				page.setFilename(file.getName());
+
+				return page;
+			}
+		}
+
+		throw new FileNotFoundException();
+	}
+
     private File getDirectory()
     {
 		try
@@ -90,7 +116,7 @@ public class PageDirectory
 
 	private String getTranslationPath()
 	{
-		return "/Packages/" + packageCode + "/" + languageCode;
+		return PackageDirectory.DIRECTORY_BASE + packageCode + "/" + languageCode;
 	}
 
 }
