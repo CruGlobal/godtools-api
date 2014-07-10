@@ -68,6 +68,7 @@ public class TranslationElementService
 		sqlConnection.createQuery(TranslationElementQueries.insert)
 				.addParameter("id", translationElement.getId())
 				.addParameter("translationId", translationElement.getTranslationId())
+				.addParameter("pageStructureId", translationElement.getPageStructureId())
 				.addParameter("baseText", translationElement.getBaseText())
 				.addParameter("translatedText", translationElement.getTranslatedText())
 				.addParameter("elementType", translationElement.getElementType())
@@ -81,6 +82,7 @@ public class TranslationElementService
 		sqlConnection.createQuery(TranslationElementQueries.update)
 				.addParameter("id", translationElement.getId())
 				.addParameter("translationId", translationElement.getTranslationId())
+				.addParameter("pageStructureId", translationElement.getPageStructureId())
 				.addParameter("baseText", translationElement.getBaseText())
 				.addParameter("translatedText", translationElement.getTranslatedText())
 				.addParameter("elementType", translationElement.getElementType())
@@ -92,9 +94,9 @@ public class TranslationElementService
 	public static class TranslationElementQueries
 	{
 		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
-		public static final String insert = "INSERT INTO translation_elements(id, translation_id, base_text, translated_text, element_type, page_name, display_order) " +
-			"VALUES(:id, :translationId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";
+		public static final String insert = "INSERT INTO translation_elements(id, translation_id, page_structure_id, base_text, translated_text, element_type, page_name, display_order) " +
+			"VALUES(:id, :translationId, :pageStructureId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";
 		public static final String update = "UPDATE translation_elements SET base_text = :baseText, translated_text = :translatedText, " +
-				"element_type = :elementType, page_name = :pageName, display_order = :displayOrder WHERE id = :id AND translation_id = :translationId";
+				"element_type = :elementType, page_name = :pageName, display_order = :displayOrder, page_structure_id = :pageStructureId WHERE id = :id AND translation_id = :translationId";
 	}
 }

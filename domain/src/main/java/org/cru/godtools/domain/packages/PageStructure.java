@@ -17,6 +17,7 @@ import java.util.UUID;
 public class PageStructure
 {
 	private UUID id;
+	private UUID translationId;
 	private UUID packageStructureId;
 	private Document xmlContent;
 	private String description;
@@ -81,6 +82,16 @@ public class PageStructure
 	public void setId(UUID id)
 	{
 		this.id = id;
+	}
+
+	public UUID getTranslationId()
+	{
+		return translationId;
+	}
+
+	public void setTranslationId(UUID translationId)
+	{
+		this.translationId = translationId;
 	}
 
 	public UUID getPackageStructureId()

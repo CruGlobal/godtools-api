@@ -22,17 +22,6 @@ CREATE TABLE translations (
   released boolean
 );
 
-CREATE TABLE translation_elements (
-  id uuid NOT NULL,
-  translation_id uuid NOT NULL REFERENCES translations(id),
-  base_text text,
-  translated_text text,
-  element_type text,
-  page_name text,
-  display_order integer,
-  PRIMARY KEY (id, translation_id)
-);
-
 CREATE TABLE package_structure (
   id uuid NOT NULL PRIMARY KEY,
   package_id uuid REFERENCES packages(id),
@@ -42,10 +31,22 @@ CREATE TABLE package_structure (
 
 CREATE TABLE page_structure (
   id uuid NOT NULL PRIMARY KEY,
-  package_structure_id uuid references package_structure(id),
+  translation_id uuid references translations(id),
   xml_content xml,
   description text,
   filename text
+);
+
+CREATE TABLE translation_elements (
+  id uuid NOT NULL,
+  translation_id uuid NOT NULL REFERENCES translations(id),
+  page_structure_id uuid NOT NULL REFERENCES page_structure(id),
+  base_text text,
+  translated_text text,
+  element_type text,
+  page_name text,
+  display_order integer,
+  PRIMARY KEY (id, translation_id)
 );
 
 CREATE TABLE translation_status (

@@ -41,6 +41,7 @@ public class PageStructureService
 		sqlConnection.createQuery(PageStructureQueries.insert)
 				.addParameter("id", pageStructure.getId())
 				.addParameter("packageStructureId", pageStructure.getPackageStructureId())
+				.addParameter("translationId", pageStructure.getTranslationId())
 				.addParameter("xmlContent", pageStructure.getXmlContent())
 				.addParameter("description", pageStructure.getDescription())
 				.addParameter("filename", pageStructure.getFilename())
@@ -51,6 +52,6 @@ public class PageStructureService
 	{
 		public static final String selectById = "SELECT * FROM page_structure WHERE id = :id";
 		public static final String selectByPackageStructureId = "SELECT * FROM page_structure WHERE package_structure_id = :packageStructureId";
-		public static final String insert = "INSERT INTO page_structure(id, package_structure_id, xml_content, description, filename) VALUES(:id, :packageStructureId, :xmlContent, :description, :filename)";
+		public static final String insert = "INSERT INTO page_structure(id, package_structure_id, xml_content, translation_id, description, filename) VALUES(:id, :packageStructureId, :xmlContent, :translationId, :description, :filename)";
 	}
 }

@@ -12,6 +12,7 @@ import java.util.UUID;
 public class TranslationElement
 {
 	private UUID id;
+	private UUID pageStructureId;
 	private UUID translationId;
 	private String baseText;
 	private String translatedText;
@@ -39,6 +40,16 @@ public class TranslationElement
 	public void setId(UUID id)
 	{
 		this.id = id;
+	}
+
+	public UUID getPageStructureId()
+	{
+		return pageStructureId;
+	}
+
+	public void setPageStructureId(UUID pageStructureId)
+	{
+		this.pageStructureId = pageStructureId;
 	}
 
 	public UUID getTranslationId()
