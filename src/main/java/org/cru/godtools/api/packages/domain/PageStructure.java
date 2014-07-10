@@ -2,7 +2,7 @@ package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Maps;
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
+import org.cru.godtools.api.packages.utils.GuavHashGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,19 +45,19 @@ public class PageStructure
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
 			String filenameFromXml = element.getAttribute("backgroundimage");
-			element.setAttribute("backgroundimage", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			element.setAttribute("backgroundimage", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filenameFromXml = element.getAttribute("watermark");
-			element.setAttribute("watermark", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			element.setAttribute("watermark", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filenameFromXml = element.getTextContent();
-			element.setTextContent(ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			element.setTextContent(GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 		}
 	}
 

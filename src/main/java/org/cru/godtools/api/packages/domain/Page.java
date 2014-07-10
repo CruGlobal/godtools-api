@@ -2,14 +2,12 @@ package org.cru.godtools.api.packages.domain;
 
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.images.ImageLookup;
-import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
+import org.cru.godtools.api.packages.utils.GuavHashGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.awt.image.BufferedImage;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,21 +33,21 @@ public class Page
 		{
 			String filename = element.getAttribute("backgroundimage");
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setAttribute("backgroundimage", ShaGenerator.calculateHash(image) + ".png");
+			element.setAttribute("backgroundimage", GuavHashGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filename = element.getAttribute("watermark");
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setAttribute("watermark", ShaGenerator.calculateHash(image) + ".png");
+			element.setAttribute("watermark", GuavHashGenerator.calculateHash(image) + ".png");
 		}
 
 		for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filename = element.getTextContent();
 			BufferedImage image = imageLookup.findByFilename(filename);
-			element.setTextContent(ShaGenerator.calculateHash(image) + ".png");
+			element.setTextContent(GuavHashGenerator.calculateHash(image) + ".png");
 		}
 	}
 
@@ -77,7 +75,7 @@ public class Page
 
 	public void calculateHash()
 	{
-		setPageHash(ShaGenerator.calculateHash(getXmlContent()));
+		setPageHash(GuavHashGenerator.calculateHash(getXmlContent()));
 	}
 
 	public UUID getId()

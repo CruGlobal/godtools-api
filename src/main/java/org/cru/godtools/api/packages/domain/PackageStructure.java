@@ -1,12 +1,11 @@
 package org.cru.godtools.api.packages.domain;
 
 import org.cru.godtools.api.images.domain.Image;
-import org.cru.godtools.api.packages.utils.ShaGenerator;
+import org.cru.godtools.api.packages.utils.GuavHashGenerator;
 import org.cru.godtools.api.packages.utils.XmlDocumentSearchUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,13 +42,13 @@ public class PackageStructure
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", ShaGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", GuavHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
 		}
 	}
 
@@ -60,7 +59,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch (NullPointerException npe)
 			{
@@ -73,7 +72,7 @@ public class PackageStructure
 			try
 			{
 				String filenameFromXml = pageElement.getAttribute("thumb");
-				pageElement.setAttribute("thumb", ShaGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+				pageElement.setAttribute("thumb", GuavHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
 			}
 			catch(NullPointerException npe)
 			{
