@@ -26,17 +26,14 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-	public Image selectByPackageNameAndFilename(String packageName, String filename)
+	public Image selectByFilename(String filename)
 	{
-//		return sqlConnection.createQuery(ImageQueries.selectByPackageNameAndFilename)
-//				.setAutoDeriveColumnNames(true)
-//				.addParameter("packageName", packageName)
-//				.addParameter("filename", filename)
-//				.executeAndFetchFirst(Image.class);
-
-		return null;
-
+		return sqlConnection.createQuery(ImageQueries.selectByFilename)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("filename", filename)
+				.executeAndFetchFirst(Image.class);
 	}
+
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
@@ -62,6 +59,6 @@ public class ImageService
         public static final String selectById = "SELECT * FROM images where id = :id";
         public static final String insert = "INSERT INTO images(id, filename, image_content, resolution) VALUES(:id, :filename, :imageContent, :resolution)";
         public static final String update = "UPDATE images SET filename = :filename, image_content = :imageContent, resolution = :resolution WHERE id = :id";
-		public static final String selectByPackageNameAndFilename = "SELECT * FROM images where filename = :filename";
+		public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
 	}
 }

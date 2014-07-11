@@ -12,6 +12,8 @@ import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 import org.w3c.dom.Element;
 
 import java.sql.Connection;
@@ -27,6 +29,7 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 	PackageService packageService = new PackageService(sqlConnection);
 	PackageStructureService packageStructureService = new PackageStructureService(sqlConnection);
 	PageStructureService pageStructureService = new PageStructureService(sqlConnection);
+	TranslationService translationService = new TranslationService(sqlConnection);
 
 	ImageService imageService = new ImageService(sqlConnection);
 	ReferencedImageService referencedImageService = new ReferencedImageService(sqlConnection);
@@ -37,40 +40,42 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 		for(Package gtPackage : KnownGodtoolsPackages.packages)
 		{
 			PackageStructure packageStructure = packageStructureService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId());
-			List<PageStructure> pageStructureList = pageStructureService.selectByPackageStructureId(packageStructure.getId());
 
 			for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(packageStructure.getXmlContent(), "page", "thumb"))
 			{
-				saveImage(gtPackage.getCode(), element.getAttribute("thumb"), packageStructure.getId());
+				saveImageReference(gtPackage.getCode(), element.getAttribute("thumb"), packageStructure.getId());
 			}
 
-			for(PageStructure pageStructure : pageStructureList)
+			for(Translation translation : translationService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId()))
 			{
-				for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "backgroundimage"))
+				for (PageStructure pageStructure : pageStructureService.selectByTranslationId(translation.getId()))
 				{
-					saveImage(gtPackage.getCode(), element.getAttribute("backgroundimage"), packageStructure.getId());
-				}
+					for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "backgroundimage"))
+					{
+						saveImageReference(gtPackage.getCode(), element.getAttribute("backgroundimage"), packageStructure.getId());
+					}
 
-				for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "watermark"))
-				{
-					saveImage(gtPackage.getCode(), element.getAttribute("watermark"), packageStructure.getId());
-				}
+					for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(pageStructure.getXmlContent(), "page", "watermark"))
+					{
+						saveImageReference(gtPackage.getCode(), element.getAttribute("watermark"), packageStructure.getId());
+					}
 
-				for(Element element : XmlDocumentSearchUtilities.findElements(pageStructure.getXmlContent(), "image"))
-				{
-					saveImage(gtPackage.getCode(), element.getTextContent(), packageStructure.getId());
+					for (Element element : XmlDocumentSearchUtilities.findElements(pageStructure.getXmlContent(), "image"))
+					{
+						saveImageReference(gtPackage.getCode(), element.getTextContent(), packageStructure.getId());
+					}
 				}
 			}
 		}
 	}
 
-	private void saveImage(String packageCode, String filename, UUID packageStructureId)
+	private void saveImageReference(String packageCode, String filename, UUID packageStructureId)
 	{
-		Image image = imageService.selectByPackageNameAndFilename(packageCode, filename);
+		Image image = imageService.selectByFilename(packageCode + "_" + filename);
 
 		if(image == null)
 		{
-			image = imageService.selectByPackageNameAndFilename("shared", filename);
+			image = imageService.selectByFilename("shared" + "_" + filename);
 		}
 		if(image != null)
 		{
@@ -80,6 +85,5 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 
 			referencedImageService.insert(referencedImage);
 		}
-
 	}
 }

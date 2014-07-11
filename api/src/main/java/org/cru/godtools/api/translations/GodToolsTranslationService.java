@@ -86,7 +86,7 @@ public class GodToolsTranslationService
 		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion, includeDrafts);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
-		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
 		//draft translations are always updated
 		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures);
@@ -164,9 +164,7 @@ public class GodToolsTranslationService
 	public void updateTranslationsFromTranslationTool(LanguageCode languageCode, String packageCode)
 	{
 		Translation translation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION, true);
-		Package gtPackage = getPackage(packageCode);
-		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
-		List<PageStructure> pageStructures = pageStructureService.selectByPackageStructureId(packageStructure.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
 		updateTranslationFromTranslationTool(translation, pageStructures);
 	}

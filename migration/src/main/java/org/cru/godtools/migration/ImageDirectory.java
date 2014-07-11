@@ -36,7 +36,7 @@ public class ImageDirectory
 
 			image.setId(UUID.randomUUID());
 			image.setImageContent(ImageReader.read(imageFile));
-			image.setFilename(imageFile.getName());
+			image.setFilename(packageCode + "_" + imageFile.getName());
 			image.setResolution((imageFile.getName().contains("2x") ? "High" : "Medium"));
 
 			imageList.add(image);
