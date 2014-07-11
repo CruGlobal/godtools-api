@@ -243,6 +243,8 @@ public class PackageDirectory
 						pageStructure.getId());
 
 				translatableElements.save(translationElementService);
+
+				pageStructureService.update(pageStructure);
 			}
 		}
 	}

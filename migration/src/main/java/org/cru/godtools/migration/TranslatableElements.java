@@ -72,6 +72,8 @@ public class TranslatableElements
 					System.out.println("************************************");
 				}
 
+				targetTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
+
 				TranslationElement translationElement = new TranslationElement();
 				translationElement.setId(elementId);
 				translationElement.setTranslationId(translationId);

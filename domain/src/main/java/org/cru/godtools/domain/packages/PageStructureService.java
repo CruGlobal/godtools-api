@@ -31,10 +31,6 @@ public class PageStructureService
 
 	public List<PageStructure> selectByPackageStructureId(UUID packageStructureId)
 	{
-//		return sqlConnection.createQuery(PageStructureQueries.selectByPackageStructureId)
-//				.setAutoDeriveColumnNames(true)
-//				.addParameter("packageStructureId", packageStructureId)
-//				.executeAndFetch(PageStructure.class);
 		return Lists.newArrayList();
 	}
 
@@ -49,10 +45,21 @@ public class PageStructureService
 				.executeUpdate();
 	}
 
+	public void update(PageStructure pageStructure)
+	{
+		sqlConnection.createQuery(PageStructureQueries.update)
+				.addParameter("id", pageStructure.getId())
+				.addParameter("translationId", pageStructure.getTranslationId())
+				.addParameter("xmlContent", pageStructure.getXmlContent())
+				.addParameter("description", pageStructure.getDescription())
+				.addParameter("filename", pageStructure.getFilename())
+				.executeUpdate();
+	}
+
 	public static final class PageStructureQueries
 	{
 		public static final String selectById = "SELECT * FROM page_structure WHERE id = :id";
-//		public static final String selectByPackageStructureId = "SELECT * FROM page_structure WHERE package_structure_id = :packageStructureId";
 		public static final String insert = "INSERT INTO page_structure(id, xml_content, translation_id, description, filename) VALUES(:id, :xmlContent, :translationId, :description, :filename)";
+		public static final String update = "UPDATE page_structure SET xml_content = :xmlContent, translation_id = :translationId, description = :description, filename = :filename WHERE id = :id";
 	}
 }
