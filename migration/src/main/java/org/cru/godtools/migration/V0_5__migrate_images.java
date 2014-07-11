@@ -13,8 +13,6 @@ import org.cru.godtools.domain.translations.TranslationService;
 
 import java.sql.Connection;
 
-import static org.cru.godtools.migration.KnownGodtoolsPackages.packages;
-
 /**
  * Created by ryancarlson on 5/12/14.
  */
@@ -34,7 +32,7 @@ public class V0_5__migrate_images implements JdbcMigration
 	@Override
 	public void migrate(Connection connection) throws Exception
 	{
-		for(Package gtPackage : packages)
+		for(Package gtPackage : KnownGodtoolsPackages.packages)
 		{
 			PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode(),
 					packageService,

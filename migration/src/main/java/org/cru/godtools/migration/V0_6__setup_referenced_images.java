@@ -18,8 +18,6 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
 
-import static org.cru.godtools.migration.KnownGodtoolsPackages.packages;
-
 /**
  * Created by ryancarlson on 5/12/14.
  */
@@ -36,7 +34,7 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 	@Override
 	public void migrate(Connection connection) throws Exception
 	{
-		for(Package gtPackage : packages)
+		for(Package gtPackage : KnownGodtoolsPackages.packages)
 		{
 			PackageStructure packageStructure = packageStructureService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId());
 			List<PageStructure> pageStructureList = pageStructureService.selectByPackageStructureId(packageStructure.getId());
