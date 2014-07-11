@@ -1,6 +1,5 @@
 *.class
-target/*
-migration/target/*
+target/
 out/*
 .idea/*
 *.iml
