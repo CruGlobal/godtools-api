@@ -18,7 +18,7 @@ import java.util.Set;
 public class MigrationStatus
 {
 
-	public static void verifyMigration(Connection sqlConnection)
+	public static void verifyPackageMigration(Connection sqlConnection)
 	{
 		int migratedPackages = countMigratedObject("packages", sqlConnection);
 		int migratedLanguages = countMigratedObject("languages", sqlConnection);
@@ -33,7 +33,6 @@ public class MigrationStatus
 		int expectedNumberOfMigratedPackageStructures = expectedNumberOfMigratedPackages; // the same thing really... no need to look it up again. guaranteed 1 to 1.
 		int expectedNumberOfMigratedPageStructures = getExpectedNumberOfMigratedPageStructures();
 		int expectedNumberOfMigratedTranslationElements = getExpectedNumberOfMigratedTranslationElements();
-
 
 		System.out.println("");
 		System.out.println("******************************************");
@@ -50,6 +49,21 @@ public class MigrationStatus
 		System.out.println("");
 	}
 
+	public static void verifyImageMigration(Connection sqlConnection)
+	{
+		int migratedImages = countMigratedObject("images", sqlConnection);
+
+		int expectedNumberOfMigratedImages = getExpectedNumberOfMigratedImages();
+
+		System.out.println("");
+		System.out.println("******************************************");
+		System.out.println("*  Migration Status Report:");
+		System.out.println("");
+		System.out.println("*    - Migrated images:               " + migratedImages + " of " + expectedNumberOfMigratedImages);
+		System.out.println("");
+		System.out.println("******************************************");
+		System.out.println("");
+	}
 	private static int countMigratedObject(String objectName, Connection sqlConnection)
 	{
 		return new Integer(sqlConnection.createQuery("SELECT count(*) from " + objectName).executeScalar().toString());
@@ -181,6 +195,39 @@ public class MigrationStatus
 		return count;
 	}
 
+	private static int getExpectedNumberOfMigratedImages()
+	{
+		File baseDirectory = getBaseDirectory();
+
+		int count = 0;
+
+		for(File packageDirectory : baseDirectory.listFiles())
+		{
+			if (packageDirectory.isDirectory() && "shared".equals(packageDirectory.getName()))
+			{
+				for (File sharedImage : packageDirectory.listFiles())
+				{
+					if (sharedImage.getName().endsWith(".png")) count++;
+				}
+			}
+			else if (packageDirectory.isDirectory())
+			{
+				for (File translationDirectory : packageDirectory.listFiles())
+				{
+					if (translationDirectory.isDirectory() && ("shared".equals(translationDirectory.getName()) || "icons".equals(translationDirectory.getName())))
+					{
+						for(File image : translationDirectory.listFiles())
+						{
+							if(image.getName().endsWith(".png")) count++;
+						}
+					}
+				}
+			}
+		}
+
+		return count;
+	}
+
 	private static File getBaseDirectory()
 	{
 		try
@@ -206,4 +253,6 @@ public class MigrationStatus
 			return null;
 		}
 	}
+
+
 }

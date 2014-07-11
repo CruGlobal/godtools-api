@@ -52,7 +52,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 			packageDirectory.savePageStructures();
 		}
 
-		MigrationStatus.verifyMigration(sqlConnection);
+		MigrationStatus.verifyPackageMigration(sqlConnection);
 	}
 
 	/**

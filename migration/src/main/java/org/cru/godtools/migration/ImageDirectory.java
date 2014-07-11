@@ -36,7 +36,6 @@ public class ImageDirectory
 
 			image.setId(UUID.randomUUID());
 			image.setImageContent(ImageReader.read(imageFile));
-			image.setPackageName(packageCode);
 			image.setFilename(imageFile.getName());
 			image.setResolution((imageFile.getName().contains("2x") ? "High" : "Medium"));
 
@@ -48,7 +47,7 @@ public class ImageDirectory
 
 	private static File getSharedDirectoryMarker() throws URISyntaxException
 	{
-		URL packageFolderUrl = ImageDirectory.class.getResource("/data/SnuffyPackages/shared");
+		URL packageFolderUrl = ImageDirectory.class.getResource(PackageDirectory.DIRECTORY_BASE + "shared");
 		return new File(packageFolderUrl.toURI());
 	}
 

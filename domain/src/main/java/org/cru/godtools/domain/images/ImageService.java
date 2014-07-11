@@ -28,17 +28,19 @@ public class ImageService
 
 	public Image selectByPackageNameAndFilename(String packageName, String filename)
 	{
-		return sqlConnection.createQuery(ImageQueries.selectByPackageNameAndFilename)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("packageName", packageName)
-				.addParameter("filename", filename)
-				.executeAndFetchFirst(Image.class);
+//		return sqlConnection.createQuery(ImageQueries.selectByPackageNameAndFilename)
+//				.setAutoDeriveColumnNames(true)
+//				.addParameter("packageName", packageName)
+//				.addParameter("filename", filename)
+//				.executeAndFetchFirst(Image.class);
+
+		return null;
+
 	}
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
-				.addParameter("packageName", image.getPackageName())
 				.addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("resolution", image.getResolution())
@@ -49,7 +51,6 @@ public class ImageService
     {
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
-				.addParameter("packageName", image.getPackageName())
 				.addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("resolution", image.getResolution())
@@ -59,8 +60,8 @@ public class ImageService
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
-        public static final String insert = "INSERT INTO images(id, package_name, filename, image_content, resolution) VALUES(:id, :packageName, :filename, :imageContent, :resolution)";
-        public static final String update = "UPDATE images SET filename = :filename, package_name = :packageName, image_content = :imageContent, resolution = :resolution WHERE id = :id";
-		public static final String selectByPackageNameAndFilename = "SELECT * FROM images where filename = :filename AND package_name = :packageName";
+        public static final String insert = "INSERT INTO images(id, filename, image_content, resolution) VALUES(:id, :filename, :imageContent, :resolution)";
+        public static final String update = "UPDATE images SET filename = :filename, image_content = :imageContent, resolution = :resolution WHERE id = :id";
+		public static final String selectByPackageNameAndFilename = "SELECT * FROM images where filename = :filename";
 	}
 }

@@ -59,5 +59,8 @@ public class V0_5__migrate_images implements JdbcMigration
 		{
 			imageService.insert(image);
 		}
+
+
+		MigrationStatus.verifyImageMigration(sqlConnection);
 	}
 }

@@ -12,7 +12,6 @@ import java.util.UUID;
 public class Image
 {
     private UUID id;
-	private String packageName;
 	private String filename;
     private byte[] imageContent;
     private String resolution;
@@ -38,16 +37,6 @@ public class Image
     {
         this.id = id;
     }
-
-	public String getPackageName()
-	{
-		return packageName;
-	}
-
-	public void setPackageName(String packageName)
-	{
-		this.packageName = packageName;
-	}
 
 	public String getFilename()
 	{
