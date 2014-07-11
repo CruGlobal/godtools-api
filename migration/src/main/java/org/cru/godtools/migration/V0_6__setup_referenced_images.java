@@ -71,11 +71,11 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 
 	private void saveImageReference(String packageCode, String filename, UUID packageStructureId)
 	{
-		Image image = imageService.selectByFilename(packageCode + "_" + filename);
+		Image image = imageService.selectByFilename(packageCode + "__" + filename);
 
 		if(image == null)
 		{
-			image = imageService.selectByFilename("shared" + "_" + filename);
+			image = imageService.selectByFilename("shared" + "__" + filename);
 		}
 		if(image != null)
 		{
