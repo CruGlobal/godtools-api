@@ -22,6 +22,7 @@ public class Image
 
 		for(Image image : imageList)
 		{
+			if(image.filename.contains("__")) image.filename = image.filename.substring(image.filename.indexOf("__") +2);
 			imageMap.put(image.getFilename(), image);
 		}
 
