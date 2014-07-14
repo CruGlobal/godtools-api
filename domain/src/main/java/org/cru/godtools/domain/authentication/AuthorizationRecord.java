@@ -14,6 +14,7 @@ public class AuthorizationRecord
     String authToken;
     DateTime grantedTimestamp;
     DateTime revokedTimestamp;
+    String deviceId;
 	boolean draftAccess;
 
     public boolean isCurrentlyActive(DateTime currentTime)
@@ -73,6 +74,10 @@ public class AuthorizationRecord
     {
         this.revokedTimestamp = revokedTimestamp;
     }
+
+    public String getDeviceId() { return deviceId; }
+
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
 
 	public boolean hasDraftAccess()
 	{

@@ -56,12 +56,22 @@ public class AuthorizationService
 				.addParameter("username", authenticationRecord.getUsername())
 				.addParameter("grantedTimestamp", clock.currentDateTime())
 				.addParameter("authToken", authenticationRecord.getAuthToken())
+                .addParameter("deviceId", authenticationRecord.getDeviceId())
 				.executeUpdate();
 	}
+
+    public AccessCodeRecord getAccessCode(String accessCode)
+    {
+       return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("accessCode", accessCode)
+                .executeAndFetchFirst(AccessCodeRecord.class);
+    }
 
     private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
-		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token) VALUES(:id, :username, :grantedTimestamp, :authToken)";
+		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId)";
+        static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
     }
 }

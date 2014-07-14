@@ -4,8 +4,8 @@ import com.google.common.base.Throwables;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
+import org.ccci.util.xml.XmlDocumentStreamConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,7 +26,7 @@ public class GuavaHashGenerator
         try
         {
             HashFunction hf = Hashing.sha1();
-            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.xmlToStream(xmlFile);
+            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlFile);
             HashCode hc = hf.newHasher().putBytes(byteStream.toByteArray()).hash();
             return hc.toString();
         } catch (Exception e)
