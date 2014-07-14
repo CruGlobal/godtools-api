@@ -36,8 +36,6 @@ public class AuthorizationResource
 	public Response requestTranslatorStatus(@PathParam("code") String code,
                                 @HeaderParam("deviceId") String deviceIdHeader,
                                 @QueryParam("deviceId") String deviceIdParam,
-                                @HeaderParam("interpreter") Integer minimumInterpreterVersionParam,
-                                @QueryParam("interpreter") Integer minimumInterpreterVersionHeader,
                                 @HeaderParam("authorization") String authCodeParam,
                                 @QueryParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException,IOException
 	{
@@ -57,13 +55,7 @@ public class AuthorizationResource
         }
 
         return Response.ok()
-                .header("UUID", authorizationRecord.getId())
-                .header("username", authorizationRecord.getUsername())
                 .header("authToken", authorizationRecord.getAuthToken())
-                .header("grantedTimestamp", authorizationRecord.getGrantedTimestamp())
-                .header("revokedTimestamp", authorizationRecord.getRevokedTimestamp())
-                .header("deviceId", authorizationRecord.getDeviceId())
-                .header("draftAccess", authorizationRecord.hasDraftAccess())
                 .build();
 	}
 
