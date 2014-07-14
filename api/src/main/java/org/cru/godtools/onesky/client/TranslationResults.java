@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * Used to return a Map, representing a Set of translated strings referenced by unique identifiers
+ * along with an HTTP status code.  The Set of translated strings corresponds to a page of GodTools
+ * content
+ *
  * Created by ryancarlson on 5/6/14.
  */
 public class TranslationResults extends ForwardingMap<UUID, String>
@@ -33,10 +37,11 @@ public class TranslationResults extends ForwardingMap<UUID, String>
 		{
 			translationResults.translatedStringsMap = Maps.newHashMap();
 
-			//this extra step is required b/c i want the keys stored as UUID.  I don't trust Jackson to convert the String ID
-			//to a UUID, b/c I don't think UUID has a valueOf or String constructor.  I could work.. just haven't tried.
+			// this extra step is required b/c i want the keys stored as UUID.  I don't trust Jackson to convert the String ID
+			// to a UUID, b/c I don't think UUID has a valueOf or String constructor.  I could work.. just haven't tried.
 			Map<String, String> stringMapOfJsonReturnedFromApi = translationResults.parseResponse(response);
 
+			// now take Map<String,String>  and convert it to Map<UUID,String>
 			for (String translationElementIdAsString : stringMapOfJsonReturnedFromApi.keySet())
 			{
 				translationResults.translatedStringsMap.put(UUID.fromString(translationElementIdAsString), stringMapOfJsonReturnedFromApi.get(translationElementIdAsString));
@@ -55,8 +60,7 @@ public class TranslationResults extends ForwardingMap<UUID, String>
 		}
 		catch (Exception e)
 		{
-			Throwables.propagate(e);
-			return null;
+			throw Throwables.propagate(e);
 		}
 	}
 

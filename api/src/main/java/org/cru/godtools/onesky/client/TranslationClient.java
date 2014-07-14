@@ -7,6 +7,8 @@ import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import javax.ws.rs.client.WebTarget;
 
 /**
+ * * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/translation.md
+ *
  * Created by ryancarlson on 5/5/14.
  */
 public class TranslationClient
@@ -15,6 +17,14 @@ public class TranslationClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
+	/**
+	 * Retrieves a file of translated text from oneskyapp.com
+	 *
+	 * @param projectId - the project's ID in oneskyapp. project would be one of (kgp, fourlaws, satisfied, etc...).
+	 *                     the id itself is numeric
+	 * @param locale - the locale of the page being download (ex: "fr" for French)
+	 * @param pageName - the name of the current page being downloaded.
+	 */
 	public TranslationResults export(Integer projectId, String locale, String pageName)
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH)
@@ -27,6 +37,14 @@ public class TranslationClient
 		return TranslationResults.createFromResponse(target.request().get());
 	}
 
+	/**
+	 * Gets the status of a translated file in oneskyapp.com
+	 *
+	 * @param projectId - the project's ID in oneskyapp. project would be one of (kgp, fourlaws, satisfied, etc...).
+	 *                     the id itself is numeric
+	 * @param locale - the locale of the page being download (ex: "fr" for French)
+	 * @param pageName - the name of the current page being downloaded.
+	 */
 	public OneSkyTranslationStatus getStatus(Integer projectId, String locale, String pageName)
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH + "/status")
@@ -38,6 +56,9 @@ public class TranslationClient
 		return OneSkyTranslationStatus.createFromResponse(target.request().get());
 	}
 
+	/**
+	 * Sets the api_key (public key), timestamp (in milliseconds) and hash of timestamp and private key to authenticate.
+	 */
 	private WebTarget addAuthentication(WebTarget target)
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
@@ -50,8 +71,7 @@ public class TranslationClient
 		}
 		catch(Exception e)
 		{
-			Throwables.propagate(e);
-			return null;
+			throw Throwables.propagate(e);
 		}
 	}
 
