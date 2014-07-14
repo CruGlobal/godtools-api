@@ -124,7 +124,7 @@ public class GodToolsPackageRetrievalProcess
             throw new NotFoundException();
         }
 
-        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.xmlToStream(createContentsFile());
+        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.writeToByteArrayStream(createContentsFile());
         bundledStream.close();
 
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))

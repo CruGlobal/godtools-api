@@ -26,7 +26,7 @@ public class GuavaHashGenerator
         try
         {
             HashFunction hf = Hashing.sha1();
-            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.xmlToStream(xmlFile);
+            ByteArrayOutputStream byteStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlFile);
             HashCode hc = hf.newHasher().putBytes(byteStream.toByteArray()).hash();
             return hc.toString();
         } catch (Exception e)
