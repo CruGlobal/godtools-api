@@ -4,8 +4,8 @@ import com.google.common.base.Throwables;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.w3c.dom.Document;
+import org.ccci.util.xml.XmlDocumentStreamConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

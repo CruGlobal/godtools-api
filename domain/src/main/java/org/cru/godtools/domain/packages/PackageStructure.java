@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.packages;
 
+import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.w3c.dom.Document;
@@ -7,8 +8,6 @@ import org.w3c.dom.Element;
 
 import java.util.Map;
 import java.util.UUID;
-
-import org.ccci.util.xml.XmlDocumentSearchUtilities;
 /**
  * Created by ryancarlson on 4/30/14.
  */

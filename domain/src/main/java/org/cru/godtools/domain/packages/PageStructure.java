@@ -1,7 +1,6 @@
 package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
-
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
