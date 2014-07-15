@@ -28,15 +28,21 @@ public class PackageService
 
     public Package selectByCode(String code)
     {
-        Package gtPackage = sqlConnection.createQuery(PackageQueries.selectByCode)
+        return sqlConnection.createQuery(PackageQueries.selectByCode)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("code", code)
                 .executeAndFetchFirst(Package.class);
-
-        return gtPackage;
     }
 
-    public void insert(Package godToolsPackage)
+	public Package selectByOneskyProjectId(Integer oneskyProjectId)
+	{
+		return sqlConnection.createQuery(PackageQueries.selectByOneskyProjectId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("oneskyProjectId", oneskyProjectId)
+				.executeAndFetchFirst(Package.class);
+	}
+
+	public void insert(Package godToolsPackage)
     {
         sqlConnection.createQuery(PackageQueries.insert)
                 .addParameter("id", godToolsPackage.getId())
@@ -47,11 +53,11 @@ public class PackageService
                 .executeUpdate();
     }
 
-
-    public static class PackageQueries
+	public static class PackageQueries
     {
         public static final String selectById = "SELECT * FROM packages WHERE id = :id";
         public static final String selectByCode = "SELECT * FROM packages WHERE code = :code";
+		public static final String selectByOneskyProjectId = "SELECT * FROM packages WHERE onesky_project_id = :oneskyProjectId";
         public static final String insert = "INSERT INTO packages(id, code, name, default_language_id, onesky_project_id) VALUES(:id, :code, :name, :defaultLanguageId, :oneskyProjectId)";
-    }
+	}
 }
