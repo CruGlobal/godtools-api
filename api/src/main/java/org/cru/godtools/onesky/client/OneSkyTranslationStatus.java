@@ -18,6 +18,18 @@ public class OneSkyTranslationStatus
 	private int stringCount;
 	private int wordCount;
 
+	public static OneSkyTranslationStatus createInitialJustUploadedStatus(String pageName)
+	{
+		OneSkyTranslationStatus oneSkyTranslationStatus = new OneSkyTranslationStatus();
+		oneSkyTranslationStatus.setStatusCode(202); //accepted
+		oneSkyTranslationStatus.setPercentCompleted(new BigDecimal(0f));
+		oneSkyTranslationStatus.setStringCount(0);
+		oneSkyTranslationStatus.setWordCount(0);
+		oneSkyTranslationStatus.setFilename(pageName);
+
+		return oneSkyTranslationStatus;
+	}
+
 	public static OneSkyTranslationStatus createFromResponse(Response response)
 	{
 		OneSkyTranslationStatus oneSkyTranslationStatus = new OneSkyTranslationStatus();
