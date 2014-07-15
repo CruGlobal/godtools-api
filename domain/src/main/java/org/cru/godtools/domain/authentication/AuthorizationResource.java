@@ -10,9 +10,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -22,7 +20,6 @@ import java.util.UUID;
  * Created by ryancarlson on 5/12/14.
  */
 @Path("/auth")
-@Produces(MediaType.APPLICATION_XML)
 public class AuthorizationResource
 {
 
@@ -78,7 +75,6 @@ public class AuthorizationResource
 
     @GET
     @Path("/status")
-    @Produces(MediaType.APPLICATION_XML)
     public Response requestAuthStatus(@HeaderParam("authorization") String authTokenParam,
                                @QueryParam("authorization") String authTokenHeader) throws ParserConfigurationException, SAXException,IOException
     {
