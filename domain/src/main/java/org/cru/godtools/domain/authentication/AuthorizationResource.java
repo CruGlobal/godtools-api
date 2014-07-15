@@ -43,14 +43,8 @@ public class AuthorizationResource
 
         authorizationRecord.setAuthToken(authorizationService.createAuthToken());
 
-        String device;
+        String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
 
-        if(deviceIdHeader == null)
-        {
-            device = deviceIdParam;
-        } else {
-            device = deviceIdHeader;
-        }
         authorizationRecord.setDeviceId(device);
 
         authorizationRecord.setId(authorizationService.createUUID());
