@@ -5,6 +5,7 @@ import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/26/14.
@@ -72,6 +73,11 @@ public class AuthorizationService
     {
         String authToken = AuthTokenGenerator.generate();
         return authToken;
+    }
+
+    public UUID createUUID()
+    {
+        return UUID.randomUUID();
     }
 
     private class AuthenticationQueries

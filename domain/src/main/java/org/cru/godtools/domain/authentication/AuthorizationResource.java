@@ -35,15 +35,25 @@ public class AuthorizationResource
 	@Path("/{code}")
 	public Response requestTranslatorStatus(@PathParam("code") String code,
                                 @HeaderParam("deviceId") String deviceIdHeader,
-                                @QueryParam("deviceId") String deviceIdParam,
-                                @HeaderParam("authorization") String authCodeParam,
-                                @QueryParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException,IOException
+                                @QueryParam("deviceId") String deviceIdParam) throws ParserConfigurationException, SAXException,IOException
 	{
 		DateTime currentTime = clock.currentDateTime();
 
         AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(code);
 
-        authorizationService.checkAuthorization(authCodeHeader, authCodeParam);
+        authorizationRecord.setAuthToken(authorizationService.createAuthToken());
+
+        String device;
+
+        if(deviceIdHeader == null)
+        {
+            device = deviceIdParam;
+        } else {
+            device = deviceIdHeader;
+        }
+        authorizationRecord.setDeviceId(device);
+
+        authorizationRecord.setId(authorizationService.createUUID());
 
         if(accessCodeRecord != null && accessCodeRecord.isCurrentlyActive(currentTime))
         {
@@ -53,6 +63,8 @@ public class AuthorizationResource
         {
             authorizationRecord.setDraftAccess(false);
         }
+
+        authorizationService.recordNewAuthorization(authorizationRecord);
 
         return Response.ok()
                 .header("authToken", authorizationRecord.getAuthToken())
