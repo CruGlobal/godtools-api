@@ -31,6 +31,14 @@ public class AuthorizationResource
     @Inject AuthorizationRecord authorizationRecord;
     @Inject AuthorizationService authorizationService;
 
+    @POST
+    public Response requestTranslatorStatusWithoutCode(@HeaderParam("deviceId") String deviceIdHeader,
+                                            @QueryParam("deviceId") String deviceIdParam) throws ParserConfigurationException, SAXException, IOException
+    {
+        String code = "";
+        return requestTranslatorStatus(code, deviceIdHeader, deviceIdParam);
+    }
+
 	@POST
 	@Path("/{code}")
 	public Response requestTranslatorStatus(@PathParam("code") String code,
