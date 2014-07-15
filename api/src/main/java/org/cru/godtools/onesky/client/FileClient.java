@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
@@ -16,6 +17,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 import java.util.Collection;
 
 /**
@@ -46,11 +48,18 @@ public class FileClient
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 
-		GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, jsonToUpload)){};
+		GenericEntity<MultipartFormDataOutput> genericEntity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, jsonToUpload)){};
+
+		LanguageCode languageCode = new LanguageCode(locale);
+
+		Variant entityVariant = new Variant(MediaType.MULTIPART_FORM_DATA_TYPE,
+				languageCode.getLanguageCode(),
+//				languageCode.getLocaleCode(),
+				"UTF-8");
 
 		Response response = target
 				.request()
-				.post(Entity.entity(entity,MediaType.MULTIPART_FORM_DATA_TYPE));
+				.post(Entity.entity(genericEntity, entityVariant));
 
 		System.out.println("File: " + pageName);
 		System.out.println("Status: " + response.getStatus());
