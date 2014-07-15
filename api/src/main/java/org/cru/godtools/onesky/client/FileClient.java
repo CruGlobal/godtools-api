@@ -5,6 +5,7 @@ package org.cru.godtools.onesky.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
@@ -41,11 +42,11 @@ public class FileClient
 	 *                               unique identifier for the element being translated.
 	 *
 	 */
-	public void uploadFile(Integer projectId, String pageName, Collection<TranslationElement> translationElementList) throws Exception
+	public void uploadFile(Integer projectId, String pageName, String locale, Collection<TranslationElement> translationElementList) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 
-		GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, translationElementList)){};
+		GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, translationElementList)){};
 
 		Response response = target
 				.request()
@@ -68,7 +69,7 @@ public class FileClient
 	 *
 	 *  Returns an instance of MultipartFormDataOutput with the above values set.
 	 */
-	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, Collection<TranslationElement> translationElementList) throws Exception
+	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, String locale, Collection<TranslationElement> translationElementList) throws Exception
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
 
@@ -78,6 +79,7 @@ public class FileClient
 		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("file", new ObjectMapper().writeValueAsString(buildFile(translationElementList)), MediaType.MULTIPART_FORM_DATA_TYPE, pageName);
+		if(!Strings.isNullOrEmpty(locale)) upload.addFormData("locale", locale, MediaType.MULTIPART_FORM_DATA_TYPE);
 
 		return upload;
 	}
@@ -94,7 +96,7 @@ public class FileClient
 
 		for(TranslationElement translationElement : translationElementList)
 		{
-			objectNode.put(translationElement.getId().toString(), translationElement.getBaseText());
+			objectNode.put(translationElement.getId().toString(), translationElement.getTranslatedText());
 		}
 
 		return objectNode;

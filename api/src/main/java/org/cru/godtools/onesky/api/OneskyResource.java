@@ -1,0 +1,35 @@
+package org.cru.godtools.onesky.api;
+
+import org.cru.godtools.onesky.io.TranslationUpload;
+
+import javax.inject.Inject;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+
+/**
+ * Created by ryancarlson on 7/14/14.
+ */
+@Path("/onesky")
+public class OneskyResource
+{
+	@Inject TranslationUpload translationUpload;
+
+	@POST
+	@Path("/project/{projectId}/uploads/locale/{locale}")
+	public Response uploadLocaleToOnesky(@PathParam("projectId") Integer projectId, @PathParam("locale") String locale)
+	{
+		// note this check might not be necessary... we would just update the translator tool when needed.
+		if(translationUpload.checkHasTranslationAlreadyBeenUploaded(projectId, locale))
+		{
+			// do something here, possible a 400?
+		}
+
+		translationUpload.doUpload(projectId, locale);
+
+		translationUpload.recordInitialUpload(projectId, locale);
+
+		return Response.noContent().build();
+	}
+}

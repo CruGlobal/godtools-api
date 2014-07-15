@@ -31,37 +31,38 @@ public class TranslationDownload
 
 	public void doDownload(UUID translationId, UUID pageStructureId)
 	{
-		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
-		String pageName = oneSkyDataService.getPageFilename(pageStructureId);
-
-		try
-		{
-			TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
-					oneSkyDataService.getLocale(translationId),
-					pageName);
-
-			if(translationResults.getStatusCode() != 200) return;
-
-			for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
-			{
-				if (translationResults.containsKey(localTranslationElement.getId()))
-				{
-					localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
-				}
-			}
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
-		oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, getRemoteTranslationStatus(translationId, pageStructureId));
+//		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
+//		String pageName = oneSkyDataService.getPageFilename(pageStructureId);
+//
+//		try
+//		{
+//			TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
+//					oneSkyDataService.getLocale(translationId),
+//					pageName);
+//
+//			if(translationResults.getStatusCode() != 200) return;
+//
+//			for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
+//			{
+//				if (translationResults.containsKey(localTranslationElement.getId()))
+//				{
+//					localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
+//				}
+//			}
+//		} catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//
+//		oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
+//		oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, getRemoteTranslationStatus(translationId, pageStructureId));
 	}
 
 	private OneSkyTranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
 	{
-		return translationClient.getStatus(oneSkyDataService.getOneskyProjectId(translationId),
-				oneSkyDataService.getLocale(translationId),
-				oneSkyDataService.getPageFilename(pageStructureId));
+//		return translationClient.getStatus(oneSkyDataService.getOneskyProjectId(translationId),
+//				oneSkyDataService.getLocale(translationId),
+//				oneSkyDataService.getPageFilename(pageStructureId));
+		return null;
 	}
 }

@@ -1,10 +1,15 @@
 package org.cru.godtools.api.packages;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
@@ -15,7 +20,6 @@ import org.cru.godtools.onesky.domain.LocalTranslationStatus;
 import org.cru.godtools.onesky.domain.LocalTranslationStatusService;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,9 +53,9 @@ public class OneSkyDataService
 	{
 		Translation translation = translationService.selectById(translationId);
 
-		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order desc");
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order");
 
-		Multimap<String, TranslationElement> translationElementMultimap = ArrayListMultimap.create();
+		Multimap<String, TranslationElement> translationElementMultimap = LinkedListMultimap.create();
 
 		for(TranslationElement translationElement : translationElementList)
 		{
@@ -61,16 +65,25 @@ public class OneSkyDataService
 		return translationElementMultimap;
 	}
 
-	public void saveTranslationElements(Collection<TranslationElement> translationElementList)
+	public Translation getTranslation(Integer oneskyProjectId, String locale)
 	{
-		for(TranslationElement translationElement : translationElementList)
-		{
-			translationElementService.update(translationElement);
-		}
+		Language language = languageService.selectByLanguageCode(new LanguageCode(locale));
+		Package gtPackage = packageService.selectByOneskyProjectId(oneskyProjectId);
+
+		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+				gtPackage.getId(),
+				GodToolsVersion.LATEST_VERSION);
+
+	}
+
+	public List<LocalTranslationStatus> getCurrentTranslationStatus(UUID translationId)
+	{
+		return translationStatusService.selectByTranslationId(translationId);
 	}
 
 	public void updateLocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus)
 	{
+		
 		if(translationStatusService.selectByTranslationIdPageStructureId(translationId,pageStructureId) != null)
 		{
 			translationStatusService.update(new LocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus, clock.currentDateTime()));
@@ -81,27 +94,8 @@ public class OneSkyDataService
 		}
 	}
 
-	public LocalTranslationStatus getLocalTranslationStatus(UUID translationId, UUID pageStructureId)
+	public List<PageStructure> getPageStructures(UUID translationId)
 	{
-		return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructureId);
-	}
-
-	public Integer getOneskyProjectId(UUID translationId)
-	{
-		Translation translation = translationService.selectById(translationId);
-
-		return packageService.selectById(translation.getPackageId()).getOneskyProjectId();
-	}
-
-	public String getLocale(UUID translationId)
-	{
-		Translation translation = translationService.selectById(translationId);
-
-		return languageService.selectLanguageById(translation.getLanguageId()).getPath();
-	}
-
-	public String getPageFilename(UUID pageStructureId)
-	{
-		return pageStructureService.selectByid(pageStructureId).getFilename();
+		return pageStructureService.selectByTranslationId(translationId);
 	}
 }
