@@ -1,5 +1,6 @@
 package org.cru.godtools.migration;
 
+import com.google.common.base.Strings;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
@@ -44,7 +45,8 @@ public class TranslatableElements
 		{
 			if (Boolean.parseBoolean(baseTranslationElement.getAttribute("translate")))
 			{
-				UUID elementId = UUID.randomUUID();
+				String existingElementId  = baseTranslationElement.getAttribute("gtapi-trx-id");
+				UUID elementId = (Strings.isNullOrEmpty(existingElementId)) ? UUID.randomUUID() : UUID.fromString(existingElementId);
 
 				baseTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
 

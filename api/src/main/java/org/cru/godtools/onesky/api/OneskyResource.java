@@ -14,7 +14,24 @@ import javax.ws.rs.core.Response;
 @Path("/onesky")
 public class OneskyResource
 {
+	/**
+	 * Here temporarily for uploading new projects until more robust logic is built out.
+	 */
+	String DEFAULT_BASE_LOCALE = "en";
+
 	@Inject TranslationUpload translationUpload;
+
+	@POST
+	@Path("/project/{projectId}/uploads")
+	public Response uploadProjectToOnesky(@PathParam("projectId") Integer projectId)
+	{
+		translationUpload.doUpload(projectId, DEFAULT_BASE_LOCALE);
+
+		translationUpload.recordInitialUpload(projectId, DEFAULT_BASE_LOCALE);
+
+		return Response.noContent().build();
+	}
+
 
 	@POST
 	@Path("/project/{projectId}/uploads/locale/{locale}")

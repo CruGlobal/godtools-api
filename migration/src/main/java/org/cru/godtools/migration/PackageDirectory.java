@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -168,23 +169,42 @@ public class PackageDirectory
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		PackageStructure packageStructure = new PackageStructure();
-
-		packageStructure.setId(UUID.randomUUID());
-		packageStructure.setPackageId(gtPackage.getId());
-		packageStructure.setXmlContent(getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
-		packageStructure.setVersionNumber(1);
+		PackageStructure englishPackageStructure = getEnglishPackageStructure(gtPackage);
 
 		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
 		{
-			TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(),
-					packageStructure.getXmlContent(),
+			PackageStructure translatedPackageStructure = getTranslatedPackageStructure(gtPackage, translation);
+
+			TranslatableElements translatableElements = new TranslatableElements(englishPackageStructure.getXmlContent(),
+					translatedPackageStructure.getXmlContent(),
 					packageCode + ".xml",
 					translation.getId());
 
 			translatableElements.save(translationElementService);
 		}
-		packageStructureService.insert(packageStructure);
+		packageStructureService.insert(englishPackageStructure);
+	}
+
+	private PackageStructure getEnglishPackageStructure(Package gtPackage) throws IOException, SAXException, ParserConfigurationException
+	{
+		PackageStructure englishPackageStructure = new PackageStructure();
+
+		englishPackageStructure.setId(UUID.randomUUID());
+		englishPackageStructure.setPackageId(gtPackage.getId());
+		englishPackageStructure.setXmlContent(getPackageDescriptorXml(languageService.selectByLanguageCode(new LanguageCode("en"))));
+		englishPackageStructure.setVersionNumber(1);
+		return englishPackageStructure;
+	}
+
+	private PackageStructure getTranslatedPackageStructure(Package gtPackage, Translation translation) throws IOException, SAXException, ParserConfigurationException
+	{
+		PackageStructure translatedPackageStructure = new PackageStructure();
+
+		translatedPackageStructure.setId(UUID.randomUUID());
+		translatedPackageStructure.setPackageId(gtPackage.getId());
+		translatedPackageStructure.setXmlContent(getPackageDescriptorXml(languageService.selectLanguageById(translation.getLanguageId())));
+		translatedPackageStructure.setVersionNumber(1);
+		return translatedPackageStructure;
 	}
 
 	/**
@@ -197,22 +217,24 @@ public class PackageDirectory
 
 		Map<UUID, Iterator<Page>> translationPageDirectoryIteratorMap = Maps.newHashMap();
 
-		// holds a reference to the english translation of the current package in scope
-		PageDirectory baseEnglishPageDirectory = new PageDirectory(packageCode, "en");
-
 		// load the translations we know about
 		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
 		{
 			Language languageRepresentedByTranslation = languageService.selectLanguageById(translation.getLanguageId());
-			// for each translation, load up all the pages from the filesystem and associate an iterator to those pages to the translation
+			// for each translation, load up all the pages from the filesystem and associate an iterator of those pages to the translationId
 			translationPageDirectoryIteratorMap.put(translation.getId(), new PageDirectory(packageCode, languageRepresentedByTranslation.getPath()).buildPages().iterator());
 		}
+
+		// hold a reference to the base English page directory
+		List<Page> baseEnglishPages = new PageDirectory(packageCode, "en").buildPages();
 
 		// loop through each translation ID
 		for(UUID translationId : translationPageDirectoryIteratorMap.keySet())
 		{
 			// take the iterator for the pages on the translation and loop through the pages
 			Iterator<Page> i = translationPageDirectoryIteratorMap.get(translationId);
+			Iterator<Page> baseIterator = baseEnglishPages.iterator();
+
 			for( ; i.hasNext();)
 			{
 				Page translatedPage = i.next();
@@ -226,20 +248,9 @@ public class PackageDirectory
 				pageStructure.setFilename(translatedPage.getFilename());
 				pageStructure.setTranslationId(translationId);
 
-				Page basePage;
-
-				try
-				{
-					 basePage = baseEnglishPageDirectory.getPageByName(translatedPage.getFilename());
-				}
-				catch(FileNotFoundException e)
-				{
-					throw Throwables.propagate(e);
-				}
-
 				pageStructureService.insert(pageStructure);
 
-				TranslatableElements translatableElements = new TranslatableElements(basePage.getXmlContent(),
+				TranslatableElements translatableElements = new TranslatableElements(baseIterator.next().getXmlContent(),
 						translatedPage.getXmlContent(),
 						translatedPage.getFilename(),
 						translationId,

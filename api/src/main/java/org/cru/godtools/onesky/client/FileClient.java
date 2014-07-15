@@ -38,15 +38,15 @@ public class FileClient
 	 *                     the id itself is numeric
 	 * @param pageName - the name of the current page being uploaded. should be user-friendly name so that users can
 	 *                 know the context for what's being translated (ex: 01_Home.xml)
-	 * @param translationElementList - list of elements from the database, contains base translation, translated value,
-	 *                               unique identifier for the element being translated.
+	 * @param jsonToUpload - Jackson ObjectNode representation of elements from the database, contains unique identifier & translated value,
+	 *                                for the elements being translated.
 	 *
 	 */
-	public void uploadFile(Integer projectId, String pageName, String locale, Collection<TranslationElement> translationElementList) throws Exception
+	public void uploadFile(Integer projectId, String pageName, String locale, ObjectNode jsonToUpload) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 
-		GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, translationElementList)){};
+		GenericEntity<MultipartFormDataOutput> entity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, jsonToUpload)){};
 
 		Response response = target
 				.request()
@@ -69,7 +69,7 @@ public class FileClient
 	 *
 	 *  Returns an instance of MultipartFormDataOutput with the above values set.
 	 */
-	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, String locale, Collection<TranslationElement> translationElementList) throws Exception
+	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, String locale, ObjectNode jsonToUpload) throws Exception
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
 
@@ -78,27 +78,11 @@ public class FileClient
 		upload.addFormData("timestamp", String.valueOf(timestamp), MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.MULTIPART_FORM_DATA_TYPE);
 		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("file", new ObjectMapper().writeValueAsString(buildFile(translationElementList)), MediaType.MULTIPART_FORM_DATA_TYPE, pageName);
+		upload.addFormData("file", new ObjectMapper().writeValueAsString(jsonToUpload), MediaType.MULTIPART_FORM_DATA_TYPE, pageName);
 		if(!Strings.isNullOrEmpty(locale)) upload.addFormData("locale", locale, MediaType.MULTIPART_FORM_DATA_TYPE);
 
 		return upload;
 	}
 
-	/**
-	 * Builds and returns an ObjectNode.  This node is a hash of unique identifier and base translation
-	 * text (English).
-	 */
-	private ObjectNode buildFile(Collection<TranslationElement> translationElementList)
-	{
-		JsonNodeFactory factory = JsonNodeFactory.instance;
 
-		ObjectNode objectNode = new ObjectNode(factory);
-
-		for(TranslationElement translationElement : translationElementList)
-		{
-			objectNode.put(translationElement.getId().toString(), translationElement.getTranslatedText());
-		}
-
-		return objectNode;
-	}
 }
