@@ -177,10 +177,13 @@ public class PackageDirectory
 
 		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
 		{
-			TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(), packageStructure.getXmlContent(), null, translation.getId());
+			TranslatableElements translatableElements = new TranslatableElements(packageStructure.getXmlContent(),
+					packageStructure.getXmlContent(),
+					packageCode + ".xml",
+					translation.getId());
+
 			translatableElements.save(translationElementService);
 		}
-
 		packageStructureService.insert(packageStructure);
 	}
 
