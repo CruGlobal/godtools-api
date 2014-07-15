@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 5/12/14.
@@ -28,7 +29,6 @@ public class AuthorizationResource
 	@Inject
 	Clock clock;
 
-    @Inject AuthorizationRecord authorizationRecord;
     @Inject AuthorizationService authorizationService;
 
     @POST
@@ -49,13 +49,15 @@ public class AuthorizationResource
 
         AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(code);
 
-        authorizationRecord.setAuthToken(authorizationService.createAuthToken());
+        AuthorizationRecord authorizationRecord = new AuthorizationRecord();
+
+        authorizationRecord.setAuthToken(AuthTokenGenerator.generate());
 
         String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
 
         authorizationRecord.setDeviceId(device);
 
-        authorizationRecord.setId(authorizationService.createUUID());
+        authorizationRecord.setId(UUID.randomUUID());
 
         if(accessCodeRecord != null && accessCodeRecord.isCurrentlyActive(currentTime))
         {
@@ -68,7 +70,7 @@ public class AuthorizationResource
 
         authorizationService.recordNewAuthorization(authorizationRecord);
 
-        return Response.ok()
+        return Response.noContent()
                 .header("authToken", authorizationRecord.getAuthToken())
                 .build();
 	}
@@ -77,9 +79,10 @@ public class AuthorizationResource
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_XML)
-    public Response requestAuthStatus(@HeaderParam("authorization") String authCodeParam,
-                               @QueryParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException,IOException
+    public Response requestAuthStatus(@HeaderParam("authorization") String authTokenParam,
+                               @QueryParam("authorization") String authTokenHeader) throws ParserConfigurationException, SAXException,IOException
     {
-        return  Response.ok().build();
+        authorizationService.checkAuthorization(authTokenParam, authTokenHeader);
+        return  Response.noContent().build();
     }
 }

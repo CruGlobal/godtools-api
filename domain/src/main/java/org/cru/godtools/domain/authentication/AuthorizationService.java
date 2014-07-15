@@ -5,7 +5,6 @@ import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/26/14.
@@ -68,17 +67,6 @@ public class AuthorizationService
                 .setAutoDeriveColumnNames(true)
                 .addParameter("accessCode", accessCode)
                 .executeAndFetchFirst(AccessCodeRecord.class);
-    }
-
-    public String createAuthToken()
-    {
-        String authToken = AuthTokenGenerator.generate();
-        return authToken;
-    }
-
-    public UUID createUUID()
-    {
-        return UUID.randomUUID();
     }
 
     private class AuthenticationQueries
