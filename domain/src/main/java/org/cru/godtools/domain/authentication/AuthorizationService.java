@@ -68,6 +68,12 @@ public class AuthorizationService
                 .executeAndFetchFirst(AccessCodeRecord.class);
     }
 
+    public String createAuthToken()
+    {
+        String authToken = AuthTokenGenerator.generate();
+        return authToken;
+    }
+
     private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";

@@ -63,10 +63,8 @@ public class AuthorizationResource
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_XML)
-    public Response requestAuthStatus(@HeaderParam("interpreter") Integer minimumInterpreterVersionParam,
-                                      @QueryParam("interpreter") Integer minimumInterpreterVersionHeader,
-                                      @HeaderParam("authorization") String authCodeParam,
-                                      @QueryParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException,IOException
+    public Response requestAuthStatus(@HeaderParam("authorization") String authCodeParam,
+                               @QueryParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException,IOException
     {
         return  Response.ok().build();
     }
