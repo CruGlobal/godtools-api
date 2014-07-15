@@ -28,7 +28,7 @@ import java.util.Collection;
  */
 public class FileClient
 {
-	public static final String SUB_PATH = "/files";
+	public static final String SUB_PATH = "";
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
@@ -54,12 +54,15 @@ public class FileClient
 
 		Variant entityVariant = new Variant(MediaType.MULTIPART_FORM_DATA_TYPE,
 				languageCode.getLanguageCode(),
-//				languageCode.getLocaleCode(),
 				"UTF-8");
+
+		Entity<GenericEntity<MultipartFormDataOutput>> entity = Entity.entity(genericEntity, entityVariant);
+
+
 
 		Response response = target
 				.request()
-				.post(Entity.entity(genericEntity, entityVariant));
+				.post(entity);
 
 		System.out.println("File: " + pageName);
 		System.out.println("Status: " + response.getStatus());

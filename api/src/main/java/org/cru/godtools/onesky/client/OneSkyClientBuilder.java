@@ -18,8 +18,10 @@ public class OneSkyClientBuilder
 	public static WebTarget buildTarget(Integer projectId, String subPath)
 	{
 		Client client = ClientBuilder.newBuilder().build();
-		return client.target(ROOT + PATH + "/" + projectId + subPath);
+//		return client.target(ROOT + PATH + "/" + projectId + subPath);
+		return client.target("http://localhost:8080/godtools-api/rest/onesky/self");
 	}
+
 
 	public static String createDevHash(long millisSinceEpoch, String secretKey) throws NoSuchAlgorithmException, UnsupportedEncodingException
 	{
