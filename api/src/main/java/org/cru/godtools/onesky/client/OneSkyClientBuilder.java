@@ -1,11 +1,7 @@
 package org.cru.godtools.onesky.client;
 
-import org.cru.godtools.onesky.Utf8EncodingApacheHttpClient4Engine;
-import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

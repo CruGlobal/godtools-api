@@ -1,7 +1,6 @@
 package org.cru.godtools.onesky.api;
 
 import org.cru.godtools.onesky.io.TranslationUpload;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartInput;
 
