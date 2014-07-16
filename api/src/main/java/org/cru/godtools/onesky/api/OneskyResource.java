@@ -1,16 +1,12 @@
 package org.cru.godtools.onesky.api;
 
 import org.cru.godtools.onesky.io.TranslationUpload;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartInput;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 /**
  * Created by ryancarlson on 7/14/14.
