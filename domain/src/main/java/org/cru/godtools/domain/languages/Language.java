@@ -19,8 +19,8 @@ public class Language
     public String getPath()
     {
         String path = code;
-        if(!Strings.isNullOrEmpty(locale)) path = path + "_" + locale;
-        if(!Strings.isNullOrEmpty(subculture)) path = path + "_" + subculture;
+        if(!Strings.isNullOrEmpty(locale)) path = path + "-" + locale;
+        if(!Strings.isNullOrEmpty(subculture)) path = path + "-" + subculture;
         return path;
     }
 

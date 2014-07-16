@@ -1,7 +1,6 @@
 package org.cru.godtools.domain.languages;
 
 import com.google.common.base.Strings;
-import org.cru.godtools.domain.languages.Language;
 
 /**
  * Created by ryancarlson on 3/24/14.
@@ -18,8 +17,8 @@ public class LanguageCode
     public static LanguageCode fromLanguage(Language language)
     {
         String constructedLanguageCode = language.getCode();
-        if(!Strings.isNullOrEmpty(language.getLocale())) constructedLanguageCode += "_" + language.getLocale();
-        if(!Strings.isNullOrEmpty(language.getSubculture())) constructedLanguageCode += "_" + language.getSubculture();
+        if(!Strings.isNullOrEmpty(language.getLocale())) constructedLanguageCode += "-" + language.getLocale();
+        if(!Strings.isNullOrEmpty(language.getSubculture())) constructedLanguageCode += "-" + language.getSubculture();
         return new LanguageCode(constructedLanguageCode);
     }
 
@@ -27,8 +26,8 @@ public class LanguageCode
     public String toString()
     {
         return getLanguageCode() +
-                (Strings.isNullOrEmpty(getLocaleCode()) ? "" : "_" + getLocaleCode()) +
-                (Strings.isNullOrEmpty(getSubculture()) ? "" : "_" + getSubculture());
+                (Strings.isNullOrEmpty(getLocaleCode()) ? "" : "-" + getLocaleCode()) +
+                (Strings.isNullOrEmpty(getSubculture()) ? "" : "-" + getSubculture());
     }
 
 	@Override
@@ -54,7 +53,7 @@ public class LanguageCode
 
 	public String getLanguageCode()
     {
-        String[] languageCodeParts = providedLanguageCode.split("_");
+        String[] languageCodeParts = providedLanguageCode.split("-");
 
         //if the languageCode isn't split, then there was no underscore. just return the the filenameWithoutSuffix.  it's the code
         if(languageCodeParts.length == 1) return providedLanguageCode;
@@ -66,7 +65,7 @@ public class LanguageCode
 
     public String getLocaleCode()
     {
-        String[] languageCodeParts = providedLanguageCode.split("_");
+        String[] languageCodeParts = providedLanguageCode.split("-");
 
         //if the languageCode isn't split, then there was no underscore. there is no locale (e.g. en.xml)
         if(languageCodeParts.length == 1) return null;
@@ -82,7 +81,7 @@ public class LanguageCode
 
     public String getSubculture()
     {
-        String[] languageCodeParts = providedLanguageCode.split("_");
+        String[] languageCodeParts = providedLanguageCode.split("-");
 
         //if the languageCode isn't split, then there was no underscore. there is no locale (e.g. en.xml)
         if(languageCodeParts.length == 1) return null;

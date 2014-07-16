@@ -126,8 +126,8 @@ public class PackageDirectory
 	{
 		String path = DIRECTORY_BASE + packageCode + "/";
 		path += language.getCode();
-		if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "_" + language.getLocale();
-		if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "_" + language.getSubculture();
+		if(!Strings.isNullOrEmpty(language.getLocale())) path = path + "-" + language.getLocale();
+		if(!Strings.isNullOrEmpty(language.getSubculture())) path = path + "-" + language.getSubculture();
 		path += ".xml";
 
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
