@@ -28,7 +28,7 @@ import java.util.Collection;
  */
 public class FileClient
 {
-	public static final String SUB_PATH = "";
+	public static final String SUB_PATH = "files";
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
@@ -86,15 +86,13 @@ public class FileClient
 		long timestamp = System.currentTimeMillis() / 1000;
 
 		MultipartFormDataOutput upload = new MultipartFormDataOutput();
-		upload.addFormData("api_key", properties.get("oneskyApiKey"), MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("timestamp", String.valueOf(timestamp), MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.MULTIPART_FORM_DATA_TYPE);
-		upload.addFormData("file", new ObjectMapper().writeValueAsString(jsonToUpload), MediaType.MULTIPART_FORM_DATA_TYPE, pageName);
-		if(!Strings.isNullOrEmpty(locale)) upload.addFormData("locale", locale, MediaType.MULTIPART_FORM_DATA_TYPE);
+		upload.addFormData("api_key", properties.get("oneskyApiKey"), MediaType.TEXT_PLAIN_TYPE);
+		upload.addFormData("timestamp", String.valueOf(timestamp), MediaType.TEXT_PLAIN_TYPE);
+		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.TEXT_PLAIN_TYPE);
+		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.TEXT_PLAIN_TYPE);
+		upload.addFormData("file", new ObjectMapper().writeValueAsString(jsonToUpload), MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8"), pageName);
+		if(!Strings.isNullOrEmpty(locale)) upload.addFormData("locale", locale, MediaType.TEXT_PLAIN_TYPE);
 
 		return upload;
 	}
-
-
 }

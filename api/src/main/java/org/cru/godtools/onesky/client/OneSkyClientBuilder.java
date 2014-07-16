@@ -1,5 +1,9 @@
 package org.cru.godtools.onesky.client;
 
+import org.cru.godtools.onesky.Utf8EncodingApacheHttpClient4Engine;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -17,9 +21,10 @@ public class OneSkyClientBuilder
 
 	public static WebTarget buildTarget(Integer projectId, String subPath)
 	{
-		Client client = ClientBuilder.newBuilder().build();
-//		return client.target(ROOT + PATH + "/" + projectId + subPath);
-		return client.target("http://localhost:8080/godtools-api/rest/onesky/self");
+		if(!subPath.startsWith("/")) subPath = "/" + subPath;
+		return new ResteasyClientBuilder()
+				.build()
+				.target(ROOT + PATH + "/" + projectId + subPath);
 	}
 
 
