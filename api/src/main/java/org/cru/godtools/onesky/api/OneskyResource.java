@@ -53,18 +53,4 @@ public class OneskyResource
 
 		return Response.noContent().build();
 	}
-
-	@POST
-	@Consumes("multipart/form-data")
-	@Path("/self")
-	public Response selfInspector(MultipartInput form) throws IOException
-	{
-		for(InputPart inputPart : form.getParts())
-		{
-			String inputPartString = inputPart.getBodyAsString();
-			inputPartString = inputPartString;
-		}
-
-		return Response.status(200).build();
-	}
 }
