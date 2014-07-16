@@ -75,14 +75,7 @@ CREATE TABLE auth_tokens(
   id uuid not null primary key,
   username text,
   auth_token text,
-  device_id text,
   granted_timestamp timestamp with time zone,
   revoked_timestamp timestamp with time zone,
   draft_access boolean
 );
-
-CREATE TABLE access_codes(
-  access_code text not null primary key,
-  created_timestamp timestamptz,
-  revoked_timestamp timestamptz
-)
