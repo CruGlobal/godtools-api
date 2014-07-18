@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.translate.client.TranslationResults;
+import org.cru.godtools.translate.client.TranslationStatus;
 
 import javax.ws.rs.client.WebTarget;
 
@@ -46,7 +47,7 @@ public class TranslationClient
 	 * @param locale - the locale of the page being download (ex: "fr" for French)
 	 * @param pageName - the name of the current page being downloaded.
 	 */
-	public OneSkyTranslationStatus getStatus(Integer projectId, String locale, String pageName)
+	public TranslationStatus getStatus(Integer projectId, String locale, String pageName)
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH + "/status")
 				.queryParam("locale", locale)
@@ -54,7 +55,7 @@ public class TranslationClient
 
 		target = addAuthentication(target);
 
-		return OneSkyTranslationStatus.createFromResponse(target.request().get());
+		return new OneSkyTranslationStatus().createFromResponse(target.request().get());
 	}
 
 	/**

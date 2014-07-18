@@ -3,6 +3,7 @@ package org.cru.godtools.translate.client.onesky;
 import com.google.common.base.Throwables;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.cru.godtools.translate.client.TranslationStatus;
 
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
@@ -10,15 +11,10 @@ import java.math.BigDecimal;
 /**
  * Created by ryancarlson on 5/6/14.
  */
-public class OneSkyTranslationStatus
+public class OneSkyTranslationStatus extends TranslationStatus
 {
-	private int statusCode;
-	private String filename;
-	private BigDecimal percentCompleted;
-	private int stringCount;
-	private int wordCount;
-
-	public static OneSkyTranslationStatus createInitialJustUploadedStatus(String pageName)
+	@Override
+	public OneSkyTranslationStatus createInitialJustUploadedStatus(String pageName)
 	{
 		OneSkyTranslationStatus oneSkyTranslationStatus = new OneSkyTranslationStatus();
 		oneSkyTranslationStatus.setStatusCode(202); //accepted
@@ -30,7 +26,8 @@ public class OneSkyTranslationStatus
 		return oneSkyTranslationStatus;
 	}
 
-	public static OneSkyTranslationStatus createFromResponse(Response response)
+	@Override
+	public OneSkyTranslationStatus createFromResponse(Response response)
 	{
 		OneSkyTranslationStatus oneSkyTranslationStatus = new OneSkyTranslationStatus();
 		JsonNode metaResponse = oneSkyTranslationStatus.getResponseEntity(response);
@@ -63,55 +60,5 @@ public class OneSkyTranslationStatus
 			Throwables.propagate(e);
 			return null;
 		}
-	}
-
-	public int getStatusCode()
-	{
-		return statusCode;
-	}
-
-	public void setStatusCode(int statusCode)
-	{
-		this.statusCode = statusCode;
-	}
-
-	public String getFilename()
-	{
-		return filename;
-	}
-
-	public void setFilename(String filename)
-	{
-		this.filename = filename;
-	}
-
-	public BigDecimal getPercentCompleted()
-	{
-		return percentCompleted;
-	}
-
-	public void setPercentCompleted(BigDecimal percentCompleted)
-	{
-		this.percentCompleted = percentCompleted;
-	}
-
-	public int getStringCount()
-	{
-		return stringCount;
-	}
-
-	public void setStringCount(int stringCount)
-	{
-		this.stringCount = stringCount;
-	}
-
-	public int getWordCount()
-	{
-		return wordCount;
-	}
-
-	public void setWordCount(int wordCount)
-	{
-		this.wordCount = wordCount;
 	}
 }
