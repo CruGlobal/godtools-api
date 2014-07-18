@@ -194,6 +194,7 @@ public class GodToolsTranslationRetrievalProcess
                 resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
+				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
 
                 rootElement.appendChild(resourceElement);
             }
