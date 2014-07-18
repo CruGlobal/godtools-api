@@ -63,7 +63,7 @@ public class V0_4__migrate_packages implements JdbcMigration
 		PackageDirectory packageDirectory = new PackageDirectory(gtPackage.getCode());
 		Package packageCreatedFromDirectory = packageDirectory.buildPackage();
 
-		packageCreatedFromDirectory.setOneskyProjectId(gtPackage.getOneskyProjectId());
+		packageCreatedFromDirectory.setTranslationProjectId(gtPackage.getTranslationProjectId());
 
 		packageService.insert(packageCreatedFromDirectory);
 	}

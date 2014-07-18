@@ -16,15 +16,15 @@ public class KnownGodtoolsPackages
     {
 		Package fourlaws = new Package();
 		fourlaws.setCode("fourlaws");
-		fourlaws.setOneskyProjectId(26580);
+		fourlaws.setTranslationProjectId(26580);
 
 		Package kgp = new Package();
 		kgp.setCode("kgp");
-		kgp.setOneskyProjectId(26582);
+		kgp.setTranslationProjectId(26582);
 
 		Package satisfied = new Package();
 		satisfied.setCode("satisfied");
-		satisfied.setOneskyProjectId(26581);
+		satisfied.setTranslationProjectId(26581);
 
 		packages.add(fourlaws);
 		packages.add(kgp);

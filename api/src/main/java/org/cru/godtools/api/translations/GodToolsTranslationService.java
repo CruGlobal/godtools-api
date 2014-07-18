@@ -154,7 +154,7 @@ public class GodToolsTranslationService
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-			updateTranslatableElements(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getOneskyProjectId(),
+			updateTranslatableElements(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getTranslationProjectId(),
 					languageCode.toString(),
 					pageStructure.getFilename()), translation);
 		}

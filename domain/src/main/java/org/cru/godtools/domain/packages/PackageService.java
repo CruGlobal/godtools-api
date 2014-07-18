@@ -34,11 +34,11 @@ public class PackageService
                 .executeAndFetchFirst(Package.class);
     }
 
-	public Package selectByOneskyProjectId(Integer oneskyProjectId)
+	public Package selectByOneskyProjectId(Integer translationProjectId)
 	{
-		return sqlConnection.createQuery(PackageQueries.selectByOneskyProjectId)
+		return sqlConnection.createQuery(PackageQueries.selectByTranslationProjectId)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("oneskyProjectId", oneskyProjectId)
+				.addParameter("translationProjectId", translationProjectId)
 				.executeAndFetchFirst(Package.class);
 	}
 
@@ -49,7 +49,7 @@ public class PackageService
                 .addParameter("code", godToolsPackage.getCode())
                 .addParameter("name", godToolsPackage.getName())
                 .addParameter("defaultLanguageId", godToolsPackage.getDefaultLanguageId())
-				.addParameter("oneskyProjectId", godToolsPackage.getOneskyProjectId())
+				.addParameter("translationProjectId", godToolsPackage.getTranslationProjectId())
                 .executeUpdate();
     }
 
@@ -57,7 +57,7 @@ public class PackageService
     {
         public static final String selectById = "SELECT * FROM packages WHERE id = :id";
         public static final String selectByCode = "SELECT * FROM packages WHERE code = :code";
-		public static final String selectByOneskyProjectId = "SELECT * FROM packages WHERE onesky_project_id = :oneskyProjectId";
-        public static final String insert = "INSERT INTO packages(id, code, name, default_language_id, onesky_project_id) VALUES(:id, :code, :name, :defaultLanguageId, :oneskyProjectId)";
+		public static final String selectByTranslationProjectId = "SELECT * FROM packages WHERE translation_project_id = :translationProjectId";
+        public static final String insert = "INSERT INTO packages(id, code, name, default_language_id, translation_project_id) VALUES(:id, :code, :name, :defaultLanguageId, :translationProjectId)";
 	}
 }

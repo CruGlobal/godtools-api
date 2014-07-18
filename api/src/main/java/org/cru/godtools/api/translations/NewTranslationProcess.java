@@ -85,7 +85,7 @@ public class NewTranslationProcess
 
 	public void uploadTranslatableElementsToTranslationTool(Package gtPackage, Language language)
 	{
-		translationUpload.doUpload(gtPackage.getOneskyProjectId(), language.getPath());
-		translationUpload.recordInitialUpload(gtPackage.getOneskyProjectId(), language.getPath());
+		translationUpload.doUpload(gtPackage.getTranslationProjectId(), language.getPath());
+		translationUpload.recordInitialUpload(gtPackage.getTranslationProjectId(), language.getPath());
 	}
 }
