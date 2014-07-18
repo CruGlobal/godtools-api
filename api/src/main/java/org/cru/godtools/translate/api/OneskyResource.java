@@ -1,6 +1,6 @@
-package org.cru.godtools.onesky.api;
+package org.cru.godtools.translate.api;
 
-import org.cru.godtools.onesky.io.TranslationUpload;
+import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
 import javax.ws.rs.POST;
@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by ryancarlson on 7/14/14.
  */
-@Path("/onesky")
+@Path("/translate")
 public class OneskyResource
 {
 	/**

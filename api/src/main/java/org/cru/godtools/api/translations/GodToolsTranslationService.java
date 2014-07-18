@@ -20,8 +20,8 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.onesky.client.TranslationResults;
-import org.cru.godtools.onesky.io.TranslationDownload;
+import org.cru.godtools.translate.client.TranslationResults;
+import org.cru.godtools.translate.client.TranslationDownload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;

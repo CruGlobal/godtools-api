@@ -1,13 +1,11 @@
-package org.cru.godtools.onesky.client;
+package org.cru.godtools.translate.client.onesky;
 
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Strings;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
@@ -18,10 +16,9 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Variant;
-import java.util.Collection;
 
 /**
- * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/file.md
+ * Client for endpoint described here: https://github.com/translate/api-documentation-platform/blob/master/resources/file.md
  *
  *
  * Created by ryancarlson on 5/1/14.

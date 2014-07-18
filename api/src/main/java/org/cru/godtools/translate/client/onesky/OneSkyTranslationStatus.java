@@ -1,4 +1,4 @@
-package org.cru.godtools.onesky.client;
+package org.cru.godtools.translate.client.onesky;
 
 import com.google.common.base.Throwables;
 import com.fasterxml.jackson.databind.ObjectMapper;

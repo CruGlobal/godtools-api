@@ -1,6 +1,6 @@
-package org.cru.godtools.onesky.domain;
+package org.cru.godtools.translate.domain;
 
-import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
+import org.cru.godtools.translate.client.onesky.OneSkyTranslationStatus;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;

@@ -8,7 +8,7 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.onesky.io.TranslationUpload;
+import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -70,7 +70,7 @@ public class NewTranslationProcess
 	 * Creates new copies of translation_elements for the new Translation and PageStructure.
 	 *
 	 * It's imperative that the TranslationElement copy.id stays the same, b/c that is our reference to the element in
-	 * onesky.  If that ID were to change, then things would be bad.  translation_elements has a composite key(id, translation_id)
+	 * translate.  If that ID were to change, then things would be bad.  translation_elements has a composite key(id, translation_id)
 	 */
 	private void copyTranslationElements(Translation currentTranslation, Translation newTranslation, PageStructure currentPage, PageStructure newPage)
 	{

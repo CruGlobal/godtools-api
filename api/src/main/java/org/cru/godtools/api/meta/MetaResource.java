@@ -7,7 +7,7 @@ import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.api.utilities.ErrorResponse;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.onesky.io.TranslationUpload;
+import org.cru.godtools.translate.client.TranslationUpload;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;

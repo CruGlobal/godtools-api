@@ -15,9 +15,9 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
-import org.cru.godtools.onesky.domain.LocalTranslationStatus;
-import org.cru.godtools.onesky.domain.LocalTranslationStatusService;
+import org.cru.godtools.translate.client.onesky.OneSkyTranslationStatus;
+import org.cru.godtools.translate.domain.LocalTranslationStatus;
+import org.cru.godtools.translate.domain.LocalTranslationStatusService;
 
 import javax.inject.Inject;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.cru.godtools.onesky.io;
+package org.cru.godtools.translate.client.onesky;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,27 +7,27 @@ import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.onesky.client.FileClient;
-import org.cru.godtools.onesky.client.OneSkyTranslationStatus;
+import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
 import java.util.Collection;
 
 /**
- * Created by ryancarlson on 5/6/14.
+ * Created by ryancarlson on 7/18/14.
  */
-public class TranslationUpload
+public class OneSkyTranslationUpload implements TranslationUpload
 {
 	private OneSkyDataService oneSkyDataService;
 	private FileClient fileClient;
 
 	@Inject
-	public TranslationUpload(OneSkyDataService oneSkyDataService, FileClient fileClient)
+	public OneSkyTranslationUpload(OneSkyDataService oneSkyDataService, FileClient fileClient)
 	{
 		this.oneSkyDataService = oneSkyDataService;
 		this.fileClient = fileClient;
 	}
 
+	@Override
 	public void doUpload(Integer oneSkyProjectId, String locale)
 	{
 		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
@@ -47,9 +47,7 @@ public class TranslationUpload
 		}
 	}
 
-	/**
-	 *
-	 */
+	@Override
 	public void recordInitialUpload(Integer oneSkyProjectId, String locale)
 	{
 		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
@@ -66,6 +64,7 @@ public class TranslationUpload
 	 * If the list of translation status is populated, then some pages have already been uploaded for this
 	 * translation.
 	 */
+	@Override
 	public boolean checkHasTranslationAlreadyBeenUploaded(Integer oneSkyProjectId, String locale)
 	{
 		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);

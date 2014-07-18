@@ -1,10 +1,8 @@
-package org.cru.godtools.onesky.domain;
+package org.cru.godtools.translate.domain;
 
-import org.joda.time.DateTime;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
