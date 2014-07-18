@@ -25,7 +25,6 @@ import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.WebApplicationException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -126,26 +125,40 @@ public class GodToolsTranslationService
 		return translations;
 	}
 
+	/**
+	 * Creates a new translations for the languageCode and packageCode combination that's specified.
+	 *
+	 * If the languageCode doesn't reference a valid language, a new language is created.
+	 *
+	 * The newly created translation is version 1 for a brand new translation, or if it's a new version of an existing
+	 * translation, then it takes the next highest version number.
+	 */
 	public Translation setupNewTranslation(LanguageCode languageCode, String packageCode)
 	{
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
-		Translation latestVersionExistingTranslation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION, true);
 
-		int nextVersionNumber;
+		Translation currentTranslation = getTranslation(gtPackage.getCode(), new LanguageCode(language.getCode()), GodToolsVersion.LATEST_VERSION, true);
+		Translation newTranslation = insertNewTranslation(gtPackage, language, currentTranslation);
 
-		if(latestVersionExistingTranslation == null)
+		if(currentTranslation != null)
 		{
-			nextVersionNumber = 1;
+			copyPageAndTranslationData(newTranslation, currentTranslation);
 		}
-		else if(latestVersionExistingTranslation.isReleased())
-		{
-			nextVersionNumber = latestVersionExistingTranslation.getVersionNumber() + 1;
-		}
-		else
-		{
-			throw new WebApplicationException("A draft version of this translation already exists.  See version " + latestVersionExistingTranslation.getVersionNumber());
-		}
+
+		return newTranslation;
+	}
+
+	/**
+	 * Inserts a new Translation record for the package and language that are passed in.  If currentTranslation is
+	 * present, then the new translation takes the next version number.  If not, then the new translation takes
+	 * version number 1.
+	 *
+	 * A copy of the new translation is returned.
+	 */
+	private Translation insertNewTranslation(Package gtPackage, Language language, Translation currentTranslation)
+	{
+		int nextVersionNumber = (currentTranslation == null) ? 1 : currentTranslation.getVersionNumber() + 1;
 
 		Translation newTranslation = new Translation();
 		newTranslation.setId(UUID.randomUUID());
@@ -155,10 +168,42 @@ public class GodToolsTranslationService
 		newTranslation.setReleased(false);
 
 		translationService.insert(newTranslation);
-
-		translationElementService.createTranslatableElements(translationService, newTranslation, gtPackage);
-
 		return newTranslation;
+	}
+
+	/**
+	 * Loads up the PageStructures for the currentTranslation and saves a copy of each one associated to the newTranslation.
+	 * Just after a new PageStructure is saved, a copied set of current PageStructure's TranslationElements are saved associated
+	 * to the new PageStructure.
+	 */
+	private void copyPageAndTranslationData(Translation currentTranslation, Translation newTranslation)
+	{
+		for(PageStructure currentPageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
+		{
+			PageStructure copy = PageStructure.copyOf(currentPageStructure);
+			copy.setId(UUID.randomUUID());
+			copy.setTranslationId(newTranslation.getId());
+			pageStructureService.insert(copy);
+
+			// it's easier to do this in the context of the new page, so that we don't have to remember
+			// the link b/w the old page and new page for a separate method call
+			copyTranslationElements(newTranslation, currentTranslation, currentPageStructure, copy);
+		}
+	}
+
+	/**
+	 * Creates new copies of translation_elements for the new Translation and PageStructure.
+	 */
+	public void copyTranslationElements(Translation currentTranslation, Translation newTranslation, PageStructure currentPage, PageStructure newPage)
+	{
+		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationIdPageStructureId(currentTranslation.getId(), currentPage.getId()))
+		{
+			TranslationElement copy = TranslationElement.copyOf(currentTranslationElement);
+			copy.setId(UUID.randomUUID());
+			copy.setTranslationId(newTranslation.getId());
+			copy.setPageStructureId(newPage.getId());
+			translationElementService.insert(copy);
+		}
 	}
 
 	public void updateTranslationsFromTranslationTool(LanguageCode languageCode, String packageCode)

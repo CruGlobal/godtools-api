@@ -22,6 +22,18 @@ public class PageStructure
 	private String description;
 	private String filename;
 
+	public static PageStructure copyOf(PageStructure pageStructure)
+	{
+		PageStructure pageStructureCopy = new PageStructure();
+		pageStructureCopy.setId(pageStructure.getId());
+		pageStructureCopy.setTranslationId(pageStructure.getTranslationId());
+		pageStructureCopy.setXmlContent(pageStructure.getXmlContent());
+		pageStructureCopy.setDescription(pageStructure.getDescription());
+		pageStructureCopy.setFilename(pageStructure.getFilename());
+
+		return pageStructureCopy;
+	}
+
 	public void setTranslatedFields(Map<UUID, TranslationElement> mapOfTranslationElements)
 	{
 		for(Element translatableElement : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "gtapi-trx-id"))

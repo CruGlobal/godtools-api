@@ -105,12 +105,14 @@ public class TranslationResource
 	public Response updateTranslation(@PathParam("language") String languageCode,
 									  @PathParam("package") String packageCode,
 									  @HeaderParam("authorization") String authTokenHeader,
-									  @QueryParam("authorization") String authTokenParam)
+									  @QueryParam("authorization") String authTokenParam,
+									  @QueryParam("publish") String publish)
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
 		godToolsTranslationService.updateTranslationsFromTranslationTool(new LanguageCode(languageCode), packageCode);
+
 
 		return Response.noContent().build();
 	}

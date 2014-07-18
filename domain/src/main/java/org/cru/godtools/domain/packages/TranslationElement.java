@@ -32,6 +32,22 @@ public class TranslationElement
 		return translationElementMap;
 	}
 
+	public static TranslationElement copyOf(TranslationElement translationElement)
+	{
+		TranslationElement translationElementCopy = new TranslationElement();
+
+		translationElementCopy.setPageStructureId(translationElement.getPageStructureId());
+		translationElementCopy.setTranslationId((translationElement.getTranslationId()));
+		translationElementCopy.setId(translationElement.getId());
+		translationElementCopy.setBaseText(translationElement.getBaseText());
+		translationElementCopy.setTranslatedText(translationElement.getTranslatedText());
+		translationElementCopy.setElementType(translationElement.getElementType());
+		translationElementCopy.setPageName(translationElement.getPageName());
+		translationElementCopy.setDisplayOrder(translationElement.getDisplayOrder());
+
+		return translationElementCopy;
+	}
+
 	public UUID getId()
 	{
 		return id;

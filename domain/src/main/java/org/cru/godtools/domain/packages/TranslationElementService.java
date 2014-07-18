@@ -22,25 +22,6 @@ public class TranslationElementService
 		this.sqlConnection = sqlConnection;
 	}
 
-	public void createTranslatableElements(TranslationService translationService, Translation newTranslation, Package gtPackage)
-	{
-		for(Translation translation : translationService.selectByPackageId(gtPackage.getId()))
-		{
-			//don't use the translation we just saved.. hopefully there's another
-			if(translation.getId().equals(newTranslation.getId())) continue;
-
-			for(TranslationElement translationElement : selectByTranslationId(translation.getId()))
-			{
-				translationElement.setTranslationId(newTranslation.getId());
-				translationElement.setTranslatedText(null);
-				insert(translationElement);
-			}
-			return;
-		}
-
-		throw new IllegalStateException("no existing translation to go off of.. better figure this out");
-	}
-
 	public List<TranslationElement> selectByTranslationId(UUID translationId, String ... orderByFields)
 	{
 		StringBuilder orderByBuilder = null;
@@ -61,6 +42,15 @@ public class TranslationElementService
 				.setAutoDeriveColumnNames(true)
 				.addParameter("translationId", translationId)
 				.executeAndFetch(TranslationElement.class);
+	}
+
+	public List<TranslationElement> selectByTranslationIdPageStructureId(UUID translationId, UUID pageStructureId)
+	{
+		return sqlConnection.createQuery(TranslationElementQueries.selectByTranslationIdPageStructureId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("translationId", translationId)
+				.addParameter("pageStructureId", pageStructureId)
+				.executeAndFetchFirst(TranslationElement.class);
 	}
 
 	public void insert(TranslationElement translationElement)
@@ -94,6 +84,7 @@ public class TranslationElementService
 	public static class TranslationElementQueries
 	{
 		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
+		public static final String selectByTranslationIdPageStructureId = "SELECT * from translation_elements WHERE translation_id = :translationId AND page_structure_id = :pageStructureId";
 		public static final String insert = "INSERT INTO translation_elements(id, translation_id, page_structure_id, base_text, translated_text, element_type, page_name, display_order) " +
 			"VALUES(:id, :translationId, :pageStructureId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";
 		public static final String update = "UPDATE translation_elements SET base_text = :baseText, translated_text = :translatedText, " +
