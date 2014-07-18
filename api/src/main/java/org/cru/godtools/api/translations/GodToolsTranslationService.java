@@ -50,10 +50,8 @@ public class GodToolsTranslationService
 	protected ReferencedImageService referencedImageService;
 	protected ImageService imageService;
 
-	private TranslationDownload translationDownload;
-
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, TranslationDownload translationDownload)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -63,7 +61,6 @@ public class GodToolsTranslationService
 		this.translationElementService = translationElementService;
 		this.referencedImageService = referencedImageService;
 		this.imageService = imageService;
-		this.translationDownload = translationDownload;
 	}
 
 	/**
@@ -218,7 +215,7 @@ public class GodToolsTranslationService
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-			translationDownload.doDownload(translation.getId(), pageStructure.getId());
+//			translationDownload.doDownload(translation.getId(), pageStructure.getId());
 		}
 	}
 

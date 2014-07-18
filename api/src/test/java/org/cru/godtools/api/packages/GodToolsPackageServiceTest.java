@@ -10,23 +10,28 @@ import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 4/2/14.
  */
 public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 {
+
+	private GodToolsPackageService godToolsPackageService;
+
 	@BeforeClass
 	@Override
 	public void setup()
 	{
 		super.setup();
+		godToolsPackageService = createPackageService();
 	}
 
 	@Test
 	public void testGetPackage()
 	{
-		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp",  new GodToolsVersion(new BigDecimal(1)), 1, true, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKgpPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp",  new GodToolsVersion(new BigDecimal("1.1")), 1, true, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKgpPackage);
 	}
@@ -43,7 +48,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testGetPackageNoMinimumInterpreterSpecified()
 	{
-		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", new GodToolsVersion(new BigDecimal(1)), null, true, PixelDensity.getEnum("High"));
+		GodToolsPackage englishKpgPackage = godToolsPackageService.getPackage(new LanguageCode("en"), "kgp", new GodToolsVersion(new BigDecimal("1.1")), null, true, PixelDensity.getEnum("High"));
 
 		mockData.validateEnglishKgpPackage(englishKpgPackage);
 	}

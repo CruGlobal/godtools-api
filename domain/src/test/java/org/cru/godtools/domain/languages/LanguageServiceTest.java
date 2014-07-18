@@ -49,26 +49,26 @@ public class LanguageServiceTest extends AbstractServiceTest
 		Assert.assertNotNull(language);
 		mockData.validateLanguage(language);
 
-		Language language2 = languageService.selectLanguageById(TEST_LANGUAGE_ID);
+		Language language2 = languageService.selectLanguageById(TEST_LANGUAGE2_ID);
 
 		Assert.assertNotNull(language2);
-		mockData.validateLanguage(language2);
+		mockData.validateLanguage2(language2);
     }
 
     @Test
     public void testSelectLanguageByCode()
     {
-		LanguageCode languageCode = new LanguageCode("fr_nt_hipster");
+		LanguageCode languageCode = new LanguageCode("fr-nt-hipster");
 		Language language = languageService.selectByLanguageCode(languageCode);
 
 		Assert.assertNotNull(language);
 		mockData.validateLanguage(language);
 
-		LanguageCode languageCode2 = new LanguageCode("fr_nt_hipster");
+		LanguageCode languageCode2 = new LanguageCode("en");
 		Language language2 = languageService.selectByLanguageCode(languageCode2);
 
 		Assert.assertNotNull(language2);
-		mockData.validateLanguage(language2);
+		mockData.validateLanguage2(language2);
 	}
 
 	@Test()

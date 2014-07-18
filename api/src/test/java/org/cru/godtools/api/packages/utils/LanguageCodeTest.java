@@ -14,9 +14,9 @@ public class LanguageCodeTest
 	@Test
 	public void testCodeWithLanguageLocaleSubculture()
 	{
-		LanguageCode languageCode = new LanguageCode("en_us_hipster");
+		LanguageCode languageCode = new LanguageCode("en-us-hipster");
 
-		Assert.assertEquals(languageCode.toString(), "en_us_hipster");
+		Assert.assertEquals(languageCode.toString(), "en-us-hipster");
 		Assert.assertEquals(languageCode.getLanguageCode(), "en");
 		Assert.assertEquals(languageCode.getLocaleCode(), "us");
 		Assert.assertEquals(languageCode.getSubculture(), "hipster");
@@ -25,9 +25,9 @@ public class LanguageCodeTest
 	@Test
 	public void testCodeWithLanguageLocale()
 	{
-		LanguageCode languageCode = new LanguageCode("fr_nt");
+		LanguageCode languageCode = new LanguageCode("fr-nt");
 
-		Assert.assertEquals(languageCode.toString(), "fr_nt");
+		Assert.assertEquals(languageCode.toString(), "fr-nt");
 		Assert.assertEquals(languageCode.getLanguageCode(), "fr");
 		Assert.assertEquals(languageCode.getLocaleCode(), "nt");
 		Assert.assertNull(languageCode.getSubculture());
@@ -47,9 +47,9 @@ public class LanguageCodeTest
 	@Test
 	public void testCodeWithLanguageSubculture()
 	{
-		LanguageCode languageCode = new LanguageCode("en_hipster");
+		LanguageCode languageCode = new LanguageCode("en-hipster");
 
-		Assert.assertEquals(languageCode.toString(), "en_hipster");
+		Assert.assertEquals(languageCode.toString(), "en-hipster");
 		Assert.assertEquals(languageCode.getLanguageCode(), "en");
 		Assert.assertNull(languageCode.getLocaleCode());
 		Assert.assertEquals(languageCode.getSubculture(), "hipster");
@@ -64,13 +64,13 @@ public class LanguageCodeTest
 		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en");
 
 		language.setLocale("us");
-		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en_us");
+		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en-us");
 
 		language.setSubculture("hipster");
-		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en_us_hipster");
+		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en-us-hipster");
 
 		language.setLocale(null);
-		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en_hipster");
+		Assert.assertEquals(LanguageCode.fromLanguage(language).toString(), "en-hipster");
 	}
 
 }

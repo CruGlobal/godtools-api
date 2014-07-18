@@ -11,8 +11,11 @@ import org.cru.godtools.api.packages.GodToolsPackage;
 import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
 import org.cru.godtools.api.utilities.ImageReader;
 import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.tests.XmlDocumentFromFile;
 
 /**
  * Created by ryancarlson on 4/2/14.
@@ -22,12 +25,14 @@ public class GodToolsPackageServiceTestMockDataService
 
 	public void persistPackage(LanguageService languageService,
 							   PackageService packageService,
+							   PackageStructureService packageStructureService,
 							   TranslationService translationService,
 							   ImageService imageService,
 							   ReferencedImageService referencedImageService)
 	{
 		persistLanguage(languageService);
 		persistPackage(packageService);
+		persistPackageStructure(packageStructureService);
 		persistTranslation(translationService);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
@@ -59,7 +64,8 @@ public class GodToolsPackageServiceTestMockDataService
 		translation.setId(GodToolsPackageServiceTest.TRANSLATION_ID);
 		translation.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
 		translation.setLanguageId(GodToolsPackageServiceTest.LANGUAGE_ID);
-
+		translation.setVersionNumber(1);
+		translation.setReleased(true);
 		translationService.insert(translation);
 	}
 
@@ -69,7 +75,7 @@ public class GodToolsPackageServiceTestMockDataService
 		image.setId(GodToolsPackageServiceTest.IMAGE_ID);
 		image.setResolution("High");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
-
+		image.setFilename("test_image_1.png");
 		imageService.insert(image);
 	}
 
@@ -77,8 +83,18 @@ public class GodToolsPackageServiceTestMockDataService
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
-
+		referencedImage.setPackageStructureId(GodToolsPackageServiceTest.PACKAGE_STRUCTURE_ID);
 		referencedImageService.insert(referencedImage);
+	}
+
+	private void persistPackageStructure(PackageStructureService packageStructureService)
+	{
+		PackageStructure packageStructure = new PackageStructure();
+		packageStructure.setId(GodToolsPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		packageStructure.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
+		packageStructure.setVersionNumber(1);
+		packageStructure.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
+		packageStructureService.insert(packageStructure);
 	}
 
 	public void validateEnglishKgpPackage(GodToolsPackage englishKgpPackage)

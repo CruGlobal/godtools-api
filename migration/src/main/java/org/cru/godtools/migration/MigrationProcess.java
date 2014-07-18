@@ -5,6 +5,8 @@ import com.googlecode.flyway.core.api.MigrationVersion;
 import org.cru.godtools.domain.database.SqlConnectionProducer;
 
 /**
+ * Can only be run after domain's migration process is run!
+ *
  * Created by ryancarlson on 3/21/14.
  */
 public class MigrationProcess
@@ -13,12 +15,9 @@ public class MigrationProcess
     {
         Flyway flyway = new Flyway();
         flyway.setDataSource("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser");
-        flyway.setInitVersion("0");
 		flyway.setTarget(MigrationVersion.fromVersion("0.6"));
 		flyway.setLocations("classpath:org.cru.godtools.migration", "classpath:db.migration");
-		flyway.clean();
-		flyway.setInitOnMigrate(true);
-        flyway.migrate();
+	    flyway.migrate();
     }
 
     public static org.sql2o.Connection getSql2oConnection()

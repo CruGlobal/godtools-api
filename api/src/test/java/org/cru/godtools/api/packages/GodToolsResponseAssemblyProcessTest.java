@@ -26,13 +26,13 @@ public class GodToolsResponseAssemblyProcessTest extends AbstractFullPackageServ
 	{
 		super.setup();
 
-		responseAssemblyProcess = new GodToolsPackageRetrievalProcess(godToolsPackageService, new FileZipper());
+		responseAssemblyProcess = new GodToolsPackageRetrievalProcess(createPackageService(), new FileZipper());
 	}
 
 	@Test
 	public void testBuildResponse() throws IOException
 	{
-		Response response = responseAssemblyProcess.setVersionNumber(new GodToolsVersion(new BigDecimal(1)))
+		Response response = responseAssemblyProcess.setVersionNumber(new GodToolsVersion(new BigDecimal("1.1")))
 				.setCompressed(false)
 				.setLanguageCode("en")
 				.setPackageCode("kgp")
