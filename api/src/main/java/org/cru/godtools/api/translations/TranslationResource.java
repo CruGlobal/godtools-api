@@ -4,6 +4,7 @@ import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.translations.Translation;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -17,6 +18,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "translation" resources.
@@ -90,14 +93,15 @@ public class TranslationResource
 									  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 									  @HeaderParam("authorization") String authTokenHeader,
-									  @QueryParam("authorization") String authTokenParam)
+									  @QueryParam("authorization") String authTokenParam) throws URISyntaxException
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
-		godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
+		Translation translation = godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
 
-		return Response.accepted().build();
+		// FIXME: this isn't quite right yet... should have major.minor version number
+		return Response.created(new URI("/" + languageCode + "/" + packageCode + "?version=" + translation.getVersionNumber())).build();
 	}
 
 	@PUT
@@ -111,6 +115,10 @@ public class TranslationResource
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
+		if(Boolean.parseBoolean(publish))
+		{
+			godToolsTranslationService.publishDraftTranslation(new LanguageCode(languageCode), packageCode);
+		}
 		return Response.noContent().build();
 	}
 }

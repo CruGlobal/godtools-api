@@ -75,7 +75,7 @@ public class GodToolsTranslationService
 											  String packageCode,
 											  GodToolsVersion godToolsVersion)
 	{
-		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion);
+		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
@@ -127,7 +127,7 @@ public class GodToolsTranslationService
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
-		Translation currentTranslation = getTranslation(gtPackage.getCode(), new LanguageCode(language.getCode()), GodToolsVersion.LATEST_VERSION);
+		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
 
 		if(currentTranslation != null)
@@ -143,6 +143,13 @@ public class GodToolsTranslationService
 		return newTranslation;
 	}
 
+	public void publishDraftTranslation(LanguageCode languageCode, String packageCode)
+	{
+		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION);
+		translation.setReleased(true);
+		translationService.update(translation);
+	}
+
 	private Translation loadBaseTranslation(Package gtPackage)
 	{
 		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
@@ -154,13 +161,13 @@ public class GodToolsTranslationService
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-			updateTranslatableElements(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getTranslationProjectId(),
+			updateLocalTranslationElementsFromTranslationTool(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getTranslationProjectId(),
 					languageCode.toString(),
 					pageStructure.getFilename()), translation);
 		}
 	}
 
-	private void updateTranslatableElements(TranslationResults translationResults, Translation translation)
+	private void updateLocalTranslationElementsFromTranslationTool(TranslationResults translationResults, Translation translation)
 	{
 		for(UUID elementId : translationResults.keySet())
 		{
@@ -170,7 +177,7 @@ public class GodToolsTranslationService
 		}
 	}
 
-	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
+	private Translation getTranslationFromDatabase(LanguageCode languageCode, String packageCode, GodToolsVersion godToolsVersion)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);

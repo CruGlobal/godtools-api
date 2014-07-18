@@ -92,8 +92,19 @@ public class TranslationService
                 .executeUpdate();
     }
 
+	public void update(Translation translation)
+	{
+		sqlConnection.createQuery(TranslationQueries.update)
+				.addParameter("id", translation.getId())
+				.addParameter("packageId", translation.getPackageId())
+				.addParameter("languageId", translation.getLanguageId())
+				.addParameter("versionNumber", translation.getVersionNumber())
+				.addParameter("released", translation.isReleased())
+				.executeUpdate();
+	}
 
-    public static class TranslationQueries
+
+	public static class TranslationQueries
     {
 		public static final String selectById = "SELECT * FROM translations WHERE id = :id";
         public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
@@ -101,6 +112,7 @@ public class TranslationService
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
 		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
         public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, released) VALUES(:id, :languageId, :packageId, :versionNumber, :released)";
+		public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, released = :released WHERE id = :id";
     }
 
 }

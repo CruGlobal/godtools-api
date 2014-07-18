@@ -9,6 +9,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 /**
+ *
+ * Only used for testing right now...
+ *
  * Created by ryancarlson on 7/14/14.
  */
 @Path("/translate")
