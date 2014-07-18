@@ -111,9 +111,6 @@ public class TranslationResource
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
-		godToolsTranslationService.updateTranslationsFromTranslationTool(new LanguageCode(languageCode), packageCode);
-
-
 		return Response.noContent().build();
 	}
 }

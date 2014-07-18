@@ -58,8 +58,6 @@ public class FileClient
 
 		Entity<GenericEntity<MultipartFormDataOutput>> entity = Entity.entity(genericEntity, entityVariant);
 
-
-
 		Response response = target
 				.request()
 				.post(entity);

@@ -12,6 +12,8 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.onesky.client.TranslationClient;
+import org.cru.godtools.onesky.io.TranslationDownload;
 
 import java.util.UUID;
 
@@ -36,6 +38,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	protected ImageService imageService;
 	protected ReferencedImageService referencedImageService;
 	protected TranslationElementService translationElementService;
+	protected TranslationDownload translationDownload;
 
 	@Override
 	public void setup()
@@ -50,6 +53,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		packageStructureService = new PackageStructureService(sqlConnection);
 		pageStructureService = new PageStructureService(sqlConnection);
 		translationElementService = new TranslationElementService(sqlConnection);
+		translationDownload = new TranslationDownload(new TranslationClient());
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 
@@ -78,7 +82,8 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 					pageStructureService,
 					translationElementService,
 					referencedImageService,
-					imageService);
+					imageService,
+					translationDownload);
 	}
 
 

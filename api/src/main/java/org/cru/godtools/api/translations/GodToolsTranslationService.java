@@ -10,7 +10,6 @@ import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.api.utilities.ResourceNotFoundException;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
@@ -21,6 +20,7 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.onesky.client.TranslationResults;
 import org.cru.godtools.onesky.io.TranslationDownload;
 
 import javax.inject.Inject;
@@ -50,8 +50,10 @@ public class GodToolsTranslationService
 	protected ReferencedImageService referencedImageService;
 	protected ImageService imageService;
 
+	private TranslationDownload translationDownload;
+
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, TranslationDownload translationDownload)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -61,47 +63,35 @@ public class GodToolsTranslationService
 		this.translationElementService = translationElementService;
 		this.referencedImageService = referencedImageService;
 		this.imageService = imageService;
+		this.translationDownload = translationDownload;
 	}
 
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
-	 *
-	 *
-	 * @param languageCode
-	 * @param packageCode
-	 * @param godToolsVersion
-	 * @param includeDrafts
-	 * @return
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
 											  String packageCode,
-											  GodToolsVersion godToolsVersion,
-											  boolean includeDrafts,
-											  Integer minimumInterpreterVersion)
+											  GodToolsVersion godToolsVersion)
 	{
-		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion, includeDrafts);
+		Translation translation = getTranslation(packageCode, languageCode, godToolsVersion);
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
 		//draft translations are always updated
-		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures);
+		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures, languageCode);
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return GodToolsTranslation.assembleFromComponents(packageCode, packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()));
+		return GodToolsTranslation.assembleFromComponents(packageCode, packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()), !translation.isReleased());
 	}
 
 	/**
 	 * Retrieves the latest version of all packages for specified language.
 	 *
-	 *
-	 * @param languageCode
-	 * @param includeDrafts
 	 * @return
-
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, boolean includeDrafts, Integer minimumInterpreterVersion)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, boolean includeDrafts)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -113,7 +103,7 @@ public class GodToolsTranslationService
 			try
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION, includeDrafts, minimumInterpreterVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), includeDrafts ? GodToolsVersion.LATEST_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION));
 			}
 			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
 			catch(NotFoundException e){ continue; }
@@ -135,7 +125,7 @@ public class GodToolsTranslationService
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
-		Translation currentTranslation = getTranslation(gtPackage.getCode(), new LanguageCode(language.getCode()), GodToolsVersion.LATEST_VERSION, true);
+		Translation currentTranslation = getTranslation(gtPackage.getCode(), new LanguageCode(language.getCode()), GodToolsVersion.LATEST_VERSION);
 		Translation newTranslation = insertNewTranslation(gtPackage, language, currentTranslation);
 
 		if(currentTranslation != null)
@@ -190,45 +180,49 @@ public class GodToolsTranslationService
 
 	/**
 	 * Creates new copies of translation_elements for the new Translation and PageStructure.
+	 *
+	 * It's imperative that the TranslationElement copy.id stays the same, b/c that is our reference to the element in
+	 * onesky.  If that ID were to change, then things would be bad.  translation_elements has a composite key(id, translation_id)
 	 */
 	public void copyTranslationElements(Translation currentTranslation, Translation newTranslation, PageStructure currentPage, PageStructure newPage)
 	{
 		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationIdPageStructureId(currentTranslation.getId(), currentPage.getId()))
 		{
 			TranslationElement copy = TranslationElement.copyOf(currentTranslationElement);
-			copy.setId(UUID.randomUUID());
 			copy.setTranslationId(newTranslation.getId());
 			copy.setPageStructureId(newPage.getId());
 			translationElementService.insert(copy);
 		}
 	}
 
-	public void updateTranslationsFromTranslationTool(LanguageCode languageCode, String packageCode)
-	{
-		Translation translation = getTranslation(packageCode, languageCode, GodToolsVersion.LATEST_VERSION, true);
-		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
-
-		updateTranslationFromTranslationTool(translation, pageStructures);
-	}
-
-	private void updateTranslationFromTranslationTool(Translation translation, List<PageStructure> pageStructures)
+	private void updateTranslationFromTranslationTool(Translation translation, List<PageStructure> pageStructures, LanguageCode languageCode)
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-//			translationDownload.doDownload(translation.getId(), pageStructure.getId());
+			updateTranslatableElements(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getOneskyProjectId(),
+					languageCode.toString(),
+					pageStructure.getFilename()), translation);
+
+
 		}
 	}
 
-	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion, boolean includeDrafts)
+	private void updateTranslatableElements(TranslationResults translationResults, Translation translation)
+	{
+		for(UUID elementId : translationResults.keySet())
+		{
+			TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
+			element.setTranslatedText(translationResults.get(elementId));
+			translationElementService.update(element);
+		}
+	}
+
+	private Translation getTranslation(String packageCode, LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Package gtPackage = packageService.selectByCode(packageCode);
 
-		Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
-
-		if(!(includeDrafts || translation.isReleased())) throw new ResourceNotFoundException(Translation.class);
-
-		return translation;
+		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
 	}
 
 	private Package getPackage(String packageCode)

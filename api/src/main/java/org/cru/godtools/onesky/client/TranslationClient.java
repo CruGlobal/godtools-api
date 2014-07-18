@@ -74,6 +74,4 @@ public class TranslationClient
 			throw Throwables.propagate(e);
 		}
 	}
-
-
 }

@@ -53,6 +53,15 @@ public class TranslationElementService
 				.executeAndFetchFirst(TranslationElement.class);
 	}
 
+	public TranslationElement selectyByIdTranslationId(UUID id, UUID translationId)
+	{
+		return sqlConnection.createQuery(TranslationElementQueries.selectByIdTranslationId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("translationId", translationId)
+				.addParameter("id", id)
+				.executeAndFetchFirst(TranslationElement.class);
+	}
+
 	public void insert(TranslationElement translationElement)
 	{
 		sqlConnection.createQuery(TranslationElementQueries.insert)
@@ -84,6 +93,7 @@ public class TranslationElementService
 	public static class TranslationElementQueries
 	{
 		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
+		public static final String selectByIdTranslationId = "SELECT * FROM translation_elements WHERE id = :id AND translation_id = :translationId";
 		public static final String selectByTranslationIdPageStructureId = "SELECT * from translation_elements WHERE translation_id = :translationId AND page_structure_id = :pageStructureId";
 		public static final String insert = "INSERT INTO translation_elements(id, translation_id, page_structure_id, base_text, translated_text, element_type, page_name, display_order) " +
 			"VALUES(:id, :translationId, :pageStructureId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";

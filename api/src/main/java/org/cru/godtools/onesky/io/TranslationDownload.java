@@ -17,52 +17,21 @@ import java.util.UUID;
  */
 public class TranslationDownload
 {
-	private OneSkyDataService oneSkyDataService;
 	private TranslationClient translationClient;
-	private Clock clock;
 
 	@Inject
-	public TranslationDownload(OneSkyDataService oneSkyDataService, TranslationClient translationClient, Clock clock)
+	public TranslationDownload(TranslationClient translationClient)
 	{
-		this.oneSkyDataService = oneSkyDataService;
 		this.translationClient = translationClient;
-		this.clock = clock;
 	}
 
-	public void doDownload(UUID translationId, UUID pageStructureId)
+	public TranslationResults doDownload(Integer oneSkyProjectId, String locale, String pageName)
 	{
-//		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translationId);
-//		String pageName = oneSkyDataService.getPageFilename(pageStructureId);
-//
-//		try
-//		{
-//			TranslationResults translationResults = translationClient.export(oneSkyDataService.getOneskyProjectId(translationId),
-//					oneSkyDataService.getLocale(translationId),
-//					pageName);
-//
-//			if(translationResults.getStatusCode() != 200) return;
-//
-//			for (TranslationElement localTranslationElement : translationElementMultimap.get(pageName))
-//			{
-//				if (translationResults.containsKey(localTranslationElement.getId()))
-//				{
-//					localTranslationElement.setTranslatedText(translationResults.get(localTranslationElement.getId()));
-//				}
-//			}
-//		} catch (Exception e)
-//		{
-//			e.printStackTrace();
-//		}
-//
-//		oneSkyDataService.saveTranslationElements(translationElementMultimap.get(pageName));
-//		oneSkyDataService.updateLocalTranslationStatus(translationId, pageStructureId, getRemoteTranslationStatus(translationId, pageStructureId));
+		return translationClient.export(oneSkyProjectId, locale, pageName);
 	}
 
-	private OneSkyTranslationStatus getRemoteTranslationStatus(UUID translationId, UUID pageStructureId)
+	private OneSkyTranslationStatus getRemoteTranslationStatus(Integer oneSkyProjectId, String locale)
 	{
-//		return translationClient.getStatus(oneSkyDataService.getOneskyProjectId(translationId),
-//				oneSkyDataService.getLocale(translationId),
-//				oneSkyDataService.getPageFilename(pageStructureId));
 		return null;
 	}
 }

@@ -60,9 +60,7 @@ public class GodToolsPackageService
 	{
 		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode,
 				packageCode,
-				godToolsVersion,
-				includeDrafts,
-				minimumInterpreterVersion);
+				godToolsVersion);
 
 		return GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure()));
 	}
@@ -80,7 +78,7 @@ public class GodToolsPackageService
 													   boolean includeDrafts,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts, minimumInterpreterVersion);
+		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

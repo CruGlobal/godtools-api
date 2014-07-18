@@ -19,6 +19,7 @@ public class GodToolsTranslation
 	String packageCode;
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
+	boolean isDraft;
 
     public GodToolsTranslation()
     {
@@ -28,7 +29,8 @@ public class GodToolsTranslation
 															 PackageStructure packageStructure,
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
-															 List<Image> referencedImages)
+															 List<Image> referencedImages,
+															 boolean isDraft)
 	{
 		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
 
@@ -48,6 +50,8 @@ public class GodToolsTranslation
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
 		godToolsTranslation.setPackageCode(packageCode);
+
+		godToolsTranslation.setDraft(isDraft);
 
 		return godToolsTranslation;
 	}
@@ -80,5 +84,15 @@ public class GodToolsTranslation
 	public void setPageStructureList(List<PageStructure> pageStructureList)
 	{
 		this.pageStructureList = pageStructureList;
+	}
+
+	public boolean isDraft()
+	{
+		return isDraft;
+	}
+
+	public void setDraft(boolean isDraft)
+	{
+		this.isDraft = isDraft;
 	}
 }
