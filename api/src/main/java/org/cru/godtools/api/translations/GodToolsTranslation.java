@@ -1,5 +1,7 @@
 package org.cru.godtools.api.translations;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
@@ -56,6 +58,38 @@ public class GodToolsTranslation
 		return godToolsTranslation;
 	}
 
+
+	/**
+	 * You can't have one without the other
+	 * @return
+	 */
+	@Override
+	public int hashCode()
+	{
+		return new HashCodeBuilder(17, 83)  // two randomly chosen prime numbers (as random as random can be...)
+				.append(packageCode)
+				.append(isDraft)
+				.toHashCode();
+	}
+
+	/**
+	 * Override equality... two translations will be considered equal iff they have the same packageCode and draft status
+	 *
+	 * @param obj
+	 * @return
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(obj == null) return false;
+		if(!(obj instanceof GodToolsTranslation)) return false;
+		GodToolsTranslation translation = (GodToolsTranslation) obj;
+
+		return new EqualsBuilder()
+				.append(packageCode, translation.getPackageCode())
+				.append(isDraft, translation.isDraft())
+				.isEquals();
+	}
 	public String getPackageCode()
 	{
 		return packageCode;

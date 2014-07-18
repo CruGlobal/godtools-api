@@ -77,6 +77,8 @@ public class GodToolsTranslationService
 											  GodToolsVersion godToolsVersion)
 	{
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
+		if(translation == null) throw new NotFoundException();
+
 		Package gtPackage = getPackage(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
@@ -98,18 +100,25 @@ public class GodToolsTranslationService
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
-		Language language = languageService.selectByLanguageCode(languageCode);
-		List<Translation> translationsForLanguage = translationService.selectByLanguageId(language.getId());
-
-		for(Translation translation : translationsForLanguage)
+		for(Package gtPackage : packageService.selectAllPackages())
 		{
 			try
 			{
-				Package gtPackage = packageService.selectById(translation.getPackageId());
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), includeDrafts ? GodToolsVersion.LATEST_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_PUBLISHED_VERSION));
 			}
-			//if the desired revision doesn't exist.. that's fine, just continue on to the next translation.
-			catch(NotFoundException e){ continue; }
+			catch(NotFoundException notFound) { /*oh well..*/ }
+			if(includeDrafts)
+			{
+				try
+				{
+					GodToolsTranslation possibleDraftTranslation = getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
+					if (!translations.contains(possibleDraftTranslation)) translations.add(possibleDraftTranslation);
+				}
+				catch(NotFoundException notFound)
+				{
+					notFound.printStackTrace(); /*oh well..*/
+				}
+			}
 		}
 
 		return translations;

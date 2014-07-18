@@ -70,7 +70,20 @@ public class TranslationService
 
 			return highestFoundVersionTranslation;
 		}
+		else if(godToolsVersion == GodToolsVersion.LATEST_PUBLISHED_VERSION)
+		{
+			Translation highestFoundVersionTranslation = null;
 
+			for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+			{
+				if(translation.isReleased() && (highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0))
+				{
+					highestFoundVersionTranslation = translation;
+				}
+			}
+
+			return highestFoundVersionTranslation;
+		}
 		Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageIdVersionNumber)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("packageId", packageId)

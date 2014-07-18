@@ -1,6 +1,8 @@
 package org.cru.godtools.domain.translations;
 
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.packages.Package;
 import java.util.UUID;
@@ -28,7 +30,7 @@ public class Translation
         setLanguageId(language.getId());
     }
 
-    public UUID getId()
+	public UUID getId()
     {
         return id;
     }
