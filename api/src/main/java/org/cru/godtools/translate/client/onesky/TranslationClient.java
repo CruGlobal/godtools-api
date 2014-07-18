@@ -9,7 +9,7 @@ import org.cru.godtools.translate.client.TranslationStatus;
 import javax.ws.rs.client.WebTarget;
 
 /**
- * * Client for endpoint described here: https://github.com/translate/api-documentation-platform/blob/master/resources/translation.md
+ * * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/translation.md
  *
  * Created by ryancarlson on 5/5/14.
  */

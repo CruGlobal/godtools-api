@@ -50,7 +50,7 @@ public class TranslationElementService
 				.setAutoDeriveColumnNames(true)
 				.addParameter("translationId", translationId)
 				.addParameter("pageStructureId", pageStructureId)
-				.executeAndFetchFirst(TranslationElement.class);
+				.executeAndFetch(TranslationElement.class);
 	}
 
 	public TranslationElement selectyByIdTranslationId(UUID id, UUID translationId)

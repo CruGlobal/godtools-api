@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Variant;
 
 /**
- * Client for endpoint described here: https://github.com/translate/api-documentation-platform/blob/master/resources/file.md
+ * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/file.md
  *
  *
  * Created by ryancarlson on 5/1/14.

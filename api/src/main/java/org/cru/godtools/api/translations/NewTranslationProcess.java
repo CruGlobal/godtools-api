@@ -62,7 +62,7 @@ public class NewTranslationProcess
 
 			// it's easier to do this in the context of the new page, so that we don't have to remember
 			// the link b/w the old page and new page for a separate method call
-			copyTranslationElements(newTranslation, currentTranslation, currentPageStructure, copy);
+			copyTranslationElements(currentTranslation, newTranslation, currentPageStructure, copy);
 		}
 	}
 

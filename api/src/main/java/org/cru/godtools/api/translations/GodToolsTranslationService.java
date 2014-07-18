@@ -65,6 +65,7 @@ public class GodToolsTranslationService
 		this.translationElementService = translationElementService;
 		this.referencedImageService = referencedImageService;
 		this.imageService = imageService;
+		this.newTranslationProcess = newTranslationProcess;
 		this.translationDownload = translationDownload;
 	}
 
@@ -132,7 +133,7 @@ public class GodToolsTranslationService
 
 		if(currentTranslation != null)
 		{
-			newTranslationProcess.copyPageAndTranslationData(newTranslation, currentTranslation);
+			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
 		}
 		else
 		{

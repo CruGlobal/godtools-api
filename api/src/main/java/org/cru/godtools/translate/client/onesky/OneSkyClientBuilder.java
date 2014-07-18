@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class OneSkyClientBuilder
 {
-	public static final String ROOT = "https://platform.api.translate.io/1";
+	public static final String ROOT = "https://platform.api.onesky.io/1";
 	public static final String PATH = "/projects";
 
 	public static WebTarget buildTarget(Integer projectId, String subPath)
