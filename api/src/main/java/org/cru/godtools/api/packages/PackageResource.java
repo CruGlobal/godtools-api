@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.packages.PixelDensity;
+import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -35,6 +36,8 @@ public class PackageResource
     @Inject
     AuthorizationService authService;
 
+	private Logger log = Logger.getLogger(PackageResource.class);
+
 	/**
 	 * GET - get all packages for the language specified by @param languageCode.
 	 *
@@ -63,7 +66,9 @@ public class PackageResource
 											  @HeaderParam("authorization") String authTokenHeader,
 											  @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
-        authService.checkAuthorization(authTokenParam, authTokenHeader);
+		log.info("Requesting all packages for language: " + languageCode);
+
+		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
         return packageRetrievalProcess
                 .setLanguageCode(languageCode)
@@ -72,8 +77,8 @@ public class PackageResource
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()
-                .buildResponse();
-    }
+				.buildResponse();
+	}
 
 	/**
 	 * GET - get all the package specified by @param packageCode for the language specified by @param languageCode.
