@@ -5,6 +5,7 @@ import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.translations.Translation;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -39,6 +40,7 @@ public class TranslationResource
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
 
+	private Logger log = Logger.getLogger(TranslationResource.class);
 
 	@GET
 	@Path("/{language}")
@@ -50,6 +52,8 @@ public class TranslationResource
 									@HeaderParam("authorization") String authTokenHeader,
 									@QueryParam("authorization") String authTokenParam) throws IOException
 	{
+		log.info("Requesting all translations for language: " + languageCode);
+
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
 		return translationRetrievalProcess
@@ -73,6 +77,8 @@ public class TranslationResource
 								   @HeaderParam("authorization") String authTokenHeader,
 								   @QueryParam("authorization") String authTokenParam) throws IOException
 	{
+		log.info("Requesting translation " + packageCode + " for language: " + languageCode);
+
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
 		return translationRetrievalProcess

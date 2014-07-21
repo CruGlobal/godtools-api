@@ -29,4 +29,11 @@ public class GodToolsVersion
 	{
 		return translationVersion;
 	}
+
+	@Override
+	public String toString()
+	{
+		return packageVersion + "." + translationVersion;
+	}
+
 }

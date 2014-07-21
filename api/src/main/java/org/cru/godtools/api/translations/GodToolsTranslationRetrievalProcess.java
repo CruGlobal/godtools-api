@@ -10,6 +10,7 @@ import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PixelDensity;
 
+import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,7 +48,9 @@ public class GodToolsTranslationRetrievalProcess
 
 	Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
 
-    @Inject
+	Logger log = Logger.getLogger(GodToolsTranslationRetrievalProcess.class);
+
+	@Inject
     public GodToolsTranslationRetrievalProcess(GodToolsTranslationService godToolsTranslationService, FileZipper fileZipper)
     {
         this.godToolsTranslationService = godToolsTranslationService;
@@ -56,48 +59,56 @@ public class GodToolsTranslationRetrievalProcess
 
     public GodToolsTranslationRetrievalProcess setPackageCode(String packageCode)
     {
-        this.packageCode = packageCode;
+		log.info("Setting package code: " + packageCode);
+		this.packageCode = packageCode;
         return this;
     }
 
     public GodToolsTranslationRetrievalProcess setLanguageCode(String languageCode)
     {
-        this.languageCode = new LanguageCode(languageCode);
+		log.info("Setting language code: " + languageCode);
+		this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
     public GodToolsTranslationRetrievalProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
+		log.info("Setting interpreter version: " + minimumInterpreterVersion);
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
     public GodToolsTranslationRetrievalProcess setVersionNumber(GodToolsVersion godToolsVersion)
     {
+		log.info("Setting version number: " + godToolsVersion == null ? "Latest published" : godToolsVersion);
         this.godToolsVersion = godToolsVersion;
         return this;
     }
 
     public GodToolsTranslationRetrievalProcess setCompressed(boolean compressed)
     {
+		log.info("Setting compressed: " + compressed);
         this.compressed = compressed;
         return this;
     }
 
 	public GodToolsTranslationRetrievalProcess setIncludeDrafts(boolean includeDrafts)
 	{
+		log.info("Setting includeDrafts: " + includeDrafts);
 		this.includeDrafts = includeDrafts;
 		return this;
 	}
 
     public GodToolsTranslationRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
+		log.info("Setting pixelDensity: " + pixelDensity);
         this.pixelDensity = pixelDensity;
         return this;
     }
 
 	public GodToolsTranslationRetrievalProcess loadTranslations()
 	{
+		log.info("Loading translations...");
 		if(Strings.isNullOrEmpty(packageCode))
 		{
 			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts));
@@ -114,6 +125,7 @@ public class GodToolsTranslationRetrievalProcess
 			godToolsTranslations.add(godToolsTranslation);
 		}
 
+		log.info("Loaded " + godToolsTranslations.size() + " translations");
 		return this;
 	}
 
@@ -121,10 +133,12 @@ public class GodToolsTranslationRetrievalProcess
     {
         if(compressed)
         {
+			log.info("Building zipped response");
             return buildZippedResponse();
         }
         else
         {
+			log.info("Building unzipped response");
             return buildXmlContentsResponse();
         }
     }
@@ -138,7 +152,7 @@ public class GodToolsTranslationRetrievalProcess
 
         ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.writeToByteArrayStream(createContentsFile());
         bundledStream.close();
-
+		
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
                 .type(MediaType.APPLICATION_XML)
                 .build();

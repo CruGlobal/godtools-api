@@ -110,6 +110,8 @@ public class PackageResource
 							   @HeaderParam("authorization") String authTokenHeader,
 							   @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
 	{
+		log.info("Requesting package " + packageCode + " for language: " + languageCode);
+
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
 		return packageRetrievalProcess
