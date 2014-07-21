@@ -31,7 +31,7 @@ public class PackageResource
 {
 
     @Inject
-	GodToolsPackageRetrievalProcess packageRetievalProcess;
+	GodToolsPackageRetrievalProcess packageRetrievalProcess;
     @Inject
     AuthorizationService authService;
 
@@ -65,7 +65,7 @@ public class PackageResource
     {
         authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-        return packageRetievalProcess
+        return packageRetrievalProcess
                 .setLanguageCode(languageCode)
                 .setCompressed(Boolean.parseBoolean(compressed))
                 .setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
@@ -107,7 +107,7 @@ public class PackageResource
 	{
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
-		return packageRetievalProcess
+		return packageRetrievalProcess
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
