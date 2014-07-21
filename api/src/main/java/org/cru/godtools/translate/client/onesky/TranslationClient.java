@@ -1,12 +1,15 @@
 package org.cru.godtools.translate.client.onesky;
 
 import com.google.common.base.Throwables;
+import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationStatus;
+import org.jboss.logging.Logger;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 /**
  * * Client for endpoint described here: https://github.com/onesky/api-documentation-platform/blob/master/resources/translation.md
@@ -18,6 +21,8 @@ public class TranslationClient
 	public static final String SUB_PATH = "/translations";
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
+
+	private Logger log = Logger.getLogger(TranslationClient.class);
 
 	/**
 	 * Retrieves a file of translated text from oneskyapp.com
@@ -36,7 +41,17 @@ public class TranslationClient
 
 		target = addAuthentication(target);
 
-		return new OneSkyTranslationResults().createFromResponse(target.request().get());
+		Response response = target.request().get();
+
+		log.info("Download response status code: " + response.getStatus());
+
+		TranslationResults translationResults = new OneSkyTranslationResults().createFromResponse(response);
+
+		Simply.logObject(translationResults, TranslationClient.class);
+
+		return translationResults;
+
+
 	}
 
 	/**
@@ -49,13 +64,23 @@ public class TranslationClient
 	 */
 	public TranslationStatus getStatus(Integer projectId, String locale, String pageName)
 	{
+		log.info("Getting translation status for file: " + pageName + " from OneSky for project ID: " + projectId + " and locale: " + locale);
+
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH + "/status")
 				.queryParam("locale", locale)
 				.queryParam("file_name", pageName);
 
 		target = addAuthentication(target);
 
-		return new OneSkyTranslationStatus().createFromResponse(target.request().get());
+		Response response = target.request().get();
+
+		log.info("Status response code: " + response.getStatus());
+
+		OneSkyTranslationStatus translationStatus = new OneSkyTranslationStatus().createFromResponse(response);
+
+		Simply.logObject(translationStatus, TranslationClient.class);
+
+		return translationStatus;
 	}
 
 	/**
