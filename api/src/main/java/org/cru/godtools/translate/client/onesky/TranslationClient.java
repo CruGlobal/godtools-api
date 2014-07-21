@@ -41,7 +41,10 @@ public class TranslationClient
 
 		target = addAuthentication(target);
 
-		Response response = target.request().get();
+		Response response = target
+				.request()
+				.accept("application/json;charset=utf-8")
+				.get();
 
 		log.info("Download response status code: " + response.getStatus());
 
