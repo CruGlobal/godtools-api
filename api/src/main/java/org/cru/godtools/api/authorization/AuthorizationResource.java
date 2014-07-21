@@ -1,6 +1,10 @@
-package org.cru.godtools.domain.authentication;
+package org.cru.godtools.api.authorization;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.authentication.AccessCodeRecord;
+import org.cru.godtools.domain.authentication.AuthTokenGenerator;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
+import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
@@ -26,7 +30,8 @@ public class AuthorizationResource
 	@Inject
 	Clock clock;
 
-    @Inject AuthorizationService authorizationService;
+    @Inject
+	AuthorizationService authorizationService;
 
     @POST
     public Response requestTranslatorStatusWithoutCode(@HeaderParam("deviceId") String deviceIdHeader,
