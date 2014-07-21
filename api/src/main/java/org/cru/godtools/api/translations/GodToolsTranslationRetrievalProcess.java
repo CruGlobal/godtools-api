@@ -152,7 +152,7 @@ public class GodToolsTranslationRetrievalProcess
 
         ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.writeToByteArrayStream(createContentsFile());
         bundledStream.close();
-		
+
         return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
                 .type(MediaType.APPLICATION_XML)
                 .build();

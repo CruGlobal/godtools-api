@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -77,7 +78,7 @@ public class TranslationResource
 								   @HeaderParam("authorization") String authTokenHeader,
 								   @QueryParam("authorization") String authTokenParam) throws IOException
 	{
-		log.info("Requesting translation " + packageCode + " for language: " + languageCode);
+		log.info("Requesting translation for package: " + packageCode + " and language: " + languageCode);
 
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 
@@ -101,10 +102,14 @@ public class TranslationResource
 									  @HeaderParam("authorization") String authTokenHeader,
 									  @QueryParam("authorization") String authTokenParam) throws URISyntaxException
 	{
+		log.info("Creating new translation for package: " + packageCode + " and language: " + languageCode);
+
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
 		Translation translation = godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
+
+		Simply.logObject(translation, TranslationResource.class);
 
 		// FIXME: this isn't quite right yet... should have major.minor version number
 		return Response.created(new URI("/" + languageCode + "/" + packageCode + "?version=" + translation.getVersionNumber())).build();
@@ -118,12 +123,16 @@ public class TranslationResource
 									  @QueryParam("authorization") String authTokenParam,
 									  @QueryParam("publish") String publish)
 	{
+		log.info("Updating translation for package: " + packageCode + " and language: " + languageCode);
+
 		authService.checkAuthorization(authTokenParam, authTokenHeader);
 		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
 
 		if(Boolean.parseBoolean(publish))
 		{
+			log.info("Publishing translation");
 			godToolsTranslationService.publishDraftTranslation(new LanguageCode(languageCode), packageCode);
+			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
 	}
