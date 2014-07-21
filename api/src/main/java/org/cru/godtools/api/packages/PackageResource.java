@@ -111,7 +111,7 @@ public class PackageResource
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
+				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_PUBLISHED_VERSION : new GodToolsVersion(versionNumber))
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.loadPackages()
