@@ -212,17 +212,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.0.1.Final</version>
-                <configuration>
-                    <hostname>${deployments.targetServerIP}</hostname>
-                    <username>deployer</username>
-                    <password>${env.deployerPassword}</password>
-                    <targetDir>api/targetz</targetDir>
-                </configuration>
-            </plugin>
         </plugins>
 
     </build>
