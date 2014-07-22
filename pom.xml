@@ -188,30 +188,6 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <!-- The exec plugin is used to execute DatabaseMigrations class's main method when ${migrations.execute is true} -->
-
-                    <!--<execution>-->
-                        <!--<id>2</id>-->
-                        <!--<phase>deploy</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>java</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<mainClass>org.cru.crs.migration.DatabaseMigration</mainClass>-->
-                            <!--<commandlineArgs>-->
-                                <!--${migrations.execute} ${migrations.environment}-->
-                            <!--</commandlineArgs>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                </executions>
-            </plugin>
-
         </plugins>
 
     </build>
