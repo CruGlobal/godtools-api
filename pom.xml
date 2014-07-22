@@ -261,16 +261,30 @@
             </plugin>
 
             <plugin>
-                <groupId>com.googlecode.flyway</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <url>${database.server.url}</url>
-                    <serverId>${database.server.id}</serverId>
-                    <initVersion>0.0</initVersion>
-                </configuration>
-            </plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <!-- The exec plugin is used to execute UnittestDatabaseBuilder class's main method before each
+                         unittest run to reset the database to a known starting state -->
 
+                    <!-- The exec plugin is used to execute DatabaseMigrations class's main method when ${migrations.execute is true} -->
+
+                    <!--<execution>-->
+                        <!--<id>2</id>-->
+                        <!--<phase>deploy</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>java</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<mainClass>org.cru.crs.migration.DatabaseMigration</mainClass>-->
+                            <!--<commandlineArgs>-->
+                                <!--${migrations.execute} ${migrations.environment}-->
+                            <!--</commandlineArgs>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
+            </plugin>
         </plugins>
 
         <resources>
@@ -280,29 +294,4 @@
             </resource>
         </resources>
     </build>
-
-    <profiles>
-        <profile>
-            <id>local</id>
-            <properties>
-                <database.server.id>godtools-local</database.server.id>
-                <database.server.url>jdbc:postgresql://localhost/godtools</database.server.url>
-                <errbit.environment>local</errbit.environment>
-                <github.global.server>github</github.global.server>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-
-        <profile>
-            <id>development</id>
-            <properties>
-                <database.server.id></database.server.id>
-                <database.server.url>jdbc:postgresql://10.7.196.222/</database.server.url>
-                <errbit.environment>DEV</errbit.environment>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>

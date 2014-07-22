@@ -25,6 +25,29 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <!-- The exec plugin is used to execute UnittestDatabaseBuilder class's main method before each
+                         unittest run to reset the database to a known starting state -->
+
+                    <execution>
+                        <id>1</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.cru.crs.migration.UnittestDatabaseBuilder</mainClass>
+                            <arguments>
+                            </arguments>
+                            <classpathScope>test</classpathScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
