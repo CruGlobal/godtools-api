@@ -1,6 +1,9 @@
 package org.cru.godtools.domain;
 
 import org.sql2o.Connection;
+import org.testng.annotations.AfterClass;
+
+import java.sql.SQLException;
 
 /**
  * Created by ryancarlson on 4/2/14.
@@ -15,6 +18,19 @@ public class AbstractServiceTest
 		builder = new UnittestDatabaseBuilder();
 		builder.build();
 
-		sqlConnection = SqlConnectionProducer.getTestSqlConnection();
+		sqlConnection = TestSqlConnectionProducer.getTestSqlConnection();
+	}
+
+	@AfterClass
+	public void teardown()
+	{
+		try
+		{
+			sqlConnection.getJdbcConnection().close();
+		}
+		catch(SQLException sqlException)
+		{
+			/* move along */
+		}
 	}
 }

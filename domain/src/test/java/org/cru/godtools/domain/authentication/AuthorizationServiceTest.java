@@ -3,6 +3,7 @@ package org.cru.godtools.domain.authentication;
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.TestClockImpl;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
