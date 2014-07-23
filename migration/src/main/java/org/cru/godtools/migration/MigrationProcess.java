@@ -1,8 +1,11 @@
 package org.cru.godtools.migration;
 
 import com.googlecode.flyway.core.Flyway;
-import com.googlecode.flyway.core.api.MigrationVersion;
-import org.cru.godtools.domain.database.SqlConnectionProducer;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+import org.sql2o.Connection;
+import org.sql2o.QuirksMode;
+import org.sql2o.Sql2o;
 
 /**
  * Can only be run after domain's migration process is run!
@@ -11,17 +14,19 @@ import org.cru.godtools.domain.database.SqlConnectionProducer;
  */
 public class MigrationProcess
 {
+	static GodToolsProperties properties = new GodToolsPropertiesFactory().get();
+
     public static void main(String[] args)
     {
         Flyway flyway = new Flyway();
-        flyway.setDataSource("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser");
-		flyway.setTarget(MigrationVersion.fromVersion("0.6"));
+        flyway.setDataSource(properties.getProperty("databaseUrl"), properties.getProperty("databaseUrl"), properties.getProperty("databaseUrl"));
+		flyway.setInitVersion("0");
 		flyway.setLocations("classpath:org.cru.godtools.migration", "classpath:db.migration");
 	    flyway.migrate();
     }
 
     public static org.sql2o.Connection getSql2oConnection()
     {
-        return new SqlConnectionProducer().getMigrationSqlConnection();
+        return new Connection(new Sql2o(properties.getProperty("databaseUrl"), properties.getProperty("databaseUrl") ,properties.getProperty("databaseUrl"), QuirksMode.PostgreSQL));
     }
 }
