@@ -20,7 +20,7 @@ public class DatabaseMigration
 	public void build()
 	{
 		Flyway flyway = new Flyway();
-		flyway.setDataSource(properties.getProperty("databaseUrl"), properties.getProperty("databaseUrl") ,properties.getProperty("databaseUrl"));
+		flyway.setDataSource(properties.getProperty("databaseUrl"), properties.getProperty("databaseUsername") ,properties.getProperty("databasePassword"));
 		flyway.setInitVersion("0");
 		flyway.setTarget(MigrationVersion.fromVersion("0.3"));
 		flyway.clean();
