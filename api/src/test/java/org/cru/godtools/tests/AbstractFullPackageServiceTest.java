@@ -27,6 +27,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	public static final UUID LANGUAGE_ID = UUID.randomUUID();
 	public static final UUID PACKAGE_ID = UUID.randomUUID();
 	public static final UUID IMAGE_ID = UUID.randomUUID();
+	public static final UUID ICON_ID = UUID.randomUUID();
 	public static final UUID PACKAGE_STRUCTURE_ID = UUID.randomUUID();
 
 	protected GodToolsPackageServiceTestMockDataService mockData;

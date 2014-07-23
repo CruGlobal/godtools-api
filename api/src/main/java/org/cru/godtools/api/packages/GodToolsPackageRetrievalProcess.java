@@ -187,8 +187,15 @@ public class GodToolsPackageRetrievalProcess
                 resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
-				resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsPackage.getIcon().getImageContent()) + ".png");
-
+				if(godToolsPackage.getIcon() != null)
+				{
+					resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsPackage.getIcon().getImageContent()) + ".png");
+				}
+				else
+				{
+					resourceElement.setAttribute("icon", "missing");
+				}
+				
                 rootElement.appendChild(resourceElement);
             }
             return contents;

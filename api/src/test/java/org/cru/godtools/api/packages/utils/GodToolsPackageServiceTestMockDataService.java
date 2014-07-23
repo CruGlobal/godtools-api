@@ -36,6 +36,9 @@ public class GodToolsPackageServiceTestMockDataService
 		persistTranslation(translationService);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
+
+		persistIcon(imageService);
+		persistReferencedImageIcon(referencedImageService);
 	}
 
 	private void persistLanguage(LanguageService languageService)
@@ -79,10 +82,28 @@ public class GodToolsPackageServiceTestMockDataService
 		imageService.insert(image);
 	}
 
+	private void persistIcon(ImageService imageService)
+	{
+		Image image = new Image();
+		image.setId(GodToolsPackageServiceTest.ICON_ID);
+		image.setResolution("High");
+		image.setImageContent(ImageReader.read("/test_image_1.png"));
+		image.setFilename("icon.png");
+		imageService.insert(image);
+	}
+
 	private void  persistReferencedImage(ReferencedImageService referencedImageService)
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(GodToolsPackageServiceTest.IMAGE_ID);
+		referencedImage.setPackageStructureId(GodToolsPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImageService.insert(referencedImage);
+	}
+
+	private void  persistReferencedImageIcon(ReferencedImageService referencedImageService)
+	{
+		ReferencedImage referencedImage = new ReferencedImage();
+		referencedImage.setImageId(GodToolsPackageServiceTest.ICON_ID);
 		referencedImage.setPackageStructureId(GodToolsPackageServiceTest.PACKAGE_STRUCTURE_ID);
 		referencedImageService.insert(referencedImage);
 	}
