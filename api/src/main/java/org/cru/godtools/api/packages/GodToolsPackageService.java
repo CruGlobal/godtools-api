@@ -110,6 +110,6 @@ public class GodToolsPackageService
 
 	private Image loadIcon(String packageCode)
 	{
-		return imageService.selectByFilename(packageCode + "__" + "en.png");
+		return imageService.selectByFilename(Image.buildFilename(packageCode, "icon.png"));
 	}
 }
