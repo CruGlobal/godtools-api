@@ -66,16 +66,20 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 					}
 				}
 			}
+
+			// save the icon references for this package.  they are titled "icon.png
+			saveImageReference(gtPackage.getCode(), "icon.png", packageStructure.getId());
+			saveImageReference(gtPackage.getCode(), "icon@2x.png", packageStructure.getId());
 		}
 	}
 
 	private void saveImageReference(String packageCode, String filename, UUID packageStructureId)
 	{
-		Image image = imageService.selectByFilename(packageCode + "__" + filename);
+		Image image = imageService.selectByFilename(Image.buildFilename(packageCode,filename));
 
 		if(image == null)
 		{
-			image = imageService.selectByFilename("shared" + "__" + filename);
+			image = imageService.selectByFilename(Image.buildFilename("shared",filename));
 		}
 		if(image != null)
 		{

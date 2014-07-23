@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.images;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -27,6 +28,11 @@ public class Image
 		}
 
 		return imageMap;
+	}
+
+	public static String buildFilename(String packageCode, String filename)
+	{
+		return packageCode + "__" + filename;
 	}
 
     public UUID getId()
