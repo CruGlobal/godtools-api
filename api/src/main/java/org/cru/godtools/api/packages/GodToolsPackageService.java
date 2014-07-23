@@ -62,7 +62,9 @@ public class GodToolsPackageService
 				packageCode,
 				godToolsVersion);
 
-		return GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure()));
+		return GodToolsPackage.assembleFromComponents(godToolsTranslation,
+				loadImages(godToolsTranslation.getPackageStructure()),
+				loadIcon(godToolsTranslation.getPackageCode()));
 	}
 
     /**
@@ -84,7 +86,9 @@ public class GodToolsPackageService
 
         for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
         {
-			godToolsPackages.add(GodToolsPackage.assembleFromComponents(godToolsTranslation, loadImages(godToolsTranslation.getPackageStructure())));
+			godToolsPackages.add(GodToolsPackage.assembleFromComponents(godToolsTranslation,
+					loadImages(godToolsTranslation.getPackageStructure()),
+					loadIcon(godToolsTranslation.getPackageCode())));
 		}
 
 		return godToolsPackages;
@@ -102,5 +106,10 @@ public class GodToolsPackageService
 		}
 
 		return imageList;
+	}
+
+	private Image loadIcon(String packageCode)
+	{
+		return imageService.selectByFilename(Image.buildFilename(packageCode, "icon.png"));
 	}
 }

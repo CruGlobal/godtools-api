@@ -187,6 +187,7 @@ public class GodToolsPackageRetrievalProcess
                 resourceElement.setAttribute("package", godToolsPackage.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsPackage.getPackageStructure().getXmlContent()) + ".xml");
+				resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsPackage.getIcon().getImageContent()) + ".png");
 
                 rootElement.appendChild(resourceElement);
             }

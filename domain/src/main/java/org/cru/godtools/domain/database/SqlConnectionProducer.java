@@ -29,16 +29,6 @@ public class SqlConnectionProducer
 		return sqlConnection;
     }
 
-	public static Connection getMigrationSqlConnection()
-	{
-		return new Connection(new Sql2o("jdbc:postgresql://localhost/godtools", "godtoolsuser", "godtoolsuser", QuirksMode.PostgreSQL));
-	}
-
-    public static Connection getTestSqlConnection()
-    {
-        return new Connection(new Sql2o("jdbc:postgresql://localhost/godtoolstest", "godtoolsuser", "godtoolsuser", QuirksMode.PostgreSQL));
-    }
-
     private Sql2o getSql2o()
     {
         return new Sql2o(properties.getProperty("databaseUrl"),

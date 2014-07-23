@@ -17,13 +17,14 @@ public class GodToolsPackage
 {
 	private GodToolsTranslation godToolsTranslation;
 	private List<Image> images = Lists.newArrayList();
+	private Image icon;
 
-
-	public static GodToolsPackage assembleFromComponents(GodToolsTranslation godToolsTranslation, List<Image> images)
+	public static GodToolsPackage assembleFromComponents(GodToolsTranslation godToolsTranslation, List<Image> images, Image icon)
 	{
 		GodToolsPackage godToolsPackage = new GodToolsPackage();
 		godToolsPackage.godToolsTranslation = godToolsTranslation;
 		godToolsPackage.images = images;
+		godToolsPackage.icon = icon;
 
 		return godToolsPackage;
 	}
@@ -63,4 +64,13 @@ public class GodToolsPackage
 		return godToolsTranslation.getPackageStructure();
 	}
 
+	public Image getIcon()
+	{
+		return icon;
+	}
+
+	public void setIcon(Image icon)
+	{
+		this.icon = icon;
+	}
 }
