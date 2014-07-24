@@ -22,6 +22,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationDownload;
+import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -53,9 +54,10 @@ public class GodToolsTranslationService
 	private NewTranslationProcess newTranslationProcess;
 
 	private TranslationDownload translationDownload;
+	private TranslationUpload translationUpload;
 
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, TranslationDownload translationDownload)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, TranslationDownload translationDownload, TranslationUpload translationUpload)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -67,6 +69,7 @@ public class GodToolsTranslationService
 		this.imageService = imageService;
 		this.newTranslationProcess = newTranslationProcess;
 		this.translationDownload = translationDownload;
+		this.translationUpload = translationUpload;
 	}
 
 	/**
@@ -137,18 +140,27 @@ public class GodToolsTranslationService
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
+		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
+
+		// save a new translation for this package language combo
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
 
+		// if we found a current translation, then copy page structures and translation elements from the current translation
+		// to the new
 		if(currentTranslation != null)
 		{
 			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
+			newTranslationProcess.copyPackageTranslationData(currentTranslation, newTranslation);
 		}
 		else
 		{
-			newTranslationProcess.copyPageAndTranslationData(newTranslation,loadBaseTranslation(gtPackage));
-			newTranslationProcess.uploadTranslatableElementsToTranslationTool(gtPackage, language);
+			Translation baseTranslation = loadBaseTranslation(gtPackage);
+			newTranslationProcess.copyPageAndTranslationData(newTranslation, baseTranslation);
+			newTranslationProcess.copyPackageTranslationData(newTranslation, baseTranslation);
 		}
+
+		newTranslationProcess.uploadToTranslationTool(gtPackage, language);
 
 		return newTranslation;
 	}

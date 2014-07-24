@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.translate.client.onesky;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * A service composed of domain services.  It provides functionality that the OneSkyTranslationUpload and OneSkkyTranslationDownload classes
+ * need to manage translations.
+ *
  * Created by ryancarlson on 5/2/14.
  */
 public class OneSkyDataService
@@ -49,9 +52,9 @@ public class OneSkyDataService
 		this.clock = clock;
 	}
 
-	public Multimap<String, TranslationElement> getTranslationElements(UUID translationId)
+	public Multimap<String, TranslationElement> getTranslationElements(Integer oneskyProjectId, String locale)
 	{
-		Translation translation = translationService.selectById(translationId);
+		Translation translation = getTranslation(oneskyProjectId, locale);
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order");
 
@@ -76,9 +79,22 @@ public class OneSkyDataService
 
 	}
 
-	public List<TranslationStatus> getCurrentTranslationStatus(UUID translationId)
+	public List<TranslationStatus> getTranslationStatus(UUID translationId)
 	{
 		return translationStatusService.selectByTranslationId(translationId);
+	}
+
+	public TranslationStatus getTranslationStatus(UUID translationId, String pageName)
+	{
+		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(translationId))
+		{
+			if(pageStructure.getFilename().equals(pageName))
+			{
+				return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructure.getId());
+			}
+		}
+
+		return null;
 	}
 
 	public void updateLocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus)
