@@ -37,7 +37,10 @@ public class DraftTranslationUpdateProcess
 
 			TranslationStatus remoteStatus = loadRemoteStatus(translationProjectId, languageCode, pageStructure);
 
-			if(remoteStatus.differsFrom(cachedStatus))
+			// this feature for optimization is removed until oneskyapp.com reviews my request
+			// to have string count and word count reflect the status of the translation, not
+			// the base content.  for now, all files are downloaded every time... :(
+			// if(remoteStatus.differsFrom(cachedStatus))
 			{
 				TranslationResults downloadResults = translationDownload.doDownload(translationProjectId,
 						languageCode.toString(),
