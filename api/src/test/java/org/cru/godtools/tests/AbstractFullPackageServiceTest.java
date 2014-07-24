@@ -1,6 +1,8 @@
 package org.cru.godtools.tests;
 
+import org.cru.godtools.api.translations.DraftTranslationUpdateProcess;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
+import org.cru.godtools.api.translations.NewTranslationProcess;
 import org.cru.godtools.api.utilities.ClockImpl;
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.images.ImageService;
@@ -99,9 +101,8 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 					translationElementService,
 					referencedImageService,
 					imageService,
-					null,
-					translationDownload,
-					translationUpload);
+					new NewTranslationProcess(),
+					new DraftTranslationUpdateProcess());
 	}
 
 

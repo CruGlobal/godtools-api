@@ -52,12 +52,11 @@ public class GodToolsTranslationService
 	protected ImageService imageService;
 
 	private NewTranslationProcess newTranslationProcess;
+	private DraftTranslationUpdateProcess draftTranslationUpdateProcess;
 
-	private TranslationDownload translationDownload;
-	private TranslationUpload translationUpload;
 
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, TranslationDownload translationDownload, TranslationUpload translationUpload)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, DraftTranslationUpdateProcess draftTranslationUpdateProcess)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -68,8 +67,7 @@ public class GodToolsTranslationService
 		this.referencedImageService = referencedImageService;
 		this.imageService = imageService;
 		this.newTranslationProcess = newTranslationProcess;
-		this.translationDownload = translationDownload;
-		this.translationUpload = translationUpload;
+		this.draftTranslationUpdateProcess = draftTranslationUpdateProcess;
 	}
 
 	/**
@@ -86,8 +84,13 @@ public class GodToolsTranslationService
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
-		// draft translations are always updated
-		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures, languageCode);
+		if(translation.isDraft())
+		{
+			draftTranslationUpdateProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+					translation,
+					pageStructures,
+					languageCode);
+		}
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
@@ -177,26 +180,6 @@ public class GodToolsTranslationService
 		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
 				gtPackage.getId(),
 				GodToolsVersion.LATEST_PUBLISHED_VERSION);
-	}
-
-	private void updateTranslationFromTranslationTool(Translation translation, List<PageStructure> pageStructures, LanguageCode languageCode)
-	{
-		for(PageStructure pageStructure : pageStructures)
-		{
-			updateLocalTranslationElementsFromTranslationTool(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getTranslationProjectId(),
-					languageCode.toString(),
-					pageStructure.getFilename()), translation);
-		}
-	}
-
-	private void updateLocalTranslationElementsFromTranslationTool(TranslationResults translationResults, Translation translation)
-	{
-		for(UUID elementId : translationResults.keySet())
-		{
-			TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
-			element.setTranslatedText(translationResults.get(elementId));
-			translationElementService.update(element);
-		}
 	}
 
 	private Translation getTranslationFromDatabase(LanguageCode languageCode, String packageCode, GodToolsVersion godToolsVersion)
