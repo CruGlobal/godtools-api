@@ -1,6 +1,5 @@
-package org.cru.godtools.translate.domain;
+package org.cru.godtools.domain.translations;
 
-import org.cru.godtools.translate.client.onesky.OneSkyTranslationStatus;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -9,7 +8,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 5/6/14.
  */
-public class LocalTranslationStatus
+public class TranslationStatus
 {
 	private UUID pageStructureId;
 	private UUID translationId;
@@ -18,17 +17,17 @@ public class LocalTranslationStatus
 	private Integer wordCount;
 	private DateTime lastUpdated;
 
-	public LocalTranslationStatus()
+	public TranslationStatus()
 	{
 	}
 
-	public LocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus, DateTime currentTime)
+	public TranslationStatus(UUID translationId, UUID pageStructureId, BigDecimal percentCompleted, Integer stringCount, Integer wordCount, DateTime currentTime)
 	{
 		this.pageStructureId = pageStructureId;
 		this.translationId = translationId;
-		this.percentCompleted = oneSkyTranslationStatus.getPercentCompleted();
-		this.stringCount = oneSkyTranslationStatus.getStringCount();
-		this.wordCount = oneSkyTranslationStatus.getWordCount();
+		this.percentCompleted = percentCompleted;
+		this.stringCount = stringCount;
+		this.wordCount = wordCount;
 		this.lastUpdated = currentTime;
 	}
 

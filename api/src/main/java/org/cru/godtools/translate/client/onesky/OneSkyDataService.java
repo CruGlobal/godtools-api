@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.translate.client.onesky;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -15,22 +15,25 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.domain.translations.TranslationStatus;
+import org.cru.godtools.domain.translations.TranslationStatusService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationStatus;
-import org.cru.godtools.translate.domain.LocalTranslationStatus;
-import org.cru.godtools.translate.domain.LocalTranslationStatusService;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 
 /**
+ * A service composed of domain services.  It provides functionality that the OneSkyTranslationUpload and OneSkkyTranslationDownload classes
+ * need to manage translations.
+ *
  * Created by ryancarlson on 5/2/14.
  */
 public class OneSkyDataService
 {
 	private TranslationElementService translationElementService;
 	private TranslationService translationService;
-	private LocalTranslationStatusService translationStatusService;
+	private TranslationStatusService translationStatusService;
 	private PackageService packageService;
 	private LanguageService languageService;
 	private PageStructureService pageStructureService;
@@ -38,7 +41,7 @@ public class OneSkyDataService
 	private Clock clock;
 
 	@Inject
-	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, LocalTranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
+	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, TranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
 	{
 		this.translationElementService = translationElementService;
 		this.translationService = translationService;
@@ -49,9 +52,9 @@ public class OneSkyDataService
 		this.clock = clock;
 	}
 
-	public Multimap<String, TranslationElement> getTranslationElements(UUID translationId)
+	public Multimap<String, TranslationElement> getTranslationElements(Integer oneskyProjectId, String locale)
 	{
-		Translation translation = translationService.selectById(translationId);
+		Translation translation = getTranslation(oneskyProjectId, locale);
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId(), "page_name", "display_order");
 
@@ -76,9 +79,22 @@ public class OneSkyDataService
 
 	}
 
-	public List<LocalTranslationStatus> getCurrentTranslationStatus(UUID translationId)
+	public List<TranslationStatus> getTranslationStatus(UUID translationId)
 	{
 		return translationStatusService.selectByTranslationId(translationId);
+	}
+
+	public TranslationStatus getTranslationStatus(UUID translationId, String pageName)
+	{
+		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(translationId))
+		{
+			if(pageStructure.getFilename().equals(pageName))
+			{
+				return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructure.getId());
+			}
+		}
+
+		return null;
 	}
 
 	public void updateLocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus)
@@ -86,11 +102,21 @@ public class OneSkyDataService
 		
 		if(translationStatusService.selectByTranslationIdPageStructureId(translationId,pageStructureId) != null)
 		{
-			translationStatusService.update(new LocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus, clock.currentDateTime()));
+			translationStatusService.update(new TranslationStatus(translationId,
+					pageStructureId,
+					oneSkyTranslationStatus.getPercentCompleted(),
+					oneSkyTranslationStatus.getStringCount(),
+					oneSkyTranslationStatus.getWordCount(),
+					clock.currentDateTime()));
 		}
 		else
 		{
-			translationStatusService.insert(new LocalTranslationStatus(translationId, pageStructureId, oneSkyTranslationStatus, clock.currentDateTime()));
+			translationStatusService.insert(new TranslationStatus(translationId,
+					pageStructureId,
+					oneSkyTranslationStatus.getPercentCompleted(),
+					oneSkyTranslationStatus.getStringCount(),
+					oneSkyTranslationStatus.getWordCount(),
+					clock.currentDateTime()));
 		}
 	}
 

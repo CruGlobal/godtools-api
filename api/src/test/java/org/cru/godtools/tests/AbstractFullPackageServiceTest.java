@@ -1,6 +1,9 @@
 package org.cru.godtools.tests;
 
+import org.cru.godtools.api.translations.DraftTranslationUpdateProcess;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
+import org.cru.godtools.api.translations.NewTranslationProcess;
+import org.cru.godtools.api.utilities.ClockImpl;
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.images.ImageService;
 import org.cru.godtools.domain.images.ReferencedImageService;
@@ -12,7 +15,12 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.domain.translations.TranslationStatusService;
+import org.cru.godtools.translate.client.TranslationUpload;
+import org.cru.godtools.translate.client.onesky.FileClient;
+import org.cru.godtools.translate.client.onesky.OneSkyDataService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;
+import org.cru.godtools.translate.client.onesky.OneSkyTranslationUpload;
 import org.cru.godtools.translate.client.onesky.TranslationClient;
 import org.cru.godtools.translate.client.TranslationDownload;
 
@@ -41,6 +49,7 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	protected ReferencedImageService referencedImageService;
 	protected TranslationElementService translationElementService;
 	protected TranslationDownload translationDownload;
+	protected TranslationUpload translationUpload;
 
 	@Override
 	public void setup()
@@ -56,6 +65,13 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		pageStructureService = new PageStructureService(sqlConnection);
 		translationElementService = new TranslationElementService(sqlConnection);
 		translationDownload = new OneSkyTranslationDownload(new TranslationClient());
+		translationUpload = new OneSkyTranslationUpload(new OneSkyDataService(translationElementService,
+				translationService,
+				new TranslationStatusService(sqlConnection),
+				packageService,
+				languageService,
+				pageStructureService,
+				new ClockImpl()), new FileClient());
 
 		mockData = new GodToolsPackageServiceTestMockDataService();
 
@@ -85,8 +101,8 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 					translationElementService,
 					referencedImageService,
 					imageService,
-					null,
-					translationDownload);
+					new NewTranslationProcess(),
+					new DraftTranslationUpdateProcess());
 	}
 
 

@@ -30,6 +30,16 @@ public class Translation
         setLanguageId(language.getId());
     }
 
+	/**
+	 * In some contexts it's nicer to read isDraft() instead of !isReleased()
+	 *
+	 * Purely for ease of reading code elsewhere.
+	 *
+	 */
+	public boolean isDraft()
+	{
+		return !isReleased();
+	}
 	public UUID getId()
     {
         return id;

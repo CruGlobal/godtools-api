@@ -23,7 +23,6 @@ public class NewTranslationProcess
 	@Inject PageStructureService pageStructureService;
 	@Inject TranslationElementService translationElementService;
 	@Inject TranslationUpload translationUpload;
-
 	/**
 	 * Inserts a new Translation record for the package and language that are passed in.  If currentTranslation is
 	 * present, then the new translation takes the next version number.  If not, then the new translation takes
@@ -66,6 +65,19 @@ public class NewTranslationProcess
 		}
 	}
 
+	public void copyPackageTranslationData(Translation currentTranslation, Translation newTranslation)
+	{
+		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationId(currentTranslation.getId()))
+		{
+			if(currentTranslationElement.getPageStructureId() == null)
+			{
+				TranslationElement copy = TranslationElement.copyOf(currentTranslationElement);
+				copy.setTranslationId(newTranslation.getId());
+				translationElementService.insert(copy);
+			}
+		}
+	}
+
 	/**
 	 * Creates new copies of translation_elements for the new Translation and PageStructure.
 	 *
@@ -83,9 +95,14 @@ public class NewTranslationProcess
 		}
 	}
 
-	public void uploadTranslatableElementsToTranslationTool(Package gtPackage, Language language)
+	public void uploadToTranslationTool(Package gtPackage, Language language)
 	{
-		translationUpload.doUpload(gtPackage.getTranslationProjectId(), language.getPath());
-		translationUpload.recordInitialUpload(gtPackage.getTranslationProjectId(), language.getPath());
+		// if not, copy page structures and translation elements from the base translation (loaded here) which is likely English
+		// and copy them to the new translation.  also upload the translation elements to translation tool.
+		if(!translationUpload.hasTranslationBeenUploaded(gtPackage.getTranslationProjectId(),language.getPath()))
+		{
+			translationUpload.doUpload(gtPackage.getTranslationProjectId(), language.getPath());
+			translationUpload.recordInitialUpload(gtPackage.getTranslationProjectId(), language.getPath());
+		}
 	}
 }
