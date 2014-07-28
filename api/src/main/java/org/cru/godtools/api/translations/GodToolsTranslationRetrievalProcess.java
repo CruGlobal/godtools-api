@@ -116,7 +116,7 @@ public class GodToolsTranslationRetrievalProcess
 
 	public GodToolsTranslationRetrievalProcess loadDrafts()
 	{
-		log.info("Loading draft...");
+		log.info("Loading drafts...");
 
 		if(Strings.isNullOrEmpty(packageCode))
 		{
@@ -127,7 +127,7 @@ public class GodToolsTranslationRetrievalProcess
 			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION));
 		}
 
-		log.info("Loaded " + godToolsTranslations.size() + " draft");
+		log.info("Loaded " + godToolsTranslations.size() + " draft(s)");
 		return this;
 	}
 
