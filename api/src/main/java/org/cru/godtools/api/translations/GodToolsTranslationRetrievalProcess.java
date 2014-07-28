@@ -111,7 +111,7 @@ public class GodToolsTranslationRetrievalProcess
 		log.info("Loading translations...");
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode));
 		}
 		else
 		{
