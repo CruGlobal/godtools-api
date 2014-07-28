@@ -50,8 +50,8 @@ public class TranslationResource
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 									@QueryParam("compressed") String compressed,
-									@HeaderParam("authorization") String authTokenHeader,
-									@QueryParam("authorization") String authTokenParam) throws IOException
+									@HeaderParam("Authorization") String authTokenHeader,
+									@QueryParam("Authorization") String authTokenParam) throws IOException
 	{
 		log.info("Requesting all translations for language: " + languageCode);
 
@@ -75,8 +75,8 @@ public class TranslationResource
 								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								   @QueryParam("compressed") String compressed,
 								   @QueryParam("version") BigDecimal versionNumber,
-								   @HeaderParam("authorization") String authTokenHeader,
-								   @QueryParam("authorization") String authTokenParam) throws IOException
+								   @HeaderParam("Authorization") String authTokenHeader,
+								   @QueryParam("Authorization") String authTokenParam) throws IOException
 	{
 		log.info("Requesting translation for package: " + packageCode + " and language: " + languageCode);
 
@@ -99,8 +99,8 @@ public class TranslationResource
 									  @PathParam("package") String packageCode,
 									  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-									  @HeaderParam("authorization") String authTokenHeader,
-									  @QueryParam("authorization") String authTokenParam) throws URISyntaxException
+									  @HeaderParam("Authorization") String authTokenHeader,
+									  @QueryParam("Authorization") String authTokenParam) throws URISyntaxException
 	{
 		log.info("Creating new translation for package: " + packageCode + " and language: " + languageCode);
 
@@ -119,8 +119,8 @@ public class TranslationResource
 	@Path("/{language}/{package}")
 	public Response updateTranslation(@PathParam("language") String languageCode,
 									  @PathParam("package") String packageCode,
-									  @HeaderParam("authorization") String authTokenHeader,
-									  @QueryParam("authorization") String authTokenParam,
+									  @HeaderParam("Authorization") String authTokenHeader,
+									  @QueryParam("Authorization") String authTokenParam,
 									  @QueryParam("publish") String publish)
 	{
 		log.info("Updating translation for package: " + packageCode + " and language: " + languageCode);

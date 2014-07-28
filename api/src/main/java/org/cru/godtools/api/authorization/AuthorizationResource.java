@@ -39,8 +39,8 @@ public class AuthorizationResource
 
 	@GET
 	@Path("/status")
-	public Response requestAuthStatus(@HeaderParam("authorization") String authTokenParam,
-									  @QueryParam("authorization") String authTokenHeader)
+	public Response requestAuthStatus(@HeaderParam("Authorization") String authTokenParam,
+									  @QueryParam("Authorization") String authTokenHeader)
 	{
 		// method will throw an UnauthorizedException (401) if:
 		// - authToken is not provided in one of two parameters,

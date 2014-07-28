@@ -1,11 +1,9 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.api.utilities.ErrorResponse;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.languages.Language;
-import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.api.utilities.ErrorResponse;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationUpload;
@@ -13,7 +11,12 @@ import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,8 +50,8 @@ public class MetaResource
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getAllMetaInfo(@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-										@QueryParam("authorization") String authCodeParam,
-										@HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+										@QueryParam("Authorization") String authCodeParam,
+										@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
@@ -61,8 +64,8 @@ public class MetaResource
     public Response getLanguageMetaInfo(@PathParam("language") String languageCode,
                                 @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
                                 @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-                                @QueryParam("authorization") String authCodeParam,
-                                @HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+                                @QueryParam("Authorization") String authCodeParam,
+                                @HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
     {
 		log.info("Getting all meta info for language: " + languageCode);
 
@@ -76,8 +79,8 @@ public class MetaResource
 								@PathParam("package") String packageCode,
 								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-								@QueryParam("authorization") String authCodeParam,
-								@HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+								@QueryParam("Authorization") String authCodeParam,
+								@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
