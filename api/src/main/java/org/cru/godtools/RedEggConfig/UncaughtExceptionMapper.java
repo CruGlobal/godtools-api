@@ -1,7 +1,7 @@
 package org.cru.godtools.RedEggConfig;
 
 import org.apache.log4j.Logger;
-import org.omg.CORBA.portable.ApplicationException;
+import org.jboss.resteasy.spi.ApplicationException;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

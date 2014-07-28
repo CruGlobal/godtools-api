@@ -34,8 +34,5 @@
         <filter-name>RedEggFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <listener>
-        <listener-class>org.cru.redegg.servlet.RedEggServletListener</listener-class>
-    </listener>
 		
 </web-app>
