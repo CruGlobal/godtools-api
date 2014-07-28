@@ -1,8 +1,5 @@
 package org.cru.godtools.api.translations;
 
-import com.google.common.base.Strings;
-import org.cru.godtools.api.utilities.ErrorResponse;
-import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.jboss.logging.Logger;
@@ -41,8 +38,8 @@ public class DraftResource
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 									@QueryParam("compressed") String compressed,
-									@HeaderParam("authorization") String authTokenHeader,
-									@QueryParam("authorization") String authTokenParam) throws IOException
+									@HeaderParam("Authorization") String authTokenHeader,
+									@QueryParam("Authorization") String authTokenParam) throws IOException
 	{
 		log.info("Requesting all drafts for language: " + languageCode);
 
