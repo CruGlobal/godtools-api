@@ -63,8 +63,8 @@ public class PackageResource
 											  @QueryParam("compressed") String compressed,
 											  @QueryParam("version") BigDecimal versionNumber,
 											  @QueryParam("density") String desiredPixelDensity,
-											  @HeaderParam("authorization") String authTokenHeader,
-											  @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
+											  @HeaderParam("Authorization") String authTokenHeader,
+											  @QueryParam("Authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
 		log.info("Requesting all packages for language: " + languageCode);
 
@@ -107,8 +107,8 @@ public class PackageResource
 							   @QueryParam("compressed") String compressed,
 							   @QueryParam("version") BigDecimal versionNumber,
 							   @QueryParam("density") String desiredPixelDensity,
-							   @HeaderParam("authorization") String authTokenHeader,
-							   @QueryParam("authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
+							   @HeaderParam("Authorization") String authTokenHeader,
+							   @QueryParam("Authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Requesting package " + packageCode + " for language: " + languageCode);
 
