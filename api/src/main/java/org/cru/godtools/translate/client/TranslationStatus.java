@@ -15,6 +15,21 @@ public abstract class TranslationStatus
 	protected int stringCount;
 	protected int wordCount;
 
+	public boolean differsFrom(org.cru.godtools.domain.translations.TranslationStatus translationStatus)
+	{
+		return percentCompleted.compareTo(translationStatus.getPercentCompleted()) != 0 ||
+				Integer.valueOf(stringCount).compareTo(translationStatus.getStringCount()) != 0 ||
+				Integer.valueOf(wordCount).compareTo(translationStatus.getWordCount()) != 0;
+	}
+
+	public org.cru.godtools.domain.translations.TranslationStatus toCachedTranslationStatus()
+	{
+		org.cru.godtools.domain.translations.TranslationStatus cachedStatus = new org.cru.godtools.domain.translations.TranslationStatus();
+		cachedStatus.setStringCount(stringCount);
+		cachedStatus.setWordCount(wordCount);
+		cachedStatus.setPercentCompleted(percentCompleted);
+		return cachedStatus;
+	}
 	public abstract TranslationStatus createInitialJustUploadedStatus(String pageName);
 
 	public abstract TranslationStatus createFromResponse(Response response);

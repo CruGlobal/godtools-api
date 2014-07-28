@@ -22,6 +22,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationDownload;
+import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -51,11 +52,11 @@ public class GodToolsTranslationService
 	protected ImageService imageService;
 
 	private NewTranslationProcess newTranslationProcess;
+	private DraftTranslationUpdateProcess draftTranslationUpdateProcess;
 
-	private TranslationDownload translationDownload;
 
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, TranslationDownload translationDownload)
+	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, DraftTranslationUpdateProcess draftTranslationUpdateProcess)
 	{
 		this.packageService = packageService;
 		this.translationService = translationService;
@@ -66,7 +67,7 @@ public class GodToolsTranslationService
 		this.referencedImageService = referencedImageService;
 		this.imageService = imageService;
 		this.newTranslationProcess = newTranslationProcess;
-		this.translationDownload = translationDownload;
+		this.draftTranslationUpdateProcess = draftTranslationUpdateProcess;
 	}
 
 	/**
@@ -83,8 +84,13 @@ public class GodToolsTranslationService
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
-		// draft translations are always updated
-		if(!translation.isReleased()) updateTranslationFromTranslationTool(translation, pageStructures, languageCode);
+		if(translation.isDraft())
+		{
+			draftTranslationUpdateProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+					translation,
+					pageStructures,
+					languageCode);
+		}
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
@@ -137,18 +143,27 @@ public class GodToolsTranslationService
 		Package gtPackage = getPackage(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
+		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
+
+		// save a new translation for this package language combo
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
 
+		// if we found a current translation, then copy page structures and translation elements from the current translation
+		// to the new
 		if(currentTranslation != null)
 		{
 			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
+			newTranslationProcess.copyPackageTranslationData(currentTranslation, newTranslation);
 		}
 		else
 		{
-			newTranslationProcess.copyPageAndTranslationData(newTranslation,loadBaseTranslation(gtPackage));
-			newTranslationProcess.uploadTranslatableElementsToTranslationTool(gtPackage, language);
+			Translation baseTranslation = loadBaseTranslation(gtPackage);
+			newTranslationProcess.copyPageAndTranslationData(newTranslation, baseTranslation);
+			newTranslationProcess.copyPackageTranslationData(newTranslation, baseTranslation);
 		}
+
+		newTranslationProcess.uploadToTranslationTool(gtPackage, language);
 
 		return newTranslation;
 	}
@@ -165,26 +180,6 @@ public class GodToolsTranslationService
 		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
 				gtPackage.getId(),
 				GodToolsVersion.LATEST_PUBLISHED_VERSION);
-	}
-
-	private void updateTranslationFromTranslationTool(Translation translation, List<PageStructure> pageStructures, LanguageCode languageCode)
-	{
-		for(PageStructure pageStructure : pageStructures)
-		{
-			updateLocalTranslationElementsFromTranslationTool(translationDownload.doDownload(packageService.selectById(translation.getPackageId()).getTranslationProjectId(),
-					languageCode.toString(),
-					pageStructure.getFilename()), translation);
-		}
-	}
-
-	private void updateLocalTranslationElementsFromTranslationTool(TranslationResults translationResults, Translation translation)
-	{
-		for(UUID elementId : translationResults.keySet())
-		{
-			TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
-			element.setTranslatedText(translationResults.get(elementId));
-			translationElementService.update(element);
-		}
 	}
 
 	private Translation getTranslationFromDatabase(LanguageCode languageCode, String packageCode, GodToolsVersion godToolsVersion)

@@ -3,7 +3,6 @@ package org.cru.godtools.translate.client.onesky;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Multimap;
-import org.cru.godtools.api.packages.OneSkyDataService;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
@@ -32,28 +31,36 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	}
 
 	@Override
-	public void doUpload(Integer oneSkyProjectId, String locale)
+	public void doUpload(Integer projectId, String locale)
 	{
-		log.info("Uploading translation for OneSky project ID: " + oneSkyProjectId + " and locale: " + locale);
-
-		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
-
-		log.info("Found translation:");
-		Simply.logObject(translation, OneSkyTranslationUpload.class);
-
-		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(translation.getId());
+		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(projectId, locale);
 
 		for(String pageName : translationElementMultimap.keySet())
 		{
 			log.info("Uploading page to OneSky: " + pageName);
 			try
 			{
-				fileClient.uploadFile(oneSkyProjectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
+				fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				log.error("Error uploading page: " + pageName, e);
 			}
+		}
+	}
+
+	@Override
+	public void doUpload(Integer projectId, String locale, String pageName)
+	{
+		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(projectId, locale);
+
+		try
+		{
+			fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -77,18 +84,25 @@ public class OneSkyTranslationUpload implements TranslationUpload
 
 	/**
 	 * If the list of translation status is populated, then some pages have already been uploaded for this
-	 * translation.
+	 * translation.  This method only checks if there are statuses populated.  To check if an individual
+	 * page, call hasTranslationBeenUploaded(projectId, locale, pageName)
 	 */
 	@Override
-	public boolean checkHasTranslationAlreadyBeenUploaded(Integer oneSkyProjectId, String locale)
+	public boolean hasTranslationBeenUploaded(Integer projectId, String locale)
 	{
-		log.info("Checking translation status for OneSky project ID: " + oneSkyProjectId + " and locale: " + locale);
-		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
+		log.info("Checking translation status for OneSky project ID: " + projectId + " and locale: " + locale);
+		Translation translation = oneSkyDataService.getTranslation(projectId, locale);
 
 		log.info("Found translation:");
 		Simply.logObject(translation, OneSkyTranslationUpload.class);
 
-		return !oneSkyDataService.getCurrentTranslationStatus(translation.getId()).isEmpty();
+		return !oneSkyDataService.getTranslationStatus(oneSkyDataService.getTranslation(projectId, locale).getId()).isEmpty();
+	}
+
+	@Override
+	public boolean hasTranslationBeenUploaded(Integer projectId, String locale, String pageName)
+	{
+		return oneSkyDataService.getTranslationStatus(oneSkyDataService.getTranslation(projectId, locale).getId(), pageName) != null;
 	}
 
 	/**

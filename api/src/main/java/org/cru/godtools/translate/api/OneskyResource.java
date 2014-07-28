@@ -41,7 +41,7 @@ public class OneskyResource
 	public Response uploadLocaleToOnesky(@PathParam("projectId") Integer projectId, @PathParam("locale") String locale)
 	{
 		// note this check might not be necessary... we would just update the translator tool when needed.
-		if(translationUpload.checkHasTranslationAlreadyBeenUploaded(projectId, locale))
+		if(translationUpload.hasTranslationBeenUploaded(projectId, locale))
 		{
 			// do something here, possible a 400?
 		}

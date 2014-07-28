@@ -3,6 +3,7 @@ package org.cru.godtools.translate.client.onesky;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.jboss.logging.Logger;
+import org.cru.godtools.translate.client.TranslationStatus;
 
 import javax.inject.Inject;
 
@@ -27,5 +28,11 @@ public class OneSkyTranslationDownload implements TranslationDownload
 		log.info("Download translation file: " + pageName + " from OneSky for project ID: " + oneSkyProjectId + " and locale: " + locale);
 
 		return translationClient.export(oneSkyProjectId, locale, pageName);
+	}
+
+	@Override
+	public TranslationStatus checkTranslationStatus(Integer projectId, String locale, String pageName)
+	{
+		return translationClient.getStatus(projectId, locale, pageName);
 	}
 }

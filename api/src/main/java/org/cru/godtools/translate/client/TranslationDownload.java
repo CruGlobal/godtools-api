@@ -7,4 +7,5 @@ package org.cru.godtools.translate.client;
 public interface TranslationDownload
 {
 	public TranslationResults doDownload(Integer projectId, String locale, String pageName);
+	public TranslationStatus checkTranslationStatus(Integer projectId, String locale, String pageName);
 }
