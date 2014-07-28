@@ -58,43 +58,72 @@ public class TranslationService
 	{
 		if(godToolsVersion == GodToolsVersion.LATEST_VERSION)
 		{
-			Translation highestFoundVersionTranslation = null;
-
-			for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
-			{
-				if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
-				{
-					highestFoundVersionTranslation = translation;
-				}
-			}
-
-			return highestFoundVersionTranslation;
+			return returnLatestVersion(languageId, packageId);
 		}
 		else if(godToolsVersion == GodToolsVersion.LATEST_PUBLISHED_VERSION)
 		{
-			Translation highestFoundVersionTranslation = null;
-
-			for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
-			{
-				if(translation.isReleased() && (highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0))
-				{
-					highestFoundVersionTranslation = translation;
-				}
-			}
-
-			return highestFoundVersionTranslation;
+			return returnLatestPublishedVersion(languageId, packageId);
 		}
-		Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageIdVersionNumber)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("packageId", packageId)
-				.addParameter("languageId", languageId)
-				.addParameter("versionNumber", godToolsVersion.getTranslationVersion())
-				.executeAndFetchFirst(Translation.class);
+		else if(godToolsVersion == GodToolsVersion.DRAFT_VERSION)
+		{
+			return returnDraftVersion(languageId, packageId);
+		}
+		else
+		{
+			Translation translation = sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageIdVersionNumber)
+					.setAutoDeriveColumnNames(true)
+					.addParameter("packageId", packageId)
+					.addParameter("languageId", languageId)
+					.addParameter("versionNumber", godToolsVersion.getTranslationVersion())
+					.executeAndFetchFirst(Translation.class);
 
-		return translation;
+			return translation;
+		}
 	}
 
-    public void insert(Translation translation)
+	private Translation returnDraftVersion(UUID languageId, UUID packageId)
+	{
+		for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+		{
+			if(!translation.isReleased())
+			{
+				return translation;
+			}
+		}
+		return null;
+	}
+
+	private Translation returnLatestPublishedVersion(UUID languageId, UUID packageId)
+	{
+		Translation highestFoundVersionTranslation = null;
+
+		for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+		{
+			if(translation.isReleased() && (highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0))
+			{
+				highestFoundVersionTranslation = translation;
+			}
+		}
+
+		return highestFoundVersionTranslation;
+	}
+
+	private Translation returnLatestVersion(UUID languageId, UUID packageId)
+	{
+		Translation highestFoundVersionTranslation = null;
+
+		for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+		{
+			if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
+			{
+				highestFoundVersionTranslation = translation;
+			}
+		}
+
+		return highestFoundVersionTranslation;
+	}
+
+	public void insert(Translation translation)
     {
         sqlConnection.createQuery(TranslationQueries.insert)
                 .addParameter("id", translation.getId())

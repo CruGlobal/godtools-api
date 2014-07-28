@@ -98,11 +98,11 @@ public class GodToolsTranslationService
 	}
 
 	/**
-	 * Retrieves the latest version of all packages for specified language.
+	 * Retrieves the latest published version of all packages for specified language.
 	 *
 	 * @return
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, boolean includeDrafts)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -110,21 +110,9 @@ public class GodToolsTranslationService
 		{
 			try
 			{
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_PUBLISHED_VERSION));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), godToolsVersion));
 			}
 			catch(NotFoundException notFound) { /*oh well..*/ }
-			if(includeDrafts)
-			{
-				try
-				{
-					GodToolsTranslation possibleDraftTranslation = getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
-					if (!translations.contains(possibleDraftTranslation)) translations.add(possibleDraftTranslation);
-				}
-				catch(NotFoundException notFound)
-				{
-					notFound.printStackTrace(); /*oh well..*/
-				}
-			}
 		}
 
 		return translations;

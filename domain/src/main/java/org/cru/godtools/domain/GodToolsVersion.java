@@ -10,6 +10,7 @@ public class GodToolsVersion
 {
 	public static final GodToolsVersion LATEST_VERSION = new GodToolsVersion(new BigDecimal(-76123));
 	public static final GodToolsVersion LATEST_PUBLISHED_VERSION = new GodToolsVersion(new BigDecimal(-135126));
+	public static final GodToolsVersion DRAFT_VERSION = new GodToolsVersion(new BigDecimal(-1289988));
 
 	final private int packageVersion;
 	final private int translationVersion;
