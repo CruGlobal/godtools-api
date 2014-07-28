@@ -25,14 +25,5 @@
 		<param-name>resteasy.scan</param-name>
 		<param-value>true</param-value>
 	</context-param>
-    
-    <filter>
-        <filter-name>RedEggFilter</filter-name>
-        <filter-class>org.cru.redegg.servlet.RedEggFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>RedEggFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
 		
 </web-app>
