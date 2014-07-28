@@ -102,7 +102,7 @@ public class GodToolsTranslationService
 	 *
 	 * @return
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, GodToolsVersion godToolsVersion)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -110,7 +110,7 @@ public class GodToolsTranslationService
 		{
 			try
 			{
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), GodToolsVersion.LATEST_PUBLISHED_VERSION));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), godToolsVersion));
 			}
 			catch(NotFoundException notFound) { /*oh well..*/ }
 		}

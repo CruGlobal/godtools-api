@@ -106,11 +106,11 @@ public class GodToolsPackageRetrievalProcess
 
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, false, pixelDensity));
+			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, pixelDensity));
 		}
 		else
 		{
-			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, false, pixelDensity));
+			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, pixelDensity));
 		}
 
 		log.info("Loaded " + godToolsPackages.size() + " packages");

@@ -55,7 +55,6 @@ public class GodToolsPackageService
                                       String packageCode,
                                       GodToolsVersion godToolsVersion,
                                       Integer minimumInterpreterVersion,
-									  boolean includeDrafts,
                                       PixelDensity pixelDensity)
 	{
 		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode,
@@ -77,10 +76,9 @@ public class GodToolsPackageService
      */
     public Set<GodToolsPackage> getPackagesForLanguage(LanguageCode languageCode,
                                                        Integer minimumInterpreterVersion,
-													   boolean includeDrafts,
                                                        PixelDensity pixelDensity)
     {
-		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, includeDrafts);
+		Set<GodToolsTranslation> godToolsTranslations = godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION);
 
         Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 

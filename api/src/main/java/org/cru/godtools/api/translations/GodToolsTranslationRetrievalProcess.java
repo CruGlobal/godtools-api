@@ -43,7 +43,6 @@ public class GodToolsTranslationRetrievalProcess
     Integer minimumInterpreterVersion;
     GodToolsVersion godToolsVersion;
     boolean compressed;
-	boolean includeDrafts;
     PixelDensity pixelDensity;
 
 	Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
@@ -92,13 +91,6 @@ public class GodToolsTranslationRetrievalProcess
         return this;
     }
 
-	public GodToolsTranslationRetrievalProcess setIncludeDrafts(boolean includeDrafts)
-	{
-		log.info("Setting includeDrafts: " + includeDrafts);
-		this.includeDrafts = includeDrafts;
-		return this;
-	}
-
     public GodToolsTranslationRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
 		log.info("Setting pixelDensity: " + pixelDensity);
@@ -111,7 +103,7 @@ public class GodToolsTranslationRetrievalProcess
 		log.info("Loading translations...");
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION));
 		}
 		else
 		{
@@ -119,6 +111,23 @@ public class GodToolsTranslationRetrievalProcess
 		}
 
 		log.info("Loaded " + godToolsTranslations.size() + " translations");
+		return this;
+	}
+
+	public GodToolsTranslationRetrievalProcess loadDrafts()
+	{
+		log.info("Loading draft...");
+
+		if(Strings.isNullOrEmpty(packageCode))
+		{
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.DRAFT_VERSION));
+		}
+		else
+		{
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION));
+		}
+
+		log.info("Loaded " + godToolsTranslations.size() + " draft");
 		return this;
 	}
 

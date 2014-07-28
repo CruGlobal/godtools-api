@@ -61,7 +61,6 @@ public class TranslationResource
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
 				.loadTranslations()
 				.buildResponse();
 	}
@@ -87,7 +86,6 @@ public class TranslationResource
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.setIncludeDrafts(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
 				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
 				.loadTranslations()
 				.buildResponse();
