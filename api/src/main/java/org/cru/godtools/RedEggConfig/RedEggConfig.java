@@ -27,9 +27,7 @@ public class RedEggConfig
         config.setEndpoint(new URI(properties.getProperty("errbitEndpoint")));
         config.setKey(properties.getProperty("errbitApiKey"));
         config.setEnvironmentName(properties.getProperty("errbitEnvironment"));
-
         config.getApplicationBasePackages().addAll(ImmutableList.of("org.cru.godtools"));
-
         return config;
     }
 }
