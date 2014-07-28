@@ -85,7 +85,7 @@ public class TranslationService
 	{
 		for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
 		{
-			if(translation.isReleased())
+			if(!translation.isReleased())
 			{
 				return translation;
 			}
