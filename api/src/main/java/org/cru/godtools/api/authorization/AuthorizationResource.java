@@ -8,7 +8,6 @@ import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.jboss.logging.Logger;
-import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -59,14 +58,10 @@ public class AuthorizationResource
     {
 		log.info("Requesting basic authorization token");
 
-		AuthorizationRecord authorizationRecord = new AuthorizationRecord();
-
-		authorizationRecord.setId(UUID.randomUUID());
+	    String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
+		AuthorizationRecord authorizationRecord = createNewAuthorization();
+	    authorizationRecord.setDeviceId(device);
 		authorizationRecord.setDraftAccess(false);
-		authorizationRecord.setAuthToken(AuthTokenGenerator.generate());
-
-		String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
-		authorizationRecord.setDeviceId(device);
 
 		log.info("Saving basic authorization record:");
 		Simply.logObject(authorizationRecord, AuthorizationResource.class);
@@ -74,7 +69,7 @@ public class AuthorizationResource
 		authorizationService.recordNewAuthorization(authorizationRecord);
 
 		return Response.noContent()
-				.header("authToken", authorizationRecord.getAuthToken())
+				.header("Authorization", authorizationRecord.getAuthToken())
 				.build();    }
 
 	@POST
@@ -86,22 +81,22 @@ public class AuthorizationResource
 		log.info("Requesting authorization token with translator access");
 
 		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(translatorCode);
-		AuthorizationRecord authorizationRecord = new AuthorizationRecord();
-		String deviceId = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
+
+		String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
+		AuthorizationRecord authorizationRecord = createNewAuthorization();
+		authorizationRecord.setDeviceId(device);
 
 		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
 		{
 			log.info("Authorization with translator access code was invalid.");
 			log.info("Provided code: " + translatorCode);
-			log.info("Device ID: " + deviceId);
+			log.info("Device ID: " + device);
 
+			// If the incorrect translator code is given, a 401 is returned
 			throw new UnauthorizedException();
 		}
 
 		authorizationRecord.setDraftAccess(true);
-		authorizationRecord.setId(UUID.randomUUID());
-        authorizationRecord.setAuthToken(AuthTokenGenerator.generate());
-        authorizationRecord.setDeviceId(deviceId);
 
 		log.info("Saving authorization record with translator access:");
 		Simply.logObject(authorizationRecord, AuthorizationResource.class);
@@ -109,7 +104,16 @@ public class AuthorizationResource
         authorizationService.recordNewAuthorization(authorizationRecord);
 
         return Response.noContent()
-                .header("authToken", authorizationRecord.getAuthToken())
+                .header("Authorization", authorizationRecord.getAuthToken())
                 .build();
+	}
+
+	public AuthorizationRecord createNewAuthorization()
+	{
+		AuthorizationRecord authorizationRecord = new AuthorizationRecord();
+		authorizationRecord.setAuthToken(AuthTokenGenerator.generate());
+		authorizationRecord.setId(UUID.randomUUID());
+
+		return authorizationRecord;
 	}
 }
