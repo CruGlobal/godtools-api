@@ -115,14 +115,7 @@ public class GodToolsTranslationRetrievalProcess
 		}
 		else
 		{
-			GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, godToolsVersion);
-
-			// if the version asked for is a draft, but this client isn't allowed access, then return the latest published version
-			if(godToolsTranslation.isDraft() && !includeDrafts)
-			{
-				godToolsTranslation = godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION);
-			}
-			godToolsTranslations.add(godToolsTranslation);
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION));
 		}
 
 		log.info("Loaded " + godToolsTranslations.size() + " translations");
