@@ -1,10 +1,8 @@
 package org.cru.godtools.migration;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -19,6 +17,7 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -245,6 +244,15 @@ public class PackageDirectory
 				// initialize the fields we can with data we know
 				pageStructure.setId(UUID.randomUUID());
 				pageStructure.setXmlContent(translatedPage.getXmlContent());
+
+				try
+				{
+					getNeededXML(translatedPage.getXmlContent());
+				} catch (ParserConfigurationException e)
+				{
+					e.printStackTrace();
+				}
+
 				pageStructure.setFilename(translatedPage.getFilename());
 				pageStructure.setTranslationId(translationId);
 
@@ -289,5 +297,25 @@ public class PackageDirectory
 		}
 
 		return null;
+	}
+
+	private void getNeededXML(Document document) throws ParserConfigurationException
+	{
+		readNode(document.getDocumentElement());
+	}
+
+	private void readNode(Node node) throws ParserConfigurationException
+	{
+		node.setTextContent("");
+
+		NodeList nodeList = node.getChildNodes();
+		for(int i = 0; i < nodeList.getLength(); i++)
+		{
+			Node currentNode = nodeList.item(i);
+			if(currentNode.getNodeType() == Node.ELEMENT_NODE)
+			{
+				readNode(currentNode);
+			}
+		}
 	}
 }
