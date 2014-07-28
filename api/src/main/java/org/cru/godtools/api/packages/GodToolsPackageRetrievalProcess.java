@@ -10,6 +10,7 @@ import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PixelDensity;
+import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -48,6 +49,8 @@ public class GodToolsPackageRetrievalProcess
 
 	Set<GodToolsPackage> godToolsPackages = Sets.newHashSet();
 
+	Logger log = Logger.getLogger(GodToolsPackageRetrievalProcess.class);
+
     @Inject
     public GodToolsPackageRetrievalProcess(GodToolsPackageService packageService, FileZipper fileZipper)
     {
@@ -57,42 +60,50 @@ public class GodToolsPackageRetrievalProcess
 
     public GodToolsPackageRetrievalProcess setPackageCode(String packageCode)
     {
+		log.info("Setting package code: " + packageCode);
         this.packageCode = packageCode;
         return this;
     }
 
     public GodToolsPackageRetrievalProcess setLanguageCode(String languageCode)
     {
+		log.info("Setting language code: " + languageCode);
         this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
     public GodToolsPackageRetrievalProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
+		log.info("Setting interpreter version: " + minimumInterpreterVersion);
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
     public GodToolsPackageRetrievalProcess setVersionNumber(GodToolsVersion godToolsVersion)
     {
+		log.info("Setting version number: " + godToolsVersion == null ? "Latest published" : godToolsVersion);
         this.godToolsVersion = godToolsVersion;
         return this;
     }
 
     public GodToolsPackageRetrievalProcess setCompressed(boolean compressed)
     {
+		log.info("Setting compressed: " + compressed);
         this.compressed = compressed;
         return this;
     }
 
     public GodToolsPackageRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
     {
+		log.info("Setting pixel density: " + pixelDensity);
         this.pixelDensity = pixelDensity;
         return this;
     }
 
 	public GodToolsPackageRetrievalProcess loadPackages()
 	{
+		log.info("Loading packages...");
+
 		if(Strings.isNullOrEmpty(packageCode))
 		{
 			godToolsPackages.addAll(packageService.getPackagesForLanguage(languageCode, minimumInterpreterVersion, false, pixelDensity));
@@ -102,6 +113,8 @@ public class GodToolsPackageRetrievalProcess
 			godToolsPackages.add(packageService.getPackage(languageCode, packageCode, godToolsVersion, minimumInterpreterVersion, false, pixelDensity));
 		}
 
+		log.info("Loaded " + godToolsPackages.size() + " packages");
+
 		return this;
 	}
 
@@ -109,10 +122,12 @@ public class GodToolsPackageRetrievalProcess
     {
         if(compressed)
         {
+			log.info("Buiding zipped response");
             return buildZippedResponse();
         }
         else
         {
+			log.info("Buiding unzipped response");
             return buildNonZippedResponse();
         }
     }

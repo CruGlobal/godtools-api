@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
 import javax.ws.rs.client.Entity;
@@ -29,6 +30,7 @@ public class FileClient
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
+	private Logger log = Logger.getLogger(FileClient.class);
 	/**
 	 * Uploads a file to oneskyapp.com.  A "file" represents a joint group of strings that should be translated.
 	 * For this project it is equivalent to one page of GodTools content (ex: 01_Home.xml)
@@ -59,9 +61,7 @@ public class FileClient
 				.request()
 				.post(entity);
 
-		System.out.println("File: " + pageName);
-		System.out.println("Status: " + response.getStatus());
-		System.out.println("*****************************************");
+		log.info("Upload response status code: " + response.getStatus());
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -8,6 +9,7 @@ import org.cru.godtools.api.utilities.ErrorResponse;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationUpload;
+import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
@@ -39,6 +41,8 @@ public class MetaResource
 	@Inject
 	private LanguageService languageService;
 
+	private Logger log = Logger.getLogger(MetaResource.class);
+
 	@GET
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getAllMetaInfo(@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
@@ -46,6 +50,8 @@ public class MetaResource
 										@QueryParam("authorization") String authCodeParam,
 										@HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
 	{
+		log.info("Getting all meta info");
+
 		return getLanguageAndPackageMetaInfo(null, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
 	}
 
@@ -58,7 +64,9 @@ public class MetaResource
                                 @QueryParam("authorization") String authCodeParam,
                                 @HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
     {
-       return getLanguageAndPackageMetaInfo(languageCode, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
+		log.info("Getting all meta info for language: " + languageCode);
+
+		return getLanguageAndPackageMetaInfo(languageCode, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
     }
 
 	@GET
@@ -71,6 +79,8 @@ public class MetaResource
 								@QueryParam("authorization") String authCodeParam,
 								@HeaderParam("authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
 	{
+		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
+
 		authService.checkAuthorization(authCodeParam, authCodeHeader);
 		Integer interpreterVersion = getMinimumInterpreterVersion(minimumInterpreterVersionParam, minimumInterpreterVersionHeader);
 
@@ -81,29 +91,14 @@ public class MetaResource
 					.build();
 		}
 
-		return Response.ok(metaService.getMetaResults(languageCode,
+		MetaResults metaResults = metaService.getMetaResults(languageCode,
 				packageCode,
 				interpreterVersion,
-				authService.canAccessOrCreateDrafts(authCodeParam, authCodeHeader))).build();
-	}
+				authService.canAccessOrCreateDrafts(authCodeParam, authCodeHeader));
 
-	@POST
-	@Path("/uploadAll")
-	public Response temporaryEndpointToUploadAll(@QueryParam("authorization") String authCodeParam,
-												 @HeaderParam("authorization") String authCodeHeader)
-	{
-		authService.checkAuthorization(authCodeParam, authCodeHeader);
+		Simply.logObject(metaResults, MetaResource.class);
 
-		Language english = languageService.selectByLanguageCode(new LanguageCode("en"));
-//		for (Package gtPackage : KnownGodtoolsPackages.packages)
-//		{
-//			for(Translation translation : translationService.selectByPackageId(packageService.selectByCode(gtPackage.getCode()).getId()))
-//			{
-//				if(translation.getLanguageId().equals(english.getId())) translationUpload.doUpload(translation.getId());
-//			}
-//		}
-
-		return Response.accepted().build();
+		return Response.ok(metaResults).build();
 	}
 
 	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)

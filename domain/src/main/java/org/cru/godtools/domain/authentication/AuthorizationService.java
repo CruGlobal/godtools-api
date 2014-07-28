@@ -3,7 +3,7 @@ package org.cru.godtools.domain.authentication;
 import com.google.common.base.Strings;
 import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
-
+import org.jboss.logging.Logger;
 import javax.inject.Inject;
 
 /**
@@ -13,6 +13,8 @@ public class AuthorizationService
 {
     Connection sqlConnection;
     Clock clock;
+
+	Logger log = Logger.getLogger(AuthorizationService.class);
 
     @Inject
     public AuthorizationService(Connection sqlConnection, Clock clock)
@@ -40,6 +42,8 @@ public class AuthorizationService
 	private AuthorizationRecord getAuthenticationRecord(String authTokenParam, String authTokenHeader)
 	{
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
+
+		log.info("Checking authorization for: " + authToken);
 
 		if(Strings.isNullOrEmpty(authToken)) throw new UnauthorizedException();
 

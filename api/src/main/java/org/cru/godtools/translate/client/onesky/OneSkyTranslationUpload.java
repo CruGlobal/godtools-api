@@ -2,12 +2,13 @@ package org.cru.godtools.translate.client.onesky;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
+import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationUpload;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -19,6 +20,8 @@ public class OneSkyTranslationUpload implements TranslationUpload
 {
 	private OneSkyDataService oneSkyDataService;
 	private FileClient fileClient;
+
+	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
 
 	@Inject
 	public OneSkyTranslationUpload(OneSkyDataService oneSkyDataService, FileClient fileClient)
@@ -34,13 +37,14 @@ public class OneSkyTranslationUpload implements TranslationUpload
 
 		for(String pageName : translationElementMultimap.keySet())
 		{
+			log.info("Uploading page to OneSky: " + pageName);
 			try
 			{
 				fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				log.error("Error uploading page: " + pageName, e);
 			}
 		}
 	}
@@ -63,7 +67,12 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	@Override
 	public void recordInitialUpload(Integer oneSkyProjectId, String locale)
 	{
+		log.info("Recording initial translation upload for OneSky project ID: " + oneSkyProjectId + " and locale: " + locale);
+
 		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
+
+		log.info("Found translation:");
+		Simply.logObject(translation, OneSkyTranslationUpload.class);
 
 		for(PageStructure pageStructure : oneSkyDataService.getPageStructures(translation.getId()))
 		{
@@ -81,6 +90,12 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	@Override
 	public boolean hasTranslationBeenUploaded(Integer projectId, String locale)
 	{
+		log.info("Checking translation status for OneSky project ID: " + projectId + " and locale: " + locale);
+		Translation translation = oneSkyDataService.getTranslation(projectId, locale);
+
+		log.info("Found translation:");
+		Simply.logObject(translation, OneSkyTranslationUpload.class);
+
 		return !oneSkyDataService.getTranslationStatus(oneSkyDataService.getTranslation(projectId, locale).getId()).isEmpty();
 	}
 
