@@ -208,7 +208,7 @@ public class PackageDirectory
 	/**
 	 * Save a PageStructure for each page in each Translation of a GodTools Package.
 	 */
-	public void savePageStructures() throws  ParserConfigurationException
+	public void savePageStructures()
 	{
 		// load the package out
 		Package gtPackage = packageService.selectByCode(packageCode);
@@ -285,7 +285,7 @@ public class PackageDirectory
 				return nodes.item(i).getTextContent();
 			}
 		}
-		
+
 		return null;
 	}
 }
