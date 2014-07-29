@@ -209,7 +209,7 @@ public class PackageDirectory
 	/**
 	 * Save a PageStructure for each page in each Translation of a GodTools Package.
 	 */
-	public void savePageStructures()
+	public void savePageStructures() throws  ParserConfigurationException
 	{
 		// load the package out
 		Package gtPackage = packageService.selectByCode(packageCode);
@@ -243,15 +243,11 @@ public class PackageDirectory
 
 				// initialize the fields we can with data we know
 				pageStructure.setId(UUID.randomUUID());
-				pageStructure.setXmlContent(translatedPage.getXmlContent());
+				// pageStructure.setXmlContent(translatedPage.getXmlContent());
 
-				try
-				{
-					getNeededXML(translatedPage.getXmlContent());
-				} catch (ParserConfigurationException e)
-				{
-					e.printStackTrace();
-				}
+				// Attempt to remove unneeded XML
+				Document document = getNeededXML(translatedPage.getXmlContent());
+				pageStructure.setXmlContent(document);
 
 				pageStructure.setFilename(translatedPage.getFilename());
 				pageStructure.setTranslationId(translationId);
@@ -299,23 +295,46 @@ public class PackageDirectory
 		return null;
 	}
 
-	private void getNeededXML(Document document) throws ParserConfigurationException
+	private Document getNeededXML(Document document) throws ParserConfigurationException
 	{
-		readNode(document.getDocumentElement());
+		// Get the document's first node. This is usually "page"
+		Node top = document.getFirstChild();
+
+		// Get a list of all the child nodes of top node.
+		NodeList list = top.getChildNodes();
+
+		for(int i = 0; i < list.getLength(); i++)
+		{
+			document = getChildText(list.item(i), document);
+		}
+
+		return document;
 	}
 
-	private void readNode(Node node) throws ParserConfigurationException
+	private Document getChildText(Node node, Document document) throws ParserConfigurationException
 	{
-		node.setTextContent("");
+		/*
+		Check to see if node has children. If not then the inner text (translated text) can be removed.
+		If there are children nodes, then the method will need to recalled.
+		*/
+		String name = node.getNodeName();
+		String image = "image";
 
-		NodeList nodeList = node.getChildNodes();
-		for(int i = 0; i < nodeList.getLength(); i++)
+		if(node.hasChildNodes())
 		{
-			Node currentNode = nodeList.item(i);
-			if(currentNode.getNodeType() == Node.ELEMENT_NODE)
+			NodeList children = node.getChildNodes();
+			for(int i = 0; i < children.getLength(); i++)
 			{
-				readNode(currentNode);
+				getChildText(children.item(i), document);
 			}
+			// Not sure if the image name would still need to be saved so just in case, it will be
+		} else {
+			String parent = node.getParentNode().getNodeName();
+
+			if(!parent.equalsIgnoreCase(image))
+				node.setTextContent(" ");
 		}
+
+		return document;
 	}
 }
