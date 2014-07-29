@@ -47,7 +47,7 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	{
 		try
 		{
-			authorizationService.getAuthorizationRecord("b", null);
+			AuthorizationRecord.checkAuthorization(authorizationService.getAuthorizationRecord("b", null), new TestClockImpl().currentDateTime());
 		}
 		catch(UnauthorizedException exception)
 		{
@@ -61,7 +61,7 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	{
 		try
 		{
-			authorizationService.getAuthorizationRecord(null, "b");
+			AuthorizationRecord.checkAuthorization(authorizationService.getAuthorizationRecord(null, "b"), new TestClockImpl().currentDateTime());
 		}
 		catch(UnauthorizedException exception)
 		{
