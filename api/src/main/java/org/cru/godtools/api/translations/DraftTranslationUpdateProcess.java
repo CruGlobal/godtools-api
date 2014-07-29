@@ -3,10 +3,10 @@ package org.cru.godtools.api.translations;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.domain.translations.TranslationStatusService;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationStatus;
@@ -23,7 +23,7 @@ public class DraftTranslationUpdateProcess
 
 	@Inject TranslationDownload translationDownload;
 	@Inject TranslationElementService translationElementService;
-	@Inject TranslationStatusService translationStatusService;
+	@Inject PageStructureService pageStructureService;
 	@Inject Clock clock;
 
 	public void updateFromTranslationTool(Integer translationProjectId,
@@ -33,8 +33,6 @@ public class DraftTranslationUpdateProcess
 	{
 		for(PageStructure pageStructure : pageStructures)
 		{
-			org.cru.godtools.domain.translations.TranslationStatus cachedStatus = loadCachedStatus(translation, pageStructure);
-
 			TranslationStatus remoteStatus = loadRemoteStatus(translationProjectId, languageCode, pageStructure);
 
 			// this feature for optimization is removed until oneskyapp.com reviews my request
@@ -47,7 +45,11 @@ public class DraftTranslationUpdateProcess
 						pageStructure.getFilename());
 
 				updateLocalTranslationElements(downloadResults, translation);
-				updateCachedStatus(remoteStatus, translation.getId(), pageStructure.getId());
+				pageStructure.updateCachedStatus(remoteStatus.getPercentCompleted(),
+						remoteStatus.getWordCount(),
+						remoteStatus.getStringCount(),
+						clock.currentDateTime());
+				pageStructureService.update(pageStructure);
 			}
 		}
 	}
@@ -66,21 +68,4 @@ public class DraftTranslationUpdateProcess
 	{
 		return translationDownload.checkTranslationStatus(projectId, languageCode.toString(), pageStructure.getFilename());
 	}
-
-	private org.cru.godtools.domain.translations.TranslationStatus loadCachedStatus(Translation translation, PageStructure pageStructure)
-	{
-		return translationStatusService.selectByTranslationIdPageStructureId(translation.getId(), pageStructure.getId());
-	}
-
-	private void updateCachedStatus(TranslationStatus remoteStatus, UUID translationId, UUID pageStructureId)
-	{
-		org.cru.godtools.domain.translations.TranslationStatus newCachedStatus = remoteStatus.toCachedTranslationStatus();
-
-		newCachedStatus.setTranslationId(translationId);
-		newCachedStatus.setPageStructureId(pageStructureId);
-		newCachedStatus.setLastUpdated(clock.currentDateTime());
-
-		translationStatusService.update(newCachedStatus);
-	}
-
 }

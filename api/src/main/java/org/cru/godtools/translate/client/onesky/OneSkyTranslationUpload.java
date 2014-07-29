@@ -76,8 +76,7 @@ public class OneSkyTranslationUpload implements TranslationUpload
 
 		for(PageStructure pageStructure : oneSkyDataService.getPageStructures(translation.getId()))
 		{
-			oneSkyDataService.updateLocalTranslationStatus(translation.getId(),
-					pageStructure.getId(),
+			oneSkyDataService.updateLocalTranslationStatus(pageStructure,
 					new OneSkyTranslationStatus().createInitialJustUploadedStatus(pageStructure.getFilename()));
 		}
 	}

@@ -15,7 +15,6 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.domain.translations.TranslationStatusService;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.cru.godtools.translate.client.onesky.FileClient;
 import org.cru.godtools.translate.client.onesky.OneSkyDataService;
@@ -67,7 +66,6 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 		translationDownload = new OneSkyTranslationDownload(new TranslationClient());
 		translationUpload = new OneSkyTranslationUpload(new OneSkyDataService(translationElementService,
 				translationService,
-				new TranslationStatusService(sqlConnection),
 				packageService,
 				languageService,
 				pageStructureService,
