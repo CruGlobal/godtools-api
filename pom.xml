@@ -3,13 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.cru</groupId>
     <artifactId>godtools</artifactId>
-    <packaging>pom</packaging>
+    <packaging>war</packaging>
+
     <version>1.0.0-SNAPSHOT</version>
-    <modules>
-        <module>domain</module>
-        <module>migration</module>
-        <module>api</module>
-    </modules>
+
     <name>Godtools API</name>
     <url>...</url>
 
@@ -200,6 +197,48 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <!-- The exec plugin is used to execute UnittestDatabaseBuilder class's main method before each
+                         unittest run to reset the database to a known starting state -->
+
+                    <execution>
+                        <id>1</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.cru.godtools.domain.UnittestDatabaseBuilder</mainClass>
+                            <arguments>
+                            </arguments>
+                            <classpathScope>test</classpathScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.0.1.Final</version>
+                <configuration>
+                    <hostname>${deployments.targetServerIP}</hostname>
+                    <username>deployer</username>
+                    <password>${env.deployerPassword}</password>
+                </configuration>
+            </plugin>
+
         </plugins>
 
     </build>
