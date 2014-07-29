@@ -3,6 +3,7 @@ package org.cru.godtools.migration;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -17,7 +18,7 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -245,7 +246,7 @@ public class PackageDirectory
 				pageStructure.setId(UUID.randomUUID());
 				// pageStructure.setXmlContent(translatedPage.getXmlContent());
 
-				// Attempt to remove unneeded XML
+				// Attempt to remove unneeded translated text from XML
 				Document document = removeTranslatedTextFromXML(translatedPage.getXmlContent());
 				pageStructure.setXmlContent(document);
 
@@ -297,42 +298,13 @@ public class PackageDirectory
 
 	private Document removeTranslatedTextFromXML(Document document) throws ParserConfigurationException
 	{
-		// Get the document's first node. This is usually "page"
-		Node top = document.getFirstChild();
-
-		// Get a list of all the child nodes of top node.
-		NodeList list = top.getChildNodes();
-
-		for(int i = 0; i < list.getLength(); i++)
+		// Find all items that are able to be translated
+		List<Element> translatedElements = XmlDocumentSearchUtilities.findElementsWithAttribute(document, "translate");
+		for(Element element : translatedElements)
 		{
-			document = removeChildNodeText(list.item(i), document);
-		}
-
-		return document;
-	}
-
-	private Document removeChildNodeText(Node node, Document document) throws ParserConfigurationException
-	{
-		/*
-		Check to see if node has children. If not then the inner text (translated text) can be removed.
-		If there are children nodes, then the method will need to recalled.
-		*/
-		String name = node.getNodeName();
-		String image = "image";
-
-		if(node.hasChildNodes())
-		{
-			NodeList children = node.getChildNodes();
-			for(int i = 0; i < children.getLength(); i++)
-			{
-				removeChildNodeText(children.item(i), document);
-			}
-			// Not sure if the image name would still need to be saved so just in case, it will be
-		} else {
-			String parent = node.getParentNode().getNodeName();
-
-			if(!parent.equalsIgnoreCase(image))
-				node.setTextContent(" ");
+			// Image text will not be removed since it is not translated
+			if (!element.getNodeName().equalsIgnoreCase("image") && !element.getParentNode().getNodeName().equalsIgnoreCase("image"))
+					element.setTextContent(" ");
 		}
 
 		return document;
