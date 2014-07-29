@@ -246,7 +246,7 @@ public class PackageDirectory
 				// pageStructure.setXmlContent(translatedPage.getXmlContent());
 
 				// Attempt to remove unneeded XML
-				Document document = getNeededXML(translatedPage.getXmlContent());
+				Document document = removeTranslatedTextFromXML(translatedPage.getXmlContent());
 				pageStructure.setXmlContent(document);
 
 				pageStructure.setFilename(translatedPage.getFilename());
@@ -295,7 +295,7 @@ public class PackageDirectory
 		return null;
 	}
 
-	private Document getNeededXML(Document document) throws ParserConfigurationException
+	private Document removeTranslatedTextFromXML(Document document) throws ParserConfigurationException
 	{
 		// Get the document's first node. This is usually "page"
 		Node top = document.getFirstChild();
@@ -305,13 +305,13 @@ public class PackageDirectory
 
 		for(int i = 0; i < list.getLength(); i++)
 		{
-			document = getChildText(list.item(i), document);
+			document = removeChildNodeText(list.item(i), document);
 		}
 
 		return document;
 	}
 
-	private Document getChildText(Node node, Document document) throws ParserConfigurationException
+	private Document removeChildNodeText(Node node, Document document) throws ParserConfigurationException
 	{
 		/*
 		Check to see if node has children. If not then the inner text (translated text) can be removed.
@@ -325,7 +325,7 @@ public class PackageDirectory
 			NodeList children = node.getChildNodes();
 			for(int i = 0; i < children.getLength(); i++)
 			{
-				getChildText(children.item(i), document);
+				removeChildNodeText(children.item(i), document);
 			}
 			// Not sure if the image name would still need to be saved so just in case, it will be
 		} else {
