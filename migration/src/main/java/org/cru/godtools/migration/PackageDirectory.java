@@ -3,7 +3,6 @@ package org.cru.godtools.migration;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -18,7 +17,6 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -244,11 +242,11 @@ public class PackageDirectory
 
 				// initialize the fields we can with data we know
 				pageStructure.setId(UUID.randomUUID());
-				// pageStructure.setXmlContent(translatedPage.getXmlContent());
+				pageStructure.setXmlContent(translatedPage.getXmlContent());
 
 				// Attempt to remove unneeded translated text from XML
-				Document document = removeTranslatedTextFromXML(translatedPage.getXmlContent());
-				pageStructure.setXmlContent(document);
+				// Document document = removeTranslatedTextFromXML(translatedPage.getXmlContent());
+				// pageStructure.setXmlContent(document);
 
 				pageStructure.setFilename(translatedPage.getFilename());
 				pageStructure.setTranslationId(translationId);
@@ -294,19 +292,5 @@ public class PackageDirectory
 		}
 
 		return null;
-	}
-
-	private Document removeTranslatedTextFromXML(Document document) throws ParserConfigurationException
-	{
-		// Find all items that are able to be translated
-		List<Element> translatedElements = XmlDocumentSearchUtilities.findElementsWithAttribute(document, "translate");
-		for(Element element : translatedElements)
-		{
-			// Image text will not be removed since it is not translated
-			if (!element.getNodeName().equalsIgnoreCase("image") && !element.getParentNode().getNodeName().equalsIgnoreCase("image"))
-					element.setTextContent(" ");
-		}
-
-		return document;
 	}
 }
