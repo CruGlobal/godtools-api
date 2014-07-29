@@ -243,11 +243,6 @@ public class PackageDirectory
 				// initialize the fields we can with data we know
 				pageStructure.setId(UUID.randomUUID());
 				pageStructure.setXmlContent(translatedPage.getXmlContent());
-
-				// Attempt to remove unneeded translated text from XML
-				// Document document = removeTranslatedTextFromXML(translatedPage.getXmlContent());
-				// pageStructure.setXmlContent(document);
-
 				pageStructure.setFilename(translatedPage.getFilename());
 				pageStructure.setTranslationId(translationId);
 
@@ -290,7 +285,7 @@ public class PackageDirectory
 				return nodes.item(i).getTextContent();
 			}
 		}
-
+		
 		return null;
 	}
 }
