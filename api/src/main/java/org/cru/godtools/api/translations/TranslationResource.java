@@ -1,6 +1,9 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Optional;
+import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.Simply;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -40,6 +43,8 @@ public class TranslationResource
 	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject
+	Clock clock;
 
 	private Logger log = Logger.getLogger(TranslationResource.class);
 
@@ -55,7 +60,7 @@ public class TranslationResource
 	{
 		log.info("Requesting all translations for language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
@@ -79,7 +84,7 @@ public class TranslationResource
 	{
 		log.info("Requesting translation for package: " + packageCode + " and language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		return translationRetrievalProcess
 				.setLanguageCode(languageCode)
@@ -102,8 +107,7 @@ public class TranslationResource
 	{
 		log.info("Creating new translation for package: " + packageCode + " and language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
-		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		Translation translation = godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
 
@@ -123,8 +127,7 @@ public class TranslationResource
 	{
 		log.info("Updating translation for package: " + packageCode + " and language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
-		if(!authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader)) throw new UnauthorizedException();
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		if(Boolean.parseBoolean(publish))
 		{

@@ -1,5 +1,7 @@
 package org.cru.godtools.api.packages;
 
+import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.packages.PixelDensity;
@@ -35,6 +37,8 @@ public class PackageResource
 	GodToolsPackageRetrievalProcess packageRetrievalProcess;
     @Inject
     AuthorizationService authService;
+	@Inject
+	Clock clock;
 
 	private Logger log = Logger.getLogger(PackageResource.class);
 
@@ -68,7 +72,7 @@ public class PackageResource
     {
 		log.info("Requesting all packages for language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
         return packageRetrievalProcess
                 .setLanguageCode(languageCode)
@@ -112,7 +116,7 @@ public class PackageResource
 	{
 		log.info("Requesting package " + packageCode + " for language: " + languageCode);
 
-		authService.checkAuthorization(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		return packageRetrievalProcess
 				.setLanguageCode(languageCode)

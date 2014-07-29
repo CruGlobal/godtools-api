@@ -3,7 +3,6 @@ package org.cru.godtools.domain.authentication;
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.TestClockImpl;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -34,13 +33,13 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	@Test
 	public void testCheckAuthorizationFromParam()
 	{
-		authorizationService.checkAuthorization("a", null);
+		authorizationService.getAuthorizationRecord("a", null);
 	}
 
 	@Test
 	public void testCheckAuthorizationFromHeader()
 	{
-		authorizationService.checkAuthorization(null, "a");
+		authorizationService.getAuthorizationRecord(null, "a");
 	}
 
 	@Test(expectedExceptions = UnauthorizedException.class)
@@ -48,7 +47,7 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	{
 		try
 		{
-			authorizationService.checkAuthorization("b", null);
+			authorizationService.getAuthorizationRecord("b", null);
 		}
 		catch(UnauthorizedException exception)
 		{
@@ -62,7 +61,7 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	{
 		try
 		{
-			authorizationService.checkAuthorization(null, "b");
+			authorizationService.getAuthorizationRecord(null, "b");
 		}
 		catch(UnauthorizedException exception)
 		{

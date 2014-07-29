@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.authentication;
 
+import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 
 import java.util.UUID;
@@ -17,7 +18,19 @@ public class AuthorizationRecord
     String deviceId;
 	boolean draftAccess;
 
-    public boolean isCurrentlyActive(DateTime currentTime)
+	public static void checkAuthorization(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
+	{
+		if(!authorizationRecordOptional.isPresent()) throw new UnauthorizedException();
+		if(!authorizationRecordOptional.get().isCurrentlyActive(currentTime)) throw new UnauthorizedException();
+	}
+
+	public static void checkAccessToDrafts(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
+	{
+		checkAuthorization(authorizationRecordOptional, currentTime);
+		if(!authorizationRecordOptional.get().hasDraftAccess()) throw new UnauthorizedException();
+	}
+
+    private boolean isCurrentlyActive(DateTime currentTime)
     {
         if(!currentTime.isBefore(grantedTimestamp))
         {
@@ -25,6 +38,7 @@ public class AuthorizationRecord
         }
         return false;
     }
+
     public UUID getId()
     {
         return id;

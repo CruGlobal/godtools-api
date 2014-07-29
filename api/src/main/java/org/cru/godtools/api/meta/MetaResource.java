@@ -1,7 +1,10 @@
 package org.cru.godtools.api.meta;
 
 import org.cru.godtools.api.utilities.ErrorResponse;
+import com.google.common.base.Optional;
+import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.Simply;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.PackageService;
@@ -44,6 +47,9 @@ public class MetaResource
 	@Inject
 	private LanguageService languageService;
 
+	@Inject
+	Clock clock;
+
 	private Logger log = Logger.getLogger(MetaResource.class);
 
 	@GET
@@ -84,7 +90,9 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		authService.checkAuthorization(authCodeParam, authCodeHeader);
+		Optional<AuthorizationRecord> authorizationRecordOptional = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		AuthorizationRecord.checkAuthorization(authorizationRecordOptional, clock.currentDateTime());
+
 		Integer interpreterVersion = getMinimumInterpreterVersion(minimumInterpreterVersionParam, minimumInterpreterVersionHeader);
 
 		if(interpreterVersion == null)
@@ -97,7 +105,7 @@ public class MetaResource
 		MetaResults metaResults = metaService.getMetaResults(languageCode,
 				packageCode,
 				interpreterVersion,
-				authService.canAccessOrCreateDrafts(authCodeParam, authCodeHeader));
+				authorizationRecordOptional.get().hasDraftAccess());
 
 		Simply.logObject(metaResults, MetaResource.class);
 

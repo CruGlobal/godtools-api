@@ -46,7 +46,7 @@ public class AuthorizationResource
 		// - authToken is not provided in one of two parameters,
 		// - authToken is invalid
 		// - authToken has been revoked
-		authorizationService.checkAuthorization(authTokenParam, authTokenHeader);
+		authorizationService.getAuthorizationRecord(authTokenParam, authTokenHeader);
 
 		// if we get here, assume all is good and a 204 no content is fine.
 		return  Response.noContent().build();

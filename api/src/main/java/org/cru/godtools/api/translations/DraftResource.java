@@ -1,5 +1,7 @@
 package org.cru.godtools.api.translations;
 
+import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.jboss.logging.Logger;
@@ -28,8 +30,10 @@ public class DraftResource
 	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject private Clock clock;
 
 	private Logger log = Logger.getLogger(DraftResource.class);
+
 
 	@GET
 	@Path("/{language}")
@@ -43,19 +47,14 @@ public class DraftResource
 	{
 		log.info("Requesting all drafts for language: " + languageCode);
 
-		if(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
-		{
-			return translationRetrievalProcess
-					.setLanguageCode(languageCode)
-					.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-					.setCompressed(Boolean.parseBoolean(compressed))
-					.loadDrafts()
-					.buildResponse();
-		}
-		else
-		{
-			throw new UnauthorizedException();
-		}
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return translationRetrievalProcess
+				.setLanguageCode(languageCode)
+				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.setCompressed(Boolean.parseBoolean(compressed))
+				.loadDrafts()
+				.buildResponse();
 	}
 
 	@GET
@@ -72,19 +71,14 @@ public class DraftResource
 	{
 		log.info("Requesting draft translation for package: " + packageCode + " and language: " + languageCode);
 
-		if(authService.canAccessOrCreateDrafts(authTokenParam, authTokenHeader))
-		{
-			return translationRetrievalProcess
-					.setLanguageCode(languageCode)
-					.setPackageCode(packageCode)
-					.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-					.setCompressed(Boolean.parseBoolean(compressed))
-					.loadDrafts()
-					.buildResponse();
-		}
-		else
-		{
-			throw new UnauthorizedException();
-		}
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return translationRetrievalProcess
+				.setLanguageCode(languageCode)
+				.setPackageCode(packageCode)
+				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
+				.setCompressed(Boolean.parseBoolean(compressed))
+				.loadDrafts()
+				.buildResponse();
 	}
 }

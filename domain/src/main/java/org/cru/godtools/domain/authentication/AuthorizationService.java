@@ -1,6 +1,6 @@
 package org.cru.godtools.domain.authentication;
 
-import com.google.common.base.Strings;
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
 import org.jboss.logging.Logger;
@@ -23,34 +23,18 @@ public class AuthorizationService
         this.clock = clock;
     }
 
-    public void checkAuthorization(String authTokenParam, String authTokenHeader)
+    public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
     {
-		AuthorizationRecord authRecord = getAuthenticationRecord(authTokenParam, authTokenHeader);
-
-        if(authRecord != null && authRecord.isCurrentlyActive(clock.currentDateTime())) return;
-
-		else throw new UnauthorizedException();
-    }
-
-	public boolean canAccessOrCreateDrafts(String authTokenParam, String authTokenHeader)
-	{
-		AuthorizationRecord authRecord = getAuthenticationRecord(authTokenParam, authTokenHeader);
-
-		return authRecord.hasDraftAccess();
-	}
-
-	private AuthorizationRecord getAuthenticationRecord(String authTokenParam, String authTokenHeader)
-	{
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
 
-		log.info("Checking authorization for: " + authToken);
+		log.info("Getting authorization for: " + authToken);
 
-		if(Strings.isNullOrEmpty(authToken)) throw new UnauthorizedException();
-
-		return sqlConnection.createQuery(AuthenticationQueries.selectByAuthToken)
+		AuthorizationRecord authorizationRecord = sqlConnection.createQuery(AuthenticationQueries.selectByAuthToken)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("authToken", authToken)
 				.executeAndFetchFirst(AuthorizationRecord.class);
+
+		return Optional.fromNullable(authorizationRecord);
 	}
 
 	public void recordNewAuthorization(AuthorizationRecord authenticationRecord)
