@@ -5,6 +5,7 @@ import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -32,15 +33,12 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 	@Deployment
 	public static JavaArchive createDeployment()
 	{
-		return ShrinkWrap.create(JavaArchive.class)
-				.addClasses(AuthorizationService.class,
-						Connection.class,
-						TestSqlConnectionProducer.class,
-						GodToolsPropertiesFactory.class,
-						GodToolsProperties.class,
-						TestClockImpl.class)
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
 
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(AuthorizationService.class, TestClockImpl.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
 	@BeforeMethod
@@ -54,7 +52,7 @@ public class AuthorizationServiceTest extends AbstractServiceTest
 		{
 			/*yawn*/
 		}
-		 AuthorizationServiceTestMockData.persistAuthorization(authorizationService);
+		AuthorizationServiceTestMockData.persistAuthorization(authorizationService);
 	}
 
 	@AfterMethod

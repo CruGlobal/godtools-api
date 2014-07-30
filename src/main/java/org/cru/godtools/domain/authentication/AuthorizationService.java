@@ -13,7 +13,7 @@ public class AuthorizationService
 {
 	@Inject
     Connection sqlConnection;
-	
+
     @Inject
 	Clock clock;
 
