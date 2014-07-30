@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages;
 
+import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -14,11 +15,18 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * First pass at writing Arquillian tests
@@ -68,6 +76,12 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		}
 	}
 
+	/**
+	 * Tests getting the English (en) version of Knowing God Personally (kgp).
+	 *
+	 * The unittest database has just one page persisted, but that should be enough
+	 * to verify most of what we want to verify.
+	 */
 	@Test
 	public void testGetPackage() throws Exception
 	{
@@ -82,5 +96,16 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 				null);
 
 		Assert.assertEquals(response.getStatus(), 200);
+
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
+		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlContentsFile, "resource");
+
+		Assert.assertEquals(resourceElements.size(), 1);
+		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "d8722200912bad3cbabbfaaa09192c7fd44f4f82.xml");
 	}
 }

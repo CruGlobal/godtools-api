@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page backgroundimage="test_image_1.png" color="#7EB14F">
+    <title mode="clear">
+        <heading color="#000000" textalign="left" size="200" x="19" y="25" w="300" gtapi-trx-id="d32fce50-df42-4ab7-9815-e0a151213a01">KNOWING GOD</heading>
+        <subheading color="#000000" textalign="right" size="211" x="0" y="60" w="275" gtapi-trx-id="6f2678f1-93d2-42d9-bca5-bc2e16593216">personally</subheading>
+    </title>
+    <text color="#000000" modifier="italics" size="112" xoffset="19" yoffset="40" w="260" gtapi-trx-id="5d1e91d4-6a9f-44cd-ac01-f45800ef1fd7">These four points explain how to enter into a personal relationship with God and experience the life for which you were created.</text>
+</page>
