@@ -4,16 +4,20 @@ import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.languages.LanguageService;
 
 import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PackageServiceTestMockData;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,12 +26,16 @@ import java.util.UUID;
  */
 public class TranslationServiceTest extends AbstractServiceTest
 {
-	public static final UUID TEST_TRANSLATION_ID =UUID.randomUUID();
+	public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 
 	@Inject
 	TranslationService translationService;
+	@Inject
+	PackageService packageService;
+	@Inject
+	LanguageService languageService;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -36,20 +44,36 @@ public class TranslationServiceTest extends AbstractServiceTest
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(TranslationService.class)
+				.addClasses(TranslationService.class, PackageService.class, LanguageService.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
-	@BeforeClass()
+	@BeforeMethod
 	public void setup()
 	{
-		super.setup();
-
-		translationService = new TranslationService(sqlConnection);
-
-		TranslationServiceTestMockData.persistLanguage(new LanguageService(sqlConnection));
-		TranslationServiceTestMockData.persistPackage(new PackageService(sqlConnection));
+		try
+		{
+			translationService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
+		TranslationServiceTestMockData.persistLanguage(languageService);
+		TranslationServiceTestMockData.persistPackage(packageService);
 		TranslationServiceTestMockData.persistTranslation(translationService);
+	}
+
+	@AfterMethod
+	public void cleanup()
+	{
+		try
+		{
+			translationService.sqlConnection.getJdbcConnection().rollback();
+		} catch (SQLException e)
+		{
+			/*yawn*/
+		}
 	}
 
 	@Test
