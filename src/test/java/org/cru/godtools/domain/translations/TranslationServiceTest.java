@@ -4,10 +4,16 @@ import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.languages.LanguageService;
 
 import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,13 +22,23 @@ import java.util.UUID;
  */
 public class TranslationServiceTest extends AbstractServiceTest
 {
-	TranslationServiceTestMockDataService mockData;
-
-	TranslationService translationService;
-
 	public static final UUID TEST_TRANSLATION_ID =UUID.randomUUID();
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
+
+	@Inject
+	TranslationService translationService;
+
+	@Deployment
+	public static JavaArchive createDeployment()
+	{
+		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
+
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(TranslationService.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
 
 	@BeforeClass()
 	public void setup()
@@ -31,10 +47,9 @@ public class TranslationServiceTest extends AbstractServiceTest
 
 		translationService = new TranslationService(sqlConnection);
 
-		mockData = new TranslationServiceTestMockDataService();
-		mockData.persistLanguage(new LanguageService(sqlConnection));
-		mockData.persistPackage(new PackageService(sqlConnection));
-		mockData.persistTranslation(translationService);
+		TranslationServiceTestMockData.persistLanguage(new LanguageService(sqlConnection));
+		TranslationServiceTestMockData.persistPackage(new PackageService(sqlConnection));
+		TranslationServiceTestMockData.persistTranslation(translationService);
 	}
 
 	@Test
@@ -43,8 +58,7 @@ public class TranslationServiceTest extends AbstractServiceTest
 		List<Translation> translations = translationService.selectByLanguageId(TEST_LANGUAGE_ID);
 
 		Assert.assertEquals(translations.size(), 1);
-		mockData.validateTranslation(translations.get(0));
-
+		TranslationServiceTestMockData.validateTranslation(translations.get(0));
 	}
 
 	@Test
@@ -53,7 +67,7 @@ public class TranslationServiceTest extends AbstractServiceTest
 		List<Translation> translations = translationService.selectByPackageId(TEST_PACKAGE_ID);
 
 		Assert.assertEquals(translations.size(), 1);
-		mockData.validateTranslation(translations.get(0));
+		TranslationServiceTestMockData.validateTranslation(translations.get(0));
 	}
 
 	@Test
@@ -61,6 +75,6 @@ public class TranslationServiceTest extends AbstractServiceTest
 	{
 		List<Translation> translation = translationService.selectByLanguageIdPackageId(TEST_LANGUAGE_ID, TEST_PACKAGE_ID);
 
-		mockData.validateTranslation(translation.get(0));
+		TranslationServiceTestMockData.validateTranslation(translation.get(0));
 	}
 }

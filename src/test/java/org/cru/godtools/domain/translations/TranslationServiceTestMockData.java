@@ -9,10 +9,10 @@ import org.testng.Assert;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class TranslationServiceTestMockDataService
+public class TranslationServiceTestMockData
 {
 
-	public void persistLanguage(LanguageService languageService)
+	public static void persistLanguage(LanguageService languageService)
 	{
 		Language language = new Language();
 		language.setId(TranslationServiceTest.TEST_LANGUAGE_ID);
@@ -20,7 +20,7 @@ public class TranslationServiceTestMockDataService
 		languageService.insert(language);
 	}
 
-	public void persistPackage(PackageService packageService)
+	public static void persistPackage(PackageService packageService)
 	{
 		Package gtPackage = new Package();
 		gtPackage.setId(TranslationServiceTest.TEST_PACKAGE_ID);
@@ -28,7 +28,7 @@ public class TranslationServiceTestMockDataService
 		packageService.insert(gtPackage);
 	}
 
-	public void persistTranslation(TranslationService translationService)
+	public static void persistTranslation(TranslationService translationService)
 	{
 		Translation translation = new Translation();
 		translation.setId(TranslationServiceTest.TEST_TRANSLATION_ID);
@@ -38,7 +38,7 @@ public class TranslationServiceTestMockDataService
 		translationService.insert(translation);
 	}
 
-	public void validateTranslation(Translation translation)
+	public static void validateTranslation(Translation translation)
 	{
 		Assert.assertNotNull(translation);
 		Assert.assertEquals(translation.getId(), TranslationServiceTest.TEST_TRANSLATION_ID);
