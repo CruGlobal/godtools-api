@@ -11,17 +11,13 @@ import javax.inject.Inject;
  */
 public class AuthorizationService
 {
+	@Inject
     Connection sqlConnection;
-    Clock clock;
+	
+    @Inject
+	Clock clock;
 
 	Logger log = Logger.getLogger(AuthorizationService.class);
-
-    @Inject
-    public AuthorizationService(Connection sqlConnection, Clock clock)
-    {
-        this.sqlConnection = sqlConnection;
-        this.clock = clock;
-    }
 
     public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
     {
