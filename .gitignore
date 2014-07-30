@@ -3,7 +3,7 @@ target/
 out/*
 .idea/*
 *.iml
-Packages
+Packages-dir
 
 # Package Files #
 *.jar

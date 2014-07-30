@@ -39,6 +39,11 @@ public class TestSqlConnectionProducer
 		return connection;
     }
 
+	public static Connection getConnection()
+	{
+		return connection;
+	}
+
 	private GodToolsProperties resolveProperties()
 	{
 		GodToolsProperties properties;
