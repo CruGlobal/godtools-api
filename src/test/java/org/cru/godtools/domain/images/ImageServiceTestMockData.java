@@ -5,9 +5,9 @@ import org.testng.Assert;
 /**
  * Created by ryancarlson on 4/1/14.
  */
-public class ImageServiceTestMockDataService
+public class ImageServiceTestMockData
 {
-	public void persistImage(ImageService imageService)
+	public static void persistImage(ImageService imageService)
 	{
 		Image image = new Image();
 		image.setId(ImageServiceTest.TEST_IMAGE_ID);
@@ -17,7 +17,7 @@ public class ImageServiceTestMockDataService
 		imageService.insert(image);
 	}
 
-	public void modifyImage(ImageService imageService)
+	public static void modifyImage(ImageService imageService)
 	{
 		Image image = new Image();
 		image.setId(ImageServiceTest.TEST_IMAGE_ID);
@@ -27,7 +27,7 @@ public class ImageServiceTestMockDataService
 		imageService.update(image);
 	}
 
-	public void persistRetinaImage(ImageService imageService)
+	public static void persistRetinaImage(ImageService imageService)
 	{
 		Image retinaImage = new Image();
 		retinaImage.setId(ImageServiceTest.TEST_RETINA_IMAGE_ID);
@@ -37,7 +37,7 @@ public class ImageServiceTestMockDataService
 		imageService.insert(retinaImage);
 	}
 
-	public void validateImage(Image image)
+	public static void validateImage(Image image)
 	{
 		Assert.assertNotNull(image);
 		Assert.assertEquals(image.getId(), ImageServiceTest.TEST_IMAGE_ID);
@@ -45,7 +45,7 @@ public class ImageServiceTestMockDataService
 		Assert.assertEquals(image.getImageContent(), "aasdfsdf".getBytes());
 	}
 
-	public void validateModifiedImage(Image modifiedImage)
+	public static void validateModifiedImage(Image modifiedImage)
 	{
 		Assert.assertNotNull(modifiedImage);
 		Assert.assertEquals(modifiedImage.getId(), ImageServiceTest.TEST_IMAGE_ID);

@@ -1,10 +1,15 @@
 package org.cru.godtools.domain.images;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.domain.packages.PackageServiceTestMockData;
 import org.sql2o.Connection;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -12,24 +17,38 @@ import java.util.UUID;
  */
 public class ImageServiceTest extends AbstractServiceTest
 {
-	ImageServiceTestMockDataService mockData;
-
-	ImageService imageService;
-
 	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
 
-	@BeforeClass()
+	@Inject
+	ImageService imageService;
+
+	@BeforeMethod
 	public void setup()
 	{
-		super.setup();
+		try
+		{
+			imageService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
+		ImageServiceTestMockData.persistImage(imageService);
+		ImageServiceTestMockData.persistRetinaImage(imageService);
+	}
 
-		imageService = new ImageService(sqlConnection);
-
-		mockData = new ImageServiceTestMockDataService();
-
-		mockData.persistImage(imageService);
-		mockData.persistRetinaImage(imageService);
+	@AfterMethod
+	public void cleanup()
+	{
+		try
+		{
+			imageService.sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
 	}
 
 	@Test
@@ -37,27 +56,14 @@ public class ImageServiceTest extends AbstractServiceTest
 	{
 		Image image = imageService.selectById(TEST_IMAGE_ID);
 
-		mockData.validateImage(image);
+		ImageServiceTestMockData.validateImage(image);
 	}
 
 	@Test
 	public void testUpdate() throws Exception
 	{
-		Connection nonAutoCommitSqlConnection1 = sqlConnection.getSql2o().beginTransaction();
-
-		try
-		{
-			ImageService nonAutoCommitImageService = new ImageService(sqlConnection);
-
-			mockData.modifyImage(nonAutoCommitImageService);
-			mockData.validateModifiedImage(nonAutoCommitImageService.selectById(TEST_IMAGE_ID));
-		}
-
-		finally
-		{
-			nonAutoCommitSqlConnection1.rollback();
-		}
-
+		ImageServiceTestMockData.modifyImage(imageService);
+		ImageServiceTestMockData.validateModifiedImage(imageService.selectById(TEST_IMAGE_ID));
 	}
 
 }

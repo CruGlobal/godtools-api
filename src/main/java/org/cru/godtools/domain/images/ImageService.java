@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class ImageService
 {
-    private Connection sqlConnection;
+    Connection sqlConnection;
 
     @Inject
     public ImageService(Connection sqlConnection)
