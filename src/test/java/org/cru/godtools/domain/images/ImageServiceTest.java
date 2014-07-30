@@ -1,6 +1,11 @@
 package org.cru.godtools.domain.images;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,6 +24,17 @@ public class ImageServiceTest extends AbstractServiceTest
 
 	@Inject
 	ImageService imageService;
+
+	@Deployment
+	public static JavaArchive createDeployment()
+	{
+		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
+
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(ImageService.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
 
 	@BeforeMethod
 	public void setup()
