@@ -19,17 +19,24 @@ import javax.inject.Inject;
 public class TestSqlConnectionProducer
 {
 	@Inject
-    GodToolsProperties properties;// = new GodToolsPropertiesFactory().get();
+    GodToolsProperties properties;
+
+	private static Connection connection;
 
 	@Produces
     public Connection getTestSqlConnection()
     {
 		GodToolsProperties properties = resolveProperties();
 
-        return new Connection(new Sql2o(properties.getProperty("unittestDatabaseUrl"),
-				properties.getProperty("unittestDatabaseUsername"),
-				properties.getProperty("unittestDatabasePassword"),
-				QuirksMode.PostgreSQL));
+		if(connection == null)
+		{
+			connection = new Connection(new Sql2o(properties.getProperty("unittestDatabaseUrl"),
+					properties.getProperty("unittestDatabaseUsername"),
+					properties.getProperty("unittestDatabasePassword"),
+					QuirksMode.PostgreSQL));
+		}
+
+		return connection;
     }
 
 	private GodToolsProperties resolveProperties()
