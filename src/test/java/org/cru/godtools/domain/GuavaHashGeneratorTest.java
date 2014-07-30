@@ -29,7 +29,7 @@ public class GuavaHashGeneratorTest
 		Document testFile = builder.parse(inputStream);
 
         Assert.assertNotNull(testFile);
-        Assert.assertEquals(GuavaHashGenerator.calculateHash(testFile), "f9448a4c925e3c45a4f8077c8a5dfce0aeabed38");
+        Assert.assertEquals(GuavaHashGenerator.calculateHash(testFile), "d8722200912bad3cbabbfaaa09192c7fd44f4f82");
     }
 
     @Test
