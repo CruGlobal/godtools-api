@@ -8,10 +8,10 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class LanguageServiceTestMockDataService
+public class LanguageServiceTestMockData
 {
 
-	public void persistLanguages(LanguageService languageService)
+	public static void persistLanguages(LanguageService languageService)
 	{
 		Language language = new Language();
 		language.setId(LanguageServiceTest.TEST_LANGUAGE_ID);
@@ -30,7 +30,7 @@ public class LanguageServiceTestMockDataService
 		languageService.insert(language2);
 	}
 
-	public Language getNonExistantLanguage()
+	public static Language getNonExistantLanguage()
 	{
 		Language nonExistantLanguage = new Language();
 		nonExistantLanguage.setId(UUID.randomUUID());
@@ -38,7 +38,7 @@ public class LanguageServiceTestMockDataService
 		return nonExistantLanguage;
 	}
 
-	public void validateLanguages(List<Language> languages)
+	public static void validateLanguages(List<Language> languages)
 	{
 		for(Language language : languages)
 		{
@@ -47,7 +47,7 @@ public class LanguageServiceTestMockDataService
 			else Assert.fail("Unknown language..");
 		}
 	}
-	public void validateLanguage(Language language)
+	public static void validateLanguage(Language language)
 	{
 		Assert.assertNotNull(language);
 		Assert.assertEquals(language.getId(), LanguageServiceTest.TEST_LANGUAGE_ID);
@@ -57,7 +57,7 @@ public class LanguageServiceTestMockDataService
 		Assert.assertEquals(language.getSubculture(), "hipster");
 	}
 
-	public void validateLanguage2(Language language2)
+	public static void validateLanguage2(Language language2)
 	{
 		Assert.assertNotNull(language2);
 		Assert.assertEquals(language2.getId(), LanguageServiceTest.TEST_LANGUAGE2_ID);

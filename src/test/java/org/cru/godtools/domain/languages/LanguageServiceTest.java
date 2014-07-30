@@ -1,10 +1,18 @@
 package org.cru.godtools.domain.languages;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,23 +21,48 @@ import java.util.UUID;
  */
 public class LanguageServiceTest extends AbstractServiceTest
 {
-	LanguageServiceTestMockDataService mockData;
-
-    LanguageService languageService;
-
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
 
-	@BeforeClass()
+	@Inject
+    LanguageService languageService;
+
+	@Deployment
+	public static JavaArchive createDeployment()
+	{
+		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
+
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(LanguageService.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
+	@BeforeMethod
 	public void setup()
 	{
-		super.setup();;
+		try
+		{
+			languageService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
+		LanguageServiceTestMockData.persistLanguages(languageService);
+	}
 
-		languageService = new LanguageService(sqlConnection);
-
-		mockData = new LanguageServiceTestMockDataService();
-
-		mockData.persistLanguages(languageService);
+	@AfterMethod
+	public void cleanup()
+	{
+		try
+		{
+			languageService.sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
 	}
 
     @Test
@@ -38,7 +71,7 @@ public class LanguageServiceTest extends AbstractServiceTest
 		List<Language> languages = languageService.selectAllLanguages();
 
 		Assert.assertEquals(languages.size(), 2);
-		mockData.validateLanguages(languages);
+		LanguageServiceTestMockData.validateLanguages(languages);
     }
 
     @Test
@@ -47,12 +80,12 @@ public class LanguageServiceTest extends AbstractServiceTest
 		Language language = languageService.selectLanguageById(TEST_LANGUAGE_ID);
 
 		Assert.assertNotNull(language);
-		mockData.validateLanguage(language);
+		LanguageServiceTestMockData.validateLanguage(language);
 
 		Language language2 = languageService.selectLanguageById(TEST_LANGUAGE2_ID);
 
 		Assert.assertNotNull(language2);
-		mockData.validateLanguage2(language2);
+		LanguageServiceTestMockData.validateLanguage2(language2);
     }
 
     @Test
@@ -62,13 +95,13 @@ public class LanguageServiceTest extends AbstractServiceTest
 		Language language = languageService.selectByLanguageCode(languageCode);
 
 		Assert.assertNotNull(language);
-		mockData.validateLanguage(language);
+		LanguageServiceTestMockData.validateLanguage(language);
 
 		LanguageCode languageCode2 = new LanguageCode("en");
 		Language language2 = languageService.selectByLanguageCode(languageCode2);
 
 		Assert.assertNotNull(language2);
-		mockData.validateLanguage2(language2);
+		LanguageServiceTestMockData.validateLanguage2(language2);
 	}
 
 	@Test()
@@ -90,7 +123,7 @@ public class LanguageServiceTest extends AbstractServiceTest
 
 		Assert.assertTrue(languageService.languageExists(language2));
 
-		Language nonExistantLanguage = mockData.getNonExistantLanguage();
+		Language nonExistantLanguage = LanguageServiceTestMockData.getNonExistantLanguage();
 
 		Assert.assertFalse(languageService.languageExists(nonExistantLanguage));
 	}
