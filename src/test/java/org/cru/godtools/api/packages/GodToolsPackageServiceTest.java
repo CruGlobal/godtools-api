@@ -70,12 +70,7 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 		{
 			/*yawn*/
 		}
-		GodToolsPackageServiceTestMockData.persistPackage(languageService,
-				packageService,
-				packageStructureService,
-				translationService,
-				imageService,
-				referencedImageService);
+		saveTestPackage();
 	}
 
 	@AfterMethod

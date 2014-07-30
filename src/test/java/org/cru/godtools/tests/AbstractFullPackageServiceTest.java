@@ -1,5 +1,6 @@
 package org.cru.godtools.tests;
 
+import org.cru.godtools.api.packages.utils.GodToolsPackageServiceTestMockData;
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.images.ImageService;
 import org.cru.godtools.domain.images.ReferencedImageService;
@@ -24,15 +25,25 @@ public class AbstractFullPackageServiceTest extends AbstractServiceTest
 	public static final UUID PACKAGE_STRUCTURE_ID = UUID.randomUUID();
 
 	@Inject
-	protected PackageService packageService;
+	private PackageService packageService;
 	@Inject
-	protected LanguageService languageService;
+	private LanguageService languageService;
 	@Inject
-	protected TranslationService translationService;
+	private TranslationService translationService;
 	@Inject
-	protected PackageStructureService packageStructureService;
+	private PackageStructureService packageStructureService;
 	@Inject
-	protected ImageService imageService;
+	private ImageService imageService;
 	@Inject
-	protected ReferencedImageService referencedImageService;
+	private ReferencedImageService referencedImageService;
+
+	protected void saveTestPackage()
+	{
+		GodToolsPackageServiceTestMockData.persistPackage(languageService,
+				packageService,
+				packageStructureService,
+				translationService,
+				imageService,
+				referencedImageService);
+	}
 }

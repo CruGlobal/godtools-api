@@ -11,12 +11,12 @@ import org.sql2o.Connection;
  */
 public class Sql2oTestClassCollection
 {
-	ImmutableSet<Class<?>> set = ImmutableSet.of(Connection.class,
+	static ImmutableSet<Class<?>> set = ImmutableSet.of(Connection.class,
 			TestSqlConnectionProducer.class,
 			GodToolsProperties.class,
 			GodToolsPropertiesFactory.class);
 
-	public Class[] getClasses()
+	public static Class[] getClasses()
 	{
 		return set.toArray(new Class<?>[set.size()]);
 	}

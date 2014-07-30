@@ -112,7 +112,7 @@ public class PackageResource
 							   @QueryParam("version") BigDecimal versionNumber,
 							   @QueryParam("density") String desiredPixelDensity,
 							   @HeaderParam("Authorization") String authTokenHeader,
-							   @QueryParam("Authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
+							   @QueryParam("Authorization") String authTokenParam) throws Exception
 	{
 		log.info("Requesting package " + packageCode + " for language: " + languageCode);
 
