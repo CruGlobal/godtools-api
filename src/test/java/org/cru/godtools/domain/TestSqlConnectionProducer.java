@@ -7,6 +7,9 @@ import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
 import org.sql2o.Sql2o;
 
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+
 /**
  * Creates sql2o connection objects that access the unittest database.  Each request creates a new
  * connection, so callers should be careful to close connections when finished.
@@ -15,13 +18,32 @@ import org.sql2o.Sql2o;
  */
 public class TestSqlConnectionProducer
 {
-    static GodToolsProperties properties = new GodToolsPropertiesFactory().get();
+	@Inject
+    GodToolsProperties properties;// = new GodToolsPropertiesFactory().get();
 
-    public static Connection getTestSqlConnection()
+	@Produces
+    public Connection getTestSqlConnection()
     {
+		GodToolsProperties properties = resolveProperties();
+
         return new Connection(new Sql2o(properties.getProperty("unittestDatabaseUrl"),
 				properties.getProperty("unittestDatabaseUsername"),
 				properties.getProperty("unittestDatabasePassword"),
 				QuirksMode.PostgreSQL));
     }
+
+	private GodToolsProperties resolveProperties()
+	{
+		GodToolsProperties properties;
+
+		if(this.properties != null)
+		{
+			properties = this.properties;
+		}
+		else
+		{
+			properties = new GodToolsPropertiesFactory().get();
+		}
+		return properties;
+	}
 }

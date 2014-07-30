@@ -14,10 +14,10 @@ public class UnittestDatabaseBuilder
 
 	public static void main(String[] args)
 	{
-		new UnittestDatabaseBuilder().build();
+		build();
 	}
 
-	public void build()
+	public static void build()
 	{
 		Flyway flyway = new Flyway();
 		flyway.setDataSource(properties.getProperty("unittestDatabaseUrl"),

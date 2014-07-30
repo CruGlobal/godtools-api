@@ -2,10 +2,21 @@ package org.cru.godtools.domain.authentication;
 
 import org.cru.godtools.domain.AbstractServiceTest;
 import org.cru.godtools.domain.TestClockImpl;
+import org.cru.godtools.domain.TestSqlConnectionProducer;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.sql2o.Connection;
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.inject.Inject;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -13,21 +24,50 @@ import java.util.UUID;
  */
 public class AuthorizationServiceTest extends AbstractServiceTest
 {
-	private AuthorizationServiceTestMockDataService mockData;
-	private AuthorizationService authorizationService;
-
 	public static final UUID TEST_AUTHORIZATION_ID = UUID.randomUUID();
 
-	@BeforeClass
-	@Override
+	@Inject
+	private AuthorizationService authorizationService;
+
+	@Deployment
+	public static JavaArchive createDeployment()
+	{
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(AuthorizationService.class,
+						Connection.class,
+						TestSqlConnectionProducer.class,
+						GodToolsPropertiesFactory.class,
+						GodToolsProperties.class,
+						TestClockImpl.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+
+	}
+
+	@BeforeMethod
 	public void setup()
 	{
-		super.setup();
+		try
+		{
+			authorizationService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
+		 AuthorizationServiceTestMockData.persistAuthorization(authorizationService);
+	}
 
-		authorizationService = new AuthorizationService(sqlConnection, new TestClockImpl());
-
-		mockData = new AuthorizationServiceTestMockDataService();
-		mockData.persistAuthorization(authorizationService);
+	@AfterMethod
+	public void cleanup()
+	{
+		try
+		{
+			authorizationService.sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+			/*yawn*/
+		}
 	}
 
 	@Test
