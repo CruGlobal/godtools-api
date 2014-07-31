@@ -248,7 +248,7 @@
                     <!-- The exec plugin is used to execute DatabaseMigration class's main method when ${migrations.execute is true} -->
                     <execution>
                         <id>database-migration</id>
-                        <phase>deploy</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
