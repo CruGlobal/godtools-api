@@ -70,6 +70,9 @@ public class AuthorizationResourceTest extends Arquillian
 		}
 	}
 
+	/**
+	 * Tests getting a generic auth token, with draft access set to false.
+	 */
 	@Test
 	public void testGetGenericAuthorizationToken() throws Exception
 	{
@@ -81,6 +84,9 @@ public class AuthorizationResourceTest extends Arquillian
 		authorizationResource.requestAuthStatus(null, response.getHeaderString("Authorization"));
 	}
 
+	/**
+	 *  Tests getting an access token with access to drafts.  Must pass a valid access code.
+	 */
 	@Test
 	public void testGetDraftAuthorizationToken() throws Exception
 	{
@@ -92,6 +98,10 @@ public class AuthorizationResourceTest extends Arquillian
 		authorizationResource.requestAuthStatus(null, response.getHeaderString("Authorization"));
 	}
 
+	/**
+	 * Tests passing an invalid access code to draft access endpoint.  Should result in a 401
+	 * Unauthorized exception
+	 */
 	@Test(expectedExceptions = UnauthorizedException.class)
 	public void testGetDraftAuthorizationTokenInvalidAccessCode() throws Exception
 	{

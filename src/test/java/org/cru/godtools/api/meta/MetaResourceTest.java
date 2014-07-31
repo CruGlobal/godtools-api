@@ -74,6 +74,11 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 		}
 	}
 
+	/**
+	 * Test getting all meta info with a generic access token.
+	 *
+	 * Expects 1 language (en) and 1 package (kgp)
+	 */
 	@Test
 	public void testGetAllMetaInfo() throws Exception
 	{
@@ -81,9 +86,14 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateMetaInfo((MetaResults) response.getEntity());
+		validateLiveMetaInfo((MetaResults)response.getEntity());
 	}
 
+	/**
+	 * Test getting meta info for a language (en) with a generic access token.
+	 *
+	 * Expects 1 language (en) and 1 package (kgp)
+	 */
 	@Test
 	public void testGetLanguageMetaInfo() throws Exception
 	{
@@ -91,9 +101,14 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateMetaInfo((MetaResults) response.getEntity());
+		validateLiveMetaInfo((MetaResults)response.getEntity());
 	}
 
+	/**
+	 * Test getting meta info for a language (en) and package (kgp) with a generic access token.
+	 *
+	 * Expects 1 language (en) and 1 package (kgp)
+	 */
 	@Test
 	public void testGetLanguageAndPackageMetaInfo() throws Exception
 	{
@@ -101,10 +116,47 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateMetaInfo((MetaResults) response.getEntity());
+		validateLiveMetaInfo((MetaResults)response.getEntity());
 	}
 
-private void validateMetaInfo(MetaResults metaResults)
+	/**
+	 * Test getting meta info for a language (en) and package (kgp) with a draft access token.
+	 *
+	 * Expects 1 language (en), and no packages (no drafts in database)
+	 */
+	@Test
+	public void testGetAllDraftMetaInfo() throws Exception
+	{
+		Response response = metaResource.getLanguageAndPackageMetaInfo("en", "kgp", 1, null, "draft-access", null);
+
+		Assert.assertEquals(200, response.getStatus());
+
+		// english language should be present
+		MetaLanguage metaLanguage = ((MetaResults)response.getEntity()).getLanguages().iterator().next();
+		Assert.assertEquals(metaLanguage.getCode(), "en");
+
+		Assert.assertTrue(metaLanguage.getPackages().isEmpty());
+	}
+
+	/**
+	 * Test getting meta info for a language (en) and package (kgp) with a draft access token.
+	 *
+	 * Expects 1 language (en) and 1 package (kgp)
+	 */
+	@Test
+	public void testGetAllDraftMetaInfoWithResults() throws Exception
+	{
+		// set the current translation to status = draft and version = 1.2
+		setTestPackageDraftStatus();
+
+		Response response = metaResource.getLanguageAndPackageMetaInfo("en", "kgp", 1, null, "draft-access", null);
+
+		Assert.assertEquals(200, response.getStatus());
+
+		validateDraftMetaInfo((MetaResults) response.getEntity());
+	}
+
+	private MetaPackage validateCommonMetaInfo(MetaResults metaResults)
 	{
 		Set<MetaLanguage> languageSet = metaResults.getLanguages();
 
@@ -120,7 +172,21 @@ private void validateMetaInfo(MetaResults metaResults)
 
 		Assert.assertEquals(metaPackage.getCode(), "kgp");
 		Assert.assertEquals(metaPackage.getName(), "Knowing God Personally");
+
+		return metaPackage;
+	}
+
+	private void validateLiveMetaInfo(MetaResults metaResults)
+	{
+		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
 		Assert.assertEquals(metaPackage.getStatus(), "live");
 		Assert.assertEquals(metaPackage.getVersion(), new BigDecimal("1.1"));
+	}
+
+	private void validateDraftMetaInfo(MetaResults metaResults)
+	{
+		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
+		Assert.assertEquals(metaPackage.getStatus(), "draft");
+		Assert.assertEquals(metaPackage.getVersion(), new BigDecimal("1.2"));
 	}
 }

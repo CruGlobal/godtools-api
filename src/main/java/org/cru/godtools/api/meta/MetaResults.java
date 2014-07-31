@@ -32,9 +32,4 @@ public class MetaResults implements java.io.Serializable
     {
         return languages;
     }
-
-    public void setLanguages(Set<MetaLanguage> languages)
-    {
-        this.languages = languages;
-    }
 }

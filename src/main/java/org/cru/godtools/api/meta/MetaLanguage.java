@@ -51,9 +51,4 @@ public class MetaLanguage
     {
         return packages;
     }
-
-    public void setPackages(Set<MetaPackage> packages)
-    {
-        this.packages = packages;
-    }
 }
