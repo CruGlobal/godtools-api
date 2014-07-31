@@ -200,6 +200,46 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+
+                    <!-- The exec plugin is used to execute DatabaseMigration class's main method when ${migrations.execute is true} -->
+                    <execution>
+                        <id>database-migration</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.cru.crs.domain.DatabaseMigration</mainClass>
+                            <commandlineArgs>
+                                ${migrations.execute} ${migrations.environment}
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.0.1.Final</version>
+                <configuration>
+                    <hostname>${deployments.targetServerIP}</hostname>
+                    <username>deployer</username>
+                    <password>${env.deployerPassword}</password>
+                </configuration>
+            </plugin>
+
         </plugins>
 
     </build>
