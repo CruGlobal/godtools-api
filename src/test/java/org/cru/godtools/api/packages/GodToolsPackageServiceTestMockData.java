@@ -7,7 +7,7 @@ import org.cru.godtools.domain.images.ReferencedImage;
 import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.api.utilities.ImageReader;
+import org.cru.godtools.utils.ImageReader;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
