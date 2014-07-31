@@ -179,6 +179,6 @@ public class TranslationResource
 
 		PageStructure pageStructure = pageStructureService.selectByid(uuid);
 
-		return Response.ok().build();
+		return Response.ok(pageStructure.getXmlContent()).build();
 	}
 }
