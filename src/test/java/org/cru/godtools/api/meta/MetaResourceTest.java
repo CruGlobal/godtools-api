@@ -17,6 +17,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -86,7 +87,7 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateLiveMetaInfo((MetaResults)response.getEntity());
+		validateLiveMetaInfo((MetaResults) response.getEntity());
 	}
 
 	/**
@@ -101,7 +102,7 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateLiveMetaInfo((MetaResults)response.getEntity());
+		validateLiveMetaInfo((MetaResults) response.getEntity());
 	}
 
 	/**
@@ -116,7 +117,7 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(200, response.getStatus());
 
-		validateLiveMetaInfo((MetaResults)response.getEntity());
+		validateLiveMetaInfo((MetaResults) response.getEntity());
 	}
 
 	/**
@@ -154,6 +155,17 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(200, response.getStatus());
 
 		validateDraftMetaInfo((MetaResults) response.getEntity());
+	}
+
+	/**
+	 * Test getting meta info w/o interpreter.  Should result in a 400 Bad Request exception
+	 */
+	@Test()
+	public void testGetAllMetaInfoNoInterpreter() throws Exception
+	{
+		Response response = metaResource.getLanguageAndPackageMetaInfo("en", "kgp", null, null, "draft-access", null);
+
+		Assert.assertEquals(400, response.getStatus());
 	}
 
 	private MetaPackage validateCommonMetaInfo(MetaResults metaResults)
