@@ -1,13 +1,16 @@
 package org.cru.godtools.domain.languages;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -19,7 +22,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class LanguageServiceTest extends AbstractServiceTest
+public class LanguageServiceTest extends Arquillian
 {
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
@@ -36,6 +39,12 @@ public class LanguageServiceTest extends AbstractServiceTest
 				.addClasses(sql2oTestClassCollection.getClasses())
 				.addClasses(LanguageService.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
+	@BeforeClass
+	public void initializeDatabase()
+	{
+		UnittestDatabaseBuilder.build();
 	}
 
 	@BeforeMethod

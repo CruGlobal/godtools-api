@@ -1,12 +1,15 @@
 package org.cru.godtools.domain.images;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -17,7 +20,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/1/14.
  */
-public class ImageServiceTest extends AbstractServiceTest
+public class ImageServiceTest extends Arquillian
 {
 	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
@@ -34,6 +37,12 @@ public class ImageServiceTest extends AbstractServiceTest
 				.addClasses(sql2oTestClassCollection.getClasses())
 				.addClasses(ImageService.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
+	@BeforeClass
+	public void initializeDatabase()
+	{
+		UnittestDatabaseBuilder.build();
 	}
 
 	@BeforeMethod

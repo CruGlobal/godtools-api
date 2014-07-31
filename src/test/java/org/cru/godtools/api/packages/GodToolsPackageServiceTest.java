@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.cru.godtools.domain.TestSqlConnectionProducer;
+import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.packages.PixelDensity;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -13,6 +14,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -39,6 +41,12 @@ public class GodToolsPackageServiceTest extends AbstractFullPackageServiceTest
 				.addClasses(sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
+	@BeforeClass
+	public void initializeDatabase()
+	{
+		UnittestDatabaseBuilder.build();
 	}
 
 	@BeforeMethod

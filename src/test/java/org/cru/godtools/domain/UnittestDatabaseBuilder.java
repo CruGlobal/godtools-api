@@ -24,7 +24,7 @@ public class UnittestDatabaseBuilder
 				properties.getProperty("unittestDatabaseUsername"),
 				properties.getProperty("unittestDatabasePassword"));
 		flyway.setInitVersion("0");
-		flyway.setTarget(MigrationVersion.fromVersion("0.3"));
+		flyway.setTarget(MigrationVersion.fromVersion("0.7"));
 		flyway.clean();
 		flyway.init();
 		flyway.migrate();

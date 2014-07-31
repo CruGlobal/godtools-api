@@ -1,10 +1,12 @@
 package org.cru.godtools.domain.packages;
 
 import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.languages.LanguageServiceTestMockData;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -20,7 +22,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class PackageServiceTest extends AbstractServiceTest
+public class PackageServiceTest extends Arquillian
 {
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 
@@ -36,6 +38,12 @@ public class PackageServiceTest extends AbstractServiceTest
 				.addClasses(sql2oTestClassCollection.getClasses())
 				.addClasses(PackageService.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
+	@BeforeClass
+	public void initializeDatabase()
+	{
+		UnittestDatabaseBuilder.build();
 	}
 
 	@BeforeMethod

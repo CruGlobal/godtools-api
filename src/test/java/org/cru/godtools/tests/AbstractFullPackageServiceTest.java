@@ -10,6 +10,7 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.jboss.arquillian.testng.Arquillian;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -17,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class AbstractFullPackageServiceTest extends AbstractServiceTest
+public class AbstractFullPackageServiceTest extends Arquillian
 {
 	public static final UUID TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID LANGUAGE_ID = UUID.randomUUID();

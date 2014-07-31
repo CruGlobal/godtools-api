@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
+import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
@@ -13,6 +14,7 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -51,6 +53,12 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 	@Inject
 	PackageResource packageResource;
+
+	@BeforeClass
+	public void initializeDatabase()
+	{
+		UnittestDatabaseBuilder.build();
+	}
 
 	@BeforeMethod
 	public void setup()
