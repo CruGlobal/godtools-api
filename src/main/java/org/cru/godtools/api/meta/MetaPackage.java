@@ -13,10 +13,6 @@ public class MetaPackage  implements java.io.Serializable
     String name;
 	String status;
 
-    public MetaPackage()
-    {
-    }
-
     public MetaPackage(String packageName, String packageCode, BigDecimal versionNumber, boolean isReleased)
     {
         setName(packageName);

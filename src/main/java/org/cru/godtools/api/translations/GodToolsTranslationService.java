@@ -144,8 +144,8 @@ public class GodToolsTranslationService
 		else
 		{
 			Translation baseTranslation = loadBaseTranslation(gtPackage);
-			newTranslationProcess.copyPageAndTranslationData(newTranslation, baseTranslation);
-			newTranslationProcess.copyPackageTranslationData(newTranslation, baseTranslation);
+			newTranslationProcess.copyPageAndTranslationData(baseTranslation, newTranslation);
+			newTranslationProcess.copyPackageTranslationData(baseTranslation, newTranslation);
 		}
 
 		newTranslationProcess.uploadToTranslationTool(gtPackage, language);

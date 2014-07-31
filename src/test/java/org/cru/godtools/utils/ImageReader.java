@@ -1,4 +1,4 @@
-package org.cru.godtools.api.utilities;
+package org.cru.godtools.utils;
 
 import com.google.common.base.Throwables;
 
