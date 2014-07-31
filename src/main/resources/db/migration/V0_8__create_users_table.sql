@@ -3,5 +3,5 @@ CREATE TABLE users (
     relay_id text,
     granted_timestamp timestamptz,
     revoked_timestamp timestamptz,
-    user_level integer
+    user_level text
 );
