@@ -135,4 +135,15 @@ public class TranslationResource
 		}
 		return Response.noContent().build();
 	}
+	
+	@POST
+	@Path("/{language}/{package}/{page}")
+	public Response updatePageStructure(@PathParam("language") String languageCode,
+	                                    @PathParam("package") String packageCode,
+	                                    @PathParam("page") String page,
+	                                    @HeaderParam("Authorization") String authTokenHeader,
+	                                    @QueryParam("Authorization") String authTokenParam)
+	{
+		return Response.ok().build();
+	}
 }
