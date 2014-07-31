@@ -15,8 +15,6 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.domain.translations.TranslationStatus;
-import org.cru.godtools.domain.translations.TranslationStatusService;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -32,7 +30,6 @@ public class OneSkyDataService
 {
 	private TranslationElementService translationElementService;
 	private TranslationService translationService;
-	private TranslationStatusService translationStatusService;
 	private PackageService packageService;
 	private LanguageService languageService;
 	private PageStructureService pageStructureService;
@@ -40,11 +37,10 @@ public class OneSkyDataService
 	private Clock clock;
 
 	@Inject
-	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, TranslationStatusService translationStatusService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
+	public OneSkyDataService(TranslationElementService translationElementService, TranslationService translationService, PackageService packageService, LanguageService languageService, PageStructureService pageStructureService, Clock clock)
 	{
 		this.translationElementService = translationElementService;
 		this.translationService = translationService;
-		this.translationStatusService = translationStatusService;
 		this.packageService = packageService;
 		this.languageService = languageService;
 		this.pageStructureService = pageStructureService;
@@ -78,45 +74,32 @@ public class OneSkyDataService
 
 	}
 
-	public List<TranslationStatus> getTranslationStatus(UUID translationId)
+	public List<PageStructure> getTranslationStatus(UUID translationId)
 	{
-		return translationStatusService.selectByTranslationId(translationId);
+		return pageStructureService.selectByTranslationId(translationId);
 	}
 
-	public TranslationStatus getTranslationStatus(UUID translationId, String pageName)
+	public PageStructure getTranslationStatus(UUID translationId, String pageName)
 	{
 		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(translationId))
 		{
 			if(pageStructure.getFilename().equals(pageName))
 			{
-				return translationStatusService.selectByTranslationIdPageStructureId(translationId, pageStructure.getId());
+				return pageStructure;
 			}
 		}
 
 		return null;
 	}
 
-	public void updateLocalTranslationStatus(UUID translationId, UUID pageStructureId, OneSkyTranslationStatus oneSkyTranslationStatus)
+	public void updateLocalTranslationStatus(PageStructure pageStructure, OneSkyTranslationStatus oneSkyTranslationStatus)
 	{
-		
-		if(translationStatusService.selectByTranslationIdPageStructureId(translationId,pageStructureId) != null)
-		{
-			translationStatusService.update(new TranslationStatus(translationId,
-					pageStructureId,
-					oneSkyTranslationStatus.getPercentCompleted(),
-					oneSkyTranslationStatus.getStringCount(),
-					oneSkyTranslationStatus.getWordCount(),
-					clock.currentDateTime()));
-		}
-		else
-		{
-			translationStatusService.insert(new TranslationStatus(translationId,
-					pageStructureId,
-					oneSkyTranslationStatus.getPercentCompleted(),
-					oneSkyTranslationStatus.getStringCount(),
-					oneSkyTranslationStatus.getWordCount(),
-					clock.currentDateTime()));
-		}
+		pageStructure.updateCachedStatus(oneSkyTranslationStatus.getPercentCompleted(),
+				oneSkyTranslationStatus.getWordCount(),
+				oneSkyTranslationStatus.getStringCount(),
+				clock.currentDateTime());
+
+		pageStructureService.update(pageStructure);
 	}
 
 	public List<PageStructure> getPageStructures(UUID translationId)

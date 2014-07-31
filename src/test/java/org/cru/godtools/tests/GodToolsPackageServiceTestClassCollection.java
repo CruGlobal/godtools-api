@@ -14,7 +14,6 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.domain.translations.TranslationStatusService;
 import org.cru.godtools.translate.client.onesky.FileClient;
 import org.cru.godtools.translate.client.onesky.OneSkyDataService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;
