@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "translation" resources.
@@ -135,15 +136,21 @@ public class TranslationResource
 		}
 		return Response.noContent().build();
 	}
-	
+
 	@POST
 	@Path("/{language}/{package}/{page}")
 	public Response updatePageStructure(@PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
-	                                    @PathParam("page") String page,
+	                                    @PathParam("page") UUID page,
 	                                    @HeaderParam("Authorization") String authTokenHeader,
 	                                    @QueryParam("Authorization") String authTokenParam)
 	{
+		log.info("Updating page structure for package: " + packageCode + " and language: " + languageCode);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+
+
 		return Response.ok().build();
 	}
 }
