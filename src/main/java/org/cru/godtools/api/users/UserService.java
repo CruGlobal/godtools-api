@@ -25,23 +25,33 @@ public class UserService
 	{
 		sqlConnection.createQuery(UserQueries.insert)
 				.addParameter("id", userRecord.getId())
+				.addParameter("relayId", userRecord.getRelayId())
 				.addParameter("grantedTimestamp", userRecord.getGrantedTimestamp())
 				.addParameter("revokedTimestamp", userRecord.getRevokedTimestamp())
 				.addParameter("userLevel", userRecord.getUserLevel())
 				.executeUpdate();
 	}
 
-	public UserRecord getUserRecord(UUID id)
+	public UserRecord getUserRecordByUUID(UUID id)
 	{
-		return sqlConnection.createQuery(UserQueries.findUserRecord)
+		return sqlConnection.createQuery(UserQueries.findUserRecordByUUID)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("id", id)
 				.executeAndFetchFirst(UserRecord.class);
 	}
 
+	public UserRecord getUserRecordByRelayId(String relayId)
+	{
+		return sqlConnection.createQuery(UserQueries.findUserRecordByRelayId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("relayId", relayId)
+				.executeAndFetchFirst(UserRecord.class);
+	}
+
 	private class UserQueries
 	{
-		static final String insert = "INSERT INTO users(id, granted_timestamp, revoked_timestamp, user_level) VALUES(:id, :grantedTimestamp, :revokedTimestamp, :userLevel)";
-		static final String findUserRecord = "SELECT * FROM users WHERE id = :id";
+		static final String insert = "INSERT INTO users(id, relay_id, granted_timestamp, revoked_timestamp, user_level) VALUES(:id, :relayId, :grantedTimestamp, :revokedTimestamp, :userLevel)";
+		static final String findUserRecordByUUID = "SELECT * FROM users WHERE id = :id";
+		static final String findUserRecordByRelayId = "SELECT * FROM users WHERE relay_id = :relayId";
 	}
 }

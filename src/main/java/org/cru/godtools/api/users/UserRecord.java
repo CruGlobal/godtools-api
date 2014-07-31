@@ -10,6 +10,7 @@ import java.util.UUID;
 public class UserRecord
 {
 	UUID id;
+	String relayId;
 	DateTime grantedTimestamp;
 	DateTime revokedTimestamp;
 	UserLevel userLevel;
@@ -32,6 +33,18 @@ public class UserRecord
 	public void setId(UUID id)
 	{
 		this.id = id;
+	}
+
+	public String getRelayId()
+	{
+		return relayId;
+	}
+
+	// RelayId will be parsed from CASReceipt.
+	// CASReceipt.getAttributes().get("ssoGuid").toString().toLowerCase()
+	public void setRelayId(String relayId)
+	{
+		this.relayId = relayId;
 	}
 
 	public DateTime getGrantedTimestamp()
