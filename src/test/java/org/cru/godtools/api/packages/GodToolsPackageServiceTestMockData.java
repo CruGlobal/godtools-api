@@ -1,6 +1,5 @@
 package org.cru.godtools.api.packages;
 
-import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.images.ImageService;
@@ -8,8 +7,6 @@ import org.cru.godtools.domain.images.ReferencedImage;
 import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.api.packages.GodToolsPackage;
-import org.cru.godtools.api.packages.GodToolsPackageServiceTest;
 import org.cru.godtools.api.utilities.ImageReader;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
@@ -20,7 +17,7 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.tests.XmlDocumentFromFile;
+import org.cru.godtools.utils.XmlDocumentFromFile;
 
 import java.util.UUID;
 

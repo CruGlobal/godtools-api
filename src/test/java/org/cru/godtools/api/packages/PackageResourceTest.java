@@ -8,6 +8,7 @@ import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.utils.NonClosingZipInputStream;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -167,7 +168,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 		ByteArrayInputStream byteArrayInputStream = (ByteArrayInputStream)response.getEntity();
 
-		ZipInputStream zipInputStream = new ZipInputStream(byteArrayInputStream);
+		NonClosingZipInputStream zipInputStream = new NonClosingZipInputStream(new ZipInputStream(byteArrayInputStream));
 
 		ZipEntry zipEntry;
 
@@ -177,17 +178,17 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 			{
 				validateContentsXml(builder.parse(new InputSource(zipInputStream)));
 			}
-			else if(zipEntry.getName().equals("0fb0b56d1ab3b03bd3587f1f0e3e6c4c1852d729.xml"))
-			{
-				Document xmlContentsFile = builder.parse(new InputSource(zipInputStream));
-				"a".toString();
-			}
 			else if(zipEntry.getName().equals("1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml"))
 			{
-				Document xmlContentsFile = builder.parse(new InputSource(zipInputStream));
-				"a".toString();
+				validatePackageConfigXml(builder.parse(new InputSource(zipInputStream)));
+			}
+			else if(zipEntry.getName().equals("0fb0b56d1ab3b03bd3587f1f0e3e6c4c1852d729.xml"))
+			{
+				validatePageXml(builder.parse(new InputSource(zipInputStream)));
 			}
 		}
+
+		zipInputStream.forceClose();
 	}
 
 	private void validateContentsXml(Document xmlContentsFile)
@@ -201,4 +202,31 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
 	}
 
+	private void validatePackageConfigXml(Document xmlPackageConfigFile)
+	{
+		List<Element> packageNameElements = XmlDocumentSearchUtilities.findElements(xmlPackageConfigFile, "packagename");
+		Assert.assertEquals(packageNameElements.size(), 1);
+		Assert.assertEquals(packageNameElements.get(0).getTextContent(), "Knowing God Personally");
+
+		List<Element> pageElements = XmlDocumentSearchUtilities.findElements(xmlPackageConfigFile, "page");
+		Assert.assertEquals(pageElements.size(), 1);
+		Assert.assertEquals(pageElements.get(0).getAttribute("filename"), "0fb0b56d1ab3b03bd3587f1f0e3e6c4c1852d729.xml");
+		Assert.assertEquals(pageElements.get(0).getTextContent(), "Home");
+
+	}
+
+	private void validatePageXml(Document xmlPageFile)
+	{
+		List<Element> headingElements = XmlDocumentSearchUtilities.findElements(xmlPageFile, "heading");
+		Assert.assertEquals(headingElements.size(), 1);
+		Assert.assertEquals(headingElements.get(0).getTextContent(), "KNOWING GOD");
+
+		List<Element> subheadingElements = XmlDocumentSearchUtilities.findElements(xmlPageFile, "subheading");
+		Assert.assertEquals(subheadingElements.size(), 1);
+		Assert.assertEquals(subheadingElements.get(0).getTextContent(), "personally");
+
+		List<Element> textElements = XmlDocumentSearchUtilities.findElements(xmlPageFile, "text");
+		Assert.assertEquals(textElements.size(), 1);
+		Assert.assertEquals(textElements.get(0).getTextContent(), "These four points explain how to enter into a personal relationship with God and experience the life for which you were created.");
+	}
 }

@@ -1,4 +1,4 @@
-package org.cru.godtools.tests;
+package org.cru.godtools.utils;
 
 import com.google.common.base.Throwables;
 import org.w3c.dom.Document;
