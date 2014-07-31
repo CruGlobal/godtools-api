@@ -29,7 +29,7 @@ public class GodToolsPackageServiceTestClassCollection
 			GodToolsPackageService.class, ReferencedImageService.class, PackageService.class,
 			TranslationService.class, LanguageService.class, PackageStructureService.class,
 			PageStructureService.class, TranslationElementService.class, NewTranslationProcess.class,
-			TranslationStatusService.class, DraftTranslationUpdateProcess.class, OneSkyTranslationDownload.class,
+			DraftTranslationUpdateProcess.class, OneSkyTranslationDownload.class,
 			OneSkyTranslationUpload.class, FileClient.class, TranslationClient.class, TestClockImpl.class,
 			OneSkyDataService.class);
 
