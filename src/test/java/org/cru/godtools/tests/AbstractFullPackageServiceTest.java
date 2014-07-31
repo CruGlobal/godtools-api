@@ -9,6 +9,7 @@ import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.arquillian.testng.Arquillian;
 
@@ -56,5 +57,12 @@ public class AbstractFullPackageServiceTest extends Arquillian
 				translationService,
 				imageService,
 				referencedImageService);
+	}
+
+	protected void setTestPackageDraftStatus()
+	{
+		Translation translation = translationService.selectById(TRANSLATION_ID);
+		translation.setReleased(false);
+		translationService.update(translation);
 	}
 }
