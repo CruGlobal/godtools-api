@@ -1,11 +1,13 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.jboss.logging.Logger;
 
@@ -42,6 +44,8 @@ public class TranslationResource
 	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject
+	PageStructureService pageStructureService;
 	@Inject
 	Clock clock;
 
@@ -141,16 +145,36 @@ public class TranslationResource
 	@Path("/{language}/{package}/{page}")
 	public Response updatePageStructure(@PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
-	                                    @PathParam("page") UUID page,
+	                                    @PathParam("page") UUID pageStructureId,
 	                                    @HeaderParam("Authorization") String authTokenHeader,
-	                                    @QueryParam("Authorization") String authTokenParam)
+	                                    @QueryParam("Authorization") String authTokenParam) throws URISyntaxException
 	{
-		log.info("Updating page structure for package: " + packageCode + " and language: " + languageCode);
+		log.info("Updating page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
+		PageStructure pageStructure = pageStructureService.selectByid(pageStructureId);
 
+		//	I assume there will need to be some logic here to replace the new xml with the old xml.
+		pageStructureService.update(pageStructure);
 
+		return Response.created(new URI("/" + languageCode + "/" + packageCode + "/" + pageStructure.getId())).build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/{page}")
+	@Produces({"application/zip", "application/xml"})
+	public Response getPageStructure(@PathParam("language") String languageCode,
+	                                 @PathParam("package") String packageCode,
+	                                 @PathParam("page") UUID pageStructureId,
+	                                 @HeaderParam("Authorization") String authTokenHeader,
+	                                 @QueryParam("Authorization") String authTokenParam)
+	{
+		log.info("Getting page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenHeader, authTokenParam), clock.currentDateTime());
+
+		// Do something here. Still working on it.
 		return Response.ok().build();
 	}
 }
