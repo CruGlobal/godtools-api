@@ -4,6 +4,6 @@ CREATE TABLE access_codes(
   revoked_timestamp timestamptz
 );
 
-INSERT INTO access_codes VALUES ('freddy', CURRENT_TIMESTAMP);
+INSERT INTO access_codes VALUES ('123456', '12-31-2013');
 
 ALTER TABLE auth_tokens ADD device_id text;

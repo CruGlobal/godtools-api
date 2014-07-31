@@ -70,7 +70,8 @@ public class AuthorizationResource
 
 		return Response.noContent()
 				.header("Authorization", authorizationRecord.getAuthToken())
-				.build();    }
+				.build();
+	}
 
 	@POST
 	@Path("/{translatorCode}")
