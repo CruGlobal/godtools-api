@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -163,10 +164,10 @@ public class TranslationResource
 
 	@GET
 	@Path("/{language}/{package}/{page}")
-	@Produces({"application/zip", "application/xml"})
+	@Produces(MediaType.APPLICATION_XML)
 	public Response getPageStructure(@PathParam("language") String languageCode,
 	                                 @PathParam("package") String packageCode,
-	                                 @PathParam("page") UUID pageStructureId,
+	                                 @PathParam("page") String pageStructureId,
 	                                 @HeaderParam("Authorization") String authTokenHeader,
 	                                 @QueryParam("Authorization") String authTokenParam)
 	{
@@ -174,7 +175,10 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenHeader, authTokenParam), clock.currentDateTime());
 
-		// Do something here. Still working on it.
+		UUID uuid = UUID.fromString(pageStructureId);
+
+		PageStructure pageStructure = pageStructureService.selectByid(uuid);
+
 		return Response.ok().build();
 	}
 }
