@@ -14,6 +14,7 @@ import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.translate.client.NoOpTranslationUpload;
 import org.cru.godtools.translate.client.onesky.FileClient;
 import org.cru.godtools.translate.client.onesky.OneSkyDataService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;
@@ -30,7 +31,7 @@ public class GodToolsPackageServiceTestClassCollection
 			TranslationService.class, LanguageService.class, PackageStructureService.class,
 			PageStructureService.class, TranslationElementService.class, NewTranslationProcess.class,
 			DraftTranslationUpdateProcess.class, OneSkyTranslationDownload.class,
-			OneSkyTranslationUpload.class, FileClient.class, TranslationClient.class, TestClockImpl.class,
+			NoOpTranslationUpload.class, FileClient.class, TranslationClient.class, TestClockImpl.class,
 			OneSkyDataService.class);
 
 	public static Class<?>[] getClasses()

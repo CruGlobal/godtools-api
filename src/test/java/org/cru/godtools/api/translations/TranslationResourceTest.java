@@ -5,6 +5,7 @@ import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -21,13 +22,17 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -38,23 +43,36 @@ import java.util.zip.ZipInputStream;
  */
 public class TranslationResourceTest extends AbstractFullPackageServiceTest
 {
+
+	private DocumentBuilder documentBuilder;
+
 	@Deployment
 	public static WebArchive createDeployment()
 	{
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(TranslationResource.class, AuthorizationService.class, FileZipper.class, GodToolsTranslationRetrievalProcess.class)
+				.addClasses(DraftResource.class, TranslationResource.class, AuthorizationService.class, FileZipper.class, GodToolsTranslationRetrievalProcess.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
 	@Inject
 	TranslationResource translationResource;
 
+	// used to validate results of createTranslation test
+	@Inject
+	DraftResource draftResource;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
+	}
+
+	@BeforeClass
+	public void createDocumentBuilder() throws ParserConfigurationException
+	{
+		documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
 	@BeforeMethod
@@ -90,10 +108,8 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Response response = translationResource.getTranslation("en", "kgp", 1, null, "false", new BigDecimal("1.1"), "a", null);
 
 		Assert.assertEquals(response.getStatus(), 200);
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
 	}
 
 	/**
@@ -116,10 +132,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
 	}
 
 	/**
@@ -160,6 +173,106 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		}
 
 		zipInputStream.forceClose();
+	}
+
+	@Test
+	public void testCreateTranslationDifferentLanguage() throws URISyntaxException, IOException, SAXException
+	{
+		Response response = translationResource.createTranslation("fr",
+				"kgp",
+				1,
+				null,
+				"draft-access",
+				null);
+
+		Assert.assertEquals(response.getStatus(), 201);
+
+		Response getDraftResponse = draftResource.getTranslation("fr",
+				"kgp",
+				1,
+				null,
+				"false",
+				new BigDecimal("1.1"),
+				"draft-access",
+				null);
+
+		Assert.assertEquals(getDraftResponse.getStatus(), 200);
+
+		validateDraftXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) getDraftResponse.getEntity())), "fr");
+	}
+
+	@Test
+	public void testCreateTranslationSameLanguage() throws URISyntaxException, IOException, SAXException
+	{
+		Response response = translationResource.createTranslation("en",
+				"kgp",
+				1,
+				null,
+				"draft-access",
+				null);
+
+		Assert.assertEquals(response.getStatus(), 201);
+
+		Response getDraftResponse = draftResource.getTranslation("en",
+				"kgp",
+				1,
+				null,
+				"false",
+				new BigDecimal("1.2"),
+				"draft-access",
+				null);
+
+		Assert.assertEquals(getDraftResponse.getStatus(), 200);
+
+		validateDraftXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) getDraftResponse.getEntity())), "en");
+	}
+
+	@Test(expectedExceptions = UnauthorizedException.class)
+	public void testCreateTranslationUnauthorized() throws URISyntaxException, IOException, SAXException
+	{
+		translationResource.createTranslation("en",
+				"kgp",
+				1,
+				null,
+				"1",
+				null);
+	}
+
+	@Test
+	public void testPublishDraftTranslation() throws URISyntaxException, IOException, SAXException
+	{
+		Response response = translationResource.updateTranslation("en",
+				"kgp",
+				"draft-access",
+				null,
+				"true");
+
+		Assert.assertEquals(response.getStatus(), 204);
+
+		Response publishedTranslationResponse = translationResource.getTranslation("en",
+				"kgp",
+				1,
+				null,
+				"false",
+				new BigDecimal("1.2"),
+				"a",
+				null);
+
+		Assert.assertEquals(publishedTranslationResponse.getStatus(), 200);
+		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)publishedTranslationResponse.getEntity())));
+
+	}
+
+
+	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)
+	{
+		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlDraftContentsFile, "resource");
+
+		Assert.assertEquals(resourceElements.size(), 1);
+		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), languageCode);
+		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
 	}
 
 	private void validateContentsXml(Document xmlContentsFile)
