@@ -198,7 +198,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "d8722200912bad3cbabbfaaa09192c7fd44f4f82.xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
 	}
 
 }
