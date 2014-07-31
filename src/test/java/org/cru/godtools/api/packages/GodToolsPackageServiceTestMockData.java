@@ -127,7 +127,7 @@ public class GodToolsPackageServiceTestMockData
 		packageStructure.setId(GodToolsPackageServiceTest.PACKAGE_STRUCTURE_ID);
 		packageStructure.setPackageId(GodToolsPackageServiceTest.PACKAGE_ID);
 		packageStructure.setVersionNumber(1);
-		packageStructure.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
+		packageStructure.setXmlContent(XmlDocumentFromFile.get("/package.xml"));
 		packageStructureService.insert(packageStructure);
 	}
 
