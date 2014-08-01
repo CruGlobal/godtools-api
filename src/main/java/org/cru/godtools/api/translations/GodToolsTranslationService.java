@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Service which uses lower-level domain services to assemble XML structure files for a translation of a GodTools translation
@@ -56,9 +55,9 @@ public class GodToolsTranslationService
 	@Inject
 	protected ImageService imageService;
 	@Inject
-	private NewTranslationProcess newTranslationProcess;
+	private NewTranslationCreation newTranslationProcess;
 	@Inject
-	private DraftTranslationUpdateProcess draftTranslationUpdateProcess;
+	private DraftTranslationUpdate draftTranslationUpdateProcess;
 
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
