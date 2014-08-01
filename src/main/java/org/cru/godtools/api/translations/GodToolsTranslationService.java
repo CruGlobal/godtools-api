@@ -39,33 +39,26 @@ import java.util.UUID;
 
 public class GodToolsTranslationService
 {
-	protected PackageService packageService;
-	protected TranslationService translationService;
-	protected LanguageService languageService;
-	protected PackageStructureService packageStructureService;
-	protected PageStructureService pageStructureService;
-	protected TranslationElementService translationElementService;
-	protected ReferencedImageService referencedImageService;
-	protected ImageService imageService;
-
-	private NewTranslationProcess newTranslationProcess;
-	private DraftTranslationUpdateProcess draftTranslationUpdateProcess;
-
-
 	@Inject
-	public GodToolsTranslationService(PackageService packageService, TranslationService translationService, LanguageService languageService, PackageStructureService packageStructureService, PageStructureService pageStructureService, TranslationElementService translationElementService, ReferencedImageService referencedImageService, ImageService imageService, NewTranslationProcess newTranslationProcess, DraftTranslationUpdateProcess draftTranslationUpdateProcess)
-	{
-		this.packageService = packageService;
-		this.translationService = translationService;
-		this.languageService = languageService;
-		this.packageStructureService = packageStructureService;
-		this.pageStructureService = pageStructureService;
-		this.translationElementService = translationElementService;
-		this.referencedImageService = referencedImageService;
-		this.imageService = imageService;
-		this.newTranslationProcess = newTranslationProcess;
-		this.draftTranslationUpdateProcess = draftTranslationUpdateProcess;
-	}
+	protected PackageService packageService;
+	@Inject
+	protected TranslationService translationService;
+	@Inject
+	protected LanguageService languageService;
+	@Inject
+	protected PackageStructureService packageStructureService;
+	@Inject
+	protected PageStructureService pageStructureService;
+	@Inject
+	protected TranslationElementService translationElementService;
+	@Inject
+	protected ReferencedImageService referencedImageService;
+	@Inject
+	protected ImageService imageService;
+	@Inject
+	private NewTranslationProcess newTranslationProcess;
+	@Inject
+	private DraftTranslationUpdateProcess draftTranslationUpdateProcess;
 
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
@@ -77,7 +70,7 @@ public class GodToolsTranslationService
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
 		if(translation == null) throw new NotFoundException();
 
-		Package gtPackage = getPackage(packageCode);
+		Package gtPackage = packageService.selectByCode(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
@@ -91,7 +84,13 @@ public class GodToolsTranslationService
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return GodToolsTranslation.assembleFromComponents(packageCode, packageStructure, pageStructures, translationElementList, getImagesUsedInThisPackage(packageStructure.getId()), !translation.isReleased());
+		return GodToolsTranslation.assembleFromComponents(packageCode,
+				packageStructure,
+				pageStructures,
+				translationElementList,
+				getImagesUsedInThisTranslation(packageStructure),
+				!translation.isReleased(),
+				loadIcon(packageCode));
 	}
 
 	/**
@@ -125,7 +124,7 @@ public class GodToolsTranslationService
 	 */
 	public Translation setupNewTranslation(LanguageCode languageCode, String packageCode)
 	{
-		Package gtPackage = getPackage(packageCode);
+		Package gtPackage = packageService.selectByCode(packageCode);
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
 		// try to load out the latest version of translation for this package/language combo
@@ -160,6 +159,20 @@ public class GodToolsTranslationService
 		translationService.update(translation);
 	}
 
+	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
+	{
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId());
+
+		List<Image> imageList = Lists.newArrayList();
+
+		for(ReferencedImage referencedImage : referencedImages)
+		{
+			imageList.add(imageService.selectById(referencedImage.getImageId()));
+		}
+
+		return imageList;
+	}
+
 	private Translation loadBaseTranslation(Package gtPackage)
 	{
 		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
@@ -175,22 +188,8 @@ public class GodToolsTranslationService
 		return translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), godToolsVersion);
 	}
 
-	private Package getPackage(String packageCode)
+	private Image loadIcon(String packageCode)
 	{
-		return packageService.selectByCode(packageCode);
-	}
-
-	private List<Image> getImagesUsedInThisPackage(UUID packageStructureId)
-	{
-		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructureId);
-
-		List<Image> imageList = Lists.newArrayList();
-
-		for(ReferencedImage referencedImage : referencedImages)
-		{
-			imageList.add(imageService.selectById(referencedImage.getImageId()));
-		}
-
-		return imageList;
+		return imageService.selectByFilename(Image.buildFilename(packageCode, "icon@2x.png"));
 	}
 }

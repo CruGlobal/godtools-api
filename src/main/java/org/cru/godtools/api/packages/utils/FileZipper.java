@@ -17,6 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,7 +63,7 @@ public class FileZipper
         }
     }
 
-    public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, PriorityQueue<String> imagesAlreadyZipped) throws IOException
+    public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, Set<String> imagesAlreadyZipped) throws IOException
     {
         for(Image image : images)
         {

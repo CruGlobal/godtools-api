@@ -1,7 +1,6 @@
 package org.cru.godtools.tests;
 
 import com.google.common.collect.ImmutableSet;
-import org.cru.godtools.api.packages.GodToolsPackageService;
 import org.cru.godtools.api.translations.DraftTranslationUpdateProcess;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationProcess;
@@ -18,7 +17,6 @@ import org.cru.godtools.translate.client.NoOpTranslationUpload;
 import org.cru.godtools.translate.client.onesky.FileClient;
 import org.cru.godtools.translate.client.onesky.OneSkyDataService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;
-import org.cru.godtools.translate.client.onesky.OneSkyTranslationUpload;
 import org.cru.godtools.translate.client.onesky.TranslationClient;
 
 /**
@@ -27,7 +25,7 @@ import org.cru.godtools.translate.client.onesky.TranslationClient;
 public class GodToolsPackageServiceTestClassCollection
 {
 	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(GodToolsTranslationService.class, ImageService.class,
-			GodToolsPackageService.class, ReferencedImageService.class, PackageService.class,
+			ReferencedImageService.class, PackageService.class,
 			TranslationService.class, LanguageService.class, PackageStructureService.class,
 			PageStructureService.class, TranslationElementService.class, NewTranslationProcess.class,
 			DraftTranslationUpdateProcess.class, OneSkyTranslationDownload.class,

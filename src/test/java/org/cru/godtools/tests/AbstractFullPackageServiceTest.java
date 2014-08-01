@@ -1,7 +1,6 @@
 package org.cru.godtools.tests;
 
-import org.cru.godtools.api.packages.GodToolsPackageServiceTestMockData;
-import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.api.translations.GodToolsTranslationServiceTestMockData;
 import org.cru.godtools.domain.images.ImageService;
 import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -49,7 +48,7 @@ public class AbstractFullPackageServiceTest extends Arquillian
 
 	protected void saveTestPackage()
 	{
-		GodToolsPackageServiceTestMockData.persistPackage(languageService,
+		GodToolsTranslationServiceTestMockData.persistPackage(languageService,
 				packageService,
 				packageStructureService,
 				pageStructureService,

@@ -26,7 +26,7 @@ public class DraftResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
+	GodToolsTranslationRetrieval translationRetrievalProcess;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
 	@Inject private Clock clock;
