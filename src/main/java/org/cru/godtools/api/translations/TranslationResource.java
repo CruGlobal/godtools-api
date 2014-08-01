@@ -38,7 +38,7 @@ public class TranslationResource
 	@Inject
 	AuthorizationService authService;
 	@Inject
-	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
+	GodToolsTranslationRetrieval translationRetrievalProcess;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
 	@Inject

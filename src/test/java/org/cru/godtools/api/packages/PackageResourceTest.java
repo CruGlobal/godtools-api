@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -48,7 +47,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(PackageResource.class, AuthorizationService.class, FileZipper.class, GodToolsPackageRetrievalProcess.class)
+				.addClasses(PackageResource.class, AuthorizationService.class, FileZipper.class, GodToolsPackageRetrieval.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -200,6 +199,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
 	}
 
 	private void validatePackageConfigXml(Document xmlPackageConfigFile)

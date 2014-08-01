@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cru.godtools.domain.images.Image;
@@ -22,6 +23,8 @@ public class GodToolsTranslation
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
 	boolean isDraft;
+	private Image icon;
+	private List<Image> images = Lists.newArrayList();
 
     public GodToolsTranslation()
     {
@@ -32,7 +35,8 @@ public class GodToolsTranslation
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
 															 List<Image> referencedImages,
-															 boolean isDraft)
+															 boolean isDraft,
+															 Image icon)
 	{
 		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
 
@@ -55,9 +59,11 @@ public class GodToolsTranslation
 
 		godToolsTranslation.setDraft(isDraft);
 
+		godToolsTranslation.setImages(referencedImages);
+		godToolsTranslation.setIcon(icon);
+
 		return godToolsTranslation;
 	}
-
 
 	/**
 	 * You can't have one without the other
@@ -128,5 +134,25 @@ public class GodToolsTranslation
 	public void setDraft(boolean isDraft)
 	{
 		this.isDraft = isDraft;
+	}
+
+	public Image getIcon()
+	{
+		return icon;
+	}
+
+	public void setIcon(Image icon)
+	{
+		this.icon = icon;
+	}
+
+	public List<Image> getImages()
+	{
+		return images;
+	}
+
+	public void setImages(List<Image> images)
+	{
+		this.images = images;
 	}
 }

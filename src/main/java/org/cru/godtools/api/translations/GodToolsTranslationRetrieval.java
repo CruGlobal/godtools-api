@@ -33,72 +33,67 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
-public class GodToolsTranslationRetrievalProcess
+public class GodToolsTranslationRetrieval
 {
-    GodToolsTranslationService godToolsTranslationService;
-    FileZipper fileZipper;
-
-    String packageCode;
-    LanguageCode languageCode;
-    Integer minimumInterpreterVersion;
-    GodToolsVersion godToolsVersion;
-    boolean compressed;
-    PixelDensity pixelDensity;
-
-	Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
-
-	Logger log = Logger.getLogger(GodToolsTranslationRetrievalProcess.class);
-
 	@Inject
-    public GodToolsTranslationRetrievalProcess(GodToolsTranslationService godToolsTranslationService, FileZipper fileZipper)
-    {
-        this.godToolsTranslationService = godToolsTranslationService;
-        this.fileZipper = fileZipper;
-    }
+    protected GodToolsTranslationService godToolsTranslationService;
+	@Inject
+    protected FileZipper fileZipper;
 
-    public GodToolsTranslationRetrievalProcess setPackageCode(String packageCode)
+    protected String packageCode;
+	protected LanguageCode languageCode;
+	protected Integer minimumInterpreterVersion;
+	protected GodToolsVersion godToolsVersion;
+    protected boolean compressed;
+	protected PixelDensity pixelDensity;
+
+	protected Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
+
+	Logger log = Logger.getLogger(GodToolsTranslationRetrieval.class);
+
+    public GodToolsTranslationRetrieval setPackageCode(String packageCode)
     {
 		log.info("Setting package code: " + packageCode);
 		this.packageCode = packageCode;
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setLanguageCode(String languageCode)
+    public GodToolsTranslationRetrieval setLanguageCode(String languageCode)
     {
 		log.info("Setting language code: " + languageCode);
 		this.languageCode = new LanguageCode(languageCode);
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
+    public GodToolsTranslationRetrieval setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
     {
 		log.info("Setting interpreter version: " + minimumInterpreterVersion);
         this.minimumInterpreterVersion = minimumInterpreterVersion;
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setVersionNumber(GodToolsVersion godToolsVersion)
+    public GodToolsTranslationRetrieval setVersionNumber(GodToolsVersion godToolsVersion)
     {
 		log.info("Setting version number: " + godToolsVersion == null ? "Latest published" : godToolsVersion);
         this.godToolsVersion = godToolsVersion;
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setCompressed(boolean compressed)
+    public GodToolsTranslationRetrieval setCompressed(boolean compressed)
     {
 		log.info("Setting compressed: " + compressed);
         this.compressed = compressed;
         return this;
     }
 
-    public GodToolsTranslationRetrievalProcess setPixelDensity(PixelDensity pixelDensity)
+    public GodToolsTranslationRetrieval setPixelDensity(PixelDensity pixelDensity)
     {
 		log.info("Setting pixelDensity: " + pixelDensity);
         this.pixelDensity = pixelDensity;
         return this;
     }
 
-	public GodToolsTranslationRetrievalProcess loadTranslations()
+	public GodToolsTranslationRetrieval loadTranslations()
 	{
 		log.info("Loading translations...");
 		if(Strings.isNullOrEmpty(packageCode))
@@ -114,7 +109,7 @@ public class GodToolsTranslationRetrievalProcess
 		return this;
 	}
 
-	public GodToolsTranslationRetrievalProcess loadDrafts()
+	public GodToolsTranslationRetrieval loadDrafts()
 	{
 		log.info("Loading drafts...");
 
@@ -145,7 +140,7 @@ public class GodToolsTranslationRetrievalProcess
         }
     }
 
-    private Response buildXmlContentsResponse() throws IOException
+	protected Response buildXmlContentsResponse() throws IOException
     {
         if(godToolsTranslations.isEmpty())
         {
@@ -160,7 +155,7 @@ public class GodToolsTranslationRetrievalProcess
                 .build();
     }
 
-    private Response buildZippedResponse() throws IOException
+	protected Response buildZippedResponse() throws IOException
     {
         if(godToolsTranslations.isEmpty()) return Response.status(404).build();
 
@@ -174,7 +169,7 @@ public class GodToolsTranslationRetrievalProcess
                 .build();
     }
 
-    private void createZipFolder(ZipOutputStream zipOutputStream)
+	protected void createZipFolder(ZipOutputStream zipOutputStream)
     {
         try
         {
@@ -195,7 +190,7 @@ public class GodToolsTranslationRetrievalProcess
         }
     }
 
-    private Document createContentsFile()
+    protected Document createContentsFile()
     {
         try
         {
@@ -211,15 +206,21 @@ public class GodToolsTranslationRetrievalProcess
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
-
+				if(godToolsTranslation.getIcon() != null)
+				{
+					resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
+				}
+				else
+				{
+					resourceElement.setAttribute("icon", "missing");
+				}
                 rootElement.appendChild(resourceElement);
             }
             return contents;
         }
         catch(ParserConfigurationException e)
         {
-            Throwables.propagate(e);
-            return null;
+            throw Throwables.propagate(e);
         }
     }
 }

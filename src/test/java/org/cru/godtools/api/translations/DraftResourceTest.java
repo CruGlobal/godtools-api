@@ -6,7 +6,6 @@ import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -43,7 +42,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(DraftResource.class, AuthorizationService.class, FileZipper.class, GodToolsTranslationRetrievalProcess.class)
+				.addClasses(DraftResource.class, AuthorizationService.class, FileZipper.class, GodToolsTranslationRetrieval.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -124,5 +123,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
+
 	}
 }

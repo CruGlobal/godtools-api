@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.GodToolsTranslationRetrieval;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -34,7 +35,7 @@ public class PackageResource
 {
 
     @Inject
-	GodToolsPackageRetrievalProcess packageRetrievalProcess;
+	GodToolsPackageRetrieval packageRetrieval;
     @Inject
     AuthorizationService authService;
 	@Inject
@@ -74,13 +75,12 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-        return packageRetrievalProcess
-                .setLanguageCode(languageCode)
+		return packageRetrieval.setLanguageCode(languageCode)
                 .setCompressed(Boolean.parseBoolean(compressed))
                 .setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
                 .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
                 .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.loadPackages()
+				.loadTranslations()
 				.buildResponse();
 	}
 
@@ -118,14 +118,14 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return packageRetrievalProcess
+		return packageRetrieval
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setCompressed(Boolean.parseBoolean(compressed))
 				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_PUBLISHED_VERSION : new GodToolsVersion(versionNumber))
 				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.loadPackages()
+				.loadTranslations()
 				.buildResponse();
 	}
 }

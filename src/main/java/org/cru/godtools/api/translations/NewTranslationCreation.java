@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 7/18/14.
  */
-public class NewTranslationProcess
+public class NewTranslationCreation
 {
 
 	@Inject TranslationService translationService;
