@@ -1,4 +1,4 @@
-package org.cru.godtools.RedEggConfig;
+package org.cru.godtools.redegg;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ApplicationException;

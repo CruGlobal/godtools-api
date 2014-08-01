@@ -1,4 +1,4 @@
-package org.cru.godtools.RedEggConfig;
+package org.cru.godtools.redegg;
 
 
 import org.cru.godtools.domain.properties.GodToolsProperties;
