@@ -1,6 +1,7 @@
 package org.cru.godtools.api.packages;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.packages.utils.ProvidesImages;
 import org.cru.godtools.api.translations.GodToolsTranslationRetrieval;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -34,7 +35,7 @@ import java.math.BigDecimal;
 public class PackageResource
 {
 
-    @Inject
+    @Inject @ProvidesImages
 	GodToolsPackageRetrieval packageRetrieval;
     @Inject
     AuthorizationService authService;

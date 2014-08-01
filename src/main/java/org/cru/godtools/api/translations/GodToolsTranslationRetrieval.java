@@ -14,6 +14,7 @@ import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
@@ -33,6 +34,7 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
+@Default
 public class GodToolsTranslationRetrieval
 {
 	@Inject

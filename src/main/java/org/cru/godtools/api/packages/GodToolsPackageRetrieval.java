@@ -3,6 +3,7 @@ package org.cru.godtools.api.packages;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.packages.utils.ProvidesImages;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationRetrieval;
 
@@ -22,6 +23,7 @@ import java.util.zip.ZipOutputStream;
  *
  * Created by ryancarlson on 3/17/14.
  */
+@ProvidesImages
 public class GodToolsPackageRetrieval extends GodToolsTranslationRetrieval
 {
 	Logger log = Logger.getLogger(GodToolsPackageRetrieval.class);
