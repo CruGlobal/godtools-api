@@ -8,6 +8,7 @@ import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public class GodToolsTranslation
 {
 	String packageCode;
+	String packageName;
+	BigDecimal versionNumber;
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
 	boolean isDraft;
@@ -31,6 +34,8 @@ public class GodToolsTranslation
     }
 
 	public static GodToolsTranslation assembleFromComponents(String packageCode,
+															 String packageName,
+															 Integer translationVersionNumber,
 															 PackageStructure packageStructure,
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
@@ -56,7 +61,8 @@ public class GodToolsTranslation
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
 		godToolsTranslation.setPackageCode(packageCode);
-
+		godToolsTranslation.setPackageName(packageName);
+		godToolsTranslation.setVersionNumber(new BigDecimal(packageStructure.getVersionNumber() + "." + translationVersionNumber));
 		godToolsTranslation.setDraft(isDraft);
 
 		godToolsTranslation.setImages(referencedImages);
@@ -154,5 +160,25 @@ public class GodToolsTranslation
 	public void setImages(List<Image> images)
 	{
 		this.images = images;
+	}
+
+	public String getPackageName()
+	{
+		return packageName;
+	}
+
+	public void setPackageName(String packageName)
+	{
+		this.packageName = packageName;
+	}
+
+	public BigDecimal getVersionNumber()
+	{
+		return versionNumber;
+	}
+
+	public void setVersionNumber(BigDecimal versionNumber)
+	{
+		this.versionNumber = versionNumber;
 	}
 }
