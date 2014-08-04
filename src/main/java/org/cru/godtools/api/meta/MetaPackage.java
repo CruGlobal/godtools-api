@@ -10,12 +10,10 @@ public class MetaPackage  implements java.io.Serializable
 {
     String code;
 	BigDecimal version;
-    String name;
 	String status;
 
-    public MetaPackage(String packageName, String packageCode, BigDecimal versionNumber, boolean isReleased)
+    public MetaPackage(String packageCode, BigDecimal versionNumber, boolean isReleased)
     {
-        setName(packageName);
         setCode(packageCode);
         setVersion(versionNumber);
 		setStatus(isReleased ? "live" : "draft");
@@ -41,17 +39,6 @@ public class MetaPackage  implements java.io.Serializable
     public void setVersion(BigDecimal version)
     {
         this.version = version;
-    }
-
-    @XmlAttribute
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
     }
 
 	@XmlAttribute()
