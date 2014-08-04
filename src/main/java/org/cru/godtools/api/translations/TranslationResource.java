@@ -11,6 +11,7 @@ import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.jboss.logging.Logger;
 
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -41,8 +42,8 @@ public class TranslationResource
 {
 	@Inject
 	AuthorizationService authService;
-	@Inject
-	GodToolsTranslationRetrievalProcess translationRetrievalProcess;
+	@Inject @Default
+	GodToolsTranslationRetrieval translationRetrieval;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
 	@Inject
@@ -66,7 +67,7 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return translationRetrievalProcess
+		return translationRetrieval
 				.setLanguageCode(languageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
@@ -90,7 +91,7 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return translationRetrievalProcess
+		return translationRetrieval
 				.setLanguageCode(languageCode)
 				.setPackageCode(packageCode)
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)

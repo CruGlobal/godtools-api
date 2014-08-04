@@ -115,7 +115,7 @@ public class MetaService
         }
     }
 
-    private MetaLanguage getMetaLanguageForSinglePackage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean includeDrafts)
+    private MetaLanguage getMetaLanguageForSinglePackage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
 		Language language = getLanguage(languageCode);
 		Package gtPackage = getPackage(packageCode);
@@ -125,7 +125,7 @@ public class MetaService
 
 		Translation translation = getTranslation(language.getId(), gtPackage.getId());
 
-		if(includeDrafts || translation.isReleased())
+		if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
 		{
 			metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
 		}

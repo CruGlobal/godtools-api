@@ -1,0 +1,1 @@
+ALTER TABLE auth_tokens ADD device_id text;

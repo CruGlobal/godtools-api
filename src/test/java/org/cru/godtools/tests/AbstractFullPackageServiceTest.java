@@ -1,7 +1,6 @@
 package org.cru.godtools.tests;
 
-import org.cru.godtools.api.packages.GodToolsPackageServiceTestMockData;
-import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.api.translations.GodToolsTranslationServiceTestMockData;
 import org.cru.godtools.domain.images.ImageService;
 import org.cru.godtools.domain.images.ReferencedImageService;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -9,6 +8,7 @@ import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.arquillian.testng.Arquillian;
 
@@ -48,7 +48,7 @@ public class AbstractFullPackageServiceTest extends Arquillian
 
 	protected void saveTestPackage()
 	{
-		GodToolsPackageServiceTestMockData.persistPackage(languageService,
+		GodToolsTranslationServiceTestMockData.persistPackage(languageService,
 				packageService,
 				packageStructureService,
 				pageStructureService,
@@ -56,5 +56,13 @@ public class AbstractFullPackageServiceTest extends Arquillian
 				translationService,
 				imageService,
 				referencedImageService);
+	}
+
+	protected void setTestPackageDraftStatus()
+	{
+		Translation translation = translationService.selectById(TRANSLATION_ID);
+		translation.setReleased(false);
+		translation.setVersionNumber(2);
+		translationService.update(translation);
 	}
 }
