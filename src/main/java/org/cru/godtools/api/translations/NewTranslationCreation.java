@@ -40,6 +40,7 @@ public class NewTranslationCreation
 		newTranslation.setPackageId(gtPackage.getId());
 		newTranslation.setVersionNumber(nextVersionNumber);
 		newTranslation.setReleased(false);
+		newTranslation.setTranslatedName(currentTranslation == null ? "" : currentTranslation.getTranslatedName());
 
 		translationService.insert(newTranslation);
 		return newTranslation;
