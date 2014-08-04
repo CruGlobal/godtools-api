@@ -127,7 +127,7 @@ public class MetaService
 
 		if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
 		{
-			metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+			metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
 		}
 
 		return metaLanguage;
@@ -146,7 +146,7 @@ public class MetaService
 			{
 				Package gtPackage = packageService.selectById(translation.getPackageId());
 
-				metaLanguage.addPackage(gtPackage.getName(), gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+				metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
 			}
         }
 

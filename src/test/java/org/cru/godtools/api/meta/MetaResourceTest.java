@@ -183,7 +183,6 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 		MetaPackage metaPackage = metaLanguage.getPackages().iterator().next();
 
 		Assert.assertEquals(metaPackage.getCode(), "kgp");
-		Assert.assertEquals(metaPackage.getName(), "Knowing God Personally");
 
 		return metaPackage;
 	}

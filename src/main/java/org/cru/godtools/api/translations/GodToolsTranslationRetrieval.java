@@ -208,6 +208,9 @@ public class GodToolsTranslationRetrieval
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", GuavaHashGenerator.calculateHash(godToolsTranslation.getPackageStructure().getXmlContent()) + ".xml");
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
+				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
+				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
+
 				if(godToolsTranslation.getIcon() != null)
 				{
 					resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");

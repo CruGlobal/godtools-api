@@ -28,9 +28,9 @@ public class MetaLanguage
         setCode(LanguageCode.fromLanguage(language).toString());
     }
 
-    public void addPackage(String packageName, String packageCode, BigDecimal versionNumber, boolean isReleased)
+    public void addPackage( String packageCode, BigDecimal versionNumber, boolean isReleased)
     {
-        packages.add(new MetaPackage(packageName, packageCode, versionNumber, isReleased));
+        packages.add(new MetaPackage(packageCode, versionNumber, isReleased));
     }
 
     @XmlAttribute
