@@ -274,7 +274,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), languageCode.equals("en") ? "Knowing God Personally" : "");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Knowing God Personally");
 
 		// english has an existing translation, so it would take version 1.2
 		if("en".equalsIgnoreCase(languageCode))
