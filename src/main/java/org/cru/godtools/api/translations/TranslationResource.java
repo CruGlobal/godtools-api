@@ -144,7 +144,7 @@ public class TranslationResource
 	}
 
 	@POST
-	@Path("/{language}/{package}/{page}")
+	@Path("/{language}/{package}/page_structure/{page}")
 	public Response updatePageStructure(@PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
 	                                    @PathParam("page") UUID pageStructureId,
@@ -164,11 +164,11 @@ public class TranslationResource
 	}
 
 	@GET
-	@Path("/{language}/{package}/{page}")
+	@Path("/{language}/{package}/page_structure/{page}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getPageStructure(@PathParam("language") String languageCode,
 	                                 @PathParam("package") String packageCode,
-	                                 @PathParam("page") String pageStructureId,
+	                                 @PathParam("page") UUID pageStructureId,
 	                                 @HeaderParam("Authorization") String authTokenHeader,
 	                                 @QueryParam("Authorization") String authTokenParam)
 	{
@@ -176,9 +176,10 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenHeader, authTokenParam), clock.currentDateTime());
 
-		UUID uuid = UUID.fromString(pageStructureId);
+		PageStructure pageStructure = pageStructureService.selectByid(pageStructureId);
 
-		PageStructure pageStructure = pageStructureService.selectByid(uuid);
+		log.info("Returned page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructure
+		+ "%n" + pageStructure.getXmlContent());
 
 		return Response.ok(pageStructure.getXmlContent()).build();
 	}
