@@ -80,6 +80,7 @@ public class GodToolsTranslationServiceTestMockData
 		translation.setPackageId(AbstractFullPackageServiceTest.PACKAGE_ID);
 		translation.setLanguageId(AbstractFullPackageServiceTest.LANGUAGE_ID);
 		translation.setVersionNumber(1);
+		translation.setTranslatedName("Knowing God Personally");
 		translation.setReleased(true);
 		translationService.insert(translation);
 	}
