@@ -1,6 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.packages.GodToolsPageStructureRetrieval;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -141,6 +143,27 @@ public class TranslationResource
 			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/page_structure")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getAllPageStructures(@PathParam("language") String languageCode,
+	                                     @PathParam("package") String packageCode,
+	                                     @QueryParam("version") BigDecimal versionNumber,
+										 @HeaderParam("Authorization") String authTokenHeader,
+										 @QueryParam("Authorization") String authTokenParam) throws URISyntaxException, IOException
+	{
+		log.info("Requesting all page structures for language: " + languageCode + " and package: " + packageCode);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		Set<GodToolsTranslation> translations = translationRetrieval.setLanguageCode(languageCode).setPackageCode(packageCode)
+			.setVersionNumber(GodToolsVersion.LATEST_VERSION).loadTranslations().godToolsTranslations;
+
+		GodToolsPageStructureRetrieval pageStructureRetrieval = new GodToolsPageStructureRetrieval();
+
+		pageStructureRetrieval.getPageStructures(translations);
+		return pageStructureRetrieval.buildXMLResponse();
 	}
 
 	@POST
