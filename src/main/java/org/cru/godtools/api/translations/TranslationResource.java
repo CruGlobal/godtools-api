@@ -166,7 +166,7 @@ public class TranslationResource
 		return pageStructureRetrieval.buildXMLResponse();
 	}
 
-	@POST
+	@PUT
 	@Path("/{language}/{package}/page/{page}")
 	public Response updatePageStructure(@PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
@@ -183,7 +183,7 @@ public class TranslationResource
 		//	I assume there will need to be some logic here to replace the new xml with the old xml.
 		pageStructureService.update(pageStructure);
 
-		return Response.created(new URI("/" + languageCode + "/" + packageCode + "/" + pageStructure.getId())).build();
+		return Response.noContent().build();
 	}
 
 	@GET
