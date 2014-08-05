@@ -25,7 +25,8 @@ public class UserService
 	{
 		sqlConnection.createQuery(UserQueries.insert)
 				.addParameter("id", userRecord.getId())
-				.addParameter("relayId", userRecord.getRelayId())
+				.addParameter("userId", userRecord.getUserId())
+				.addParameter("userName", userRecord.getUserName())
 				.addParameter("grantedTimestamp", userRecord.getGrantedTimestamp())
 				.addParameter("revokedTimestamp", userRecord.getRevokedTimestamp())
 				.addParameter("userLevel", userRecord.getUserLevel())
@@ -44,14 +45,14 @@ public class UserService
 	{
 		return sqlConnection.createQuery(UserQueries.findUserRecordByRelayId)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("relayId", relayId)
+				.addParameter("userId", relayId)
 				.executeAndFetchFirst(UserRecord.class);
 	}
 
 	private class UserQueries
 	{
-		static final String insert = "INSERT INTO users(id, relay_id, granted_timestamp, revoked_timestamp, user_level) VALUES(:id, :relayId, :grantedTimestamp, :revokedTimestamp, :userLevel)";
+		static final String insert = "INSERT INTO users(id, user_id, user_name, granted_timestamp, revoked_timestamp, user_level) VALUES(:id, :userId, :userName, :grantedTimestamp, :revokedTimestamp, :userLevel)";
 		static final String findUserRecordByUUID = "SELECT * FROM users WHERE id = :id";
-		static final String findUserRecordByRelayId = "SELECT * FROM users WHERE relay_id = :relayId";
+		static final String findUserRecordByRelayId = "SELECT * FROM users WHERE relay_id = :userId";
 	}
 }
