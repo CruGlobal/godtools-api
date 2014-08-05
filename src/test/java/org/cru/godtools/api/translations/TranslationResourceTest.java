@@ -287,7 +287,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		UUID page = ids.get(0);
 
 		Response updatePageStructureResponse = translationResource.updatePageStructure("en", "kgp", page ,"draft-access", null);
-		Assert.assertEquals(updatePageStructureResponse.getStatus(), 201);
+		Assert.assertEquals(updatePageStructureResponse.getStatus(), 204);
 
 		Response getPageStructureResponse = translationResource.getPageStructure("en", "kgp", page, "draft-access", null);
 		Assert.assertEquals(getPageStructureResponse.getStatus(), 200);
