@@ -6,6 +6,7 @@ import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -35,6 +36,7 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -45,6 +47,8 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 {
 
 	private DocumentBuilder documentBuilder;
+	public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
+	public static final UUID TEST_PAGE_STRUCTURE_ID = UUID.randomUUID();
 
 	@Deployment
 	public static WebArchive createDeployment()
@@ -58,6 +62,10 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 	@Inject
 	TranslationResource translationResource;
+
+	// used to get list of pageStructure Ids
+	@Inject
+	PageStructureService pageStructureService;
 
 	// used to validate results of createTranslation test
 	@Inject
@@ -263,6 +271,39 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 	}
 
+
+	@Test
+	public void testGetAllPageStructures() throws Exception
+	{
+		Response response = translationResource.getAllPageStructures("en", "kgp", null, "a", null);
+		Assert.assertEquals(response.getStatus(), 200);
+		validatePageStructureXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) response.getEntity())));
+	}
+
+	@Test
+	public void testUpdateAndGetPageStructure() throws Exception
+	{
+		List<UUID> ids = pageStructureService.selectAllPageStructureIds();
+		UUID page = ids.get(0);
+
+		Response updatePageStructureResponse = translationResource.updatePageStructure("en", "kgp", page ,"draft-access", null);
+		Assert.assertEquals(updatePageStructureResponse.getStatus(), 201);
+
+		Response getPageStructureResponse = translationResource.getPageStructure("en", "kgp", page, "draft-access", null);
+		Assert.assertEquals(getPageStructureResponse.getStatus(), 200);
+	}
+
+	private void validatePageStructureXml(Document xmlPageStructureFile)
+	{
+		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlPageStructureFile, "Page_Structure");
+
+		Assert.assertEquals(resourceElements.size(), 1);
+
+		/*
+		Page Structure ID's are created randomly each time the DB is created.
+		This means the Id's can't be coded in to be tested.
+		 */
+	}
 
 	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)
 	{

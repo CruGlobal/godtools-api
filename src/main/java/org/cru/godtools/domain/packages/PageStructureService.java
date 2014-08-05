@@ -65,6 +65,13 @@ public class PageStructureService
 				.executeUpdate();
 	}
 
+	public List<UUID> selectAllPageStructureIds()
+	{
+
+		return sqlConnection.createQuery(PageStructureQueries.selectAllIds)
+				.executeScalarList();
+	}
+
 	public static final class PageStructureQueries
 	{
 		public static final String selectById = "SELECT * FROM page_structure WHERE id = :id";
@@ -73,5 +80,6 @@ public class PageStructureService
 				"VALUES(:id, :xmlContent, :translationId, :description, :filename, :percentCompleted, :stringCount, :wordCount, :lastUpdated)";
 		public static final String update = "UPDATE page_structure SET xml_content = :xmlContent, translation_id = :translationId, description = :description, filename = :filename, " +
 				"percent_completed = :percentCompleted, string_count = :stringCount, word_count = :wordCount, last_updated = :lastUpdated WHERE id = :id";
+		public static final String selectAllIds = "SELECT id FROM page_structure";
 	}
 }

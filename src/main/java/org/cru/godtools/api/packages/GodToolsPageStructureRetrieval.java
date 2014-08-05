@@ -69,7 +69,7 @@ public class GodToolsPageStructureRetrieval
 		{
 			Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
-			Element root = contents.createElement("contents");
+			Element root = contents.createElement("Page_Structures");
 			contents.appendChild(root);
 
 			for (PageStructure pageStructure : pageStructures)
