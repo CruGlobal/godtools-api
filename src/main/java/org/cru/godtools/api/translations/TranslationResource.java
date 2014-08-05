@@ -146,7 +146,7 @@ public class TranslationResource
 	}
 
 	@GET
-	@Path("/{language}/{package}/page_structure")
+	@Path("/{language}/{package}/page")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getAllPageStructures(@PathParam("language") String languageCode,
 	                                     @PathParam("package") String packageCode,
@@ -167,7 +167,7 @@ public class TranslationResource
 	}
 
 	@POST
-	@Path("/{language}/{package}/page_structure/{page}")
+	@Path("/{language}/{package}/page/{page}")
 	public Response updatePageStructure(@PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
 	                                    @PathParam("page") UUID pageStructureId,
@@ -187,7 +187,7 @@ public class TranslationResource
 	}
 
 	@GET
-	@Path("/{language}/{package}/page_structure/{page}")
+	@Path("/{language}/{package}/page/{page}")
 	@Produces(MediaType.APPLICATION_XML)
 	public Response getPageStructure(@PathParam("language") String languageCode,
 	                                 @PathParam("package") String packageCode,
