@@ -45,7 +45,6 @@ public class GodToolsPageStructureRetrieval
 			System.out.println("Translations is null");
 		} else
 		{
-
 			for (GodToolsTranslation translation : translations)
 			{
 				pageStructures.addAll(translation.getPageStructureList());
@@ -78,6 +77,12 @@ public class GodToolsPageStructureRetrieval
 				{
 					Element structure = contents.createElement("Page_Structure");
 					structure.setAttribute("ID", pageStructure.getId().toString());
+					structure.setAttribute("Translation_ID", pageStructure.getTranslationId().toString());
+
+					// Currently Description is empty, so it will not be included
+					// structure.setAttribute("Description", pageStructure.getDescription());
+
+					structure.setAttribute("filename", pageStructure.getFilename());
 					root.appendChild(structure);
 				}
 			}
