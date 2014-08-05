@@ -3,6 +3,7 @@ package org.cru.godtools.migration;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -17,6 +18,7 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -42,7 +44,7 @@ import java.util.UUID;
  */
 public class PackageDirectory
 {
-	public static final String DIRECTORY_BASE = "/Packages/";
+	public static final String DIRECTORY_BASE = "/Packages-dir/";
 
 	private String packageCode;
 
@@ -178,9 +180,22 @@ public class PackageDirectory
 					packageCode + ".xml",
 					translation.getId());
 
+			saveTranslatedName(translation, translatedPackageStructure);
 			translatableElements.save(translationElementService);
 		}
 		packageStructureService.insert(englishPackageStructure);
+	}
+
+	private void saveTranslatedName(Translation translation, PackageStructure translatedPackageStructure)
+	{
+		List<Element> packageNameElementList = XmlDocumentSearchUtilities.findElements(translatedPackageStructure.getXmlContent(), "packagename");
+
+		// there should be exactly one, if there are zero oh well.. if there are more.. idk
+		if(packageNameElementList.size() == 1)
+		{
+			translation.setTranslatedName(packageNameElementList.get(0).getTextContent());
+			translationService.update(translation);
+		}
 	}
 
 	private PackageStructure getEnglishPackageStructure(Package gtPackage) throws IOException, SAXException, ParserConfigurationException

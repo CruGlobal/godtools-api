@@ -130,6 +130,7 @@ public class TranslationService
                 .addParameter("packageId", translation.getPackageId())
                 .addParameter("languageId", translation.getLanguageId())
 				.addParameter("versionNumber", translation.getVersionNumber())
+				.addParameter("translatedName", translation.getTranslatedName())
 				.addParameter("released", translation.isReleased())
                 .executeUpdate();
     }
@@ -141,6 +142,7 @@ public class TranslationService
 				.addParameter("packageId", translation.getPackageId())
 				.addParameter("languageId", translation.getLanguageId())
 				.addParameter("versionNumber", translation.getVersionNumber())
+				.addParameter("translatedName", translation.getTranslatedName())
 				.addParameter("released", translation.isReleased())
 				.executeUpdate();
 	}
@@ -153,8 +155,8 @@ public class TranslationService
         public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
         public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
 		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
-        public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, released) VALUES(:id, :languageId, :packageId, :versionNumber, :released)";
-		public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, released = :released WHERE id = :id";
+        public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, translated_name, released) VALUES(:id, :languageId, :packageId, :versionNumber, :translatedName, :released)";
+		public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, translated_name = :translatedName, released = :released WHERE id = :id";
     }
 
 }

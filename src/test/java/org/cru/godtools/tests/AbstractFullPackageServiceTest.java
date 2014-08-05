@@ -63,6 +63,7 @@ public class AbstractFullPackageServiceTest extends Arquillian
 		Translation translation = translationService.selectById(TRANSLATION_ID);
 		translation.setReleased(false);
 		translation.setVersionNumber(2);
+		translation.setTranslatedName("Connaitre Dieu Personellement");
 		translationService.update(translation);
 	}
 }
