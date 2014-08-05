@@ -9,6 +9,7 @@ public class ReferencedImage
 {
 	private UUID imageId;
 	private UUID packageStructureId;
+	private String density;
 
 	public UUID getImageId()
 	{
@@ -28,5 +29,15 @@ public class ReferencedImage
 	public void setPackageStructureId(UUID packageStructureId)
 	{
 		this.packageStructureId = packageStructureId;
+	}
+
+	public String getDensity()
+	{
+		return density;
+	}
+
+	public void setDensity(String density)
+	{
+		this.density = density;
 	}
 }

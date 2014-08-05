@@ -74,17 +74,28 @@ public class V0_6__setup_referenced_images implements JdbcMigration
 
 	private void saveImageReference(String packageCode, String filename, UUID packageStructureId)
 	{
-		Image image = imageService.selectByFilename(Image.buildFilename(packageCode,filename));
+		String mediumFilename = filename;
+		String highFilename = filename.substring(0, filename.length() -4) + "@2x.png";
 
-		if(image == null)
+		insertImage(packageCode, mediumFilename, packageStructureId);
+		insertImage(packageCode, highFilename, packageStructureId);
+	}
+
+	private void insertImage(String packageCode, String filename, UUID packageStructureId)
+	{
+		Image image = imageService.selectByFilename(packageCode + "__" + filename);
+
+		if (image == null)
 		{
-			image = imageService.selectByFilename(Image.buildFilename("shared",filename));
+			image = imageService.selectByFilename("shared" + "__" + filename);
 		}
-		if(image != null)
+
+		if (image != null)
 		{
 			ReferencedImage referencedImage = new ReferencedImage();
 			referencedImage.setImageId(image.getId());
 			referencedImage.setPackageStructureId(packageStructureId);
+			referencedImage.setDensity(image.getResolution());
 
 			referencedImageService.insert(referencedImage);
 		}
