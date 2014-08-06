@@ -47,8 +47,6 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 {
 
 	private DocumentBuilder documentBuilder;
-	public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
-	public static final UUID TEST_PAGE_STRUCTURE_ID = UUID.randomUUID();
 
 	@Deployment
 	public static WebArchive createDeployment()
@@ -286,7 +284,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		List<UUID> ids = pageStructureService.selectAllPageStructureIds();
 		UUID page = ids.get(0);
 
-		Response updatePageStructureResponse = translationResource.updatePageStructure("en", "kgp", page ,"draft-access", null);
+		Response updatePageStructureResponse = translationResource.updatePageStructure("en", "kgp", page ,"draft-access", null, null);
 		Assert.assertEquals(updatePageStructureResponse.getStatus(), 204);
 
 		Response getPageStructureResponse = translationResource.getPageStructure("en", "kgp", page, "draft-access", null);
@@ -295,14 +293,16 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 	private void validatePageStructureXml(Document xmlPageStructureFile)
 	{
-		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlPageStructureFile, "Page_Structure");
-
-		Assert.assertEquals(resourceElements.size(), 1);
-
 		/*
-		Page Structure ID's are created randomly each time the DB is created.
-		This means the Id's can't be coded in to be tested.
+		Since the database is rolled back each time a test is run, the only data stored is test data.
+		This is why only one element will be returned when the test is run.
 		 */
+
+		List<Element> elements = XmlDocumentSearchUtilities.findElements(xmlPageStructureFile, "Page");
+
+		Assert.assertEquals(elements.size(), 1);
+		Assert.assertEquals(elements.get(0).getAttribute("ID"), PAGE_STRUCTURE_ID.toString());
+		Assert.assertEquals(elements.get(0).getAttribute("Translation_ID"), TRANSLATION_ID.toString());
 	}
 
 	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)

@@ -75,7 +75,7 @@ public class GodToolsPageStructureRetrieval
 			{
 				if (pageStructure != null)
 				{
-					Element structure = contents.createElement("Page_Structure");
+					Element structure = contents.createElement("Page");
 					structure.setAttribute("ID", pageStructure.getId().toString());
 					structure.setAttribute("Translation_ID", pageStructure.getTranslationId().toString());
 
