@@ -172,12 +172,12 @@ public class TranslationResource
 	@PUT
 	@Consumes(MediaType.APPLICATION_XML)
 	@Path("/{language}/{package}/page/{page}")
-	public Response updatePageStructure(@PathParam("language") String languageCode,
+	public Response updatePageStructure(Document XmlContent,
+	                                    @PathParam("language") String languageCode,
 	                                    @PathParam("package") String packageCode,
 	                                    @PathParam("page") UUID pageStructureId,
 	                                    @HeaderParam("Authorization") String authTokenHeader,
-	                                    @QueryParam("Authorization") String authTokenParam,
-	                                    Document XmlContent) throws URISyntaxException
+	                                    @QueryParam("Authorization") String authTokenParam) throws URISyntaxException
 	{
 		log.info("Updating page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
 
@@ -199,7 +199,7 @@ public class TranslationResource
 	                                 @PathParam("package") String packageCode,
 	                                 @PathParam("page") UUID pageStructureId,
 	                                 @HeaderParam("Authorization") String authTokenHeader,
-	                                 @QueryParam("Authorization") String authTokenParam)
+	                                 @QueryParam("Authorization") String authTokenParam) throws URISyntaxException, IOException
 	{
 		log.info("Getting page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
 
@@ -210,6 +210,9 @@ public class TranslationResource
 		log.info("Returned page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructure
 		+ "%n" + pageStructure.getXmlContent());
 
-		return Response.ok(pageStructure.getXmlContent()).build();
+		GodToolsPageStructureRetrieval pageStructureRetrieval = new GodToolsPageStructureRetrieval();
+		pageStructureRetrieval.addSinglePageStructure(pageStructure);
+
+		return pageStructureRetrieval.buildXMLResponse();
 	}
 }

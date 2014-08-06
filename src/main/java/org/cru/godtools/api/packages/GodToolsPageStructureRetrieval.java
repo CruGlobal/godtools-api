@@ -52,6 +52,16 @@ public class GodToolsPageStructureRetrieval
 		}
 	}
 
+	public void addSinglePageStructure(PageStructure pageStructure)
+	{
+		pageStructures = new ArrayList<>();
+
+		if(pageStructure != null)
+		{
+			pageStructures.add(pageStructure);
+		}
+	}
+
 	public Response buildXMLResponse() throws IOException
 	{
 		ByteArrayOutputStream outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createXmlDocument());
