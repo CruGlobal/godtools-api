@@ -110,6 +110,7 @@ public class GodToolsTranslationServiceTestMockData
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(AbstractFullPackageServiceTest.IMAGE_ID);
 		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.setDensity("High");
 		referencedImageService.insert(referencedImage);
 	}
 
@@ -118,6 +119,7 @@ public class GodToolsTranslationServiceTestMockData
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(AbstractFullPackageServiceTest.ICON_ID);
 		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.setDensity("High");
 		referencedImageService.insert(referencedImage);
 	}
 

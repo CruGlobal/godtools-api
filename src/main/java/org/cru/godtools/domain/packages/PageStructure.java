@@ -67,38 +67,20 @@ public class PageStructure
 	{
 			for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 			{
-				try
-				{
 					String filenameFromXml = element.getAttribute("backgroundimage");
 					element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-				} catch (NullPointerException npe)
-				{
-
-				}
 			}
 
 			for (Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 			{
-				try
-				{
 					String filenameFromXml = element.getAttribute("watermark");
 					element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-				} catch (NullPointerException npe)
-				{
-
-				}
 			}
 
 			for (Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 			{
-				try
-				{
 					String filenameFromXml = element.getTextContent();
 					element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-				} catch (NullPointerException npe)
-				{
-
-				}
 			}
 	}
 
