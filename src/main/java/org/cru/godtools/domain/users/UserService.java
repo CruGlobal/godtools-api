@@ -1,4 +1,4 @@
-package org.cru.godtools.api.users;
+package org.cru.godtools.domain.users;
 
 import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
@@ -41,11 +41,11 @@ public class UserService
 				.executeAndFetchFirst(UserRecord.class);
 	}
 
-	public UserRecord getUserRecordByRelayId(String relayId)
+	public UserRecord getUserRecordByUserId(String userId)
 	{
 		return sqlConnection.createQuery(UserQueries.findUserRecordByRelayId)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("userId", relayId)
+				.addParameter("userId", userId)
 				.executeAndFetchFirst(UserRecord.class);
 	}
 
@@ -53,6 +53,6 @@ public class UserService
 	{
 		static final String insert = "INSERT INTO users(id, user_id, user_name, granted_timestamp, revoked_timestamp, user_level) VALUES(:id, :userId, :userName, :grantedTimestamp, :revokedTimestamp, :userLevel)";
 		static final String findUserRecordByUUID = "SELECT * FROM users WHERE id = :id";
-		static final String findUserRecordByRelayId = "SELECT * FROM users WHERE relay_id = :userId";
+		static final String findUserRecordByRelayId = "SELECT * FROM users WHERE user_id = :userId";
 	}
 }

@@ -1,4 +1,4 @@
-package org.cru.godtools.api.users;
+package org.cru.godtools.domain.users;
 
 /**
  * Created by matthewfrederick on 7/31/14.

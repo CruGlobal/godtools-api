@@ -1,4 +1,4 @@
-package org.cru.godtools.api.users;
+package org.cru.godtools.domain.users;
 
 import org.joda.time.DateTime;
 
