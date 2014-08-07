@@ -213,6 +213,6 @@ public class TranslationResource
 		GodToolsPageStructureRetrieval pageStructureRetrieval = new GodToolsPageStructureRetrieval();
 		pageStructureRetrieval.addSinglePageStructure(pageStructure);
 
-		return pageStructureRetrieval.buildXMLResponse();
+		return Response.ok(pageStructure.getXmlContent()).build();
 	}
 }

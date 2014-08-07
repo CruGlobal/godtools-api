@@ -119,7 +119,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
 	}
 
-	/**
+	/*
 	 * Tests getting all the English (en) translations
 	 *
 	 * Currently there is just one, kgp.
@@ -290,12 +290,6 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Response getPageStructureResponse = translationResource.getPageStructure("en", "kgp", page, "draft-access", null);
 		Assert.assertEquals(getPageStructureResponse.getStatus(), 200);
-
-		/*
-		Currently, getPageStructure will return the xml layout of the page structure. With this option,
-		the validatePageStructureXml test can not be used.
-		 */
-		validateSinglePageStructureXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) getPageStructureResponse.getEntity())));
 	}
 
 	private void validatePageStructureXml(Document xmlPageStructureFile)
@@ -310,17 +304,6 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(elements.size(), 1);
 		Assert.assertEquals(elements.get(0).getAttribute("ID"), PAGE_STRUCTURE_ID.toString());
 		Assert.assertEquals(elements.get(0).getAttribute("Translation_ID"), TRANSLATION_ID.toString());
-	}
-
-	private void validateSinglePageStructureXml(Document XmlPageStructureFile)
-	{
-		List<Element> packagename = XmlDocumentSearchUtilities.findElements(XmlPageStructureFile, "packagename");
-		List<Element> page = XmlDocumentSearchUtilities.findElements(XmlPageStructureFile, "page");
-
-		Assert.assertEquals(packagename.size(), 1);
-		Assert.assertEquals(page.size(), 1);
-		Assert.assertEquals(packagename.get(0).getTextContent(), "Knowing God Personally");
-		Assert.assertEquals(page.get(0).getTextContent(), "Home");
 	}
 
 	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)

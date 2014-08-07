@@ -67,15 +67,8 @@ public class GodToolsPageStructureRetrieval
 
 	public Response buildXMLResponse() throws IOException
 	{
-		ByteArrayOutputStream outputStream;
-		if (single)
-		{
-			outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createSinglePageStructureXmlDocument());
-		} else
-		{
-			outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createXmlDocument());
-		}
 
+		ByteArrayOutputStream outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createXmlDocument());
 		outputStream.close();
 
 			return Response.ok(new ByteArrayInputStream(outputStream.toByteArray()))
@@ -109,21 +102,6 @@ public class GodToolsPageStructureRetrieval
 			}
 			return contents;
 
-		} catch (ParserConfigurationException e)
-		{
-			throw Throwables.propagate(e);
-		}
-	}
-
-	public Document createSinglePageStructureXmlDocument()
-	{
-		try
-		{
-			Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-
-			contents.importNode(pageStructures.get(0).getXmlContent(), true);
-
-			return contents;
 		} catch (ParserConfigurationException e)
 		{
 			throw Throwables.propagate(e);
