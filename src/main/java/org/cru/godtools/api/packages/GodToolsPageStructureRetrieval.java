@@ -34,11 +34,13 @@ public class GodToolsPageStructureRetrieval
 	GodToolsTranslation godToolsTranslation;
 
 	List<PageStructure> pageStructures;
+	Boolean single = false;
 
 
 	public void getPageStructures(Set<GodToolsTranslation> translations)
 	{
 		pageStructures = new ArrayList<>();
+		single = false;
 
 		if (translations == null)
 		{
@@ -55,6 +57,7 @@ public class GodToolsPageStructureRetrieval
 	public void addSinglePageStructure(PageStructure pageStructure)
 	{
 		pageStructures = new ArrayList<>();
+		single = true;
 
 		if(pageStructure != null)
 		{
@@ -64,12 +67,20 @@ public class GodToolsPageStructureRetrieval
 
 	public Response buildXMLResponse() throws IOException
 	{
-		ByteArrayOutputStream outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createXmlDocument());
+		ByteArrayOutputStream outputStream;
+		if (single)
+		{
+			outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createSinglePageStructureXmlDocument());
+		} else
+		{
+			outputStream = XmlDocumentStreamConverter.writeToByteArrayStream(createXmlDocument());
+		}
+
 		outputStream.close();
 
-		return Response.ok(new ByteArrayInputStream(outputStream.toByteArray()))
-				.type(MediaType.APPLICATION_XML)
-				.build();
+			return Response.ok(new ByteArrayInputStream(outputStream.toByteArray()))
+					.type(MediaType.APPLICATION_XML)
+					.build();
 	}
 
 	public Document createXmlDocument()
@@ -98,6 +109,21 @@ public class GodToolsPageStructureRetrieval
 			}
 			return contents;
 
+		} catch (ParserConfigurationException e)
+		{
+			throw Throwables.propagate(e);
+		}
+	}
+
+	public Document createSinglePageStructureXmlDocument()
+	{
+		try
+		{
+			Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+
+			contents.importNode(pageStructures.get(0).getXmlContent(), true);
+
+			return contents;
 		} catch (ParserConfigurationException e)
 		{
 			throw Throwables.propagate(e);
