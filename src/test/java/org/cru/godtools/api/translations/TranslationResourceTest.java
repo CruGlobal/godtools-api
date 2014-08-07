@@ -270,7 +270,6 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 	}
 
-
 	@Test
 	public void testGetAllPageStructures() throws Exception
 	{
