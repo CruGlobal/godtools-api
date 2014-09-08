@@ -84,7 +84,7 @@ public class GodToolsTranslationService
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
 		return GodToolsTranslation.assembleFromComponents(packageCode,
-				gtPackage.getName(),
+				translation.getTranslatedName(),
 				translation.getVersionNumber(),
 				packageStructure,
 				pageStructures,

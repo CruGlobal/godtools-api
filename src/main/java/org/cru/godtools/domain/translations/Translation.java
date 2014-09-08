@@ -13,6 +13,7 @@ public class Translation
 	private UUID id;
 	private UUID packageId;
 	private UUID languageId;
+	private String translatedName;
 	private Integer versionNumber;
 	private boolean released;
 
@@ -86,5 +87,15 @@ public class Translation
 	public void setReleased(boolean released)
 	{
 		this.released = released;
+	}
+
+	public String getTranslatedName()
+	{
+		return translatedName;
+	}
+
+	public void setTranslatedName(String translatedName)
+	{
+		this.translatedName = translatedName;
 	}
 }
