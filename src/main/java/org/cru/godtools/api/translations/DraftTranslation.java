@@ -18,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 7/24/14.
  */
-public class DraftTranslationUpdate
+public class DraftTranslation
 {
 
 	@Inject TranslationDownload translationDownload;

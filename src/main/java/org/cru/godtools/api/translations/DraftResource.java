@@ -3,6 +3,8 @@ package org.cru.godtools.api.translations;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.packages.PageStructure;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -15,6 +17,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 7/28/14.
@@ -79,5 +82,27 @@ public class DraftResource
 				.setCompressed(Boolean.parseBoolean(compressed))
 				.loadDrafts()
 				.buildResponse();
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Produces("application/zip")
+	public Response getPage(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@PathParam("pageId") UUID pageId,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@QueryParam("compressed") String compressed,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam) throws IOException
+	{
+		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		// page already has latest translation elements applied, and images too.
+		PageStructure draftPage = godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId);
+
+		return translationRetrievalProcess.buildSinglePageResponse(draftPage);
 	}
 }

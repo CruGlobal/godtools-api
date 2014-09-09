@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Service which uses lower-level domain services to assemble XML structure files for a translation of a GodTools translation
@@ -57,7 +58,31 @@ public class GodToolsTranslationService
 	@Inject
 	private NewTranslationCreation newTranslationProcess;
 	@Inject
-	private DraftTranslationUpdate draftTranslationUpdateProcess;
+	private DraftTranslation draftTranslationProcess;
+
+	/**
+	 * Retrieves a specific page of a translation
+	 */
+	public PageStructure getPage(LanguageCode languageCode, UUID pageId)
+	{
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Package gtPackage = packageService.selectById(translation.getPackageId());
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+
+		draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+				translation,
+				Lists.newArrayList(pageStructure),
+				languageCode);
+
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
+				pageId);
+
+		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
+		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
+
+		return pageStructure;
+	}
 
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
@@ -75,7 +100,7 @@ public class GodToolsTranslationService
 
 		if(translation.isDraft())
 		{
-			draftTranslationUpdateProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
 					translation,
 					pageStructures,
 					languageCode);
