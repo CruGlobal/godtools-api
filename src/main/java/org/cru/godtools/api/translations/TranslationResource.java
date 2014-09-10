@@ -112,8 +112,8 @@ public class TranslationResource
 
 		Simply.logObject(translation, TranslationResource.class);
 
-		// FIXME: this isn't quite right yet... should have major.minor version number
-		return Response.created(new URI("/" + languageCode + "/" + packageCode + "?version=" + translation.getVersionNumber())).build();
+		// FIXME: this isn't quite right yet... major version number should not be hard coded, but for now the API doesn't support updating it
+		return Response.created(new URI("/" + languageCode + "/" + packageCode + "?version=1." + translation.getVersionNumber())).build();
 	}
 
 	@PUT
