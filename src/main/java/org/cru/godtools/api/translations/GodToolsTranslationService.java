@@ -187,7 +187,7 @@ public class GodToolsTranslationService
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
 	{
-		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId());
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId(), true);
 
 		List<Image> imageList = Lists.newArrayList();
 
