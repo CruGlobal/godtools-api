@@ -76,10 +76,6 @@ public class TranslatableElements
 
 				targetTranslationElement.setAttribute("gtapi-trx-id", elementId.toString());
 
-				// Remove translated text since it is not needed. However, do not remove Image text
-				if (!targetTranslationElement.getNodeName().equalsIgnoreCase("image"))
-					targetTranslationElement.setTextContent(" ");
-
 				TranslationElement translationElement = new TranslationElement();
 				translationElement.setId(elementId);
 				translationElement.setTranslationId(translationId);
@@ -91,6 +87,10 @@ public class TranslatableElements
 				translationElement.setPageStructureId(pageStructureId);
 
 				translationElementService.insert(translationElement);
+
+				// Remove translated text since it is not needed. However, do not remove Image text
+				if (!targetTranslationElement.getNodeName().equalsIgnoreCase("image"))
+					targetTranslationElement.setTextContent(" ");
 			}
 			elementNumber++;
 		}
