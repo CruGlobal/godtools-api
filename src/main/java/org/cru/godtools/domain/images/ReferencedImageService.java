@@ -27,17 +27,29 @@ public class ReferencedImageService
 				.executeAndFetch(ReferencedImage.class);
 	}
 
+	public List<ReferencedImage> selectByPackageStructureIdAndDensity(UUID packageStructureId, String density)
+	{
+		return sqlConnection.createQuery(ReferencedImageQueries.selectByPackageStructureIdAndDensity)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("packageStructureId", packageStructureId)
+				.addParameter("density", density)
+				.executeAndFetch(ReferencedImage.class);
+	}
+
 	public void insert(ReferencedImage referencedImage)
 	{
 		sqlConnection.createQuery(ReferencedImageQueries.insert)
 				.addParameter("imageId", referencedImage.getImageId())
 				.addParameter("packageStructureId", referencedImage.getPackageStructureId())
+				.addParameter("density", referencedImage.getDensity())
 				.executeUpdate();
 	}
 
+
 	public static class ReferencedImageQueries
 	{
-		public static String insert = "INSERT into referenced_images(image_id, package_structure_id) VALUES(:imageId, :packageStructureId)";
+		public static String insert = "INSERT into referenced_images(image_id, package_structure_id, density) VALUES(:imageId, :packageStructureId, :density)";
 		public static String selectByPackageStructureId = "SELECT * FROM referenced_images WHERE package_structure_id = :packageStructureId";
+		public static final String selectByPackageStructureIdAndDensity = "SELECT * FROM referenced_images WHERE package_structure_id = :packageStructureId AND density = :density";
 	}
 }

@@ -97,14 +97,19 @@ public class GodToolsTranslationRetrieval
 
 	public GodToolsTranslationRetrieval loadTranslations()
 	{
+
 		log.info("Loading translations...");
+
+		if (pixelDensity == null)
+			setPixelDensity(PixelDensity.HIGH);
+
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION, pixelDensity));
 		}
 		else
 		{
-			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION));
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.LATEST_PUBLISHED_VERSION, pixelDensity));
 		}
 
 		log.info("Loaded " + godToolsTranslations.size() + " translations");
@@ -115,13 +120,16 @@ public class GodToolsTranslationRetrieval
 	{
 		log.info("Loading drafts...");
 
+		if (pixelDensity == null)
+			setPixelDensity(PixelDensity.HIGH);
+
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.DRAFT_VERSION));
+			godToolsTranslations.addAll(godToolsTranslationService.getTranslationsForLanguage(languageCode, GodToolsVersion.DRAFT_VERSION, pixelDensity));
 		}
 		else
 		{
-			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION));
+			godToolsTranslations.add(godToolsTranslationService.getTranslation(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION, pixelDensity));
 		}
 
 		log.info("Loaded " + godToolsTranslations.size() + " draft(s)");
@@ -210,6 +218,7 @@ public class GodToolsTranslationRetrieval
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
 				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
 				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
+	            resourceElement.setAttribute("density", pixelDensity.toString());
 
 				if(godToolsTranslation.getIcon() != null)
 				{

@@ -16,6 +16,7 @@ import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.packages.PixelDensity;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
@@ -64,7 +65,7 @@ public class GodToolsTranslationService
 	 */
 	public GodToolsTranslation getTranslation(LanguageCode languageCode,
 											  String packageCode,
-											  GodToolsVersion godToolsVersion)
+											  GodToolsVersion godToolsVersion, PixelDensity pixelDensity)
 	{
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
 		if(translation == null) throw new NotFoundException();
@@ -89,7 +90,7 @@ public class GodToolsTranslationService
 				packageStructure,
 				pageStructures,
 				translationElementList,
-				getImagesUsedInThisTranslation(packageStructure),
+				getImagesUsedInThisTranslation(packageStructure, pixelDensity),
 				!translation.isReleased(),
 				loadIcon(packageCode));
 	}
@@ -99,7 +100,7 @@ public class GodToolsTranslationService
 	 *
 	 * @return
 	 */
-	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, GodToolsVersion godToolsVersion)
+	public Set<GodToolsTranslation> getTranslationsForLanguage(LanguageCode languageCode, GodToolsVersion godToolsVersion, PixelDensity pixelDensity)
 	{
 		Set<GodToolsTranslation> translations = Sets.newHashSet();
 
@@ -107,7 +108,7 @@ public class GodToolsTranslationService
 		{
 			try
 			{
-				translations.add(getTranslation(languageCode, gtPackage.getCode(), godToolsVersion));
+				translations.add(getTranslation(languageCode, gtPackage.getCode(), godToolsVersion, pixelDensity));
 			}
 			catch(NotFoundException notFound) { /*oh well..*/ }
 		}
@@ -160,9 +161,11 @@ public class GodToolsTranslationService
 		translationService.update(translation);
 	}
 
-	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
+	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure, PixelDensity pixelDensity)
 	{
-		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureId(packageStructure.getId());
+		String density = pixelDensity.toString();
+
+		List<ReferencedImage> referencedImages = referencedImageService.selectByPackageStructureIdAndDensity(packageStructure.getId(), density);
 
 		List<Image> imageList = Lists.newArrayList();
 
