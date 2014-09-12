@@ -74,22 +74,25 @@ public class OneSkyDataService
 
 	}
 
-	public List<PageStructure> getTranslationStatus(UUID translationId)
+	public boolean hasTranslationBeenUploadedToTranslationTool(UUID translationId)
 	{
-		return pageStructureService.selectByTranslationId(translationId);
+		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(translationId))
+		{
+			if(pageStructure.getLastUpdated() == null) return false;
+		}
+		return true;
 	}
 
-	public PageStructure getTranslationStatus(UUID translationId, String pageName)
+	public boolean hasPageBeenUploadedToTranslationTool(UUID translationId, String pageName)
 	{
 		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(translationId))
 		{
 			if(pageStructure.getFilename().equals(pageName))
 			{
-				return pageStructure;
+				return pageStructure.getLastUpdated() != null;
 			}
 		}
-
-		return null;
+		return false;
 	}
 
 	public void updateLocalTranslationStatus(PageStructure pageStructure, OneSkyTranslationStatus oneSkyTranslationStatus)
