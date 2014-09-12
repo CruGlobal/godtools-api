@@ -156,6 +156,9 @@ public class GodToolsTranslationService
 		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
 
+		// only allow one draft per translation
+		if(currentTranslation != null && currentTranslation.isDraft()) return currentTranslation;
+
 		// save a new translation for this package language combo
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
 
