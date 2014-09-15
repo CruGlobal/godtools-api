@@ -95,7 +95,7 @@ public class OneSkyTranslationUpload implements TranslationUpload
 		log.info("Found translation:");
 		Simply.logObject(translation, OneSkyTranslationUpload.class);
 
-		return oneSkyDataService.hasTranslationBeenUploadedToTranslationTool(oneSkyDataService.getTranslation(projectId, locale).getId());
+		return oneSkyDataService.hasTranslationBeenUploadedToTranslationTool(translation.getId());
 	}
 
 	@Override
