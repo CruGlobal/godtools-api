@@ -122,7 +122,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), PACKAGE_STRUCTURE_ID + ".xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), TRANSLATION_ID + ".xml");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Connaitre Dieu Personellement");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("version"), "1.2");

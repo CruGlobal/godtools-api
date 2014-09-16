@@ -79,7 +79,9 @@ public class GodToolsPackageRetrieval extends GodToolsTranslationRetrieval
 
 			for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
 			{
-				fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(), zipOutputStream);
+				fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
+						godToolsTranslation.getTranslation(),
+						zipOutputStream);
 
 				fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
 

@@ -7,6 +7,7 @@ import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.translations.Translation;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,6 +24,7 @@ public class GodToolsTranslation
 	String packageCode;
 	String packageName;
 	BigDecimal versionNumber;
+	Translation translation;
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
 	boolean isDraft;
@@ -34,8 +36,7 @@ public class GodToolsTranslation
     }
 
 	public static GodToolsTranslation assembleFromComponents(String packageCode,
-															 String packageName,
-															 Integer translationVersionNumber,
+															 Translation translation,
 															 PackageStructure packageStructure,
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
@@ -61,12 +62,14 @@ public class GodToolsTranslation
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
 		godToolsTranslation.setPackageCode(packageCode);
-		godToolsTranslation.setPackageName(packageName);
-		godToolsTranslation.setVersionNumber(new BigDecimal(packageStructure.getVersionNumber() + "." + translationVersionNumber));
+		godToolsTranslation.setPackageName(translation.getTranslatedName());
+		godToolsTranslation.setVersionNumber(new BigDecimal(packageStructure.getVersionNumber() + "." + translation.getVersionNumber()));
 		godToolsTranslation.setDraft(isDraft);
 
 		godToolsTranslation.setImages(referencedImages);
 		godToolsTranslation.setIcon(icon);
+
+		godToolsTranslation.translation = translation;
 
 		return godToolsTranslation;
 	}
@@ -180,5 +183,10 @@ public class GodToolsTranslation
 	public void setVersionNumber(BigDecimal versionNumber)
 	{
 		this.versionNumber = versionNumber;
+	}
+
+	public Translation getTranslation()
+	{
+		return translation;
 	}
 }

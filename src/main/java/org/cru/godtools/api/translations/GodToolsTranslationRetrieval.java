@@ -201,7 +201,9 @@ public class GodToolsTranslationRetrieval
         {
             for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
             {
-                fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(), zipOutputStream);
+                fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
+						godToolsTranslation.getTranslation(),
+						zipOutputStream);
 
                 fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
             }
@@ -230,7 +232,7 @@ public class GodToolsTranslationRetrieval
                 Element resourceElement = contents.createElement("resource");
                 resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", godToolsTranslation.getPackageStructure().getId() + ".xml");
+                resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
 				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
 				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());

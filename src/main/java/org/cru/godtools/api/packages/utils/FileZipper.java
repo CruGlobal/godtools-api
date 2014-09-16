@@ -4,6 +4,7 @@ import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.translations.Translation;
 import org.w3c.dom.Document;
 
 
@@ -36,10 +37,10 @@ public class FileZipper
      * @throws TransformerException
      * @throws Exception
      */
-    public void zipPackageFile(PackageStructure packageStructure, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+    public void zipPackageFile(PackageStructure packageStructure, Translation translation, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
 		Document xmlContent = packageStructure.getXmlContent();
-		zipFile(xmlContent, packageStructure.getId() + ".xml", zipOutputStream);
+		zipFile(xmlContent, translation.getId() + ".xml", zipOutputStream);
     }
 
     /**
