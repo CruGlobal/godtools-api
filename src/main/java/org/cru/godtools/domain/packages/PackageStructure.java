@@ -41,13 +41,13 @@ public class PackageStructure
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", pageStructures.get(filenameFromXml).getId()+ ".xml");
 		}
 
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", GuavaHashGenerator.calculateHash(pageStructures.get(filenameFromXml).getXmlContent()) + ".xml");
+			pageElement.setAttribute("filename", pageStructures.get(filenameFromXml).getId() + ".xml");
 		}
 	}
 

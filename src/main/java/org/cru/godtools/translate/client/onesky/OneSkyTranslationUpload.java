@@ -95,13 +95,13 @@ public class OneSkyTranslationUpload implements TranslationUpload
 		log.info("Found translation:");
 		Simply.logObject(translation, OneSkyTranslationUpload.class);
 
-		return !oneSkyDataService.getTranslationStatus(oneSkyDataService.getTranslation(projectId, locale).getId()).isEmpty();
+		return oneSkyDataService.hasTranslationBeenUploadedToTranslationTool(translation.getId());
 	}
 
 	@Override
 	public boolean hasTranslationBeenUploaded(Integer projectId, String locale, String pageName)
 	{
-		return oneSkyDataService.getTranslationStatus(oneSkyDataService.getTranslation(projectId, locale).getId(), pageName) != null;
+		return oneSkyDataService.hasPageBeenUploadedToTranslationTool(oneSkyDataService.getTranslation(projectId, locale).getId(), pageName);
 	}
 
 	/**

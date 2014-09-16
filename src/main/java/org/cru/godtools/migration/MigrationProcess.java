@@ -22,7 +22,9 @@ public class MigrationProcess
         flyway.setDataSource(properties.getProperty("databaseUrl"), properties.getProperty("databaseUsername"), properties.getProperty("databasePassword"));
 		flyway.setInitVersion("0");
 		flyway.setLocations("classpath:org.cru.godtools.migration", "classpath:db.migration");
-	    flyway.migrate();
+//		flyway.clean();
+		flyway.setInitOnMigrate(true);
+//	    flyway.migrate();
     }
 
     public static org.sql2o.Connection getSql2oConnection()

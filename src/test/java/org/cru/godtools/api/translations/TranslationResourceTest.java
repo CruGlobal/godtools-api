@@ -272,7 +272,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), languageCode);
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), PACKAGE_STRUCTURE_ID + ".xml");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Knowing God Personally");
 
@@ -296,7 +296,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), "1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml");
+		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), PACKAGE_STRUCTURE_ID + ".xml");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
 		Assert.assertEquals(resourceElements.get(0).getAttribute("version"), new BigDecimal("1.1").toPlainString());
 		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Knowing God Personally");
@@ -310,7 +310,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		List<Element> pageElements = XmlDocumentSearchUtilities.findElements(xmlPackageConfigFile, "page");
 		Assert.assertEquals(pageElements.size(), 1);
-		Assert.assertEquals(pageElements.get(0).getAttribute("filename"), "0fb0b56d1ab3b03bd3587f1f0e3e6c4c1852d729.xml");
+		Assert.assertEquals(pageElements.get(0).getAttribute("filename"), PAGE_STRUCTURE_ID + ".xml");
 		Assert.assertEquals(pageElements.get(0).getTextContent(), "Home");
 
 	}

@@ -39,7 +39,7 @@ public class FileZipper
     public void zipPackageFile(PackageStructure packageStructure, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
     {
 		Document xmlContent = packageStructure.getXmlContent();
-		zipFile(xmlContent, GuavaHashGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
+		zipFile(xmlContent, packageStructure.getId() + ".xml", zipOutputStream);
     }
 
     /**
@@ -59,7 +59,7 @@ public class FileZipper
 
 			if(xmlContent == null) continue;
 
-			zipFile(xmlContent, GuavaHashGenerator.calculateHash(xmlContent) + ".xml", zipOutputStream);
+			zipFile(xmlContent, page.getId() + ".xml", zipOutputStream);
         }
     }
 
