@@ -1,16 +1,21 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.packages.GodToolsPageStructureRetrieval;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.jboss.logging.Logger;
+import org.w3c.dom.Document;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -19,11 +24,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "translation" resources.
@@ -42,6 +50,8 @@ public class TranslationResource
 	GodToolsTranslationRetrieval translationRetrieval;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject
+	PageStructureService pageStructureService;
 	@Inject
 	Clock clock;
 
@@ -135,5 +145,74 @@ public class TranslationResource
 			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/page")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getAllPageStructures(@PathParam("language") String languageCode,
+	                                     @PathParam("package") String packageCode,
+	                                     @QueryParam("version") BigDecimal versionNumber,
+										 @HeaderParam("Authorization") String authTokenHeader,
+										 @QueryParam("Authorization") String authTokenParam) throws URISyntaxException, IOException
+	{
+		log.info("Requesting all page structures for language: " + languageCode + " and package: " + packageCode);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		Set<GodToolsTranslation> translations = translationRetrieval.setLanguageCode(languageCode).setPackageCode(packageCode)
+			.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
+			.loadTranslations().godToolsTranslations;
+
+		GodToolsPageStructureRetrieval pageStructureRetrieval = new GodToolsPageStructureRetrieval();
+
+		pageStructureRetrieval.getPageStructures(translations);
+		return pageStructureRetrieval.buildXMLResponse();
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_XML)
+	@Path("/{language}/{package}/page/{page}")
+	public Response updatePageStructure(Document XmlContent,
+	                                    @PathParam("language") String languageCode,
+	                                    @PathParam("package") String packageCode,
+	                                    @PathParam("page") UUID pageStructureId,
+	                                    @HeaderParam("Authorization") String authTokenHeader,
+	                                    @QueryParam("Authorization") String authTokenParam) throws URISyntaxException
+	{
+		log.info("Updating page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		PageStructure pageStructure = pageStructureService.selectByid(pageStructureId);
+
+		pageStructure.setXmlContent(XmlContent);
+
+		pageStructureService.update(pageStructure);
+
+		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/page/{page}")
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getPageStructure(@PathParam("language") String languageCode,
+	                                 @PathParam("package") String packageCode,
+	                                 @PathParam("page") UUID pageStructureId,
+	                                 @HeaderParam("Authorization") String authTokenHeader,
+	                                 @QueryParam("Authorization") String authTokenParam) throws URISyntaxException, IOException
+	{
+		log.info("Getting page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructureId.toString());
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenHeader, authTokenParam), clock.currentDateTime());
+
+		PageStructure pageStructure = pageStructureService.selectByid(pageStructureId);
+
+		log.info("Returned page structure for package: " + packageCode + " language: " + languageCode + " and page structure ID: " + pageStructure
+		+ "%n" + pageStructure.getXmlContent());
+
+		GodToolsPageStructureRetrieval pageStructureRetrieval = new GodToolsPageStructureRetrieval();
+		pageStructureRetrieval.addSinglePageStructure(pageStructure);
+
+		return Response.ok(pageStructure.getXmlContent()).build();
 	}
 }

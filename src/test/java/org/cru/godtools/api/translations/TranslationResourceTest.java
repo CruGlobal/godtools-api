@@ -1,11 +1,13 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Throwables;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
+import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -60,6 +62,10 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 	@Inject
 	TranslationResource translationResource;
 
+	// used to get list of pageStructure Ids
+	@Inject
+	PageStructureService pageStructureService;
+
 	// used to validate results of createTranslation test
 	@Inject
 	DraftResource draftResource;
@@ -113,7 +119,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
 	}
 
-	/**
+	/*
 	 * Tests getting all the English (en) translations
 	 *
 	 * Currently there is just one, kgp.
@@ -264,6 +270,41 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 	}
 
+	@Test
+	public void testGetAllPageStructures() throws Exception
+	{
+		Response response = translationResource.getAllPageStructures("en", "kgp", null, "a", null);
+		Assert.assertEquals(response.getStatus(), 200);
+		validatePageStructureXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) response.getEntity())));
+	}
+
+	@Test
+	public void testUpdateAndGetPageStructure() throws Exception
+	{
+		List<UUID> ids = pageStructureService.selectAllPageStructureIds();
+		UUID page = ids.get(0);
+		Document testDoc = createXMLDocument();
+
+		Response updatePageStructureResponse = translationResource.updatePageStructure(testDoc, "en", "kgp", page ,"draft-access", null);
+		Assert.assertEquals(updatePageStructureResponse.getStatus(), 204);
+
+		Response getPageStructureResponse = translationResource.getPageStructure("en", "kgp", page, "draft-access", null);
+		Assert.assertEquals(getPageStructureResponse.getStatus(), 200);
+	}
+
+	private void validatePageStructureXml(Document xmlPageStructureFile)
+	{
+		/*
+		Since the database is rolled back each time a test is run, the only data stored is test data.
+		This is why only one element will be returned when the test is run.
+		 */
+
+		List<Element> elements = XmlDocumentSearchUtilities.findElements(xmlPageStructureFile, "Page");
+
+		Assert.assertEquals(elements.size(), 1);
+		Assert.assertEquals(elements.get(0).getAttribute("ID"), PAGE_STRUCTURE_ID.toString());
+		Assert.assertEquals(elements.get(0).getAttribute("Translation_ID"), TRANSLATION_ID.toString());
+	}
 
 	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)
 	{
@@ -328,5 +369,22 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		List<Element> textElements = XmlDocumentSearchUtilities.findElements(xmlPageFile, "text");
 		Assert.assertEquals(textElements.size(), 1);
 		Assert.assertEquals(textElements.get(0).getTextContent(), "These four points explain how to enter into a personal relationship with God and experience the life for which you were created.");
+	}
+
+	private Document createXMLDocument()
+	{
+		try
+		{
+			Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element root = contents.createElement("Test_Element");
+			root.setAttribute("Test", "Result");
+			contents.appendChild(root);
+
+			return contents;
+
+		} catch (ParserConfigurationException e)
+		{
+			throw Throwables.propagate(e);
+		}
 	}
 }
