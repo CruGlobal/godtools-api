@@ -18,17 +18,12 @@ import java.util.Collection;
  */
 public class OneSkyTranslationUpload implements TranslationUpload
 {
+	@Inject
 	private OneSkyDataService oneSkyDataService;
+	@Inject
 	private FileClient fileClient;
 
 	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
-
-	@Inject
-	public OneSkyTranslationUpload(OneSkyDataService oneSkyDataService, FileClient fileClient)
-	{
-		this.oneSkyDataService = oneSkyDataService;
-		this.fileClient = fileClient;
-	}
 
 	@Override
 	public void doUpload(Integer projectId, String locale)

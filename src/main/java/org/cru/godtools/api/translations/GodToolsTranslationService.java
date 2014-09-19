@@ -85,6 +85,8 @@ public class GodToolsTranslationService
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
 
+		//TODO: update cache!!
+
 		return pageStructure;
 	}
 
@@ -165,6 +167,7 @@ public class GodToolsTranslationService
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
 		// try to load out the latest version of translation for this package/language combo
+		//TODO: try cache first
 		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
 
 		// only allow one draft per translation
@@ -175,7 +178,7 @@ public class GodToolsTranslationService
 
 		// if we found a current translation, then copy page structures and translation elements from the current translation
 		// to the new
-		if(currentTranslation != null)
+		if (currentTranslation != null)
 		{
 			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
 			newTranslationProcess.copyPackageTranslationData(currentTranslation, newTranslation);
