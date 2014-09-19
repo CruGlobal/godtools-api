@@ -86,7 +86,7 @@ public class DraftResource
 
 	@GET
 	@Path("/{language}/{package}/pages/{pageId}")
-	@Produces("application/zip")
+	@Produces({"application/zip", "application/xml"})
 	public Response getPage(@PathParam("language") String languageCode,
 							@PathParam("package") String packageCode,
 							@PathParam("pageId") UUID pageId,

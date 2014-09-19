@@ -155,6 +155,7 @@ public class GodToolsTranslationRetrieval
 			fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
 
 			zipOutputStream.close();
+			bundledStream.close();
 		}
 		catch(Exception e)
 		{
