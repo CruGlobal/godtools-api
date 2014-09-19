@@ -1,7 +1,6 @@
 package org.cru.godtools.api.translations;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.spy.memcached.MemcachedClient;
@@ -26,8 +25,6 @@ import org.cru.godtools.domain.translations.TranslationService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -64,6 +61,8 @@ public class GodToolsTranslationService
 	private NewTranslationCreation newTranslationProcess;
 	@Inject
 	private DraftTranslation draftTranslationProcess;
+	@Inject
+	private MemcachedClient cache;
 
 	/**
 	 * Retrieves a specific page of a translation
@@ -98,18 +97,10 @@ public class GodToolsTranslationService
 	{
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
 
-		try
-		{
-			MemcachedClient cache = new MemcachedClient(new InetSocketAddress("10.7.197.135", 11211));
-			Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
-			if(possibleTranslation.isPresent()) return (GodToolsTranslation)possibleTranslation.get();
-		}
-		catch(IOException e)
-		{
-			throw Throwables.propagate(e);
-		}
-
 		if(translation == null) throw new NotFoundException();
+
+		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+		if(possibleTranslation.isPresent()) return (GodToolsTranslation)possibleTranslation.get();
 
 		Package gtPackage = packageService.selectByCode(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
@@ -134,15 +125,7 @@ public class GodToolsTranslationService
 				!translation.isReleased(),
 				loadIcon(packageCode));
 
-		try
-		{
-			MemcachedClient cache = new MemcachedClient(new InetSocketAddress("10.7.197.135", 11211));
-			cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
-		}
-		catch(IOException e)
-		{
-			throw Throwables.propagate(e);
-		}
+		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
 
 		return godToolsTranslation;
 	}
