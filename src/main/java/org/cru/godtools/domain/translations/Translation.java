@@ -3,12 +3,14 @@ package org.cru.godtools.domain.translations;
 
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.packages.Package;
+
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class Translation
+public class Translation implements Serializable
 {
 	private UUID id;
 	private UUID packageId;

@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/30/14.
  */
-public class PageStructure
+public class PageStructure implements Serializable
 {
 	private UUID id;
 	private UUID translationId;

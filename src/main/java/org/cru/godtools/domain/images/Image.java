@@ -2,6 +2,7 @@ package org.cru.godtools.domain.images;
 
 import com.google.common.collect.Maps;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -9,7 +10,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/21/14.
  */
-public class Image
+public class Image implements Serializable
 {
     private UUID id;
 	private String filename;

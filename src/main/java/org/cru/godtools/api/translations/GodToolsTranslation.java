@@ -9,6 +9,7 @@ import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.translations.Translation;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.UUID;
  *
  * Created by ryancarlson on 3/18/14.
  */
-public class GodToolsTranslation
+public class GodToolsTranslation implements Serializable
 {
 	String packageCode;
 	String packageName;

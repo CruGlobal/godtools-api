@@ -1,7 +1,10 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.spy.memcached.MemcachedClient;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.images.ImageService;
@@ -23,6 +26,8 @@ import org.cru.godtools.domain.translations.TranslationService;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -92,6 +97,18 @@ public class GodToolsTranslationService
 											  GodToolsVersion godToolsVersion)
 	{
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
+
+		try
+		{
+			MemcachedClient cache = new MemcachedClient(new InetSocketAddress("10.7.197.135", 11211));
+			Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+			if(possibleTranslation.isPresent()) return (GodToolsTranslation)possibleTranslation.get();
+		}
+		catch(IOException e)
+		{
+			throw Throwables.propagate(e);
+		}
+
 		if(translation == null) throw new NotFoundException();
 
 		Package gtPackage = packageService.selectByCode(packageCode);
@@ -108,7 +125,7 @@ public class GodToolsTranslationService
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
-		return GodToolsTranslation.assembleFromComponents(packageCode,
+		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(packageCode,
 				translation,
 				packageStructure,
 				pageStructures,
@@ -116,6 +133,18 @@ public class GodToolsTranslationService
 				getImagesUsedInThisTranslation(packageStructure),
 				!translation.isReleased(),
 				loadIcon(packageCode));
+
+		try
+		{
+			MemcachedClient cache = new MemcachedClient(new InetSocketAddress("10.7.197.135", 11211));
+			cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
+		}
+		catch(IOException e)
+		{
+			throw Throwables.propagate(e);
+		}
+
+		return godToolsTranslation;
 	}
 
 	/**

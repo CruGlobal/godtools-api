@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import net.spy.memcached.MemcachedClient;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -22,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 

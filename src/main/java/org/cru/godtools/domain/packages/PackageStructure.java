@@ -6,12 +6,13 @@ import org.cru.godtools.domain.images.Image;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 /**
  * Created by ryancarlson on 4/30/14.
  */
-public class PackageStructure
+public class PackageStructure implements Serializable
 {
 	private UUID id;
 	private UUID packageId;
