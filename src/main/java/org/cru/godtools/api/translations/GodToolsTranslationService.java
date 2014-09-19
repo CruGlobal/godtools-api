@@ -226,6 +226,9 @@ public class GodToolsTranslationService
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION);
 		translation.setReleased(true);
 		translationService.update(translation);
+
+		// remove the translation from the cache b/c it will have draft status.  it will be replaced with the new "live" version
+		cache.delete(translation.getId().toString());
 	}
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
