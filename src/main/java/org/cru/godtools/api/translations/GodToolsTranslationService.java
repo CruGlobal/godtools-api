@@ -85,9 +85,21 @@ public class GodToolsTranslationService
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
 
-		//TODO: update cache!!
+		updateCache(translation, pageStructure);
 
 		return pageStructure;
+	}
+
+	private void updateCache(Translation translation, PageStructure pageStructure)
+	{
+		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+		if(possibleTranslation.isPresent())
+		{
+			GodToolsTranslation godToolsTranslation = (GodToolsTranslation)possibleTranslation.get();
+
+			godToolsTranslation.replacePageXml(pageStructure);
+			cache.replace(translation.getId().toString(), 3600, translation);
+		}
 	}
 
 	/**
@@ -108,13 +120,14 @@ public class GodToolsTranslationService
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 
-		if(translation.isDraft())
-		{
-			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
-					translation,
-					pageStructures,
-					languageCode);
-		}
+		// if the translators ALWAYS preview their work, then this update/download won't be needed
+//		if(translation.isDraft())
+//		{
+//			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+//					translation,
+//					pageStructures,
+//					languageCode);
+//		}
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 

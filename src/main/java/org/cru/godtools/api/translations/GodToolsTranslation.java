@@ -75,6 +75,18 @@ public class GodToolsTranslation implements Serializable
 		return godToolsTranslation;
 	}
 
+
+	public void replacePageXml(PageStructure updatedPageStructure)
+	{
+		for(PageStructure pageStructure : pageStructureList)
+		{
+			if(pageStructure.getId().equals(updatedPageStructure.getId()))
+			{
+				pageStructure.setXmlContent(updatedPageStructure.getXmlContent());
+			}
+		}
+	}
+
 	/**
 	 * You can't have one without the other
 	 * @return
