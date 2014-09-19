@@ -102,7 +102,7 @@ public class GodToolsTranslationService
 
 			godToolsTranslation.replacePageXml(pageStructure);
 			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
-			cache.replace(translation.getId().toString(), 3600, translation);
+			cache.replace(translation.getId().toString(), 3600, godToolsTranslation);
 		}
 	}
 
