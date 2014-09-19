@@ -101,7 +101,7 @@ public class GodToolsTranslationService
 			GodToolsTranslation godToolsTranslation = (GodToolsTranslation)possibleTranslation.get();
 
 			godToolsTranslation.replacePageXml(pageStructure);
-			logger.info(String.format("replacing page &s in cached translation &s", pageStructure.getId(), translation.getId()));
+			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
 			cache.replace(translation.getId().toString(), 3600, translation);
 		}
 	}
@@ -120,7 +120,7 @@ public class GodToolsTranslationService
 		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
 		if(possibleTranslation.isPresent())
 		{
-			logger.info(String.format("found translation &s in cache", translation.getId()));
+			logger.info(String.format("found translation %s in cache", translation.getId()));
 			return (GodToolsTranslation)possibleTranslation.get();
 		}
 
@@ -148,7 +148,7 @@ public class GodToolsTranslationService
 				!translation.isReleased(),
 				loadIcon(packageCode));
 
-		logger.info(String.format("adding translation &s to cache", translation.getId()));
+		logger.info(String.format("adding translation %s to cache", translation.getId()));
 		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
 
 		return godToolsTranslation;
@@ -196,7 +196,7 @@ public class GodToolsTranslationService
 
 		// save a new translation for this package language combo
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
-		logger.info(String.format("created translation &s", newTranslation.getId()));
+		logger.info(String.format("created translation %s", newTranslation.getId()));
 
 		// if we found a current translation, then copy page structures and translation elements from the current translation
 		// to the new
