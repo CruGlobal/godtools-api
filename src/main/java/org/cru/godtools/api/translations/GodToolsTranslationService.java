@@ -22,6 +22,7 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -64,6 +65,8 @@ public class GodToolsTranslationService
 	@Inject
 	private MemcachedClient cache;
 
+	private Logger logger = Logger.getLogger(GodToolsTranslationService.class);
+
 	/**
 	 * Retrieves a specific page of a translation
 	 */
@@ -98,6 +101,7 @@ public class GodToolsTranslationService
 			GodToolsTranslation godToolsTranslation = (GodToolsTranslation)possibleTranslation.get();
 
 			godToolsTranslation.replacePageXml(pageStructure);
+			logger.info(String.format("replacing page &s in cached translation &s", pageStructure.getId(), translation.getId()));
 			cache.replace(translation.getId().toString(), 3600, translation);
 		}
 	}
@@ -114,7 +118,11 @@ public class GodToolsTranslationService
 		if(translation == null) throw new NotFoundException();
 
 		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
-		if(possibleTranslation.isPresent()) return (GodToolsTranslation)possibleTranslation.get();
+		if(possibleTranslation.isPresent())
+		{
+			logger.info(String.format("found translation &s in cache", translation.getId()));
+			return (GodToolsTranslation)possibleTranslation.get();
+		}
 
 		Package gtPackage = packageService.selectByCode(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
@@ -140,6 +148,7 @@ public class GodToolsTranslationService
 				!translation.isReleased(),
 				loadIcon(packageCode));
 
+		logger.info(String.format("adding translation &s to cache", translation.getId()));
 		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
 
 		return godToolsTranslation;
@@ -180,7 +189,6 @@ public class GodToolsTranslationService
 		Language language = languageService.getOrCreateLanguage(languageCode);
 
 		// try to load out the latest version of translation for this package/language combo
-		//TODO: try cache first
 		Translation currentTranslation = getTranslationFromDatabase(new LanguageCode(language.getCode()), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);
 
 		// only allow one draft per translation
@@ -188,9 +196,11 @@ public class GodToolsTranslationService
 
 		// save a new translation for this package language combo
 		Translation newTranslation = newTranslationProcess.saveNewTranslation(gtPackage, language, currentTranslation);
+		logger.info(String.format("created translation &s", newTranslation.getId()));
 
 		// if we found a current translation, then copy page structures and translation elements from the current translation
 		// to the new
+		logger.info("Starting translation data copy at");
 		if (currentTranslation != null)
 		{
 			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
@@ -202,8 +212,11 @@ public class GodToolsTranslationService
 			newTranslationProcess.copyPageAndTranslationData(baseTranslation, newTranslation);
 			newTranslationProcess.copyPackageTranslationData(baseTranslation, newTranslation);
 		}
+		logger.info("Finished translation data copy");
 
+		logger.info("Starting async upload");
 		newTranslationProcess.uploadToTranslationTool(gtPackage, language);
+		logger.info("Finished async upload");
 
 		return newTranslation;
 	}
