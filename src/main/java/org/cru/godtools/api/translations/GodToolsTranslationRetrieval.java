@@ -141,7 +141,7 @@ public class GodToolsTranslationRetrieval
 				log.info("Scheduling draft update for: " + godToolsTranslation.getTranslation().getId());
 				try
 				{
-					DraftUpdateJobScheduler.scheduleUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
+					DraftUpdateJobScheduler.scheduleRecurringUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
 							godToolsTranslation.getLanguage().getPath(),
 							godToolsTranslation.getPageNameSet(),
 							godToolsTranslation.getTranslation());

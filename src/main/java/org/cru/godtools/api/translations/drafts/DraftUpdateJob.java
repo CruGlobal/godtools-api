@@ -75,7 +75,7 @@ public class DraftUpdateJob implements Job
 		}
 
 		clearCache(translation);
-		
+
 		// delete the marker (it was only good for 30s anyways)
 		cache.delete(updateMarkerKey);
 	}

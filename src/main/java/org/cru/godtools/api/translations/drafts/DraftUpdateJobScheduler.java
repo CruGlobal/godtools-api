@@ -19,25 +19,48 @@ import java.util.Set;
  */
 public class DraftUpdateJobScheduler
 {
-	public static void scheduleUpdate(Integer projectId, String locale, Set<String> pageNames, Translation translation) throws SchedulerException
+	public static void scheduleOneUpdate(Integer projectId, String locale, Set<String> pageNames, Translation translation) throws SchedulerException
 	{
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-		JobDetail jobDetail = JobBuilder.newJob(DraftUpdateJob.class)
-				.withIdentity(translation.getId().toString())
-				.usingJobData(buildJobData(projectId, locale, pageNames, translation))
-				.build();
+		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation);
 
-		Trigger trigger = TriggerBuilder.newTrigger()
-				.withIdentity(translation.getId().toString())
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule()
-				.withIntervalInSeconds(30)
-				.withRepeatCount(10))
-				.build();
+		Trigger trigger = buildTrigger(translation, 0, 0);
 
 		scheduler.scheduleJob(jobDetail, Sets.newHashSet(trigger), true);
 
 		if(!scheduler.isStarted()) scheduler.start();
+	}
+
+	public static void scheduleRecurringUpdate(Integer projectId, String locale, Set<String> pageNames, Translation translation) throws SchedulerException
+	{
+		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation);
+
+		Trigger trigger = buildTrigger(translation, 30, 10);
+
+		scheduler.scheduleJob(jobDetail, Sets.newHashSet(trigger), true);
+
+		if(!scheduler.isStarted()) scheduler.start();
+	}
+
+	private static JobDetail buildJob(Integer projectId, String locale, Set<String> pageNames, Translation translation)
+	{
+		return JobBuilder.newJob(DraftUpdateJob.class)
+					.withIdentity(translation.getId().toString())
+					.usingJobData(buildJobData(projectId, locale, pageNames, translation))
+					.build();
+	}
+
+	private static Trigger buildTrigger(Translation translation, int interval, int repeatCount)
+	{
+		return TriggerBuilder.newTrigger()
+					.withIdentity(translation.getId().toString())
+					.withSchedule(SimpleScheduleBuilder.simpleSchedule()
+							.withIntervalInSeconds(interval)
+							.withRepeatCount(repeatCount))
+					.build();
 	}
 
 	private static JobDataMap buildJobData(Integer projectId, String locale, Set<String> pageNames, Translation translation)

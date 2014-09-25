@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.spy.memcached.MemcachedClient;
+import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.images.ImageService;
@@ -23,6 +24,7 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
+import org.quartz.SchedulerException;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -234,8 +236,20 @@ public class GodToolsTranslationService
 		translation.setReleased(true);
 		translationService.update(translation);
 
-		// remove the translation from the cache b/c it will have draft status.  it will be replaced with the new "live" version
-		cache.delete(translation.getId().toString());
+		GodToolsTranslation godToolsTranslation = getTranslation(translation);
+
+		try
+		{
+			// job will delete draft from the cache when it is finished
+			DraftUpdateJobScheduler.scheduleOneUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
+					godToolsTranslation.getLanguage().getPath(),
+					godToolsTranslation.getPageNameSet(),
+					godToolsTranslation.getTranslation());
+		}
+		catch (SchedulerException e)
+		{
+			logger.error("Error scheduling draft update on publish", e);
+		}
 	}
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
