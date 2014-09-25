@@ -24,18 +24,20 @@ public class DraftUpdateJobScheduler
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 		JobDetail jobDetail = JobBuilder.newJob(DraftUpdateJob.class)
-				.withIdentity("draft" + translation.getId().toString())
+				.withIdentity(translation.getId().toString())
 				.usingJobData(buildJobData(projectId, locale, pageNames, translation))
 				.build();
 
 		Trigger trigger = TriggerBuilder.newTrigger()
-				.withIdentity("draft" + translation.getId().toString())
+				.withIdentity(translation.getId().toString())
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule()
 				.withIntervalInSeconds(30)
 				.withRepeatCount(10))
 				.build();
 
 		scheduler.scheduleJob(jobDetail, Sets.newHashSet(trigger), true);
+
+		if(!scheduler.isStarted()) scheduler.start();
 	}
 
 	private static JobDataMap buildJobData(Integer projectId, String locale, Set<String> pageNames, Translation translation)

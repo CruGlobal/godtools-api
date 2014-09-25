@@ -1,14 +1,19 @@
 package org.cru.godtools.api.translations.drafts;
 
 import net.spy.memcached.MemcachedClient;
+import org.cru.godtools.api.cache.MemcachedClientProducer;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
+import org.cru.godtools.domain.database.SqlConnectionProducer;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
+import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;
+import org.cru.godtools.translate.client.onesky.TranslationClient;
 import org.jboss.logging.Logger;
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -27,14 +32,11 @@ public class DraftUpdateJob implements Job
 	public static final String PAGE_NAME_SET_KEY = "pageNameSetKey";
 	public static final String TRANSLATION_KEY = "translationKey";
 
-	@Inject
-	TranslationDownload translationDownload;
-	@Inject
-	TranslationElementService translationElementService;
-	@Inject
-	GodToolsTranslationService godToolsTranslationService;
-	@Inject
-	MemcachedClient cache;
+	TranslationDownload translationDownload = new OneSkyTranslationDownload(new TranslationClient());
+
+	TranslationElementService translationElementService = new TranslationElementService(new SqlConnectionProducer().getSqlConnection());
+
+	MemcachedClient cache = new MemcachedClientProducer().getClient();
 
 	Logger log = Logger.getLogger(DraftUpdateJob.class);
 
@@ -52,11 +54,19 @@ public class DraftUpdateJob implements Job
 		Translation translation = (Translation) jobExecutionContext.getMergedJobDataMap().get(TRANSLATION_KEY);
 		log.info(String.format("Found translation: %s", translation.getId().toString()));
 
-		for(String pageName : pageNames)
+		// use the cache to determine if another server has started an update on this draft in the
+		// last 30s.  if so, let it do its thing
+		String updateMarkerKey = translation.getId().toString() + "-updating-marker";
+		if(cache.get(updateMarkerKey) == null) return;
+
+		// if we are the first one to do this update, then add a marker to the cache, claiming it
+		cache.add(updateMarkerKey, 30, new Object());
+
+		for (String pageName : pageNames)
 		{
 			TranslationResults translationResults = translationDownload.doDownload(projectId, locale, pageName);
 
-			for(UUID elementId : translationResults.keySet())
+			for (UUID elementId : translationResults.keySet())
 			{
 				TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
 				element.setTranslatedText(translationResults.get(elementId));
@@ -64,9 +74,16 @@ public class DraftUpdateJob implements Job
 			}
 		}
 
-		GodToolsTranslation godToolsTranslation = godToolsTranslationService.getTranslation(translation);
+		clearCache(translation);
+		
+		// delete the marker (it was only good for 30s anyways)
+		cache.delete(updateMarkerKey);
+	}
 
-		log.info(String.format("adding translation %s to cache", translation.getId()));
-		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
+	private void clearCache(Translation translation)
+	{
+		log.info(String.format("removing translation %s from cache", translation.getId()));
+
+		cache.delete(translation.getId().toString());
 	}
 }
