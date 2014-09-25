@@ -2,12 +2,13 @@ package org.cru.godtools.domain.languages;
 
 import com.google.common.base.Strings;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class Language
+public class Language implements Serializable
 {
 
     UUID id;
