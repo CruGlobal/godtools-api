@@ -106,6 +106,35 @@ public class GodToolsTranslationService
 		}
 	}
 
+	public GodToolsTranslation getTranslation(Translation translation)
+	{
+		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+		if(possibleTranslation.isPresent())
+		{
+			logger.info(String.format("found translation %s in cache", translation.getId()));
+			return (GodToolsTranslation)possibleTranslation.get();
+		}
+
+		Package gtPackage = packageService.selectById(translation.getPackageId());
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
+
+		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(gtPackage,
+				languageService.selectLanguageById(translation.getLanguageId()),
+				translation,
+				packageStructure,
+				pageStructures,
+				translationElementList,
+				getImagesUsedInThisTranslation(packageStructure),
+				loadIcon(gtPackage.getCode()));
+
+		logger.info(String.format("adding translation %s to cache", translation.getId()));
+		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
+
+		return godToolsTranslation;
+	}
+
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
 	 */
@@ -124,29 +153,7 @@ public class GodToolsTranslationService
 			return (GodToolsTranslation)possibleTranslation.get();
 		}
 
-		Package gtPackage = packageService.selectByCode(packageCode);
-		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
-		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
-
-		// if the translators ALWAYS preview their work, then this update/download won't be needed
-//		if(translation.isDraft())
-//		{
-//			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
-//					translation,
-//					pageStructures,
-//					languageCode);
-//		}
-
-		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
-
-		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(packageCode,
-				translation,
-				packageStructure,
-				pageStructures,
-				translationElementList,
-				getImagesUsedInThisTranslation(packageStructure),
-				!translation.isReleased(),
-				loadIcon(packageCode));
+		GodToolsTranslation godToolsTranslation = getTranslation(translation);
 
 		logger.info(String.format("adding translation %s to cache", translation.getId()));
 		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);

@@ -56,6 +56,7 @@ public class DraftResource
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
 				.loadDrafts()
+				.scheduleAsynchronousDraftUpdates()
 				.buildResponse();
 	}
 
@@ -81,6 +82,7 @@ public class DraftResource
 				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
 				.setCompressed(Boolean.parseBoolean(compressed))
 				.loadDrafts()
+				.scheduleAsynchronousDraftUpdates()
 				.buildResponse();
 	}
 
