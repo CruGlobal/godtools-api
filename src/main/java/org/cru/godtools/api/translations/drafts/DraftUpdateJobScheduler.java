@@ -23,7 +23,7 @@ public class DraftUpdateJobScheduler
 	{
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation);
+		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation, true);
 
 		Trigger trigger = buildTrigger(translation, 0, 0);
 
@@ -36,7 +36,7 @@ public class DraftUpdateJobScheduler
 	{
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation);
+		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation, false);
 
 		Trigger trigger = buildTrigger(translation, 30, 10);
 
@@ -45,11 +45,11 @@ public class DraftUpdateJobScheduler
 		if(!scheduler.isStarted()) scheduler.start();
 	}
 
-	private static JobDetail buildJob(Integer projectId, String locale, Set<String> pageNames, Translation translation)
+	private static JobDetail buildJob(Integer projectId, String locale, Set<String> pageNames, Translation translation, boolean forceUpdate)
 	{
 		return JobBuilder.newJob(DraftUpdateJob.class)
 					.withIdentity(translation.getId().toString())
-					.usingJobData(buildJobData(projectId, locale, pageNames, translation))
+					.usingJobData(buildJobData(projectId, locale, pageNames, translation, forceUpdate))
 					.build();
 	}
 
@@ -63,16 +63,15 @@ public class DraftUpdateJobScheduler
 					.build();
 	}
 
-	private static JobDataMap buildJobData(Integer projectId, String locale, Set<String> pageNames, Translation translation)
+	private static JobDataMap buildJobData(Integer projectId, String locale, Set<String> pageNames, Translation translation, boolean forceUpdate)
 	{
 		JobDataMap jobDataMap = new JobDataMap();
 		jobDataMap.put(DraftUpdateJob.PROJECT_ID_KEY, projectId);
 		jobDataMap.put(DraftUpdateJob.LOCALE_KEY, locale);
 		jobDataMap.put(DraftUpdateJob.TRANSLATION_KEY, translation);
 		jobDataMap.put(DraftUpdateJob.PAGE_NAME_SET_KEY, pageNames);
+		jobDataMap.put(DraftUpdateJob.FORCE_UPDATE_KEY, forceUpdate);
 
 		return jobDataMap;
 	}
-
-
 }

@@ -31,6 +31,7 @@ public class DraftUpdateJob implements Job
 	public static final String LOCALE_KEY = "localeKey";
 	public static final String PAGE_NAME_SET_KEY = "pageNameSetKey";
 	public static final String TRANSLATION_KEY = "translationKey";
+	public static final String FORCE_UPDATE_KEY = "forceUpdateKey";
 
 	TranslationDownload translationDownload = new OneSkyTranslationDownload(new TranslationClient());
 
@@ -54,10 +55,13 @@ public class DraftUpdateJob implements Job
 		Translation translation = (Translation) jobExecutionContext.getMergedJobDataMap().get(TRANSLATION_KEY);
 		log.info(String.format("Found translation: %s", translation.getId().toString()));
 
+		boolean forceUpdate = jobExecutionContext.getMergedJobDataMap().getBoolean(FORCE_UPDATE_KEY);
+		log.info(String.format("Found forceUpdate: %s", forceUpdate));
+
 		// use the cache to determine if another server has started an update on this draft in the
 		// last 30s.  if so, let it do its thing
 		String updateMarkerKey = translation.getId().toString() + "-updating-marker";
-		if(cache.get(updateMarkerKey) == null) return;
+		if(!forceUpdate && cache.get(updateMarkerKey) != null) return;
 
 		// if we are the first one to do this update, then add a marker to the cache, claiming it
 		cache.add(updateMarkerKey, 30, new Object());
