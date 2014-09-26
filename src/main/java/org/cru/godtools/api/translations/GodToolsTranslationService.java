@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.spy.memcached.MemcachedClient;
+import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.images.ImageService;
@@ -63,7 +64,7 @@ public class GodToolsTranslationService
 	@Inject
 	private DraftTranslation draftTranslationProcess;
 	@Inject
-	private MemcachedClient cache;
+	private GodToolsCache cache;
 
 	private Logger logger = Logger.getLogger(GodToolsTranslationService.class);
 
@@ -95,14 +96,14 @@ public class GodToolsTranslationService
 
 	private void updateCache(Translation translation, PageStructure pageStructure)
 	{
-		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
 		if(possibleTranslation.isPresent())
 		{
-			GodToolsTranslation godToolsTranslation = (GodToolsTranslation)possibleTranslation.get();
+			GodToolsTranslation godToolsTranslation = possibleTranslation.get();
 
 			godToolsTranslation.replacePageXml(pageStructure);
 			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
-			cache.replace(translation.getId().toString(), 3600, godToolsTranslation);
+			cache.replace(godToolsTranslation);
 		}
 	}
 
@@ -117,25 +118,16 @@ public class GodToolsTranslationService
 
 		if(translation == null) throw new NotFoundException();
 
-		Optional<Object> possibleTranslation = Optional.fromNullable(cache.get(translation.getId().toString()));
+		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
 		if(possibleTranslation.isPresent())
 		{
 			logger.info(String.format("found translation %s in cache", translation.getId()));
-			return (GodToolsTranslation)possibleTranslation.get();
+			return possibleTranslation.get();
 		}
 
 		Package gtPackage = packageService.selectByCode(packageCode);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
-
-		// if the translators ALWAYS preview their work, then this update/download won't be needed
-//		if(translation.isDraft())
-//		{
-//			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
-//					translation,
-//					pageStructures,
-//					languageCode);
-//		}
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
@@ -149,7 +141,7 @@ public class GodToolsTranslationService
 				loadIcon(packageCode));
 
 		logger.info(String.format("adding translation %s to cache", translation.getId()));
-		cache.add(godToolsTranslation.getTranslation().getId().toString(), 3600, godToolsTranslation);
+		cache.add(godToolsTranslation);
 
 		return godToolsTranslation;
 	}
@@ -228,7 +220,7 @@ public class GodToolsTranslationService
 		translationService.update(translation);
 
 		// remove the translation from the cache b/c it will have draft status.  it will be replaced with the new "live" version
-		cache.delete(translation.getId().toString());
+		cache.remove(translation.getId());
 	}
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
