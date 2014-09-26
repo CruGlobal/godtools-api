@@ -11,6 +11,8 @@ import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericEntity;
@@ -24,6 +26,8 @@ import javax.ws.rs.core.Variant;
  *
  * Created by ryancarlson on 5/1/14.
  */
+
+@Stateless
 public class FileClient
 {
 	public static final String SUB_PATH = "files";
@@ -41,8 +45,8 @@ public class FileClient
 	 *                 know the context for what's being translated (ex: 01_Home.xml)
 	 * @param jsonToUpload - Jackson ObjectNode representation of elements from the database, contains unique identifier & translated value,
 	 *                                for the elements being translated.
-	 *
 	 */
+	@Asynchronous
 	public void uploadFile(Integer projectId, String pageName, String locale, ObjectNode jsonToUpload) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);

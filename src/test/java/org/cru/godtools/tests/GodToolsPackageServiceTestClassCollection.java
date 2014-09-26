@@ -1,6 +1,7 @@
 package org.cru.godtools.tests;
 
 import com.google.common.collect.ImmutableSet;
+import org.cru.godtools.api.cache.NoOpCache;
 import org.cru.godtools.api.translations.DraftTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationCreation;
@@ -30,7 +31,7 @@ public class GodToolsPackageServiceTestClassCollection
 			PageStructureService.class, TranslationElementService.class, NewTranslationCreation.class,
 			DraftTranslation.class, OneSkyTranslationDownload.class,
 			NoOpTranslationUpload.class, FileClient.class, TranslationClient.class, TestClockImpl.class,
-			OneSkyDataService.class);
+			OneSkyDataService.class, NoOpCache.class);
 
 	public static Class<?>[] getClasses()
 	{
