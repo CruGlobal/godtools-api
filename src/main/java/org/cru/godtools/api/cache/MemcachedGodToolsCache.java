@@ -20,7 +20,7 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	@Override
 	public Optional<GodToolsTranslation> get(UUID translationId)
 	{
-		return Optional.of((GodToolsTranslation)memcachedClient.get(translationId.toString()));
+		return Optional.fromNullable((GodToolsTranslation)memcachedClient.get(translationId.toString()));
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	@Override
 	public Optional<GodToolsTranslation> remove(UUID translationId)
 	{
-		Optional<GodToolsTranslation> optionalTranslation = Optional.of((GodToolsTranslation) memcachedClient.get(translationId.toString()));
+		Optional<GodToolsTranslation> optionalTranslation = Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
 		memcachedClient.delete(translationId.toString());
 
 		return optionalTranslation;
