@@ -2,6 +2,7 @@ package org.cru.godtools.domain.database;
 
 
 import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.sql2o.Connection;
 import org.sql2o.QuirksMode;
 import org.sql2o.Sql2o;
@@ -31,6 +32,9 @@ public class SqlConnectionProducer
 
     private Sql2o getSql2o()
     {
+		// quartz can't do CDI, but I need an sql connection
+		if(properties == null) properties = new GodToolsPropertiesFactory().get();
+
         return new Sql2o(properties.getProperty("databaseUrl"),
                 properties.getProperty("databaseUsername"),
                 properties.getProperty("databasePassword"),

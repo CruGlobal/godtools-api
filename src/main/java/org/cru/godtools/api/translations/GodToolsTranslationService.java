@@ -3,7 +3,8 @@ package org.cru.godtools.api.translations;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.spy.memcached.MemcachedClient;
+
+import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
@@ -24,6 +25,7 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
+import org.quartz.SchedulerException;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -107,6 +109,35 @@ public class GodToolsTranslationService
 		}
 	}
 
+	public GodToolsTranslation getTranslation(Translation translation)
+	{
+		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
+		if(possibleTranslation.isPresent())
+		{
+			logger.info(String.format("found translation %s in cache", translation.getId()));
+			return possibleTranslation.get();
+		}
+
+		Package gtPackage = packageService.selectById(translation.getPackageId());
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
+
+		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(gtPackage,
+				languageService.selectLanguageById(translation.getLanguageId()),
+				translation,
+				packageStructure,
+				pageStructures,
+				translationElementList,
+				getImagesUsedInThisTranslation(packageStructure),
+				loadIcon(gtPackage.getCode()));
+
+		logger.info(String.format("adding translation %s to cache", translation.getId()));
+		cache.add(godToolsTranslation);
+
+		return godToolsTranslation;
+	}
+
 	/**
 	 * Retrieves a specific package in a specific language at a specific version.
 	 */
@@ -125,25 +156,7 @@ public class GodToolsTranslationService
 			return possibleTranslation.get();
 		}
 
-		Package gtPackage = packageService.selectByCode(packageCode);
-		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
-		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
-
-		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
-
-		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(packageCode,
-				translation,
-				packageStructure,
-				pageStructures,
-				translationElementList,
-				getImagesUsedInThisTranslation(packageStructure),
-				!translation.isReleased(),
-				loadIcon(packageCode));
-
-		logger.info(String.format("adding translation %s to cache", translation.getId()));
-		cache.add(godToolsTranslation);
-
-		return godToolsTranslation;
+		return getTranslation(translation);
 	}
 
 	/**
@@ -219,8 +232,22 @@ public class GodToolsTranslationService
 		translation.setReleased(true);
 		translationService.update(translation);
 
-		// remove the translation from the cache b/c it will have draft status.  it will be replaced with the new "live" version
-		cache.remove(translation.getId());
+		GodToolsTranslation godToolsTranslation = getTranslation(translation);
+
+		if(TranslationResource.BYPASS_ASYNC_UPDATE) return;
+
+		try
+		{
+			// job will delete draft from the cache when it is finished
+			DraftUpdateJobScheduler.scheduleOneUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
+					godToolsTranslation.getLanguage().getPath(),
+					godToolsTranslation.getPageNameSet(),
+					godToolsTranslation.getTranslation());
+		}
+		catch (SchedulerException e)
+		{
+			logger.error("Error scheduling draft update on publish", e);
+		}
 	}
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)

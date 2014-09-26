@@ -11,10 +11,11 @@ import java.util.UUID;
  */
 public class TranslationElementService
 {
-
+	@Inject
 	Connection sqlConnection;
 
-	@Inject
+	public TranslationElementService(){}
+
 	public TranslationElementService(Connection sqlConnection)
 	{
 		this.sqlConnection = sqlConnection;

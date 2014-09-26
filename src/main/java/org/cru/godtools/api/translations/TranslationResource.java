@@ -45,6 +45,7 @@ public class TranslationResource
 	Clock clock;
 
 	private Logger log = Logger.getLogger(TranslationResource.class);
+	static boolean BYPASS_ASYNC_UPDATE = false;
 
 	@GET
 	@Path("/{language}")

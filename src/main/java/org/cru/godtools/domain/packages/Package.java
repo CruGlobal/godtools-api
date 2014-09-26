@@ -1,11 +1,12 @@
 package org.cru.godtools.domain.packages;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class Package
+public class Package implements Serializable
 {
     UUID id;
     String name;

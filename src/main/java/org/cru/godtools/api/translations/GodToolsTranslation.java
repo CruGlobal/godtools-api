@@ -1,9 +1,12 @@
 package org.cru.godtools.api.translations;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
@@ -13,6 +16,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -22,13 +26,11 @@ import java.util.UUID;
  */
 public class GodToolsTranslation implements Serializable
 {
-	String packageCode;
-	String packageName;
-	BigDecimal versionNumber;
+	Package gtPackage;
+	Language language;
 	Translation translation;
 	PackageStructure packageStructure;
 	List<PageStructure> pageStructureList;
-	boolean isDraft;
 	private Image icon;
 	private List<Image> images = Lists.newArrayList();
 
@@ -36,13 +38,13 @@ public class GodToolsTranslation implements Serializable
     {
     }
 
-	public static GodToolsTranslation assembleFromComponents(String packageCode,
+	public static GodToolsTranslation assembleFromComponents(Package gtPackage,
+															 Language language,
 															 Translation translation,
 															 PackageStructure packageStructure,
 															 List<PageStructure> pageStructures,
 															 List<TranslationElement> translationElementList,
 															 List<Image> referencedImages,
-															 boolean isDraft,
 															 Image icon)
 	{
 		GodToolsTranslation godToolsTranslation = new GodToolsTranslation();
@@ -62,10 +64,8 @@ public class GodToolsTranslation implements Serializable
 
 		godToolsTranslation.setPackageStructure(packageStructure);
 		godToolsTranslation.setPageStructureList(pageStructures);
-		godToolsTranslation.setPackageCode(packageCode);
-		godToolsTranslation.setPackageName(translation.getTranslatedName());
-		godToolsTranslation.setVersionNumber(new BigDecimal(packageStructure.getVersionNumber() + "." + translation.getVersionNumber()));
-		godToolsTranslation.setDraft(isDraft);
+		godToolsTranslation.gtPackage = gtPackage;
+		godToolsTranslation.language = language;
 
 		godToolsTranslation.setImages(referencedImages);
 		godToolsTranslation.setIcon(icon);
@@ -95,8 +95,8 @@ public class GodToolsTranslation implements Serializable
 	public int hashCode()
 	{
 		return new HashCodeBuilder(17, 83)  // two randomly chosen prime numbers (as random as random can be...)
-				.append(packageCode)
-				.append(isDraft)
+				.append(gtPackage.getCode())
+				.append(translation.isDraft())
 				.toHashCode();
 	}
 
@@ -111,21 +111,17 @@ public class GodToolsTranslation implements Serializable
 	{
 		if(obj == null) return false;
 		if(!(obj instanceof GodToolsTranslation)) return false;
-		GodToolsTranslation translation = (GodToolsTranslation) obj;
+		GodToolsTranslation godToolsTranslation = (GodToolsTranslation) obj;
 
 		return new EqualsBuilder()
-				.append(packageCode, translation.getPackageCode())
-				.append(isDraft, translation.isDraft())
+				.append(this.gtPackage.getCode(), godToolsTranslation.gtPackage.getCode())
+				.append(this.translation.isDraft(), godToolsTranslation.translation.isDraft())
 				.isEquals();
 	}
+
 	public String getPackageCode()
 	{
-		return packageCode;
-	}
-
-	public void setPackageCode(String packageCode)
-	{
-		this.packageCode = packageCode;
+		return gtPackage.getCode();
 	}
 
 	public PackageStructure getPackageStructure()
@@ -150,12 +146,7 @@ public class GodToolsTranslation implements Serializable
 
 	public boolean isDraft()
 	{
-		return isDraft;
-	}
-
-	public void setDraft(boolean isDraft)
-	{
-		this.isDraft = isDraft;
+		return translation.isDraft();
 	}
 
 	public Image getIcon()
@@ -180,26 +171,38 @@ public class GodToolsTranslation implements Serializable
 
 	public String getPackageName()
 	{
-		return packageName;
-	}
-
-	public void setPackageName(String packageName)
-	{
-		this.packageName = packageName;
+		return translation.getTranslatedName();
 	}
 
 	public BigDecimal getVersionNumber()
 	{
-		return versionNumber;
-	}
-
-	public void setVersionNumber(BigDecimal versionNumber)
-	{
-		this.versionNumber = versionNumber;
+		return new BigDecimal(packageStructure.getVersionNumber() + "." + translation.getVersionNumber());
 	}
 
 	public Translation getTranslation()
 	{
 		return translation;
+	}
+
+	public Package getPackage()
+	{
+		return gtPackage;
+	}
+
+	public Language getLanguage()
+	{
+		return language;
+	}
+
+	public Set<String> getPageNameSet()
+	{
+		Set<String> pageNames = Sets.newHashSet();
+
+		for(PageStructure pageStructure : pageStructureList)
+		{
+			pageNames.add(pageStructure.getFilename());
+		}
+
+		return pageNames;
 	}
 }

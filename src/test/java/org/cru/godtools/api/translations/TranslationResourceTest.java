@@ -6,6 +6,7 @@ import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
+import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -242,6 +243,8 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 	@Test
 	public void testPublishDraftTranslation() throws URISyntaxException, IOException, SAXException
 	{
+		TranslationResource.BYPASS_ASYNC_UPDATE = true;
+		
 		Response response = translationResource.updateTranslation("en",
 				"kgp",
 				"draft-access",

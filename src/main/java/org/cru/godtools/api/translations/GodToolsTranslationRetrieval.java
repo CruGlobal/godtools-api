@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -13,6 +14,7 @@ import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.PixelDensity;
 
 import org.jboss.logging.Logger;
+import org.quartz.SchedulerException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -130,6 +132,32 @@ public class GodToolsTranslationRetrieval
 		return this;
 	}
 
+	public GodToolsTranslationRetrieval scheduleAsynchronousDraftUpdates()
+	{
+		if(DraftResource.BYPASS_ASYNC_UPDATE) return this;
+
+		for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
+		{
+			if(godToolsTranslation.isDraft())
+			{
+				log.info("Scheduling draft update for: " + godToolsTranslation.getTranslation().getId());
+				try
+				{
+					DraftUpdateJobScheduler.scheduleRecurringUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
+							godToolsTranslation.getLanguage().getPath(),
+							godToolsTranslation.getPageNameSet(),
+							godToolsTranslation.getTranslation());
+				}
+				catch (SchedulerException e)
+				{
+					log.error("Error scheduling draft update", e);
+				}
+			}
+		}
+
+		return this;
+	}
+
     public Response buildResponse() throws IOException
     {
         if(compressed)
@@ -234,7 +262,7 @@ public class GodToolsTranslationRetrieval
                 resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
                 resourceElement.setAttribute("language", languageCode.toString());
                 resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
-				resourceElement.setAttribute("status", godToolsTranslation.isDraft ? "draft" : "live");
+				resourceElement.setAttribute("status", godToolsTranslation.isDraft() ? "draft" : "live");
 				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
 				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
 
