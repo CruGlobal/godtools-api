@@ -115,7 +115,7 @@ public class GodToolsTranslationService
 		if(possibleTranslation.isPresent())
 		{
 			logger.info(String.format("found translation %s in cache", translation.getId()));
-			return (GodToolsTranslation)possibleTranslation.get();
+			return possibleTranslation.get();
 		}
 
 		Package gtPackage = packageService.selectById(translation.getPackageId());
@@ -156,12 +156,7 @@ public class GodToolsTranslationService
 			return possibleTranslation.get();
 		}
 
-		GodToolsTranslation godToolsTranslation = getTranslation(translation);
-
-		logger.info(String.format("adding translation %s to cache", translation.getId()));
-		cache.add(godToolsTranslation);
-
-		return godToolsTranslation;
+		return getTranslation(translation);
 	}
 
 	/**
