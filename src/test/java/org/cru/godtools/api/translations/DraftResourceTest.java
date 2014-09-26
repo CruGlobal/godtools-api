@@ -68,6 +68,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		}
 		saveTestPackage();
 		setTestPackageDraftStatus();
+		DraftResource.BYPASS_ASYNC_UPDATE = true;
 	}
 
 	@AfterMethod

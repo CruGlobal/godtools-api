@@ -239,6 +239,8 @@ public class GodToolsTranslationService
 
 		GodToolsTranslation godToolsTranslation = getTranslation(translation);
 
+		if(TranslationResource.BYPASS_ASYNC_UPDATE) return;
+
 		try
 		{
 			// job will delete draft from the cache when it is finished

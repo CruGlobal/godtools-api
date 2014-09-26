@@ -35,7 +35,7 @@ public class DraftResource
 	@Inject private Clock clock;
 
 	private Logger log = Logger.getLogger(DraftResource.class);
-
+	static boolean BYPASS_ASYNC_UPDATE = false;
 
 	@GET
 	@Path("/{language}")

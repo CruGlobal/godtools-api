@@ -134,6 +134,8 @@ public class GodToolsTranslationRetrieval
 
 	public GodToolsTranslationRetrieval scheduleAsynchronousDraftUpdates()
 	{
+		if(DraftResource.BYPASS_ASYNC_UPDATE) return this;
+
 		for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
 		{
 			if(godToolsTranslation.isDraft())
