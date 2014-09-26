@@ -171,7 +171,7 @@ public class GodToolsTranslation implements Serializable
 
 	public String getPackageName()
 	{
-		return gtPackage.getName();
+		return translation.getTranslatedName();
 	}
 
 	public BigDecimal getVersionNumber()
