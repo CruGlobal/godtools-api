@@ -53,11 +53,11 @@ public class LanguageResource
 
 		languageService.insert(language);
 
-//		for(org.cru.godtools.domain.packages.Package gtPackage : packageService.selectAllPackages())
-//		{
-//			godToolsTranslationService.setupNewTranslation(LanguageCode.fromLanguage(language),
-//					gtPackage.getCode());
-//		}
+		for(org.cru.godtools.domain.packages.Package gtPackage : packageService.selectAllPackages())
+		{
+			godToolsTranslationService.setupNewTranslation(LanguageCode.fromLanguage(language),
+					gtPackage.getCode());
+		}
 		return Response.status(201).build();
 	}
 }
