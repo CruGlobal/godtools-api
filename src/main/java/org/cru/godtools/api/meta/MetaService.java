@@ -122,6 +122,7 @@ public class MetaService
 
         MetaLanguage metaLanguage = new MetaLanguage(language);
 		metaLanguage.setCode(languageCode);
+		metaLanguage.setName(language.getName());
 
 		Translation translation = getTranslation(language.getId(), gtPackage.getId());
 
@@ -136,9 +137,11 @@ public class MetaService
 	private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
         List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
+		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
 
         MetaLanguage metaLanguage = new MetaLanguage();
 		metaLanguage.setCode(languageCode);
+		metaLanguage.setName(language.getName());
 
         for(Translation translation : translations)
         {
