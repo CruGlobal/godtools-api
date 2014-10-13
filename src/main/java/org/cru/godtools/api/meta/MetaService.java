@@ -27,7 +27,7 @@ public class MetaService
     LanguageService languageService;
     TranslationService translationService;
     PackageService packageService;
-	PackageStructureService packageStructureService;
+    PackageStructureService packageStructureService;
 
     @Inject
     public MetaService(Connection sqlConnection, LanguageService languageService, TranslationService translationService, PackageService packageService, PackageStructureService packageStructureService)
@@ -36,26 +36,26 @@ public class MetaService
         this.languageService = languageService;
         this.translationService = translationService;
         this.packageService = packageService;
-		this.packageStructureService = packageStructureService;
+        this.packageStructureService = packageStructureService;
     }
 
-	/**
-	 * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
-	 * passed in languageCode, packageCode and interpreterVersion.
-	 *
-	 * Note, languageCode and packageCode could optionally either or both be null.
-	 *
-	 * Structure:
-	 * MetaResults
-	 * 	-Set<MetaLanguage>
-	 *    -Set<MetaPackage>
-	 *
-	 *
-	 * @param languageCode
-	 * @param packageCode
-	 * @param minimumInterpreterVersion
-	 * @return
-	 */
+    /**
+     * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
+     * passed in languageCode, packageCode and interpreterVersion.
+     *
+     * Note, languageCode and packageCode could optionally either or both be null.
+     *
+     * Structure:
+     * MetaResults
+     * 	-Set<MetaLanguage>
+     *    -Set<MetaPackage>
+     *
+     *
+     * @param languageCode
+     * @param packageCode
+     * @param minimumInterpreterVersion
+     * @return
+     */
     public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
         if(Strings.isNullOrEmpty(languageCode))
@@ -65,23 +65,23 @@ public class MetaService
         else
         {
             MetaResults results = new MetaResults();
-			MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly);
-			results.addLanguage(metaLanguage);
+            MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly);
+            results.addLanguage(metaLanguage);
 
-			return results;
+            return results;
         }
     }
 
-	/**
-	 * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
-	 * passed in languageCode, packageCode and interpreterVersion.
-	 *
-	 * Assumes languageCode was null, so look up the package information across all languages.
-	 *
-	 * @param packageCode
-	 * @param minimumInterpreterVersion
-	 * @return
-	 */
+    /**
+     * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
+     * passed in languageCode, packageCode and interpreterVersion.
+     *
+     * Assumes languageCode was null, so look up the package information across all languages.
+     *
+     * @param packageCode
+     * @param minimumInterpreterVersion
+     * @return
+     */
     private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
         MetaResults results = new MetaResults();
@@ -93,16 +93,16 @@ public class MetaService
         return results;
     }
 
-	/**
-	 * Returns a JAX-B annotated object of type MetaLanguage.  This object returns the information on what resources are available on
-	 * the given language with the passed in packageCode and interpreterVersion.
-	 *
-	 *
-	 * @param packageCode
-	 * @param minimumInterpreterVersion
-	 * @param draftsOnly
-	 * @return
-	 */
+    /**
+     * Returns a JAX-B annotated object of type MetaLanguage.  This object returns the information on what resources are available on
+     * the given language with the passed in packageCode and interpreterVersion.
+     *
+     *
+     * @param packageCode
+     * @param minimumInterpreterVersion
+     * @param draftsOnly
+     * @return
+     */
     private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
         if(Strings.isNullOrEmpty(packageCode))
@@ -117,69 +117,69 @@ public class MetaService
 
     private MetaLanguage getMetaLanguageForSinglePackage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
-		Language language = getLanguage(languageCode);
-		Package gtPackage = getPackage(packageCode);
+        Language language = getLanguage(languageCode);
+        Package gtPackage = getPackage(packageCode);
 
         MetaLanguage metaLanguage = new MetaLanguage(language);
-		metaLanguage.setCode(languageCode);
-		metaLanguage.setName(language.getName());
+        metaLanguage.setCode(languageCode);
+        metaLanguage.setName(language.getName());
 
-		Translation translation = getTranslation(language.getId(), gtPackage.getId());
+        Translation translation = getTranslation(language.getId(), gtPackage.getId());
 
-		if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
-		{
-			metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
-		}
-
-		return metaLanguage;
-    }
-
-	private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
-    {
-        List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
-		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
-
-        MetaLanguage metaLanguage = new MetaLanguage();
-		metaLanguage.setCode(languageCode);
-		metaLanguage.setName(language.getName());
-
-        for(Translation translation : translations)
+        if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
         {
-			if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
-			{
-				Package gtPackage = packageService.selectById(translation.getPackageId());
-
-				metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
-			}
+            metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
         }
 
         return metaLanguage;
     }
 
-	private BigDecimal getVersionNumber(Translation translation, Package gtPackage)
-	{
-		return new BigDecimal(getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber());
-	}
+    private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    {
+        List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
+        Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
 
-	private Language getLanguage(String languageCode)
-	{
-		return languageService.selectByLanguageCode(new LanguageCode(languageCode));
-	}
+        MetaLanguage metaLanguage = new MetaLanguage();
+        metaLanguage.setCode(languageCode);
+        metaLanguage.setName(language.getName());
 
-	private Package getPackage(String packageCode)
-	{
-		return packageService.selectByCode(packageCode);
-	}
+        for(Translation translation : translations)
+        {
+            if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
+            {
+                Package gtPackage = packageService.selectById(translation.getPackageId());
 
-	private PackageStructure getPackageStructure(UUID packageId)
-	{
-		return packageStructureService.selectByPackageId(packageId);
-	}
+                metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+            }
+        }
 
-	private Translation getTranslation(UUID languageId, UUID packageId)
-	{
-		List<Translation> translationList = translationService.selectByLanguageIdPackageId(languageId, packageId);
+        return metaLanguage;
+    }
 
-		return translationList.get(0);
-	}
+    private BigDecimal getVersionNumber(Translation translation, Package gtPackage)
+    {
+        return new BigDecimal(getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber());
+    }
+
+    private Language getLanguage(String languageCode)
+    {
+        return languageService.selectByLanguageCode(new LanguageCode(languageCode));
+    }
+
+    private Package getPackage(String packageCode)
+    {
+        return packageService.selectByCode(packageCode);
+    }
+
+    private PackageStructure getPackageStructure(UUID packageId)
+    {
+        return packageStructureService.selectByPackageId(packageId);
+    }
+
+    private Translation getTranslation(UUID languageId, UUID packageId)
+    {
+        List<Translation> translationList = translationService.selectByLanguageIdPackageId(languageId, packageId);
+
+        return translationList.get(0);
+    }
 }

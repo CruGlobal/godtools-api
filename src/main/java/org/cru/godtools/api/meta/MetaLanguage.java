@@ -16,7 +16,7 @@ import java.util.Set;
 public class MetaLanguage
 {
     String code;
-	String name;
+    String name;
     Set<MetaPackage> packages = Sets.newHashSet();
 
     public MetaLanguage()
@@ -27,7 +27,7 @@ public class MetaLanguage
     public MetaLanguage(Language language)
     {
         code = LanguageCode.fromLanguage(language).toString();
-		name = language.getName();
+        name = language.getName();
     }
 
     public void addPackage(String packageCode, BigDecimal versionNumber, boolean isReleased)
@@ -47,19 +47,19 @@ public class MetaLanguage
         return this;
     }
 
-	@XmlAttribute
-	public String getName()
-	{
-		return name;
-	}
+    @XmlAttribute
+    public String getName()
+    {
+        return name;
+    }
 
-	public MetaLanguage setName(String name)
-	{
-		this.name = name;
-		return this;
-	}
+    public MetaLanguage setName(String name)
+    {
+        this.name = name;
+        return this;
+    }
 
-	@XmlElementWrapper(name = "packages")
+    @XmlElementWrapper(name = "packages")
     @XmlElement(name = "package")
     public Set<MetaPackage> getPackages()
     {
