@@ -11,6 +11,7 @@ public class AccessCodeRecord
     String accessCode;
     DateTime createdTimestamp;
     DateTime revokedTimestamp;
+	boolean admin;
 
     public boolean isCurrentlyActive(DateTime currentTime)
     {
@@ -50,4 +51,14 @@ public class AccessCodeRecord
     {
         this.accessCode = code;
     }
+
+	public boolean isAdmin()
+	{
+		return admin;
+	}
+
+	public void setAdmin(boolean admin)
+	{
+		this.admin = admin;
+	}
 }

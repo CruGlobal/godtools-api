@@ -17,6 +17,7 @@ public class AuthorizationRecord
     DateTime revokedTimestamp;
     String deviceId;
 	boolean draftAccess;
+	boolean admin;
 
 	public static void checkAuthorization(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
 	{
@@ -101,5 +102,15 @@ public class AuthorizationRecord
 	public void setDraftAccess(boolean draftAccess)
 	{
 		this.draftAccess = draftAccess;
+	}
+
+	public boolean isAdmin()
+	{
+		return admin;
+	}
+
+	public void setAdmin(boolean admin)
+	{
+		this.admin = admin;
 	}
 }
