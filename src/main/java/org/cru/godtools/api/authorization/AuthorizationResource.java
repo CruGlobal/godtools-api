@@ -120,9 +120,6 @@ public class AuthorizationResource
 		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(adminPassphrase);
 
 		String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
-		AuthorizationRecord authorizationRecord = createNewAuthorization();
-		authorizationRecord.setDeviceId(device);
-		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
 
 		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
 		{
@@ -134,6 +131,9 @@ public class AuthorizationResource
 			throw new UnauthorizedException();
 		}
 
+		AuthorizationRecord authorizationRecord = createNewAuthorization();
+		authorizationRecord.setDeviceId(device);
+		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
 		authorizationRecord.setDraftAccess(true);
 
 		log.info("Saving authorization record with admin access:");
