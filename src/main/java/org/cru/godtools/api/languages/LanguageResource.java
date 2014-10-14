@@ -43,7 +43,7 @@ public class LanguageResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addLanguage(Language language, @HeaderParam("Authorization") String authorization)
 	{
-		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(authorization, "");
+		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(authorization, null);
 
 		if(!authorizationRecord.isPresent() || !authorizationRecord.get().isAdmin()) return Response.status(401).build();
 
