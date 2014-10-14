@@ -39,6 +39,10 @@ public class MetaService
         this.packageStructureService = packageStructureService;
     }
 
+	public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+	{
+		return getMetaResults(languageCode, packageCode, minimumInterpreterVersion, draftsOnly, false);
+	}
     /**
      * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
      * passed in languageCode, packageCode and interpreterVersion.
@@ -49,23 +53,17 @@ public class MetaService
      * MetaResults
      * 	-Set<MetaLanguage>
      *    -Set<MetaPackage>
-     *
-     *
-     * @param languageCode
-     * @param packageCode
-     * @param minimumInterpreterVersion
-     * @return
      */
-    public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
         if(Strings.isNullOrEmpty(languageCode))
         {
-            return getMetaResultsForAllLanguages(packageCode, minimumInterpreterVersion, draftsOnly);
+            return getMetaResultsForAllLanguages(packageCode, minimumInterpreterVersion, draftsOnly, allResults);
         }
         else
         {
             MetaResults results = new MetaResults();
-            MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly);
+            MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly, allResults);
             results.addLanguage(metaLanguage);
 
             return results;
@@ -82,12 +80,12 @@ public class MetaService
      * @param minimumInterpreterVersion
      * @return
      */
-    private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
         {
-            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion, draftsOnly));
+            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion, draftsOnly, allResults));
         }
 
         return results;
@@ -103,11 +101,11 @@ public class MetaService
      * @param draftsOnly
      * @return
      */
-    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
         if(Strings.isNullOrEmpty(packageCode))
         {
-            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion, draftsOnly);
+            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion, draftsOnly, allResults);
         }
         else
         {
@@ -134,7 +132,7 @@ public class MetaService
         return metaLanguage;
     }
 
-    private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
         List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
         Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
@@ -145,7 +143,7 @@ public class MetaService
 
         for(Translation translation : translations)
         {
-            if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
+            if(allResults || (draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
             {
                 Package gtPackage = packageService.selectById(translation.getPackageId());
 

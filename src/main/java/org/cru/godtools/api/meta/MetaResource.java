@@ -53,7 +53,7 @@ public class MetaResource
 	private Logger log = Logger.getLogger(MetaResource.class);
 
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMetaInfo(@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
@@ -105,7 +105,8 @@ public class MetaResource
 		MetaResults metaResults = metaService.getMetaResults(languageCode,
 				packageCode,
 				interpreterVersion,
-				authorizationRecordOptional.get().hasDraftAccess());
+				authorizationRecordOptional.get().hasDraftAccess(),
+				authorizationRecordOptional.get().isAdmin());
 
 		Simply.logObject(metaResults, MetaResource.class);
 
