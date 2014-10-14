@@ -38,6 +38,10 @@
             <param-name>cors.supportedHeaders</param-name>
             <param-value>Accept,Origin,Content-Type,Authorization,interpreter</param-value>
         </init-param>
+        <init-param>
+            <param-name>cors.exposedHeaders</param-name>
+            <param-value>Authorization</param-value>
+        </init-param>
     </filter>
 
     <filter-mapping>
