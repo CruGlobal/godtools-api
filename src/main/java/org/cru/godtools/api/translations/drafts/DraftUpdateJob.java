@@ -64,7 +64,7 @@ public class DraftUpdateJob implements Job
 		if(!forceUpdate && cache.get(updateMarkerKey) != null) return;
 
 		// if we are the first one to do this update, then add a marker to the cache, claiming it
-		cache.add(updateMarkerKey, 30, new Object());
+		cache.add(updateMarkerKey, 30, new String("marker"));
 
 		for (String pageName : pageNames)
 		{
