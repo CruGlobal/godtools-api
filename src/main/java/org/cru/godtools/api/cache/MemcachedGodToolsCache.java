@@ -3,6 +3,7 @@ package org.cru.godtools.api.cache;
 import com.google.common.base.Optional;
 import net.spy.memcached.MemcachedClient;
 import org.cru.godtools.api.translations.GodToolsTranslation;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -16,35 +17,51 @@ public class MemcachedGodToolsCache implements GodToolsCache
 
 	@Inject
 	MemcachedClient memcachedClient;
-
+	@Inject
+	GodToolsProperties properties;
 	@Override
 	public Optional<GodToolsTranslation> get(UUID translationId)
 	{
-		return Optional.fromNullable((GodToolsTranslation)memcachedClient.get(translationId.toString()));
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			return Optional.fromNullable((GodToolsTranslation)memcachedClient.get(translationId.toString()));
+		}
+		else return Optional.absent();
+
 	}
 
 	@Override
 	public void add(GodToolsTranslation godToolsTranslation)
 	{
-		memcachedClient.add(godToolsTranslation.getTranslation().getId().toString(),
-				CACHE_EXPIRATION_SECONDS,
-				godToolsTranslation);
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			memcachedClient.add(godToolsTranslation.getTranslation().getId().toString(),
+					CACHE_EXPIRATION_SECONDS,
+					godToolsTranslation);
+		}
 	}
 
 	@Override
 	public Optional<GodToolsTranslation> remove(UUID translationId)
 	{
-		Optional<GodToolsTranslation> optionalTranslation = Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
-		memcachedClient.delete(translationId.toString());
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			Optional<GodToolsTranslation> optionalTranslation = Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
+			memcachedClient.delete(translationId.toString());
 
-		return optionalTranslation;
+			return optionalTranslation;
+		}
+		else return Optional.absent();
 	}
 
 	@Override
 	public void replace(GodToolsTranslation godToolsTranslation)
 	{
-		memcachedClient.replace(godToolsTranslation.getTranslation().getId().toString(),
-				CACHE_EXPIRATION_SECONDS,
-				godToolsTranslation);
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			memcachedClient.replace(godToolsTranslation.getTranslation().getId().toString(),
+					CACHE_EXPIRATION_SECONDS,
+					godToolsTranslation);
+		}
 	}
 }
