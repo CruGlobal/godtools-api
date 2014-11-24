@@ -39,7 +39,7 @@ public class DraftResource
 
 	@GET
 	@Path("/{language}")
-	@Produces({"application/zip", "application/xml"})
+	@Produces({"application/zip", "application/xml", "application/json"})
 	public Response getTranslations(@PathParam("language") String languageCode,
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
@@ -62,7 +62,7 @@ public class DraftResource
 
 	@GET
 	@Path("/{language}/{package}")
-	@Produces({"application/zip", "application/xml"})
+	@Produces({"application/zip", "application/xml", "application/json"})
 	public Response getTranslation(@PathParam("language") String languageCode,
 								   @PathParam("package") String packageCode,
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,

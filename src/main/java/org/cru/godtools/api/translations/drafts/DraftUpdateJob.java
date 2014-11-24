@@ -7,6 +7,8 @@ import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.domain.database.SqlConnectionProducer;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
@@ -39,6 +41,8 @@ public class DraftUpdateJob implements Job
 
 	MemcachedClient cache = new MemcachedClientProducer().getClient();
 
+	Boolean memcachedEnabled = Boolean.valueOf(new GodToolsPropertiesFactory().get().getProperty("memcachedEnabled"));
+
 	Logger log = Logger.getLogger(DraftUpdateJob.class);
 
 	@Override
@@ -61,10 +65,14 @@ public class DraftUpdateJob implements Job
 		// use the cache to determine if another server has started an update on this draft in the
 		// last 30s.  if so, let it do its thing
 		String updateMarkerKey = translation.getId().toString() + "-updating-marker";
-		if(!forceUpdate && cache.get(updateMarkerKey) != null) return;
 
-		// if we are the first one to do this update, then add a marker to the cache, claiming it
-		cache.add(updateMarkerKey, 30, new String("marker"));
+		if(!forceUpdate && memcachedEnabled && cache.get(updateMarkerKey) != null) return;
+
+		if(memcachedEnabled)
+		{
+			// if we are the first one to do this update, then add a marker to the cache, claiming it
+			cache.add(updateMarkerKey, 30, new String("marker"));
+		}
 
 		for (String pageName : pageNames)
 		{
@@ -77,11 +85,13 @@ public class DraftUpdateJob implements Job
 				translationElementService.update(element);
 			}
 		}
+		if(memcachedEnabled)
+		{
+			clearCache(translation);
 
-		clearCache(translation);
-
-		// delete the marker (it was only good for 30s anyways)
-		cache.delete(updateMarkerKey);
+			// delete the marker (it was only good for 30s anyways)
+			cache.delete(updateMarkerKey);
+		}
 	}
 
 	private void clearCache(Translation translation)

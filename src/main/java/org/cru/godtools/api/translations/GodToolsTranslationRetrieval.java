@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.contents.Content;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
@@ -202,11 +203,8 @@ public class GodToolsTranslationRetrieval
             throw new NotFoundException();
         }
 
-        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.writeToByteArrayStream(createContentsFile());
-        bundledStream.close();
-
-        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
-                .type(MediaType.APPLICATION_XML)
+        return Response
+				.ok(Content.createContentsFile(godToolsTranslations, languageCode.toString()))
                 .build();
     }
 
@@ -237,7 +235,7 @@ public class GodToolsTranslationRetrieval
                 fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
             }
 
-            fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
+//            fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
 
             zipOutputStream.close();
         }
@@ -247,40 +245,8 @@ public class GodToolsTranslationRetrieval
         }
     }
 
-    protected Document createContentsFile()
+    protected Content createContentsFile()
     {
-        try
-        {
-            Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-
-            Element rootElement = contents.createElement("content");
-            contents.appendChild(rootElement);
-
-            for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
-            {
-                Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
-                resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
-				resourceElement.setAttribute("status", godToolsTranslation.isDraft() ? "draft" : "live");
-				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
-				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
-
-				if(godToolsTranslation.getIcon() != null)
-				{
-					resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
-				}
-				else
-				{
-					resourceElement.setAttribute("icon", "missing");
-				}
-                rootElement.appendChild(resourceElement);
-            }
-            return contents;
-        }
-        catch(ParserConfigurationException e)
-        {
-            throw Throwables.propagate(e);
-        }
+		return Content.createContentsFile(godToolsTranslations, languageCode.toString());
     }
 }
