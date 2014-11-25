@@ -109,6 +109,54 @@ public class PageStructure implements Serializable
 		setLastUpdated(currentTime);
 	}
 
+	public void mergeXmlContent(Document updatedPageLayout)
+	{
+		List<Element> updatedLayoutElementsWithGtapiId = XmlDocumentSearchUtilities.findElementsWithAttribute(updatedPageLayout, "gtapi-trx-id");
+
+		for(String attributeName : REMOVABLE_ATTRIBUTES)
+		{
+			if(xmlContent.getDocumentElement().getAttribute(attributeName) != null)
+			{
+				updatedPageLayout.getDocumentElement().setAttribute(attributeName, xmlContent.getDocumentElement().getAttribute(attributeName));
+			}
+
+			for(Element elementWithRemovableAttribute : XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, attributeName))
+			{
+				for(Element element : updatedLayoutElementsWithGtapiId)
+				{
+					if(element.getAttribute("gtapi-trx-id").equals(elementWithRemovableAttribute.getAttribute("gtapi-trx-id")))
+					{
+						element.setAttribute(attributeName, elementWithRemovableAttribute.getAttribute(attributeName));
+					}
+				}
+			}
+		}
+
+		xmlContent = updatedPageLayout;
+	}
+
+	public Document getXmlContent(boolean strippedDown)
+	{
+		if(strippedDown)
+		{
+			for(String attributeName : REMOVABLE_ATTRIBUTES)
+			{
+				if(xmlContent.getDocumentElement().getAttribute(attributeName) != null)
+				{
+					xmlContent.getDocumentElement().removeAttribute(attributeName);
+				}
+				for(Element elementWithRemovableAttribute : XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, attributeName))
+				{
+					if(elementWithRemovableAttribute.getAttribute("gtapi-trx-id") != null)
+					{
+						elementWithRemovableAttribute.removeAttribute(attributeName);
+					}
+				}
+			}
+		}
+		return xmlContent;
+	}
+
 	public UUID getId()
 	{
 		return id;
@@ -131,25 +179,6 @@ public class PageStructure implements Serializable
 
 	public Document getXmlContent()
 	{
-		return xmlContent;
-	}
-
-	public Document getXmlContent(boolean strippedDown)
-	{
-		if(strippedDown)
-		{
-			for(String attributeName : REMOVABLE_ATTRIBUTES)
-			{
-				if(xmlContent.getDocumentElement().getAttribute(attributeName) != null)
-				{
-					xmlContent.getDocumentElement().removeAttribute(attributeName);
-				}
-				for(Element elementWithRemovableAttribute : XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, attributeName))
-				{
-					elementWithRemovableAttribute.removeAttribute(attributeName);
-				}
-			}
-		}
 		return xmlContent;
 	}
 
@@ -217,5 +246,4 @@ public class PageStructure implements Serializable
 	{
 		this.lastUpdated = lastUpdated;
 	}
-
 }

@@ -102,7 +102,7 @@ public class GodToolsTranslationService
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 
-		pageStructure.setXmlContent(updatedPageLayout);
+		pageStructure.mergeXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);
 	}
