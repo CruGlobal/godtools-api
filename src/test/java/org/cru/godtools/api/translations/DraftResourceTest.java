@@ -2,6 +2,8 @@ package org.cru.godtools.api.translations;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.contents.Content;
+import org.cru.godtools.api.translations.contents.Resource;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -90,10 +92,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		// auth token does not have access to drafts
 		Response response = draftResource.getTranslation("en", "kgp", 1, null, "false", new BigDecimal("1.1"), "draft-access", null);
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	@Test
@@ -102,10 +101,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		// auth token does not have access to drafts
 		Response response = draftResource.getTranslations("en", 1, null, "false", "draft-access", null);
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	@Test(expectedExceptions = UnauthorizedException.class)
@@ -115,17 +111,18 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		draftResource.getTranslation("en", "kgp", 1, null, "false", new BigDecimal("1.1"), "a", null);
 	}
 
-	private void validateContentsXml(Document xmlContentsFile)
+	private void validateContentsXml(Content xmlContentsFile)
 	{
-		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlContentsFile, "resource");
+		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Assert.assertEquals(resourceElements.size(), 1);
-		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), TRANSLATION_ID + ".xml");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Connaitre Dieu Personellement");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("version"), "1.2");
+		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+
+		Assert.assertEquals(firstResource.getLanguage(), "en");
+		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
+		Assert.assertEquals(firstResource.getStatus(), "draft");
+		Assert.assertEquals(firstResource.getConfig(), TRANSLATION_ID + ".xml");
+		Assert.assertEquals(firstResource.getIcon(), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
+		Assert.assertEquals(firstResource.getName(), "Connaitre Dieu Personellement");
+		Assert.assertEquals(firstResource.getVersion(), "1.2");
 	}
 }
