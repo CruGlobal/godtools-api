@@ -88,7 +88,7 @@ public class GodToolsPackageRetrieval extends GodToolsTranslationRetrieval
 				fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
 			}
 
-//			fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
+			fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
 
 			zipOutputStream.close();
 		}
