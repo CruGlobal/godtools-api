@@ -27,6 +27,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
 import org.quartz.SchedulerException;
+import org.w3c.dom.Document;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -95,6 +96,15 @@ public class GodToolsTranslationService
 		updateCache(translation, pageStructure);
 
 		return pageStructure;
+	}
+
+	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
+	{
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+
+		pageStructure.setXmlContent(updatedPageLayout);
+
+		pageStructureService.update(pageStructure);
 	}
 
 	public Config getConfig(String packageCode, LanguageCode languageCode)
@@ -293,5 +303,4 @@ public class GodToolsTranslationService
 			cache.replace(godToolsTranslation);
 		}
 	}
-
 }

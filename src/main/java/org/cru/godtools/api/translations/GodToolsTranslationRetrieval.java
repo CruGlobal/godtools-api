@@ -198,7 +198,7 @@ public class GodToolsTranslationRetrieval
 		}
 		else
 		{
-			return Response.ok(pageStructure.getXmlContent()).build();
+			return Response.ok(pageStructure.getXmlContent(true)).build();
 		}
 	}
 
