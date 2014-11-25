@@ -1,6 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.config.Config;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -87,6 +88,27 @@ public class DraftResource
 	}
 
 	@GET
+	@Path("/{language}/{package}/config")
+	@Produces({"application/xml", "application/json"})
+	public Response getConfig(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@QueryParam("compressed") String compressed,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam) throws IOException
+	{
+		log.info("Requesting config.xml for package: " + packageCode + " and language: " + languageCode);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		// page already has latest translation elements applied, and images too.
+		Config configFile = godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode));
+
+		return Response.ok(configFile).build();
+	}
+
+	@GET
 	@Path("/{language}/{package}/pages/{pageId}")
 	@Produces({"application/zip", "application/xml"})
 	public Response getPage(@PathParam("language") String languageCode,
@@ -105,6 +127,8 @@ public class DraftResource
 		// page already has latest translation elements applied, and images too.
 		PageStructure draftPage = godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId);
 
-		return translationRetrievalProcess.buildSinglePageResponse(draftPage);
+		return translationRetrievalProcess
+				.setCompressed(Boolean.parseBoolean(compressed))
+				.buildSinglePageResponse(draftPage);
 	}
 }

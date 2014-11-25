@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.config.Config;
 import org.cru.godtools.api.translations.contents.Content;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -175,25 +176,30 @@ public class GodToolsTranslationRetrieval
 
 	public Response buildSinglePageResponse(PageStructure pageStructure)
 	{
-		//always compressed
-		ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
-		ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
-
-		try
+		if(compressed)
 		{
-			fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
+			ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
+			ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
 
-			zipOutputStream.close();
-			bundledStream.close();
+			try
+			{
+				fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
+
+				zipOutputStream.close();
+				bundledStream.close();
+			} catch (Exception e)
+			{
+				throw Throwables.propagate(e);
+			}
+
+			return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
+					.type("application/zip")
+					.build();
 		}
-		catch(Exception e)
+		else
 		{
-			throw Throwables.propagate(e);
+			return Response.ok(pageStructure.getXmlContent()).build();
 		}
-
-		return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
-				.type("application/zip")
-				.build();
 	}
 
 	protected Response buildXmlContentsResponse() throws IOException
