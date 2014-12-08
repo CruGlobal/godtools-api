@@ -208,13 +208,13 @@ public class GodToolsTranslationService
 		logger.info("Starting translation data copy at");
 		if (currentTranslation != null)
 		{
-			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation);
+			newTranslationProcess.copyPageAndTranslationData(currentTranslation, newTranslation, false);
 			newTranslationProcess.copyPackageTranslationData(currentTranslation, newTranslation);
 		}
 		else
 		{
 			Translation baseTranslation = loadBaseTranslation(gtPackage);
-			newTranslationProcess.copyPageAndTranslationData(baseTranslation, newTranslation);
+			newTranslationProcess.copyPageAndTranslationData(baseTranslation, newTranslation, true);
 			newTranslationProcess.copyPackageTranslationData(baseTranslation, newTranslation);
 		}
 		logger.info("Finished translation data copy");

@@ -51,13 +51,23 @@ public class NewTranslationCreation
 	 * Just after a new PageStructure is saved, a copied set of current PageStructure's TranslationElements are saved associated
 	 * to the new PageStructure.
 	 */
-	public void copyPageAndTranslationData(Translation currentTranslation, Translation newTranslation)
+	public void copyPageAndTranslationData(Translation currentTranslation, Translation newTranslation, boolean translationIsNew)
 	{
 		for(PageStructure currentPageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
 		{
 			PageStructure copy = PageStructure.copyOf(currentPageStructure);
 			copy.setId(UUID.randomUUID());
 			copy.setTranslationId(newTranslation.getId());
+
+			// when starting a new translation, set these fields to null so they get pushed to OneSky
+			if(translationIsNew)
+			{
+				copy.setPercentCompleted(null);
+				copy.setWordCount(null);
+				copy.setStringCount(null);
+				copy.setLastUpdated(null);
+			}
+
 			pageStructureService.insert(copy);
 
 			// it's easier to do this in the context of the new page, so that we don't have to remember
