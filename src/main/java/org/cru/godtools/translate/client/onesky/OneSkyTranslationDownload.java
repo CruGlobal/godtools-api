@@ -14,15 +14,14 @@ import javax.inject.Inject;
 public class OneSkyTranslationDownload implements TranslationDownload
 {
 	private TranslationClient translationClient;
+	private GodToolsProperties properties;
 
 	@Inject
-	public OneSkyTranslationDownload(TranslationClient translationClient)
+	public OneSkyTranslationDownload(TranslationClient translationClient,  GodToolsProperties properties)
 	{
 		this.translationClient = translationClient;
+		this.properties = properties;
 	}
-
-	@Inject
-	private GodToolsProperties properties;
 
 	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
 

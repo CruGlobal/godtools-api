@@ -14,4 +14,8 @@ public interface GodToolsCache
 	void add(GodToolsTranslation godToolsTranslation);
 	Optional<GodToolsTranslation> remove(UUID translationId);
 	void replace(GodToolsTranslation godToolsTranslation);
+
+	Optional<Boolean> getMarker(UUID translationId);
+	void recordMarker(UUID translationId);
+	void removeMarker(UUID translationId);
 }
