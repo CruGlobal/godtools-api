@@ -76,7 +76,7 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String marker = (String)memcachedClient.get(translationId.toString() + "-updating-marker");
+			String marker = (String) memcachedClient.get(buildMarkerKey(translationId));
 			return Optional.of(marker != null);
 		}
 		else return Optional.absent();
@@ -87,7 +87,7 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String updateMarkerKey = buildMarker(translationId);
+			String updateMarkerKey = buildMarkerKey(translationId);
 
 			memcachedClient.add(updateMarkerKey, 30, new String("marker"));
 		}
@@ -98,13 +98,13 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String updateMarkerKey = buildMarker(translationId);
+			String updateMarkerKey = buildMarkerKey(translationId);
 
 			memcachedClient.delete(updateMarkerKey);
 		}
 	}
 
-	private String buildMarker(UUID translationId)
+	private String buildMarkerKey(UUID translationId)
 	{
 		return translationId.toString() + "-updating-marker";
 	}
