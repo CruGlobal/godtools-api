@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import net.spy.memcached.MemcachedClient;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class MemcachedGodToolsCache implements GodToolsCache
 
 	MemcachedClient memcachedClient;
 	GodToolsProperties properties;
+	Logger log = Logger.getLogger(MemcachedGodToolsCache.class);
 
 	@Inject
 	public MemcachedGodToolsCache(MemcachedClient memcachedClient, GodToolsProperties properties)
@@ -30,10 +32,18 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			return Optional.fromNullable((GodToolsTranslation)memcachedClient.get(translationId.toString()));
+			try
+			{
+				return Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error retrieving translation w/ ID: %s from cache", translationId.toString()),
+						e);
+			}
 		}
-		else return Optional.absent();
 
+		return Optional.absent();
 	}
 
 	@Override
@@ -41,9 +51,17 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			memcachedClient.add(godToolsTranslation.getTranslation().getId().toString(),
-					CACHE_EXPIRATION_SECONDS,
-					godToolsTranslation);
+			try
+			{
+				memcachedClient.add(godToolsTranslation.getTranslation().getId().toString(),
+						CACHE_EXPIRATION_SECONDS,
+						godToolsTranslation);
+			}
+			catch (Exception e)
+			{
+				log.error(String.format("Error adding translation w/ ID: %s to cache", godToolsTranslation.getTranslation().getId().toString()),
+						e);
+			}
 		}
 	}
 
@@ -52,12 +70,21 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			Optional<GodToolsTranslation> optionalTranslation = Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
-			memcachedClient.delete(translationId.toString());
+			try
+			{
+				Optional<GodToolsTranslation> optionalTranslation = Optional.fromNullable((GodToolsTranslation) memcachedClient.get(translationId.toString()));
+				memcachedClient.delete(translationId.toString());
 
-			return optionalTranslation;
+				return optionalTranslation;
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error removing translation w/ ID: %s from cache", translationId.toString()),
+						e);
+			}
 		}
-		else return Optional.absent();
+
+		return Optional.absent();
 	}
 
 	@Override
@@ -65,9 +92,17 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			memcachedClient.replace(godToolsTranslation.getTranslation().getId().toString(),
-					CACHE_EXPIRATION_SECONDS,
-					godToolsTranslation);
+			try
+			{
+				memcachedClient.replace(godToolsTranslation.getTranslation().getId().toString(),
+						CACHE_EXPIRATION_SECONDS,
+						godToolsTranslation);
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error replacing translation w/ ID: %s in cache", godToolsTranslation.getTranslation().getId().toString()),
+						e);
+			}
 		}
 	}
 
@@ -76,10 +111,19 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String marker = (String) memcachedClient.get(buildMarkerKey(translationId));
-			return Optional.of(marker != null);
+			try
+			{
+				String marker = (String) memcachedClient.get(buildMarkerKey(translationId));
+				return Optional.of(marker != null);
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error getting translation build marker for translation w/ ID: %s in cache", translationId.toString()),
+						e);
+			}
 		}
-		else return Optional.absent();
+
+		return Optional.absent();
 	}
 
 	@Override
@@ -87,9 +131,15 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String updateMarkerKey = buildMarkerKey(translationId);
-
-			memcachedClient.add(updateMarkerKey, 30, new String("marker"));
+			try
+			{
+				memcachedClient.add(buildMarkerKey(translationId), 30, new String("marker"));
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error recording translation build marker for translation w/ ID: %s in cache", translationId.toString()),
+						e);
+			}
 		}
 	}
 
@@ -98,9 +148,15 @@ public class MemcachedGodToolsCache implements GodToolsCache
 	{
 		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
 		{
-			String updateMarkerKey = buildMarkerKey(translationId);
-
-			memcachedClient.delete(updateMarkerKey);
+			try
+			{
+				memcachedClient.delete(buildMarkerKey(translationId));
+			}
+			catch(Exception e)
+			{
+				log.error(String.format("Error removing translation build marker for translation w/ ID: %s from cache", translationId.toString()),
+						e);
+			}
 		}
 	}
 
