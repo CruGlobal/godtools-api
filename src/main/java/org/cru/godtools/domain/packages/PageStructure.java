@@ -70,23 +70,23 @@ public class PageStructure implements Serializable
 
 	public void replaceImageNamesWithImageHashes(Map<String, Image> images)
 	{
-		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
-		{
-			String filenameFromXml = element.getAttribute("backgroundimage");
-			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-		}
-
-		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
-		{
-			String filenameFromXml = element.getAttribute("watermark");
-			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-		}
-
-		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
-		{
-			String filenameFromXml = element.getTextContent();
-			element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
-		}
+//		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
+//		{
+//			String filenameFromXml = element.getAttribute("backgroundimage");
+//			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+//		}
+//
+//		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
+//		{
+//			String filenameFromXml = element.getAttribute("watermark");
+//			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+//		}
+//
+//		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
+//		{
+//			String filenameFromXml = element.getTextContent();
+//			element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+//		}
 	}
 
 	public static  Map<String, PageStructure> createMapOfPageStructures(List<PageStructure> pageStructureList)
