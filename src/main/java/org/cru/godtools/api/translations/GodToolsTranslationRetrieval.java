@@ -185,6 +185,8 @@ public class GodToolsTranslationRetrieval
 			{
 				fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
 
+				fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
+
 				zipOutputStream.close();
 				bundledStream.close();
 			} catch (Exception e)
