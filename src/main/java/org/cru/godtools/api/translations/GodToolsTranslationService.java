@@ -101,10 +101,12 @@ public class GodToolsTranslationService
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
 		pageStructure.mergeXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);
+
+		updateCache(translation, pageStructure);
 	}
 
 	public Config getConfig(String packageCode, LanguageCode languageCode)
