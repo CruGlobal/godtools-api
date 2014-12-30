@@ -1,15 +1,19 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.config.Config;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.jboss.logging.Logger;
+import org.w3c.dom.Document;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -39,7 +43,7 @@ public class DraftResource
 
 	@GET
 	@Path("/{language}")
-	@Produces({"application/zip", "application/xml"})
+	@Produces({"application/zip", "application/xml", "application/json"})
 	public Response getTranslations(@PathParam("language") String languageCode,
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
@@ -62,7 +66,7 @@ public class DraftResource
 
 	@GET
 	@Path("/{language}/{package}")
-	@Produces({"application/zip", "application/xml"})
+	@Produces({"application/zip", "application/xml", "application/json"})
 	public Response getTranslation(@PathParam("language") String languageCode,
 								   @PathParam("package") String packageCode,
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
@@ -87,6 +91,27 @@ public class DraftResource
 	}
 
 	@GET
+	@Path("/{language}/{package}/config")
+	@Produces({"application/xml", "application/json"})
+	public Response getConfig(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@QueryParam("compressed") String compressed,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam) throws IOException
+	{
+		log.info("Requesting config.xml for package: " + packageCode + " and language: " + languageCode);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		// page already has latest translation elements applied, and images too.
+		Config configFile = godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode));
+
+		return Response.ok(configFile).build();
+	}
+
+	@GET
 	@Path("/{language}/{package}/pages/{pageId}")
 	@Produces({"application/zip", "application/xml"})
 	public Response getPage(@PathParam("language") String languageCode,
@@ -105,6 +130,29 @@ public class DraftResource
 		// page already has latest translation elements applied, and images too.
 		PageStructure draftPage = godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId);
 
-		return translationRetrievalProcess.buildSinglePageResponse(draftPage);
+		return translationRetrievalProcess
+				.setCompressed(Boolean.parseBoolean(compressed))
+				.buildSinglePageResponse(draftPage);
+	}
+
+	@PUT
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Consumes("application/xml")
+	public Response updatePageLayout(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@PathParam("pageId") UUID pageId,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam,
+							Document updatedPageLayout) throws IOException
+	{
+		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
+
+		return Response.noContent().build();
 	}
 }

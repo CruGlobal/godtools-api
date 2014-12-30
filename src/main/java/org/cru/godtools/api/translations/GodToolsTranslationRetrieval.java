@@ -6,6 +6,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.config.Config;
+import org.cru.godtools.api.translations.contents.Content;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
@@ -174,25 +176,30 @@ public class GodToolsTranslationRetrieval
 
 	public Response buildSinglePageResponse(PageStructure pageStructure)
 	{
-		//always compressed
-		ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
-		ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
-
-		try
+		if(compressed)
 		{
-			fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
+			ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
+			ZipOutputStream zipOutputStream = new ZipOutputStream(bundledStream);
 
-			zipOutputStream.close();
-			bundledStream.close();
+			try
+			{
+				fileZipper.zipPageFiles(Lists.newArrayList(pageStructure), zipOutputStream);
+
+				zipOutputStream.close();
+				bundledStream.close();
+			} catch (Exception e)
+			{
+				throw Throwables.propagate(e);
+			}
+
+			return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
+					.type("application/zip")
+					.build();
 		}
-		catch(Exception e)
+		else
 		{
-			throw Throwables.propagate(e);
+			return Response.ok(pageStructure.getXmlContent(true)).build();
 		}
-
-		return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
-				.type("application/zip")
-				.build();
 	}
 
 	protected Response buildXmlContentsResponse() throws IOException
@@ -202,11 +209,8 @@ public class GodToolsTranslationRetrieval
             throw new NotFoundException();
         }
 
-        ByteArrayOutputStream bundledStream = XmlDocumentStreamConverter.writeToByteArrayStream(createContentsFile());
-        bundledStream.close();
-
-        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
-                .type(MediaType.APPLICATION_XML)
+        return Response
+				.ok(Content.createContentsFile(godToolsTranslations, languageCode.toString()))
                 .build();
     }
 
@@ -247,21 +251,21 @@ public class GodToolsTranslationRetrieval
         }
     }
 
-    protected Document createContentsFile()
-    {
-        try
-        {
-            Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+	protected Document createContentsFile()
+	{
+		try
+		{
+			Document contents = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
-            Element rootElement = contents.createElement("content");
-            contents.appendChild(rootElement);
+			Element rootElement = contents.createElement("content");
+			contents.appendChild(rootElement);
 
-            for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
-            {
-                Element resourceElement = contents.createElement("resource");
-                resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
-                resourceElement.setAttribute("language", languageCode.toString());
-                resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
+			for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
+			{
+				Element resourceElement = contents.createElement("resource");
+				resourceElement.setAttribute("package", godToolsTranslation.getPackageCode());
+				resourceElement.setAttribute("language", languageCode.toString());
+				resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft() ? "draft" : "live");
 				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
 				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
@@ -274,13 +278,13 @@ public class GodToolsTranslationRetrieval
 				{
 					resourceElement.setAttribute("icon", "missing");
 				}
-                rootElement.appendChild(resourceElement);
-            }
-            return contents;
-        }
-        catch(ParserConfigurationException e)
-        {
-            throw Throwables.propagate(e);
-        }
-    }
+				rootElement.appendChild(resourceElement);
+			}
+			return contents;
+		}
+		catch(ParserConfigurationException e)
+		{
+			throw Throwables.propagate(e);
+		}
+	}
 }

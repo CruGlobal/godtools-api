@@ -2,6 +2,8 @@ package org.cru.godtools.api.packages;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.contents.Content;
+import org.cru.godtools.api.translations.contents.Resource;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -108,10 +110,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	/**
@@ -136,10 +135,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		Document xmlContentsFile = builder.parse(new InputSource((ByteArrayInputStream)response.getEntity()));
-		validateContentsXml(xmlContentsFile);
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	/**
@@ -175,7 +171,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		{
 			if(zipEntry.getName().equals("contents.xml"))
 			{
-				validateContentsXml(builder.parse(new InputSource(zipInputStream)));
+//				validateContentsXml(builder.parse(new InputSource(zipInputStream)));
 			}
 			else if(zipEntry.getName().equals("1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml"))
 			{
@@ -190,16 +186,17 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		zipInputStream.forceClose();
 	}
 
-	private void validateContentsXml(Document xmlContentsFile)
+	private void validateContentsXml(Content xmlContentsFile)
 	{
-		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlContentsFile, "resource");
+		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Assert.assertEquals(resourceElements.size(), 1);
-		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), TRANSLATION_ID + ".xml");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
+		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+
+		Assert.assertEquals(firstResource.getLanguage(), "en");
+		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
+		Assert.assertEquals(firstResource.getStatus(), "live");
+		Assert.assertEquals(firstResource.getConfig(), TRANSLATION_ID + ".xml");
+		Assert.assertEquals(firstResource.getIcon(), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
 	}
 
 	private void validatePackageConfigXml(Document xmlPackageConfigFile)

@@ -15,10 +15,16 @@ public class MemcachedGodToolsCache implements GodToolsCache
 {
 	private static final int CACHE_EXPIRATION_SECONDS = 3600;
 
-	@Inject
 	MemcachedClient memcachedClient;
-	@Inject
 	GodToolsProperties properties;
+
+	@Inject
+	public MemcachedGodToolsCache(MemcachedClient memcachedClient, GodToolsProperties properties)
+	{
+		this.memcachedClient = memcachedClient;
+		this.properties = properties;
+	}
+
 	@Override
 	public Optional<GodToolsTranslation> get(UUID translationId)
 	{
@@ -63,5 +69,43 @@ public class MemcachedGodToolsCache implements GodToolsCache
 					CACHE_EXPIRATION_SECONDS,
 					godToolsTranslation);
 		}
+	}
+
+	@Override
+	public Optional<Boolean> getMarker(UUID translationId)
+	{
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			String marker = (String) memcachedClient.get(buildMarkerKey(translationId));
+			return Optional.of(marker != null);
+		}
+		else return Optional.absent();
+	}
+
+	@Override
+	public void recordMarker(UUID translationId)
+	{
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			String updateMarkerKey = buildMarkerKey(translationId);
+
+			memcachedClient.add(updateMarkerKey, 30, new String("marker"));
+		}
+	}
+
+	@Override
+	public void removeMarker(UUID translationId)
+	{
+		if(Boolean.parseBoolean(properties.getProperty("memcachedEnabled", "false")))
+		{
+			String updateMarkerKey = buildMarkerKey(translationId);
+
+			memcachedClient.delete(updateMarkerKey);
+		}
+	}
+
+	private String buildMarkerKey(UUID translationId)
+	{
+		return translationId.toString() + "-updating-marker";
 	}
 }
