@@ -1,9 +1,8 @@
 package org.cru.godtools.api.translations;
 
-import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.contents.Content;
-import org.cru.godtools.api.translations.contents.Resource;
+import org.cru.godtools.api.translations.model.Content;
+import org.cru.godtools.api.translations.model.Resource;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -20,18 +19,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Created by ryancarlson on 7/31/14.

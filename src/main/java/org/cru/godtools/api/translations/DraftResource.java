@@ -1,11 +1,9 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.translations.config.Config;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.packages.PageStructure;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 
@@ -105,10 +103,9 @@ public class DraftResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		// page already has latest translation elements applied, and images too.
-		Config configFile = godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode));
-
-		return Response.ok(configFile).build();
+		return Response
+				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode)))
+				.build();
 	}
 
 	@GET
@@ -127,12 +124,9 @@ public class DraftResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		// page already has latest translation elements applied, and images too.
-		PageStructure draftPage = godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId);
-
 		return translationRetrievalProcess
 				.setCompressed(Boolean.parseBoolean(compressed))
-				.buildSinglePageResponse(draftPage);
+				.buildSinglePageResponse(godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId));
 	}
 
 	@PUT
@@ -153,6 +147,8 @@ public class DraftResource
 
 		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 
-		return Response.noContent().build();
+		return Response
+				.noContent()
+				.build();
 	}
 }

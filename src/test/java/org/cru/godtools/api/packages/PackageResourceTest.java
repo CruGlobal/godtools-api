@@ -2,8 +2,8 @@ package org.cru.godtools.api.packages;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.contents.Content;
-import org.cru.godtools.api.translations.contents.Resource;
+import org.cru.godtools.api.translations.model.Content;
+import org.cru.godtools.api.translations.model.Resource;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
