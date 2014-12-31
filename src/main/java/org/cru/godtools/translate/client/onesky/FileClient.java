@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 
@@ -66,6 +67,11 @@ public class FileClient
 				.post(entity);
 
 		log.info("Upload response status code: " + response.getStatus());
+
+		if(response.getStatus() != 201)
+		{
+			throw new IllegalStateException("Expected a 201 response from OneSky upload, but instead received:  " + response.getStatus());
+		}
 	}
 
 	/**
