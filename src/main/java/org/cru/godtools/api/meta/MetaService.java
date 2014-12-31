@@ -154,9 +154,9 @@ public class MetaService
         return metaLanguage;
     }
 
-    private BigDecimal getVersionNumber(Translation translation, Package gtPackage)
+    private String getVersionNumber(Translation translation, Package gtPackage)
     {
-        return new BigDecimal(getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber());
+        return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
     }
 
     private Language getLanguage(String languageCode)
