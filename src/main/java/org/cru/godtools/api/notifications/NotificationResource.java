@@ -41,6 +41,8 @@ public class NotificationResource
 
 		deviceService.insert(device);
 
+		Message message = new Message.Builder().addData("test", "test").build();
+
 		return Response.ok().build();
 	}
 }
