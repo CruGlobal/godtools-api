@@ -3,6 +3,8 @@ package org.cru.godtools.api.notifications;
 import org.cru.godtools.api.authorization.AuthorizationResource;
 import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.notifications.DeviceService;
+import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -23,6 +25,8 @@ public class NotificationResource
 	@Inject
 	DeviceService deviceService;
 
+	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
+
 	Logger log = Logger.getLogger(AuthorizationResource.class);
 
 	@POST
@@ -42,6 +46,17 @@ public class NotificationResource
 		deviceService.insert(device);
 
 		Message message = new Message.Builder().addData("test", "test").build();
+		log.info("Creating message with test data");
+		Sender sender = new Sender(properties.getNonNullProperty("GoogleApiKey"));
+		try
+		{
+			Result result = sender.send(message, registrationId, 2);
+			log.info(result.getMessageId());
+		}
+		catch (Exception e)
+		{
+			log.info(e.getMessage(), e);
+		}
 
 		return Response.ok().build();
 	}
