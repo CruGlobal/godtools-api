@@ -19,12 +19,12 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 /**
- * Created by matthewfrederick on 12/30/14.
+ * Created by matthewfrederick on 1/5/15.
  */
-public class DeviceServiceTest extends Arquillian
+public class NotificationServiceTest extends Arquillian
 {
 	@Inject
-	DeviceService deviceService;
+	NotificationService notificationService;
 
 	UUID id = UUID.randomUUID();
 
@@ -35,7 +35,7 @@ public class DeviceServiceTest extends Arquillian
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(DeviceService.class, ClockImpl.class)
+				.addClasses(NotificationService.class, ClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -50,13 +50,13 @@ public class DeviceServiceTest extends Arquillian
 	{
 		try
 		{
-			deviceService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+			notificationService.sqlConnection.getJdbcConnection().setAutoCommit(false);
 		}
 		catch(SQLException e)
 		{
 			/*yawn*/
 		}
-		deviceService.insert(createNotificationRegistration(id));
+		notificationService.insertNotification(createNotification(id));
 
 	}
 
@@ -65,7 +65,7 @@ public class DeviceServiceTest extends Arquillian
 	{
 		try
 		{
-			deviceService.sqlConnection.getJdbcConnection().rollback();
+			notificationService.sqlConnection.getJdbcConnection().rollback();
 		}
 		catch(SQLException e)
 		{
@@ -76,18 +76,22 @@ public class DeviceServiceTest extends Arquillian
 	@Test
 	public void testInsertNotification()
 	{
-		Device returnedDevice = deviceService.selectById(id);
-		Assert.assertNotNull(returnedDevice);
-
+		Notification notification = new Notification();
+		notification.setRegistrationId("Test");
+		notification.setNotificationType(2);
+		Notification returnedNotification = notificationService.selectNotificationByRegistrationIdAndType(notification);
+		Assert.assertNotNull(returnedNotification);
 	}
 
-	private Device createNotificationRegistration(UUID id)
+	private Notification createNotification(UUID id)
 	{
-		Device device = new Device();
-		device.setId(id);
-		device.setDeviceId("Device");
-		device.setRegistrationId("Registration");
+		Notification notification = new Notification();
+		notification.setId(id);
+		notification.setRegistrationId("Test");
+		notification.setPresentations(1);
+		notification.setNotificationSent(false);
+		notification.setNotificationType(2);
 
-		return device;
+		return notification;
 	}
 }

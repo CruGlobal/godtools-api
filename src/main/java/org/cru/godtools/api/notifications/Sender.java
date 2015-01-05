@@ -102,11 +102,9 @@ public class Sender
 		do
 		{
 			attempt++;
-			if (logger.isLoggable(Level.FINE))
-			{
-				logger.fine("Attempt #" + attempt + " to send message " +
-						message + " to regIds " + registrationId);
-			}
+			logger.info("Attempt #" + attempt + " to send message " +
+					message + " to regIds " + registrationId);
+
 			result = sendNoRetry(message, registrationId);
 			tryAgain = result == null && attempt <= retries;
 			if (tryAgain)
@@ -591,7 +589,7 @@ public class Sender
 	protected HttpURLConnection post(String url, String body)
 			throws IOException
 	{
-		return post(url, "application/x-www-form-urlencoded;charset=UTF-8", body);
+		return post(url, "application/json", body);
 	}
 
 	/**
@@ -618,9 +616,10 @@ public class Sender
 		{
 			logger.warning("URL does not use https: " + url);
 		}
-		logger.fine("Sending POST to " + url);
+		logger.info("Sending POST to " + url);
 		logger.finest("POST body: " + body);
 		byte[] bytes = body.getBytes();
+
 		HttpURLConnection conn = getConnection(url);
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
