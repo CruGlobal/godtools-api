@@ -20,7 +20,7 @@ public class DeviceService
 
 	public Device selectById(UUID id)
 	{
-		return sqlConnection.createQuery(NotificationQueries.selectById)
+		return sqlConnection.createQuery(deviceQueries.selectById)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("id", id)
 				.executeAndFetchFirst(Device.class);
@@ -28,14 +28,14 @@ public class DeviceService
 
 	public void insert(Device device)
 	{
-		sqlConnection.createQuery(NotificationQueries.insert)
+		sqlConnection.createQuery(deviceQueries.insert)
 				.addParameter("id", device.getId())
 				.addParameter("registrationId", device.getRegistrationId())
 				.addParameter("deviceId", device.getDeviceId())
 				.executeUpdate();
 	}
 
-	public static class NotificationQueries
+	public static class deviceQueries
 	{
 		public final static String selectById = "SELECT * FROM devices WHERE id = :id";
 		public final static String insert = "INSERT INTO devices(id, registration_id, device_id) " +

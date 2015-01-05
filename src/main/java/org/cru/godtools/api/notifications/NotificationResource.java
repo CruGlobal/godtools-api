@@ -1,18 +1,27 @@
 package org.cru.godtools.api.notifications;
 
+import com.google.common.base.Optional;
 import org.cru.godtools.api.authorization.AuthorizationResource;
+import org.cru.godtools.domain.authentication.AuthorizationRecord;
+import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.notifications.DeviceService;
+import org.cru.godtools.domain.notifications.Notification;
+import org.cru.godtools.domain.notifications.NotificationService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
@@ -24,6 +33,10 @@ public class NotificationResource
 {
 	@Inject
 	DeviceService deviceService;
+	@Inject
+	AuthorizationService authorizationService;
+	@Inject
+	NotificationService notificationService;
 
 	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
@@ -45,9 +58,12 @@ public class NotificationResource
 
 		deviceService.insert(device);
 
+		// todo: Once testing is done, remove this
 		Message message = new Message.Builder().addData("test", "test").build();
 		log.info("Creating message with test data");
-		Sender sender = new Sender(properties.getNonNullProperty("GoogleApiKey"));
+		String apiKey = properties.getNonNullProperty("GoogleApiKey");
+		log.info(apiKey);
+		Sender sender = new Sender(apiKey);
 		try
 		{
 			Result result = sender.send(message, registrationId, 2);
@@ -59,5 +75,39 @@ public class NotificationResource
 		}
 
 		return Response.ok().build();
+	}
+
+	@PUT
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response updateNotification(Notification notification, @HeaderParam(value="Authorization") String authcode)
+	{
+		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(null, authcode);
+		if (!authorizationRecord.isPresent()) throw new UnauthorizedException();
+
+		Notification originalNotification = notificationService.selectNotificationByRegistrationIdAndType(notification);
+
+		/*
+		 * Why is an insert and updated needed you may ask. The reason for this is for the items that need to be done several times
+		 * for the notification to be sent. This will allow the api to keep track of the number of times a "presentation" has been made.
+		 */
+		if (originalNotification == null)
+		{
+			notification.setId(UUID.randomUUID());
+			// we will not rely on the app to keep track of the number of presentations.
+			notification.setPresentations(1);
+			notificationService.insertNotification(notification);
+		}
+		else
+		{
+			if (!originalNotification.isNotificationSent())
+			{
+				notification.setId(originalNotification.getId());
+				notification.setPresentations(originalNotification.getPresentations() + 1);
+				notificationService.updateNotification(notification);
+			}
+		}
+
+		return Response.noContent().build();
 	}
 }
