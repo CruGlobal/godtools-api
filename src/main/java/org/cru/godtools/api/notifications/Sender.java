@@ -1,6 +1,7 @@
 package org.cru.godtools.api.notifications;
 
 import org.cru.godtools.api.notifications.Result.Builder;
+import org.jboss.logging.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
@@ -20,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.cru.godtools.api.notifications.Constants.GCM_SEND_ENDPOINT;
 import static org.cru.godtools.api.notifications.Constants.JSON_CANONICAL_IDS;
@@ -46,22 +45,18 @@ import static org.cru.godtools.api.notifications.Constants.TOKEN_MESSAGE_ID;
 
 /**
  * Created by matthewfrederick on 12/31/14.
+ *
+ * Copied from Google's Push Notification example by permission under http://www.apache.org/licenses/LICENSE-2.0
  */
 public class Sender
 {
 	protected static final String UTF8 = "UTF-8";
 
-	/**
-	 * Initial delay before first retry, without jitter.
-	 */
 	protected static final int BACKOFF_INITIAL_DELAY = 1000;
-	/**
-	 * Maximum delay before a retry.
-	 */
 	protected static final int MAX_BACKOFF_DELAY = 1024000;
 
 	protected final Random random = new Random();
-	protected static final Logger logger =
+	protected static final Logger log =
 			Logger.getLogger(Sender.class.getName());
 
 	private final String key;
@@ -102,7 +97,7 @@ public class Sender
 		do
 		{
 			attempt++;
-			logger.info("Attempt #" + attempt + " to send message " +
+			log.info("Attempt #" + attempt + " to send message " +
 					message + " to regIds " + registrationId);
 
 			result = sendNoRetry(message, registrationId);
@@ -169,7 +164,7 @@ public class Sender
 			String value = entry.getValue();
 			if (key == null || value == null)
 			{
-				logger.warning("Ignoring payload entry thas has null: " + entry);
+				log.warn("Ignoring payload entry thas has null: " + entry);
 			} else
 			{
 				key = PARAM_PAYLOAD_PREFIX + key;
@@ -177,7 +172,7 @@ public class Sender
 			}
 		}
 		String requestBody = body.toString();
-		logger.finest("Request body: " + requestBody);
+		log.info("Request body: " + requestBody);
 		HttpURLConnection conn;
 		int status;
 		try
@@ -186,12 +181,12 @@ public class Sender
 			status = conn.getResponseCode();
 		} catch (IOException e)
 		{
-			logger.log(Level.FINE, "IOException posting to GCM", e);
+			log.info("IOException posting to GCM", e);
 			return null;
 		}
 		if (status / 100 == 5)
 		{
-			logger.fine("GCM service is unavailable (status " + status + ")");
+			log.info("GCM service is unavailable (status " + status + ")");
 			return null;
 		}
 		String responseBody;
@@ -200,13 +195,13 @@ public class Sender
 			try
 			{
 				responseBody = getAndClose(conn.getErrorStream());
-				logger.finest("Plain post error response: " + responseBody);
+				log.info("Plain post error response: " + responseBody);
 			} catch (IOException e)
 			{
 				// ignore the exception since it will thrown an InvalidRequestException
 				// anyways
 				responseBody = "N/A";
-				logger.log(Level.FINE, "Exception reading response: ", e);
+				log.info("Exception reading response: ", e);
 			}
 			throw new InvalidRequestException(status, responseBody);
 		} else
@@ -216,7 +211,7 @@ public class Sender
 				responseBody = getAndClose(conn.getInputStream());
 			} catch (IOException e)
 			{
-				logger.log(Level.WARNING, "Exception reading response: ", e);
+				log.info("Exception reading response: ", e);
 				// return null so it can retry
 				return null;
 			}
@@ -245,14 +240,13 @@ public class Sender
 					builder.canonicalRegistrationId(value);
 				} else
 				{
-					logger.warning("Invalid response from GCM: " + responseBody);
+					log.info("Invalid response from GCM: " + responseBody);
 				}
 			}
 			Result result = builder.build();
-			if (logger.isLoggable(Level.FINE))
-			{
-				logger.fine("Message created succesfully (" + result + ")");
-			}
+
+			log.info("Message created succesfully (" + result + ")");
+
 			return result;
 		} else if (token.equals(TOKEN_ERROR))
 		{
@@ -297,23 +291,21 @@ public class Sender
 		{
 			multicastResult = null;
 			attempt++;
-			if (logger.isLoggable(Level.FINE))
-			{
-				logger.fine("Attempt #" + attempt + " to send message " +
+
+			log.info("Attempt #" + attempt + " to send message " +
 						message + " to regIds " + unsentRegIds);
-			}
 			try
 			{
 				multicastResult = sendNoRetry(message, unsentRegIds);
 			} catch (IOException e)
 			{
 				// no need for WARNING since exception might be already logged
-				logger.log(Level.FINEST, "IOException on attempt " + attempt, e);
+				log.info("IOException on attempt " + attempt, e);
 			}
 			if (multicastResult != null)
 			{
 				long multicastId = multicastResult.getMulticastId();
-				logger.fine("multicast_id on attempt # " + attempt + ": " +
+				log.info("multicast_id on attempt # " + attempt + ": " +
 						multicastId);
 				multicastIds.add(multicastId);
 				unsentRegIds = updateStatus(unsentRegIds, results, multicastResult);
@@ -434,7 +426,7 @@ public class Sender
 			jsonRequest.put(JSON_PAYLOAD, payload);
 		}
 		String requestBody = JSONValue.toJSONString(jsonRequest);
-		logger.finest("JSON request: " + requestBody);
+		log.info("JSON request: " + requestBody);
 		HttpURLConnection conn;
 		int status;
 		try
@@ -443,7 +435,7 @@ public class Sender
 			status = conn.getResponseCode();
 		} catch (IOException e)
 		{
-			logger.log(Level.FINE, "IOException posting to GCM", e);
+			log.info("IOException posting to GCM", e);
 			return null;
 		}
 		String responseBody;
@@ -452,13 +444,13 @@ public class Sender
 			try
 			{
 				responseBody = getAndClose(conn.getErrorStream());
-				logger.finest("JSON error response: " + responseBody);
+				log.error("JSON error response: " + responseBody);
 			} catch (IOException e)
 			{
 				// ignore the exception since it will thrown an InvalidRequestException
 				// anyways
 				responseBody = "N/A";
-				logger.log(Level.FINE, "Exception reading response: ", e);
+				log.info("Exception reading response: ", e);
 			}
 			throw new InvalidRequestException(status, responseBody);
 		}
@@ -467,10 +459,10 @@ public class Sender
 			responseBody = getAndClose(conn.getInputStream());
 		} catch (IOException e)
 		{
-			logger.log(Level.WARNING, "IOException reading response", e);
+			log.warn("IOException reading response", e);
 			return null;
 		}
-		logger.finest("JSON response: " + responseBody);
+		log.info("JSON response: " + responseBody);
 		JSONParser parser = new JSONParser();
 		JSONObject jsonResponse;
 		try
@@ -517,7 +509,7 @@ public class Sender
 		// log exception, as IOException constructor that takes a message and cause
 		// is only available on Java 6
 		String msg = "Error parsing JSON response (" + responseBody + ")";
-		logger.log(Level.WARNING, msg, e);
+		log.warn(msg, e);
 		return new IOException(msg + ":" + e);
 	}
 
@@ -531,7 +523,7 @@ public class Sender
 			} catch (IOException e)
 			{
 				// ignore error
-				logger.log(Level.FINEST, "IOException closing stream", e);
+				log.info("IOException closing stream", e);
 			}
 		}
 	}
@@ -614,10 +606,10 @@ public class Sender
 		}
 		if (!url.startsWith("https://"))
 		{
-			logger.warning("URL does not use https: " + url);
+			log.warn("URL does not use https: " + url);
 		}
-		logger.info("Sending POST to " + url);
-		logger.finest("POST body: " + body);
+		log.info("Sending POST to " + url);
+		log.info("POST body: " + body);
 		byte[] bytes = body.getBytes();
 
 		HttpURLConnection conn = getConnection(url);
