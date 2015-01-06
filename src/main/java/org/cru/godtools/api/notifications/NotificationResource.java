@@ -94,6 +94,7 @@ public class NotificationResource
 		 */
 		if (originalNotification == null)
 		{
+			log.info("Creating new Notification");
 			notification.setId(UUID.randomUUID());
 			// we will not rely on the app to keep track of the number of presentations.
 			notification.setPresentations(1);
@@ -103,6 +104,7 @@ public class NotificationResource
 		{
 			if (!originalNotification.isNotificationSent())
 			{
+				log.info("Updating previous notification");
 				notification.setId(originalNotification.getId());
 				notification.setPresentations(originalNotification.getPresentations() + 1);
 				notificationService.updateNotification(notification);
