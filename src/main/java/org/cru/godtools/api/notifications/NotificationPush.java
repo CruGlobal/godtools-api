@@ -77,7 +77,7 @@ public class NotificationPush
 					String msg = getMessageForType(notification.getNotificationType());
 					Message message = new Message.Builder().addData("msg", msg).build();
 
-					String apiKey = properties.getNonNullProperty("GoogleApiKey");
+					String apiKey = properties.getNonNullProperty("googleApiKey");
 
 					Sender sender = new Sender(apiKey);
 

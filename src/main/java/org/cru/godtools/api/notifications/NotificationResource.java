@@ -60,7 +60,7 @@ public class NotificationResource
 		// todo: Once testing is done, remove this
 		Message message = new Message.Builder().addData("test", "test").build();
 		log.info("Creating message with test data");
-		String apiKey = properties.getNonNullProperty("GoogleApiKey");
+		String apiKey = properties.getNonNullProperty("googleApiKey");
 		log.info(apiKey);
 		Sender sender = new Sender(apiKey);
 		try
