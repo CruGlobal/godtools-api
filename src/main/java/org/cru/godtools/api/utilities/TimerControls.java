@@ -15,8 +15,8 @@ import javax.ejb.TimerService;
  */
 public class TimerControls
 {
-	private final int baseIntervalSeconds = 30; // one hour
-	private int currentIntervalSeconds = 30;
+	private final int baseIntervalSeconds = 3600; // one hour
+	private int currentIntervalSeconds = 3600;
 
 	private boolean backoffRequired;
 
