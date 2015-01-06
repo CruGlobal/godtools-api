@@ -85,6 +85,7 @@ public class NotificationPush
 					{
 						Result result = sender.send(message, notification.getRegistrationId(), 2);
 						log.info(result.getMessageId());
+
 						notification.setNotificationSent(true);
 						notificationService.updateNotification(notification);
 					}
@@ -137,6 +138,7 @@ public class NotificationPush
 
 		}
 
+		log.warn("Message not found for notification type: " + notificationType);
 		return null;
 	}
 }
