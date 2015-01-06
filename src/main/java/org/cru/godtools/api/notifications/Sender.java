@@ -581,7 +581,7 @@ public class Sender
 	protected HttpURLConnection post(String url, String body)
 			throws IOException
 	{
-		return post(url, "application/json", body);
+		return post(url, "application/x-www-form-urlencoded;charset=UTF-8", body);
 	}
 
 	/**
