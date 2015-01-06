@@ -24,6 +24,9 @@ public class MemcachedClientProducer
 		// mainly for quartz where CDI doesn't work...
 		if(godToolsProperties == null) godToolsProperties = new GodToolsPropertiesFactory().get();
 
+		// if memcache is not enabled, then don't return a client
+		if(!Boolean.valueOf(godToolsProperties.getProperty("memcachedEnabled", "false"))) return null;
+
 		try
 		{
 			return new MemcachedClient(new InetSocketAddress(godToolsProperties.getNonNullProperty("memcachedHost"),
