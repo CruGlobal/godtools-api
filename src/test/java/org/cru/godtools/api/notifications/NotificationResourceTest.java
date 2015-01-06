@@ -1,5 +1,6 @@
 package org.cru.godtools.api.notifications;
 
+import junit.framework.Assert;
 import org.cru.godtools.api.utilities.ClockImpl;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
@@ -18,6 +19,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
 /**
@@ -72,6 +74,7 @@ public class NotificationResourceTest extends Arquillian
 	@Test
 	public void testRegisterDevice()
 	{
-
+		Response response = notificationResource.registerDevice("APA91bHIz9nHNI1clH4lTQSnynCwrF_dSThdJM4o1NcMXoPs3GH7N14WqZMTSYkbQgD6W7KF5l0f5XhbyEkRiO2ZOW_QcPLqMtPtXFUtPC7C8EiQiqF6EDFhxfCVqcijZL10tBfO3KuQZcvIihfriUSuWezbG5sgcu1xF18bDhBDjRdjxEXNXac", "456", null);
+		Assert.assertNotNull(response);
 	}
 }
