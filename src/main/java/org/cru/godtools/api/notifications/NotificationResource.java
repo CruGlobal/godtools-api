@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -77,11 +76,13 @@ public class NotificationResource
 		return Response.ok().build();
 	}
 
-	@PUT
+	@POST
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateNotification(Notification notification, @HeaderParam(value="Authorization") String authcode)
 	{
+		log.info("Notification update for registrationId: " + notification.getRegistrationId());
+
 		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(null, authcode);
 		if (!authorizationRecord.isPresent()) throw new UnauthorizedException();
 
