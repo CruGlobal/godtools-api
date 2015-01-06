@@ -45,19 +45,24 @@ import static org.cru.godtools.api.notifications.Constants.TOKEN_MESSAGE_ID;
 
 /**
  * Created by matthewfrederick on 12/31/14.
- *
+ * <p/>
  * Copied from Google's Push Notification example by permission under http://www.apache.org/licenses/LICENSE-2.0
  */
 public class Sender
 {
 	protected static final String UTF8 = "UTF-8";
 
+	/**
+	 * Initial delay before first retry, without jitter.
+	 */
 	protected static final int BACKOFF_INITIAL_DELAY = 1000;
+	/**
+	 * Maximum delay before a retry.
+	 */
 	protected static final int MAX_BACKOFF_DELAY = 1024000;
 
 	protected final Random random = new Random();
-	protected static final Logger log =
-			Logger.getLogger(Sender.class.getName());
+	protected static final Logger log = Logger.getLogger(Sender.class);
 
 	private final String key;
 
@@ -85,7 +90,7 @@ public class Sender
 	 * @return result of the request (see its javadoc for more details).
 	 * @throws IllegalArgumentException if registrationId is {@literal null}.
 	 * @throws InvalidRequestException  if GCM didn't returned a 200 or 5xx status.
-	 * @throws java.io.IOException      if message could not be sent.
+	 * @throws IOException              if message could not be sent.
 	 */
 	public Result send(Message message, String registrationId, int retries)
 			throws IOException
@@ -99,7 +104,6 @@ public class Sender
 			attempt++;
 			log.info("Attempt #" + attempt + " to send message " +
 					message + " to regIds " + registrationId);
-
 			result = sendNoRetry(message, registrationId);
 			tryAgain = result == null && attempt <= retries;
 			if (tryAgain)
@@ -211,7 +215,7 @@ public class Sender
 				responseBody = getAndClose(conn.getInputStream());
 			} catch (IOException e)
 			{
-				log.info("Exception reading response: ", e);
+				log.warn("Exception reading response: ", e);
 				// return null so it can retry
 				return null;
 			}
@@ -240,7 +244,7 @@ public class Sender
 					builder.canonicalRegistrationId(value);
 				} else
 				{
-					log.info("Invalid response from GCM: " + responseBody);
+					log.warn("Invalid response from GCM: " + responseBody);
 				}
 			}
 			Result result = builder.build();
@@ -293,7 +297,8 @@ public class Sender
 			attempt++;
 
 			log.info("Attempt #" + attempt + " to send message " +
-						message + " to regIds " + unsentRegIds);
+					message + " to regIds " + unsentRegIds);
+
 			try
 			{
 				multicastResult = sendNoRetry(message, unsentRegIds);
@@ -425,16 +430,13 @@ public class Sender
 		{
 			jsonRequest.put(JSON_PAYLOAD, payload);
 		}
-
 		String requestBody = JSONValue.toJSONString(jsonRequest);
 		log.info("JSON request: " + requestBody);
-
 		HttpURLConnection conn;
 		int status;
-
 		try
 		{
-			conn = post(GCM_SEND_ENDPOINT, "application/application/x-www-form-urlencoded;charset=UTF-8", requestBody);
+			conn = post(GCM_SEND_ENDPOINT, "application/json", requestBody);
 			status = conn.getResponseCode();
 		} catch (IOException e)
 		{
@@ -447,7 +449,7 @@ public class Sender
 			try
 			{
 				responseBody = getAndClose(conn.getErrorStream());
-				log.error("JSON error response: " + responseBody);
+				log.info("JSON error response: " + responseBody);
 			} catch (IOException e)
 			{
 				// ignore the exception since it will thrown an InvalidRequestException
@@ -613,9 +615,7 @@ public class Sender
 		}
 		log.info("Sending POST to " + url);
 		log.info("POST body: " + body);
-		log.info("Content-Type" + contentType);
 		byte[] bytes = body.getBytes();
-
 		HttpURLConnection conn = getConnection(url);
 		conn.setDoOutput(true);
 		conn.setUseCaches(false);
@@ -623,9 +623,6 @@ public class Sender
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Type", contentType);
 		conn.setRequestProperty("Authorization", "key=" + key);
-
-		log.info("key=" + key);
-
 		OutputStream out = conn.getOutputStream();
 		try
 		{
