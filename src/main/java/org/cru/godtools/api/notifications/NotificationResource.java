@@ -61,7 +61,7 @@ public class NotificationResource
 		Message message = new Message.Builder().addData("test", "test").build();
 		log.info("Creating message with test data");
 		String apiKey = properties.getNonNullProperty("googleApiKey");
-		log.info(apiKey);
+		log.info("APIKey: " + apiKey);
 		Sender sender = new Sender(apiKey);
 		try
 		{
