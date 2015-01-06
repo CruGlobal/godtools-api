@@ -46,7 +46,7 @@ public class NotificationService
 				.addParameter("registrationId", notification.registrationId)
 				.addParameter("notificationType", notification.getNotificationType())
 				.addParameter("presentations", notification.getPresentations())
-				.addParameter("notification_sent", notification.isNotificationSent())
+				.addParameter("notificationSent", notification.isNotificationSent())
 				.addParameter("timestamp", clock.currentDateTime())
 				.executeUpdate();
 	}
@@ -74,7 +74,7 @@ public class NotificationService
 				"notification_type = :notificationType, " +
 				"presentations = :presentations, " +
 				"notification_sent = :notificationSent, " +
-				"timestamp = :timestamp, " +
+				"timestamp = :timestamp " +
 				"WHERE id = :id";
 		public final static String selectNotificationByRegistrationIdAndType = "SELECT * FROM notifications WHERE registration_id = :registrationId AND notification_type = :notificationType";
 	}

@@ -74,13 +74,18 @@ public class NotificationServiceTest extends Arquillian
 	}
 
 	@Test
-	public void testInsertNotification()
+	public void testInsertAndUpdateNotification()
 	{
 		Notification notification = new Notification();
 		notification.setRegistrationId("Test");
 		notification.setNotificationType(2);
 		Notification returnedNotification = notificationService.selectNotificationByRegistrationIdAndType(notification);
 		Assert.assertNotNull(returnedNotification);
+
+		returnedNotification.setNotificationSent(true);
+		notificationService.updateNotification(returnedNotification);
+		notification = notificationService.selectNotificationByRegistrationIdAndType(notification);
+		Assert.assertEquals(notification.isNotificationSent(), true);
 	}
 
 	private Notification createNotification(UUID id)
