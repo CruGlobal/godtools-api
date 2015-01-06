@@ -425,13 +425,16 @@ public class Sender
 		{
 			jsonRequest.put(JSON_PAYLOAD, payload);
 		}
+
 		String requestBody = JSONValue.toJSONString(jsonRequest);
 		log.info("JSON request: " + requestBody);
+
 		HttpURLConnection conn;
 		int status;
+
 		try
 		{
-			conn = post(GCM_SEND_ENDPOINT, "application/json", requestBody);
+			conn = post(GCM_SEND_ENDPOINT, "application/application/x-www-form-urlencoded;charset=UTF-8", requestBody);
 			status = conn.getResponseCode();
 		} catch (IOException e)
 		{
@@ -610,6 +613,7 @@ public class Sender
 		}
 		log.info("Sending POST to " + url);
 		log.info("POST body: " + body);
+		log.info("Content-Type" + contentType);
 		byte[] bytes = body.getBytes();
 
 		HttpURLConnection conn = getConnection(url);
@@ -619,6 +623,9 @@ public class Sender
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Type", contentType);
 		conn.setRequestProperty("Authorization", "key=" + key);
+
+		log.info("key=" + key);
+
 		OutputStream out = conn.getOutputStream();
 		try
 		{
