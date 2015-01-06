@@ -2,11 +2,15 @@ package org.cru.godtools.api.notifications;
 
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.utilities.TimerControls;
+import org.cru.godtools.domain.database.SqlConnectionProducer;
 import org.cru.godtools.domain.notifications.Notification;
 import org.cru.godtools.domain.notifications.NotificationService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
+import org.sql2o.Connection;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -22,12 +26,12 @@ import javax.inject.Inject;
 @Startup
 public class NotificationPush
 {
-	@Inject
 	NotificationService notificationService;
+	Connection sqlConnection;
+	GodToolsProperties properties;
+
 	@Inject
 	Clock clock;
-	@Inject
-	GodToolsProperties properties;
 	@Inject
 	TimerControls timerControls;
 
@@ -36,9 +40,32 @@ public class NotificationPush
 
 	Logger log = Logger.getLogger(NotificationPush.class);
 
+	@PostConstruct
+	public void initialize()
+	{
+		timerControls.createTimer(timerService, NotificationPush.class);
+	}
+
 	@Timeout
 	public void execute()
 	{
+		log.info("Starting NotificationPush");
+
+		if (properties == null)
+		{
+			properties = new GodToolsPropertiesFactory().get();
+		}
+
+		if (sqlConnection == null)
+		{
+			sqlConnection = new SqlConnectionProducer().getSqlConnection();
+		}
+
+		if (notificationService == null)
+		{
+			notificationService = new NotificationService(sqlConnection);
+		}
+
 		try
 		{
 			for (Notification notification : notificationService.selectAllUnsentNotifications())

@@ -2,6 +2,8 @@ package org.cru.godtools.api.notifications;
 
 /**
  * Created by matthewfrederick on 12/30/14.
+ *
+ * Copied from Google's Push Notification example by permission under http://www.apache.org/licenses/LICENSE-2.0
  */
 public final class Constants
 {

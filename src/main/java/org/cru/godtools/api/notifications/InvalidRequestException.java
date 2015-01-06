@@ -4,6 +4,8 @@ import java.io.IOException;
 
 /**
  * Created by matthewfrederick on 12/31/14.
+ *
+ * Copied from Google's Push Notification example by permission under http://www.apache.org/licenses/LICENSE-2.0
  */
 public class InvalidRequestException extends IOException
 {

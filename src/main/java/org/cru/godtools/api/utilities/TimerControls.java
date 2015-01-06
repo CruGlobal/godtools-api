@@ -10,10 +10,12 @@ import javax.ejb.TimerService;
 
 /**
  * Created by matthewfrederick on 1/5/15.
+ *
+ * Copied from ERT class created by Ryan Carlson
  */
 public class TimerControls
 {
-	private final int baseIntervalSeconds = 30;
+	private final int baseIntervalSeconds = 30; // one hour
 	private int currentIntervalSeconds = 30;
 
 	private boolean backoffRequired;
