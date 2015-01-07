@@ -74,7 +74,7 @@ public class NotificationResourceTest extends Arquillian
 	@Test
 	public void testRegisterDevice()
 	{
-		Response response = notificationResource.registerDevice("APA91bHIz9nHNI1clH4lTQSnynCwrF_dSThdJM4o1NcMXoPs3GH7N14WqZMTSYkbQgD6W7KF5l0f5XhbyEkRiO2ZOW_QcPLqMtPtXFUtPC7C8EiQiqF6EDFhxfCVqcijZL10tBfO3KuQZcvIihfriUSuWezbG5sgcu1xF18bDhBDjRdjxEXNXac", "456", null);
+		Response response = notificationResource.registerDevice("123", "456", null);
 		Assert.assertNotNull(response);
 	}
 }
