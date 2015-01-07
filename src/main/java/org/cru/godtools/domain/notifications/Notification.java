@@ -12,7 +12,6 @@ public class Notification implements Serializable
 {
 	UUID id;
 	String registrationId;
-	DateTime triggerTime;
 	DateTime timestamp;
 	int presentations;
 	int notificationType;
@@ -77,16 +76,6 @@ public class Notification implements Serializable
 	public void setRegistrationId(String registrationId)
 	{
 		this.registrationId = registrationId;
-	}
-
-	public DateTime getTriggerTime()
-	{
-		return triggerTime;
-	}
-
-	public void setTriggerTime(DateTime triggerTime)
-	{
-		this.triggerTime = triggerTime;
 	}
 
 	public DateTime getTimestamp()
