@@ -88,6 +88,8 @@ public class NotificationPush
 
 						notification.setNotificationSent(true);
 						notificationService.updateNotification(notification);
+
+						log.info("Notification: " + notification.getId() + "is sent: " + notification.isNotificationSent());
 					}
 					catch (Exception e)
 					{
