@@ -113,19 +113,19 @@ public class NotificationPush
 		switch (notificationType)
 		{
 			// app not used for 2 weeks
-			case 1:
+			case Constants.NOT_USED_2_WEEKS:
 				return "God is always at work around us. Who could you share your faith with today? Pray for those people right now.";
 
 			// after 1 presentation of 4SL/KGP
-			case 2:
+			case Constants.AFTER_1_PRESENTATION:
 				return "You took a faith step to share about Jesus. Way to go! Tell us what God is doing.";
 
 			// after 10 presentation of 4SL/KGP
-			case 3:
+			case Constants.AFTER_10_PRESENTATIONS:
 				return "Great job trusting God to share your faith! Tell us how we can pray for you.";
 
 			// 24 hours after a share
-			case 4:
+			case Constants.DAY_AFTER_SHARE:
 				return "Did you share your faith yesterday? Contact them and see what they are thinking.";
 
 			// 2 days after downloading app
@@ -133,7 +133,7 @@ public class NotificationPush
 				return "Excited you want to share your faith through God Tools. Take some time today to review the materials, so that you're prepared when God provides a 'divine appointment' for you to share your faith!";
 
 			// after 3 uses
-			case 6:
+			case Constants.AFTER_3_USES:
 				return "Is God Tools helping you? Tell us how to make it better.";
 
 		}

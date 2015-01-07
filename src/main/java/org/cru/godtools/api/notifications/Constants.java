@@ -7,6 +7,12 @@ package org.cru.godtools.api.notifications;
  */
 public final class Constants
 {
+	public static final int NOT_USED_2_WEEKS = 1;
+	public static final int AFTER_1_PRESENTATION = 2;
+	public static final int AFTER_10_PRESENTATIONS = 3;
+	public static final int DAY_AFTER_SHARE = 4;
+	public static final int AFTER_3_USES = 6;
+
 	/**
 	 * Endpoint for sending messages.
 	 */
