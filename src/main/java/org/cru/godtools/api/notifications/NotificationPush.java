@@ -17,6 +17,7 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by matthewfrederick on 1/5/15.
@@ -68,7 +69,9 @@ public class NotificationPush
 
 		try
 		{
-			for (Notification notification : notificationService.selectAllUnsentNotifications())
+			List<Notification> notifications = notificationService.selectAllUnsentNotifications();
+
+			for (Notification notification : notifications)
 			{
 				if (notification.isReadyForNotification(clock.currentDateTime()))
 				{
