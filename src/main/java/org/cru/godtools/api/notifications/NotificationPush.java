@@ -75,7 +75,7 @@ public class NotificationPush
 					log.info("Creating message for notification type:" + notification.getNotificationType());
 
 					String msg = getMessageForType(notification.getNotificationType());
-					Message message = new Message.Builder().addData("msg", msg).build();
+					Message message = new Message.Builder().addData("msg", msg).addData("type", Integer.toString(notification.getNotificationType())).build();
 
 					String apiKey = properties.getNonNullProperty("googleApiKey");
 
