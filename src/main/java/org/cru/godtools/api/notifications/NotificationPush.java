@@ -8,6 +8,7 @@ import org.cru.godtools.domain.notifications.NotificationService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
+import org.joda.time.DateTime;
 import org.sql2o.Connection;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import javax.ejb.Startup;
 import javax.ejb.Timeout;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Created by matthewfrederick on 1/5/15.
@@ -26,17 +28,19 @@ import javax.inject.Inject;
 @Startup
 public class NotificationPush
 {
-	NotificationService notificationService;
-	Connection sqlConnection;
-	GodToolsProperties properties;
-
 	@Inject
 	Clock clock;
 	@Inject
 	TimerControls timerControls;
 
+	NotificationService notificationService;
+	@Inject
+	Connection sqlConnection;
+
 	@Resource
 	TimerService timerService;
+
+	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
 	Logger log = Logger.getLogger(NotificationPush.class);
 
@@ -51,11 +55,6 @@ public class NotificationPush
 	{
 		log.info("Starting NotificationPush");
 
-		if (properties == null)
-		{
-			properties = new GodToolsPropertiesFactory().get();
-		}
-
 		if (sqlConnection == null)
 		{
 			sqlConnection = new SqlConnectionProducer().getSqlConnection();
@@ -66,9 +65,22 @@ public class NotificationPush
 			notificationService = new NotificationService(sqlConnection);
 		}
 
+		if (clock == null)
+		{
+			clock = new Clock()
+			{
+				@Override
+				public DateTime currentDateTime()
+				{
+					return null;
+				}
+			};
+		}
+
 		try
 		{
-			for (Notification notification : notificationService.selectAllUnsentNotifications())
+			List<Notification> notifications = notificationService.selectAllUnsentNotifications();
+			for (Notification notification : notifications)
 			{
 				if (notification.isReadyForNotification(clock.currentDateTime()))
 				{

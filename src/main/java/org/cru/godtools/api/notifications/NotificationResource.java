@@ -57,22 +57,6 @@ public class NotificationResource
 
 		deviceService.insert(device);
 
-		// todo: Once testing is done, remove this
-		Message message = new Message.Builder().addData("test", "test").build();
-		log.info("Creating message with test data");
-		String apiKey = properties.getNonNullProperty("googleApiKey");
-		log.info("APIKey: " + apiKey);
-		Sender sender = new Sender(apiKey);
-		try
-		{
-			Result result = sender.send(message, registrationId, 2);
-			log.info(result.getMessageId());
-		}
-		catch (Exception e)
-		{
-			log.info(e.getMessage(), e);
-		}
-
 		return Response.ok().build();
 	}
 
