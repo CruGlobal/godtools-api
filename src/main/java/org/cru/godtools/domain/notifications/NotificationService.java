@@ -5,6 +5,7 @@ import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by matthewfrederick on 1/5/15.
