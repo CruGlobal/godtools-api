@@ -11,13 +11,14 @@ import java.util.List;
  */
 public class NotificationService
 {
+	@Inject
 	Connection sqlConnection;
 
-	@Inject
-	public NotificationService(Connection sqlConnection)
-	{
-		this.sqlConnection = sqlConnection;
-	}
+//	@Inject
+//	public NotificationService(Connection sqlConnection)
+//	{
+//		this.sqlConnection = sqlConnection;
+//	}
 
 	@Inject
 	Clock clock;

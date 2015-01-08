@@ -27,10 +27,12 @@ import java.util.List;
 @Startup
 public class NotificationPush
 {
+	@Inject
 	NotificationService notificationService;
+	@Inject
 	Connection sqlConnection;
+	@Inject
 	GodToolsProperties properties;
-
 	@Inject
 	Clock clock;
 	@Inject
@@ -64,7 +66,7 @@ public class NotificationPush
 
 		if (notificationService == null)
 		{
-			notificationService = new NotificationService(sqlConnection);
+			notificationService = new NotificationService();
 		}
 
 		try
