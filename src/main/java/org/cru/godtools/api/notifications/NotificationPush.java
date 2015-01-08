@@ -29,7 +29,6 @@ public class NotificationPush
 {
 	NotificationService notificationService;
 	Connection sqlConnection;
-	GodToolsProperties properties;
 
 	@Inject
 	Clock clock;
@@ -38,6 +37,8 @@ public class NotificationPush
 
 	@Resource
 	TimerService timerService;
+
+	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
 	Logger log = Logger.getLogger(NotificationPush.class);
 
@@ -51,11 +52,6 @@ public class NotificationPush
 	public void execute()
 	{
 		log.info("Starting NotificationPush");
-
-		if (properties == null)
-		{
-			properties = new GodToolsPropertiesFactory().get();
-		}
 
 		if (sqlConnection == null)
 		{
