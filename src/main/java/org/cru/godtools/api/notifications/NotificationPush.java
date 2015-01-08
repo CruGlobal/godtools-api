@@ -96,7 +96,7 @@ public class NotificationPush
 					}
 					catch (Exception e)
 					{
-						log.error("Could not send notification");
+						log.error("Could not send notification with ID: " + notification.getId());
 						log.error(e.getMessage(), e);
 					}
 				}
