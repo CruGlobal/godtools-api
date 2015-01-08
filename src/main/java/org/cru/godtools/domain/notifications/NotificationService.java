@@ -64,6 +64,14 @@ public class NotificationService
 				.executeUpdate();
 	}
 
+	public void setNotificationAsSent(UUID id)
+	{
+		sqlConnection.createQuery(notificationQueries.setNotificationAsSent)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("id", id)
+				.executeUpdate();
+	}
+
 	public static class notificationQueries
 	{
 		public final static String selectAllUnsent = "SELECT * FROM notifications WHERE notification_sent = 'f'";
@@ -77,5 +85,6 @@ public class NotificationService
 				"timestamp = :timestamp " +
 				"WHERE id = :id";
 		public final static String selectNotificationByRegistrationIdAndType = "SELECT * FROM notifications WHERE registration_id = :registrationId AND notification_type = :notificationType";
+		public final static String setNotificationAsSent = "UPDATE notifications SET notification_sent = 't' WHERE id = :id";
 	}
 }

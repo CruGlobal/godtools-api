@@ -8,7 +8,6 @@ import org.cru.godtools.domain.notifications.NotificationService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
-import org.joda.time.DateTime;
 import org.sql2o.Connection;
 
 import javax.annotation.PostConstruct;
@@ -28,14 +27,13 @@ import java.util.List;
 @Startup
 public class NotificationPush
 {
+	NotificationService notificationService;
+	Connection sqlConnection;
+
 	@Inject
 	Clock clock;
 	@Inject
 	TimerControls timerControls;
-
-	NotificationService notificationService;
-	@Inject
-	Connection sqlConnection;
 
 	@Resource
 	TimerService timerService;
@@ -65,21 +63,10 @@ public class NotificationPush
 			notificationService = new NotificationService(sqlConnection);
 		}
 
-		if (clock == null)
-		{
-			clock = new Clock()
-			{
-				@Override
-				public DateTime currentDateTime()
-				{
-					return null;
-				}
-			};
-		}
-
 		try
 		{
 			List<Notification> notifications = notificationService.selectAllUnsentNotifications();
+
 			for (Notification notification : notifications)
 			{
 				if (notification.isReadyForNotification(clock.currentDateTime()))
@@ -98,14 +85,13 @@ public class NotificationPush
 						Result result = sender.send(message, notification.getRegistrationId(), 2);
 						log.info(result.getMessageId());
 
-						notification.setNotificationSent(true);
-						notificationService.updateNotification(notification);
+						notificationService.setNotificationAsSent(notification.getId());
 
 						log.info("Notification: " + notification.getId() + "is sent: " + notification.isNotificationSent());
 					}
 					catch (Exception e)
 					{
-						log.error("Could not send notification");
+						log.error("Could not send notification with ID: " + notification.getId());
 						log.error(e.getMessage(), e);
 					}
 				}
