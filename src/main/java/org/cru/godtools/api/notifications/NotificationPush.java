@@ -27,12 +27,10 @@ import java.util.List;
 @Startup
 public class NotificationPush
 {
-	@Inject
 	NotificationService notificationService;
-	@Inject
 	Connection sqlConnection;
-	@Inject
 	GodToolsProperties properties;
+
 	@Inject
 	Clock clock;
 	@Inject
@@ -66,7 +64,7 @@ public class NotificationPush
 
 		if (notificationService == null)
 		{
-			notificationService = new NotificationService();
+			notificationService = new NotificationService(sqlConnection);
 		}
 
 		try
@@ -91,8 +89,7 @@ public class NotificationPush
 						Result result = sender.send(message, notification.getRegistrationId(), 2);
 						log.info(result.getMessageId());
 
-						notification.setNotificationSent(true);
-						notificationService.updateNotification(notification);
+						notificationService.setNotificationAsSent(notification.getId());
 
 						log.info("Notification: " + notification.getId() + "is sent: " + notification.isNotificationSent());
 					}
