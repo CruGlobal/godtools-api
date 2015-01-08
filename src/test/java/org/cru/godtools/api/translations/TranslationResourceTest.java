@@ -2,11 +2,12 @@ package org.cru.godtools.api.translations;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.translations.contents.Content;
+import org.cru.godtools.api.translations.contents.Resource;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -36,7 +37,6 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -111,7 +111,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream)response.getEntity())));
+		validateContentsXml((Content)response.getEntity());
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		{
 			if(zipEntry.getName().equals("contents.xml"))
 			{
-				validateContentsXml(builder.parse(new InputSource(zipInputStream)));
+//				validateContentsXml(builder.parse(new InputSource(zipInputStream)));
 			}
 			else if(zipEntry.getName().equals("1a108ca6462c5a5fb990fd2f0af377330311d0bf.xml"))
 			{
@@ -200,7 +200,8 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(getDraftResponse.getStatus(), 200);
 
-		validateDraftXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) getDraftResponse.getEntity())), "fr");
+
+		validateDraftXml((Content)getDraftResponse.getEntity(), "fr");
 	}
 
 	@Test
@@ -226,7 +227,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(getDraftResponse.getStatus(), 200);
 
-		validateDraftXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) getDraftResponse.getEntity())), "en");
+		validateDraftXml((Content)getDraftResponse.getEntity(), "en");
 	}
 
 	@Test(expectedExceptions = UnauthorizedException.class)
@@ -263,46 +264,48 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 				null);
 
 		Assert.assertEquals(publishedTranslationResponse.getStatus(), 200);
-		validateContentsXml(documentBuilder.parse(new InputSource((ByteArrayInputStream) publishedTranslationResponse.getEntity())));
 
+		validateContentsXml((Content)publishedTranslationResponse.getEntity());
 	}
 
 
-	private void validateDraftXml(Document xmlDraftContentsFile, String languageCode)
+	private void validateDraftXml(Content xmlContentsFile, String languageCode)
 	{
-		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlDraftContentsFile, "resource");
+		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Assert.assertEquals(resourceElements.size(), 1);
-		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), languageCode);
-		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "draft");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Knowing God Personally");
+		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+
+		Assert.assertEquals(firstResource.getLanguage(), languageCode);
+		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
+		Assert.assertEquals(firstResource.getStatus(), "draft");
+		Assert.assertEquals(firstResource.getIcon(), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
+		Assert.assertEquals(firstResource.getName(), "Knowing God Personally");
 
 		// english has an existing translation, so it would take version 1.2
 		if("en".equalsIgnoreCase(languageCode))
 		{
-			Assert.assertEquals(resourceElements.get(0).getAttribute("version"), new BigDecimal("1.2").toPlainString());
+			Assert.assertEquals(firstResource.getVersion(), new BigDecimal("1.2").toPlainString());
 		}
 		// french is a new translations, so it would take version 1.1
 		else if("fr".equalsIgnoreCase(languageCode))
 		{
-			Assert.assertEquals(resourceElements.get(0).getAttribute("version"), new BigDecimal("1.1").toPlainString());
+			Assert.assertEquals(firstResource.getVersion(), new BigDecimal("1.1").toPlainString());
 		}
 	}
 
-	private void validateContentsXml(Document xmlContentsFile)
+	private void validateContentsXml(Content xmlContentsFile)
 	{
-		List<Element> resourceElements = XmlDocumentSearchUtilities.findElements(xmlContentsFile, "resource");
-
-		Assert.assertEquals(resourceElements.size(), 1);
-		Assert.assertEquals(resourceElements.get(0).getAttribute("language"), "en");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("package"), "kgp");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("status"), "live");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("config"), TRANSLATION_ID + ".xml");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("icon"), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
-		Assert.assertEquals(resourceElements.get(0).getAttribute("version"), new BigDecimal("1.1").toPlainString());
-		Assert.assertEquals(resourceElements.get(0).getAttribute("name"), "Knowing God Personally");
+		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
+		
+		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+		
+		Assert.assertEquals(firstResource.getLanguage(), "en");
+		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
+		Assert.assertEquals(firstResource.getStatus(), "live");
+		Assert.assertEquals(firstResource.getConfig(), TRANSLATION_ID + ".xml");
+		Assert.assertEquals(firstResource.getIcon(), "646dbcad0e235684c4b89c0b82fc7aa8ba3a87b5.png");
+		Assert.assertEquals(firstResource.getVersion(), new BigDecimal("1.1").toPlainString());
+		Assert.assertEquals(firstResource.getName(), "Knowing God Personally");
 	}
 
 	private void validatePackageConfigXml(Document xmlPackageConfigFile)
