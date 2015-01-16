@@ -38,7 +38,7 @@ public class DraftUpdateJobScheduler
 
 		JobDetail jobDetail = buildJob(projectId, locale, pageNames, translation, false);
 
-		Trigger trigger = buildTrigger(translation, 30, 10);
+		Trigger trigger = buildTrigger(translation, 30, 2);
 
 		scheduler.scheduleJob(jobDetail, Sets.newHashSet(trigger), true);
 
