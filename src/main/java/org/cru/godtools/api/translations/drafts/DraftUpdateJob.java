@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations.drafts;
 
+import com.google.common.base.Optional;
 import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.api.cache.MemcachedClientProducer;
 import org.cru.godtools.api.cache.MemcachedGodToolsCache;
@@ -103,9 +104,11 @@ public class DraftUpdateJob implements Job
 
 		// use the cache to determine if another server has started an update on this draft in the
 		// last 30s.  if so, let it do its thing
+		Optional<Boolean> optionalMarker = cache.getMarker(translation.getId());
+
 		if(!forceUpdate &&
-				cache.getMarker(translation.getId()).isPresent() &&
-				cache.getMarker(translation.getId()).get() != null) return;
+				optionalMarker.isPresent() &&
+				optionalMarker.get()) return;
 
 		for (String pageName : pageNames)
 		{
