@@ -102,10 +102,6 @@ public class NotificationPush
 			log.error("Error trying to send notifications in NotificationPush");
 			log.error(e.getMessage(), e);
 		}
-		finally
-		{
-			timerControls.updateTimer(timerService, NotificationPush.class);
-		}
 	}
 
 	private String getMessageForType(int notificationType)
