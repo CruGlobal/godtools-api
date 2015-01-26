@@ -132,7 +132,7 @@ public class DraftResource
 	@PUT
 	@Path("/{language}/{package}/pages/{pageId}")
 	@Consumes("application/xml")
-	public Response updatePageLayout(@PathParam("language") String languageCode,
+	public Response updatePageLayoutForSpecificLanguage(@PathParam("language") String languageCode,
 							@PathParam("package") String packageCode,
 							@PathParam("pageId") UUID pageId,
 							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
@@ -141,11 +141,33 @@ public class DraftResource
 							@QueryParam("Authorization") String authTokenParam,
 							Document updatedPageLayout) throws IOException
 	{
-		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
+
+		return Response
+				.noContent()
+				.build();
+	}
+
+	@PUT
+	@Path("/{package}/pages/{pageName}")
+	@Consumes("application/xml")
+	public Response updatePageLayoutForAllLanguages(@PathParam("package") String packageCode,
+									 @PathParam("pageName") String pageName,
+									 @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+									 @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+									 @HeaderParam("Authorization") String authTokenHeader,
+									 @QueryParam("Authorization") String authTokenParam,
+									 Document updatedPageLayout) throws IOException
+	{
+		log.info("Updating draft page update for package: " + packageCode + " and page name: " + pageName);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		godToolsTranslationService.updatePageLayout(pageName, packageCode, updatedPageLayout);
 
 		return Response
 				.noContent()

@@ -109,6 +109,38 @@ public class GodToolsTranslationService
 		updateCache(translation, pageStructure);
 	}
 
+	/**
+	 * Updates page layout across all translations.
+	 *   - If necessary a new draft will be created for any language that doesn't have one.
+	 *   -
+	 */
+	public void updatePageLayout(String pageName, String packageCode, Document updatedPageLayout)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+
+		List<Translation> latestTranslations = Lists.newArrayList();
+
+		for(Language language : languageService.selectAllLanguages())
+		{
+			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), GodToolsVersion.LATEST_VERSION);
+			if(!translation.isDraft())
+			{
+				// create a new draft!
+			}
+			latestTranslations.add(translation);  //possibly new translation
+		}
+
+		// all should be drafts by this point.
+		for(Translation translation : latestTranslations)
+		{
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), pageName);
+			pageStructure.mergeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+			updateCache(translation, pageStructure);
+		}
+	}
+
 	public Config getConfig(String packageCode, LanguageCode languageCode)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
