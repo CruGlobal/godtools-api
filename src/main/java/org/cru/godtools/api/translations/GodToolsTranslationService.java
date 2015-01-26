@@ -117,27 +117,44 @@ public class GodToolsTranslationService
 	public void updatePageLayout(String pageName, String packageCode, Document updatedPageLayout)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
-
-		List<Translation> latestTranslations = Lists.newArrayList();
+		Translation englishTranslation = loadBaseTranslation(gtPackage);
+		PageStructure baseEnglishPage = pageStructureService.selectByid(UUID.fromString(pageName));
+		List<Translation> publishedTranslations = Lists.newArrayList();
+		List<Translation> draftTranslations = Lists.newArrayList();
 
 		for(Language language : languageService.selectAllLanguages())
 		{
 			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), GodToolsVersion.LATEST_VERSION);
+
+			// we won't create any brand new translations at this point.
+			if(translation == null) continue;
+
 			if(!translation.isDraft())
 			{
-				// create a new draft!
+				publishedTranslations.add(setupNewTranslation(LanguageCode.fromLanguage(language), gtPackage.getCode()));
 			}
-			latestTranslations.add(translation);  //possibly new translation
+			else
+			{
+				draftTranslations.add(translation);  //possibly new translation
+			}
 		}
 
-		// all should be drafts by this point.
-		for(Translation translation : latestTranslations)
+		for(Translation translation : draftTranslations)
 		{
-			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), pageName);
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
 			pageStructure.mergeXmlContent(updatedPageLayout);
 
 			pageStructureService.update(pageStructure);
 			updateCache(translation, pageStructure);
+		}
+
+		for(Translation translation : publishedTranslations)
+		{
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
+			pageStructure.mergeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+			publishDraftTranslation(translation);
 		}
 	}
 
@@ -269,7 +286,11 @@ public class GodToolsTranslationService
 
 	public void publishDraftTranslation(LanguageCode languageCode, String packageCode)
 	{
-		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION);
+		publishDraftTranslation(getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION));
+	}
+
+	public void publishDraftTranslation(Translation translation)
+	{
 		translation.setReleased(true);
 		translationService.update(translation);
 
