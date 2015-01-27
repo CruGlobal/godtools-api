@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * Represents a config file that is the structure the structure of a God Tools resource.
+ * Represents a config file that is the structure of a God Tools resource.
  *
  * A God Tools resource is a collection of many @see Page s, a single @see About page
  * and a single @see PackageName.  Each of these contained items is represented by a single XML element or JSON object.
