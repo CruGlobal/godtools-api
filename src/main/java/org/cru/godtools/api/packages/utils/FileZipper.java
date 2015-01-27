@@ -1,5 +1,6 @@
 package org.cru.godtools.api.packages.utils;
 
+import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PageStructure;
@@ -16,6 +17,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -66,11 +68,11 @@ public class FileZipper
     {
         for(Image image : images)
         {
-//			String imageHash = GuavaHashGenerator.calculateHash(image.getImageContent());
+			String imageHash = GuavaHashGenerator.calculateHash(image.getImageContent());
 
-			if(imagesAlreadyZipped.contains(image.getFilename())) continue;
-            zipImage(image.getImageContent(), image.getFilename(), zipOutputStream);
-            imagesAlreadyZipped.add(image.getFilename());
+			if(imagesAlreadyZipped.contains(imageHash)) continue;
+            zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
+            imagesAlreadyZipped.add(imageHash);
         }
     }
     /**
