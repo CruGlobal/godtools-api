@@ -36,7 +36,7 @@ public class PackageStructure implements Serializable
 					String translatedText = translationElementMap.get(translationElementId).getTranslatedText();
 					String elementType = translatableElement.getTagName();
 
-					logger.info(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
+					logger.debug(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
 					translatableElement.setTextContent(translatedText);
 				}
 			}

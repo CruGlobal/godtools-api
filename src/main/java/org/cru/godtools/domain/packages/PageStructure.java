@@ -66,13 +66,13 @@ public class PageStructure implements Serializable
 					String translatedText = mapOfTranslationElements.get(translationElementId).getTranslatedText();
 					String elementType = translatableElement.getTagName();
 
-					logger.info(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
+					logger.debug(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
 					translatableElement.setTextContent(mapOfTranslationElements.get(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))).getTranslatedText());
 				}
 			}
 			catch(IllegalArgumentException e)
 			{
-				System.out.println("Invalid UUID... oh well.  Move along");
+				logger.warn("Invalid UUID... oh well.  Move along");
 			}
 		}
 	}
