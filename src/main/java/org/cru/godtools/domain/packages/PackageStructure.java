@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 /**
@@ -36,7 +37,7 @@ public class PackageStructure implements Serializable
 					String translatedText = translationElementMap.get(translationElementId).getTranslatedText();
 					String elementType = translatableElement.getTagName();
 
-					logger.debug(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
+					logger.info(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
 					translatableElement.setTextContent(translatedText);
 				}
 			}
@@ -90,6 +91,17 @@ public class PackageStructure implements Serializable
 			}
 		}
 
+	}
+
+	public String getPackageName()
+	{
+		if(xmlContent == null) return "";
+
+		List<Element> packageNameElements = XmlDocumentSearchUtilities.findElements(xmlContent, "packagename");
+
+		if(packageNameElements.size() != 1) throw new IllegalStateException("Expected one packagename element");
+
+		return packageNameElements.get(0).getTextContent();
 	}
 
 	public UUID getId()

@@ -266,7 +266,7 @@ public class GodToolsTranslationRetrieval
 				resourceElement.setAttribute("language", languageCode.toString());
 				resourceElement.setAttribute("config", godToolsTranslation.getTranslation().getId() + ".xml");
 				resourceElement.setAttribute("status", godToolsTranslation.isDraft() ? "draft" : "live");
-				resourceElement.setAttribute("name", godToolsTranslation.getPackageName());
+				resourceElement.setAttribute("name", godToolsTranslation.getPackageStructure().getPackageName());
 				resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
 
 				if(godToolsTranslation.getIcon() != null)
