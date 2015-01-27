@@ -144,7 +144,7 @@ public class GodToolsTranslationRetrieval
 				{
 					DraftUpdateJobScheduler.scheduleRecurringUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
 							godToolsTranslation.getLanguage().getPath(),
-							godToolsTranslation.getPageNameSet(),
+							godToolsTranslation.getFilenameSet(),
 							godToolsTranslation.getTranslation());
 				}
 				catch (SchedulerException e)

@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,6 +35,8 @@ public class PageStructure implements Serializable
 	private Integer wordCount;
 	private DateTime lastUpdated;
 
+	private final Logger logger = Logger.getLogger(PackageStructure.class);
+
 	public static PageStructure copyOf(PageStructure pageStructure)
 	{
 		PageStructure pageStructureCopy = new PageStructure();
@@ -56,8 +59,14 @@ public class PageStructure implements Serializable
 		{
 			try
 			{
+				UUID translationElementId = UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"));
+
 				if (mapOfTranslationElements.containsKey(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))))
 				{
+					String translatedText = mapOfTranslationElements.get(translationElementId).getTranslatedText();
+					String elementType = translatableElement.getTagName();
+
+					logger.info(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
 					translatableElement.setTextContent(mapOfTranslationElements.get(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))).getTranslatedText());
 				}
 			}

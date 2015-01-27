@@ -3,6 +3,7 @@ package org.cru.godtools.domain.packages;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
+import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -18,6 +19,9 @@ public class PackageStructure implements Serializable
 	private UUID packageId;
 	private Integer versionNumber;
 	private Document xmlContent;
+	private String filename;
+
+	private final Logger logger = Logger.getLogger(PackageStructure.class);
 
 	public void setTranslatedFields(Map<UUID, TranslationElement> translationElementMap)
 	{
@@ -25,14 +29,20 @@ public class PackageStructure implements Serializable
 		{
 			try
 			{
-				if (translationElementMap.containsKey(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))))
+				UUID translationElementId = UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"));
+
+				if (translationElementMap.containsKey(translationElementId))
 				{
-					translatableElement.setTextContent(translationElementMap.get(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))).getTranslatedText());
+					String translatedText = translationElementMap.get(translationElementId).getTranslatedText();
+					String elementType = translatableElement.getTagName();
+
+					logger.info(String.format("Setting translation element: %s with ID: %s to value: %s", elementType, translationElementId.toString(), translatedText));
+					translatableElement.setTextContent(translatedText);
 				}
 			}
 			catch(IllegalArgumentException e)
 			{
-				System.out.println("Invalid UUID... oh well.  Move along");
+				logger.warn("Invalid UUID... oh well.  Move along");
 			}
 		}
 	}
@@ -120,5 +130,15 @@ public class PackageStructure implements Serializable
 	public void setXmlContent(Document xmlContent)
 	{
 		this.xmlContent = xmlContent;
+	}
+
+	public String getFilename()
+	{
+		return filename;
+	}
+
+	public void setFilename(String filename)
+	{
+		this.filename = filename;
 	}
 }

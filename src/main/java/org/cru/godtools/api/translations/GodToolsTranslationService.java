@@ -303,7 +303,7 @@ public class GodToolsTranslationService
 			// job will delete draft from the cache when it is finished
 			DraftUpdateJobScheduler.scheduleOneUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
 					godToolsTranslation.getLanguage().getPath(),
-					godToolsTranslation.getPageNameSet(),
+					godToolsTranslation.getFilenameSet(),
 					godToolsTranslation.getTranslation());
 		}
 		catch (SchedulerException e)
