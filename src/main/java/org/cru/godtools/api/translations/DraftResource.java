@@ -17,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -118,7 +119,7 @@ public class DraftResource
 							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 							@QueryParam("compressed") String compressed,
 							@HeaderParam("Authorization") String authTokenHeader,
-							@QueryParam("Authorization") String authTokenParam) throws IOException
+							@QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
 	{
 		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
 
