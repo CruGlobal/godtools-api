@@ -9,7 +9,10 @@ import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -144,26 +147,27 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
-	public Document getXmlContent(boolean strippedDown)
+	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
 	{
-		if(strippedDown)
+		Document xmlDocumentCopy = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		Node copiedRoot = xmlDocumentCopy.importNode(xmlContent.getDocumentElement(), true);
+		xmlDocumentCopy.appendChild(copiedRoot);
+
+		for(String attributeName : REMOVABLE_ATTRIBUTES)
 		{
-			for(String attributeName : REMOVABLE_ATTRIBUTES)
+			if(xmlDocumentCopy.getDocumentElement().getAttribute(attributeName) != null)
 			{
-				if(xmlContent.getDocumentElement().getAttribute(attributeName) != null)
+				xmlDocumentCopy.getDocumentElement().removeAttribute(attributeName);
+			}
+			for(Element elementWithRemovableAttribute : XmlDocumentSearchUtilities.findElementsWithAttribute(xmlDocumentCopy, attributeName))
+			{
+				if(elementWithRemovableAttribute.getAttribute("gtapi-trx-id") != null)
 				{
-					xmlContent.getDocumentElement().removeAttribute(attributeName);
-				}
-				for(Element elementWithRemovableAttribute : XmlDocumentSearchUtilities.findElementsWithAttribute(xmlContent, attributeName))
-				{
-					if(elementWithRemovableAttribute.getAttribute("gtapi-trx-id") != null)
-					{
-						elementWithRemovableAttribute.removeAttribute(attributeName);
-					}
+					elementWithRemovableAttribute.removeAttribute(attributeName);
 				}
 			}
 		}
-		return xmlContent;
+		return xmlDocumentCopy;
 	}
 
 	public UUID getId()

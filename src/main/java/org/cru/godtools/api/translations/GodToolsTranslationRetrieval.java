@@ -171,7 +171,7 @@ public class GodToolsTranslationRetrieval
         }
     }
 
-	public Response buildSinglePageResponse(PageStructure pageStructure)
+	public Response buildSinglePageResponse(PageStructure pageStructure) throws ParserConfigurationException
 	{
 		if(compressed)
 		{
@@ -197,7 +197,7 @@ public class GodToolsTranslationRetrieval
 		}
 		else
 		{
-			return Response.ok(pageStructure.getXmlContent(true)).build();
+			return Response.ok(pageStructure.getStrippedDownCopyOfXmlContent()).build();
 		}
 	}
 
