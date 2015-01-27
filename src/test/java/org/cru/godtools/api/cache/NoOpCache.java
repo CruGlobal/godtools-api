@@ -33,4 +33,22 @@ public class NoOpCache implements GodToolsCache
 	{
 
 	}
+
+	@Override
+	public Optional<Boolean> getMarker(UUID translationId)
+	{
+		return Optional.absent();
+	}
+
+	@Override
+	public void recordMarker(UUID translationId)
+	{
+
+	}
+
+	@Override
+	public void removeMarker(UUID translationId)
+	{
+
+	}
 }

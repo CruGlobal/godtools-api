@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 public class MetaPackage  implements java.io.Serializable
 {
     String code;
-	BigDecimal version;
+	String version;
 	String status;
 
-    public MetaPackage(String packageCode, BigDecimal versionNumber, boolean isReleased)
+    public MetaPackage(String packageCode, String versionNumber, boolean isReleased)
     {
         setCode(packageCode);
         setVersion(versionNumber);
@@ -31,12 +31,12 @@ public class MetaPackage  implements java.io.Serializable
     }
 
     @XmlAttribute
-    public BigDecimal getVersion()
+    public String getVersion()
     {
         return version;
     }
 
-    public void setVersion(BigDecimal version)
+    public void setVersion(String version)
     {
         this.version = version;
     }

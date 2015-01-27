@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
@@ -22,12 +23,20 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	private OneSkyDataService oneSkyDataService;
 	@Inject
 	private FileClient fileClient;
+	@Inject
+	private GodToolsProperties properties;
 
 	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
 
 	@Override
 	public void doUpload(Integer projectId, String locale)
 	{
+		if(!Boolean.parseBoolean(properties.getProperty("oneskyIntegrationEnabled", "true")))
+		{
+			log.info("Onesky integration disabled on this server.  Check configuration settings");
+			return;
+		}
+
 		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(projectId, locale);
 
 		for(String pageName : translationElementMultimap.keySet())

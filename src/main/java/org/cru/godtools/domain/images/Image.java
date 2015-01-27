@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.images;
 
 import com.google.common.collect.Maps;
+import org.cru.godtools.domain.GuavaHashGenerator;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Image implements Serializable
 		{
 			if(image.filename.contains("__")) image.filename = image.filename.substring(image.filename.indexOf("__") +2);
 			imageMap.put(image.getFilename(), image);
+			imageMap.put(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png", image);
 		}
 
 		return imageMap;

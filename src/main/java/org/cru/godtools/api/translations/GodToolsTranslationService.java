@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import org.cru.godtools.api.translations.model.Config;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -26,6 +27,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
 import org.quartz.SchedulerException;
+import org.w3c.dom.Document;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -96,17 +98,73 @@ public class GodToolsTranslationService
 		return pageStructure;
 	}
 
-	private void updateCache(Translation translation, PageStructure pageStructure)
+	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
-		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
-		if(possibleTranslation.isPresent())
-		{
-			GodToolsTranslation godToolsTranslation = possibleTranslation.get();
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		pageStructure.mergeXmlContent(updatedPageLayout);
 
-			godToolsTranslation.replacePageXml(pageStructure);
-			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
-			cache.replace(godToolsTranslation);
+		pageStructureService.update(pageStructure);
+
+		updateCache(translation, pageStructure);
+	}
+
+	/**
+	 * Updates page layout across all translations.
+	 *   - If necessary a new draft will be created for any language that doesn't have one.
+	 *   -
+	 */
+	public void updatePageLayout(String pageName, String packageCode, Document updatedPageLayout)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+		Translation englishTranslation = loadBaseTranslation(gtPackage);
+		PageStructure baseEnglishPage = pageStructureService.selectByid(UUID.fromString(pageName));
+		List<Translation> publishedTranslations = Lists.newArrayList();
+		List<Translation> draftTranslations = Lists.newArrayList();
+
+		for(Language language : languageService.selectAllLanguages())
+		{
+			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), GodToolsVersion.LATEST_VERSION);
+
+			// we won't create any brand new translations at this point.
+			if(translation == null) continue;
+
+			if(!translation.isDraft())
+			{
+				publishedTranslations.add(setupNewTranslation(LanguageCode.fromLanguage(language), gtPackage.getCode()));
+			}
+			else
+			{
+				draftTranslations.add(translation);  //possibly new translation
+			}
 		}
+
+		for(Translation translation : draftTranslations)
+		{
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
+			pageStructure.mergeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+			updateCache(translation, pageStructure);
+		}
+
+		for(Translation translation : publishedTranslations)
+		{
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
+			pageStructure.mergeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+			publishDraftTranslation(translation);
+		}
+	}
+
+	public Config getConfig(String packageCode, LanguageCode languageCode)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION);
+		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
+		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructureService.selectByTranslationId(translation.getId())));
+		return Config.createConfigFile(packageStructure);
 	}
 
 	public GodToolsTranslation getTranslation(Translation translation)
@@ -228,7 +286,11 @@ public class GodToolsTranslationService
 
 	public void publishDraftTranslation(LanguageCode languageCode, String packageCode)
 	{
-		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION);
+		publishDraftTranslation(getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.LATEST_VERSION));
+	}
+
+	public void publishDraftTranslation(Translation translation)
+	{
 		translation.setReleased(true);
 		translationService.update(translation);
 
@@ -241,7 +303,7 @@ public class GodToolsTranslationService
 			// job will delete draft from the cache when it is finished
 			DraftUpdateJobScheduler.scheduleOneUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
 					godToolsTranslation.getLanguage().getPath(),
-					godToolsTranslation.getPageNameSet(),
+					godToolsTranslation.getFilenameSet(),
 					godToolsTranslation.getTranslation());
 		}
 		catch (SchedulerException e)
@@ -282,5 +344,18 @@ public class GodToolsTranslationService
 	private Image loadIcon(String packageCode)
 	{
 		return imageService.selectByFilename(Image.buildFilename(packageCode, "icon@2x.png"));
+	}
+
+	private void updateCache(Translation translation, PageStructure pageStructure)
+	{
+		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
+		if(possibleTranslation.isPresent())
+		{
+			GodToolsTranslation godToolsTranslation = possibleTranslation.get();
+
+			godToolsTranslation.replacePageXml(pageStructure);
+			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
+			cache.replace(godToolsTranslation);
+		}
 	}
 }

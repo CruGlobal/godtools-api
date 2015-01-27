@@ -1,5 +1,6 @@
 package org.cru.godtools.translate.client.onesky;
 
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.jboss.logging.Logger;
@@ -13,11 +14,13 @@ import javax.inject.Inject;
 public class OneSkyTranslationDownload implements TranslationDownload
 {
 	private TranslationClient translationClient;
+	private GodToolsProperties properties;
 
 	@Inject
-	public OneSkyTranslationDownload(TranslationClient translationClient)
+	public OneSkyTranslationDownload(TranslationClient translationClient,  GodToolsProperties properties)
 	{
 		this.translationClient = translationClient;
+		this.properties = properties;
 	}
 
 	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
@@ -25,6 +28,12 @@ public class OneSkyTranslationDownload implements TranslationDownload
 	@Override
 	public TranslationResults doDownload(Integer oneSkyProjectId, String locale, String pageName)
 	{
+		if(!Boolean.parseBoolean(properties.getProperty("oneskyIntegrationEnabled", "true")))
+		{
+			log.info("Onesky integration disabled on this server.  Check configuration settings");
+			return new OneSkyTranslationResults();
+		}
+
 		log.info("Download translation file: " + pageName + " from OneSky for project ID: " + oneSkyProjectId + " and locale: " + locale);
 
 		return translationClient.export(oneSkyProjectId, locale, pageName);
@@ -33,6 +42,12 @@ public class OneSkyTranslationDownload implements TranslationDownload
 	@Override
 	public TranslationStatus checkTranslationStatus(Integer projectId, String locale, String pageName)
 	{
+		if(!Boolean.parseBoolean(properties.getProperty("oneskyIntegrationEnabled", "true")))
+		{
+			log.info("Onesky integration disabled on this server.  Check configuration settings");
+			return new OneSkyTranslationStatus();
+		}
+
 		return translationClient.getStatus(projectId, locale, pageName);
 	}
 }

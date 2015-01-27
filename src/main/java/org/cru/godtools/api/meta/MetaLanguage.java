@@ -30,7 +30,7 @@ public class MetaLanguage
         name = language.getName();
     }
 
-    public void addPackage(String packageCode, BigDecimal versionNumber, boolean isReleased)
+    public void addPackage(String packageCode, String versionNumber, boolean isReleased)
     {
         packages.add(new MetaPackage(packageCode, versionNumber, isReleased));
     }

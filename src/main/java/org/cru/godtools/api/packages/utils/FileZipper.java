@@ -28,87 +28,87 @@ import java.util.zip.ZipOutputStream;
 public class FileZipper
 {
 
-    /**
-     * The package XML is added to the zipOutputStream.
-     *
-     * @param zipOutputStream
-     * @return
-     * @throws IOException
-     * @throws TransformerException
-     * @throws Exception
-     */
-    public void zipPackageFile(PackageStructure packageStructure, Translation translation, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
-    {
+	/**
+	 * The package XML is added to the zipOutputStream.
+	 *
+	 * @param zipOutputStream
+	 * @return
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws Exception
+	 */
+	public void zipPackageFile(PackageStructure packageStructure, Translation translation, ZipOutputStream zipOutputStream) throws IOException, TransformerException, Exception
+	{
 		Document xmlContent = packageStructure.getXmlContent();
 		zipFile(xmlContent, translation.getId() + ".xml", zipOutputStream);
-    }
+	}
 
-    /**
-     * The page XML is added to the zipOutputStream.
-     *
-     * @param zipOutputStream
-     * @return
-     * @throws IOException
-     * @throws TransformerException
-     * @throws Exception
-     */
-    public void zipPageFiles(List<PageStructure> pageStructureList, ZipOutputStream zipOutputStream) throws Exception
-    {
-        for(PageStructure page : pageStructureList)
-        {
+	/**
+	 * The page XML is added to the zipOutputStream.
+	 *
+	 * @param zipOutputStream
+	 * @return
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws Exception
+	 */
+	public void zipPageFiles(List<PageStructure> pageStructureList, ZipOutputStream zipOutputStream) throws Exception
+	{
+		for(PageStructure page : pageStructureList)
+		{
 			Document xmlContent = page.getXmlContent();
 
 			if(xmlContent == null) continue;
 
 			zipFile(xmlContent, page.getId() + ".xml", zipOutputStream);
-        }
-    }
+		}
+	}
 
-    public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, Set<String> imagesAlreadyZipped) throws IOException
-    {
-        for(Image image : images)
-        {
+	public void zipImageFiles(List<Image> images, ZipOutputStream zipOutputStream, Set<String> imagesAlreadyZipped) throws IOException
+	{
+		for(Image image : images)
+		{
 			String imageHash = GuavaHashGenerator.calculateHash(image.getImageContent());
 
 			if(imagesAlreadyZipped.contains(imageHash)) continue;
-            zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
-            imagesAlreadyZipped.add(imageHash);
-        }
-    }
-    /**
-     * The contents XML is added to the zipOutputStream.
-     *
-     * @param contentsFile
-     * @param zipOutputStream
-     * @return
-     * @throws IOException
-     * @throws TransformerException
-     * @throws Exception
-     */
-    public void zipContentsFile(Document contentsFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException
-    {
-        zipFile(contentsFile, "contents.xml", zipOutputStream);
-    }
+			zipImage(image.getImageContent(), imageHash + ".png", zipOutputStream);
+			imagesAlreadyZipped.add(imageHash);
+		}
+	}
+	/**
+	 * The contents XML is added to the zipOutputStream.
+	 *
+	 * @param contentsFile
+	 * @param zipOutputStream
+	 * @return
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws Exception
+	 */
+	public void zipContentsFile(Document contentsFile, ZipOutputStream zipOutputStream) throws IOException, TransformerException
+	{
+		zipFile(contentsFile, "contents.xml", zipOutputStream);
+	}
 
-    public void zipFile(Document file, String filename, ZipOutputStream zipOutputStream) throws IOException, TransformerException
-    {
-        zipOutputStream.putNextEntry(new ZipEntry(filename));
+	public void zipFile(Document file, String filename, ZipOutputStream zipOutputStream) throws IOException, TransformerException
+	{
+		zipOutputStream.putNextEntry(new ZipEntry(filename));
 
-        Source source = new DOMSource(file);
-        Result result = new StreamResult(zipOutputStream);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		Source source = new DOMSource(file);
+		Result result = new StreamResult(zipOutputStream);
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 
-        transformer.transform(source, result);
+		transformer.transform(source, result);
 
-        zipOutputStream.closeEntry();
-    }
+		zipOutputStream.closeEntry();
+	}
 
-    public void zipImage(byte[] image, String filename, ZipOutputStream zipOutputStream) throws IOException
-    {
-        zipOutputStream.putNextEntry(new ZipEntry(filename));
+	public void zipImage(byte[] image, String filename, ZipOutputStream zipOutputStream) throws IOException
+	{
+		zipOutputStream.putNextEntry(new ZipEntry(filename));
 
-        zipOutputStream.write(image);
+		zipOutputStream.write(image);
 
-        zipOutputStream.closeEntry();
-    }
+		zipOutputStream.closeEntry();
+	}
 }
