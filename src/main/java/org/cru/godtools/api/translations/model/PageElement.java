@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *  <page filename="cfcf98c0-2626-4b8e-b6b9-088213209a7d.xml" thumb="PageThumb_01.png">Page d'Accueil</page>
  * </document>
  */
-public class Page
+public class PageElement
 {
 	String filename;
 	String title;

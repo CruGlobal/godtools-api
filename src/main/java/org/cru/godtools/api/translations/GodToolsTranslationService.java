@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import org.cru.godtools.api.translations.model.Config;
+import org.cru.godtools.api.translations.model.ConfigFile;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -168,13 +168,13 @@ public class GodToolsTranslationService
 		}
 	}
 
-	public Config getConfig(String packageCode, LanguageCode languageCode)
+	public ConfigFile getConfig(String packageCode, LanguageCode languageCode)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructureService.selectByTranslationId(translation.getId())));
-		return Config.createConfigFile(packageStructure);
+		return ConfigFile.createConfigFile(packageStructure);
 	}
 
 	public GodToolsTranslation getTranslation(Translation translation)

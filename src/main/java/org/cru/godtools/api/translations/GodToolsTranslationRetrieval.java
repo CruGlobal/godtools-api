@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.model.Content;
+import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
@@ -209,7 +209,7 @@ public class GodToolsTranslationRetrieval
         }
 
         return Response
-				.ok(Content.createContentsFile(godToolsTranslations, languageCode.toString()))
+				.ok(ContentsFile.createContentsFile(godToolsTranslations, languageCode.toString()))
                 .build();
     }
 

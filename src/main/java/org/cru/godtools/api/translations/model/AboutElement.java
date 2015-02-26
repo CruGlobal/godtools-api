@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *  <about filename="57b47e36-0697-4618-b8dc-878f45c49586.xml">A propos</about>
  * </document>
  */
-public class About
+public class AboutElement
 {
 	String filename;
 	String title;

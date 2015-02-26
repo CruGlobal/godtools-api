@@ -6,6 +6,7 @@ import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.translations.Translation;
 import org.jboss.logging.Logger;
 
@@ -196,8 +197,10 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
+		PageStructure pageStructure = godToolsTranslationService.getPage(new LanguageCode(languageCode), pageId);
+
 		return translationRetrieval
 				.setCompressed(false)
-				.buildSinglePageResponse(godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId));
+				.buildSinglePageResponse(pageStructure);
 	}
 }

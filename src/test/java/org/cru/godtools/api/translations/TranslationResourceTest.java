@@ -2,8 +2,8 @@ package org.cru.godtools.api.translations;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.model.Content;
-import org.cru.godtools.api.translations.model.Resource;
+import org.cru.godtools.api.translations.model.ContentsFile;
+import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -111,7 +111,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		Assert.assertEquals(getDraftResponse.getStatus(), 200);
 
 
-		validateDraftXml((Content)getDraftResponse.getEntity(), "fr");
+		validateDraftXml((ContentsFile)getDraftResponse.getEntity(), "fr");
 	}
 
 	@Test
@@ -227,7 +227,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(getDraftResponse.getStatus(), 200);
 
-		validateDraftXml((Content)getDraftResponse.getEntity(), "en");
+		validateDraftXml((ContentsFile)getDraftResponse.getEntity(), "en");
 	}
 
 	@Test(expectedExceptions = UnauthorizedException.class)
@@ -265,15 +265,15 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(publishedTranslationResponse.getStatus(), 200);
 
-		validateContentsXml((Content)publishedTranslationResponse.getEntity());
+		validateContentsXml((ContentsFile)publishedTranslationResponse.getEntity());
 	}
 
 
-	private void validateDraftXml(Content xmlContentsFile, String languageCode)
+	private void validateDraftXml(ContentsFile xmlContentsFile, String languageCode)
 	{
 		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+		ResourceElement firstResource = xmlContentsFile.getResourceSet().iterator().next();
 
 		Assert.assertEquals(firstResource.getLanguage(), languageCode);
 		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
@@ -293,11 +293,11 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		}
 	}
 
-	private void validateContentsXml(Content xmlContentsFile)
+	private void validateContentsXml(ContentsFile xmlContentsFile)
 	{
 		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 		
-		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+		ResourceElement firstResource = xmlContentsFile.getResourceSet().iterator().next();
 		
 		Assert.assertEquals(firstResource.getLanguage(), "en");
 		Assert.assertEquals(firstResource.getPackageCode(), "kgp");

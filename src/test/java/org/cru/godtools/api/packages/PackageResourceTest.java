@@ -2,8 +2,8 @@ package org.cru.godtools.api.packages;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.model.Content;
-import org.cru.godtools.api.translations.model.Resource;
+import org.cru.godtools.api.translations.model.ContentsFile;
+import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -110,7 +110,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 
 		Assert.assertEquals(response.getStatus(), 200);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	/**
@@ -186,11 +186,11 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 		zipInputStream.forceClose();
 	}
 
-	private void validateContentsXml(Content xmlContentsFile)
+	private void validateContentsXml(ContentsFile xmlContentsFile)
 	{
 		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+		ResourceElement firstResource = xmlContentsFile.getResourceSet().iterator().next();
 
 		Assert.assertEquals(firstResource.getLanguage(), "en");
 		Assert.assertEquals(firstResource.getPackageCode(), "kgp");

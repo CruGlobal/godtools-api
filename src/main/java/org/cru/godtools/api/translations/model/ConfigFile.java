@@ -31,68 +31,72 @@ import java.util.List;
  * </document>
  */
 @XmlRootElement
-public class Config
+public class ConfigFile
 {
-	List<Page> pages = Lists.newArrayList();
-	org.cru.godtools.api.translations.model.About about = new org.cru.godtools.api.translations.model.About();
-	PackageName packageName = new PackageName();
+	@XmlElement(name = "page")
+	List<PageElement> pageElements = Lists.newArrayList();
 
-	public static Config createConfigFile(PackageStructure packageStructure)
+	@XmlElement(name = "about")
+	AboutElement about = new AboutElement();
+
+	@XmlElement(name = "packagename")
+	PackagenameElement packageName = new PackagenameElement();
+
+	public static ConfigFile createConfigFile(PackageStructure packageStructure)
 	{
-		Config config = new Config();
+		ConfigFile configFile = new ConfigFile();
 
 		Document xmlPackageStructure = packageStructure.getXmlContent();
 
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "packagename"))
 		{
-			config.packageName.setTitle(element.getTextContent());
+			configFile.packageName.setTitle(element.getTextContent());
 		}
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "page"))
 		{
-			Page page = new Page();
-			page.setFilename(element.getAttribute("filename"));
-			page.setTitle(element.getTextContent());
-			config.pages.add(page);
+			PageElement pageElement = new PageElement();
+			pageElement.setFilename(element.getAttribute("filename"));
+			pageElement.setTitle(element.getTextContent());
+			configFile.pageElements.add(pageElement);
 		}
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "about"))
 		{
-			config.about.setFilename(element.getAttribute("about"));
-			config.about.setTitle(element.getTextContent());
+			configFile.about.setFilename(element.getAttribute("about"));
+			configFile.about.setTitle(element.getTextContent());
 		}
 
-		return config;
+		return configFile;
 	}
 
-	@XmlElementWrapper(name = "pages")
 	@XmlElement(name = "page")
-	public List<Page> getPageSet()
+	public List<PageElement> getPageSet()
 	{
-		return pages;
+		return pageElements;
 	}
 
-	public void setPageSet(List<Page> pages)
+	public void setPageSet(List<PageElement> pageElements)
 	{
-		this.pages = pages;
+		this.pageElements = pageElements;
 	}
 
 	@XmlElement
-	public PackageName getPackageName()
+	public PackagenameElement getPackageName()
 	{
 		return packageName;
 	}
 
-	public void setPackageName(PackageName packageName)
+	public void setPackageName(PackagenameElement packageName)
 	{
 		this.packageName = packageName;
 	}
 
 	@XmlElement
-	public org.cru.godtools.api.translations.model.About getAbout()
+	public AboutElement getAbout()
 	{
 		return about;
 	}
 
-	public void setAbout(org.cru.godtools.api.translations.model.About about)
+	public void setAbout(AboutElement about)
 	{
 		this.about = about;
 	}
