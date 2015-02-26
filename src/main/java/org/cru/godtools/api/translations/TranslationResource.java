@@ -19,10 +19,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "translation" resources.
@@ -137,5 +139,65 @@ public class TranslationResource
 			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/config")
+	@Produces("application/json")
+	public Response getJsonConfig(@PathParam("language") String languageCode,
+							  @PathParam("package") String packageCode,
+							  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							  @QueryParam("compressed") String compressed,
+							  @HeaderParam("Authorization") String authTokenHeader,
+							  @QueryParam("Authorization") String authTokenParam) throws IOException
+	{
+		log.info("Requesting config.xml for package: " + packageCode + " and language: " + languageCode);
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return Response
+				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode)))
+				.build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Produces("application/xml")
+	public Response getXmlPage(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@PathParam("pageId") UUID pageId,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
+	{
+		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return translationRetrieval
+				.setCompressed(false)
+				.buildSinglePageResponse(godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId));
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Produces("application/json")
+	public Response getJsonPage(@PathParam("language") String languageCode,
+							   @PathParam("package") String packageCode,
+							   @PathParam("pageId") UUID pageId,
+							   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							   @HeaderParam("Authorization") String authTokenHeader,
+							   @QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
+	{
+		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return translationRetrieval
+				.setCompressed(false)
+				.buildSinglePageResponse(godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId));
 	}
 }
