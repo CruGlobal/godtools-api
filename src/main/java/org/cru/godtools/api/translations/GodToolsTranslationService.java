@@ -82,10 +82,13 @@ public class GodToolsTranslationService
 		Package gtPackage = packageService.selectById(translation.getPackageId());
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
-		draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
-				translation,
-				Lists.newArrayList(pageStructure),
-				languageCode);
+		if(translation.isDraft())
+		{
+			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+					translation,
+					Lists.newArrayList(pageStructure),
+					languageCode);
+		}
 
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
 				pageId);
@@ -93,7 +96,14 @@ public class GodToolsTranslationService
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
 
-		updateCache(translation, pageStructure);
+		/* When this method was initially created it was only used to interact with 'draft' translations.  Now this current update will use
+		 * this method to retrieve a page of a live translation as well.  Until more analysis can be done, assume the cache should only be
+		 * updated when fetching a draft page.  RTC 2/26/15
+		 */
+		if(translation.isDraft())
+		{
+			updateCache(translation, pageStructure);
+		}
 
 		return pageStructure;
 	}
