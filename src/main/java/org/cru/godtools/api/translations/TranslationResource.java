@@ -207,6 +207,13 @@ public class TranslationResource
 
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 
+		if(pageStructure == null)
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
+
 		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
 				pageId);
 
@@ -240,6 +247,13 @@ public class TranslationResource
 		}
 
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+
+		if(pageStructure == null)
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
 
 		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
 				pageId);
