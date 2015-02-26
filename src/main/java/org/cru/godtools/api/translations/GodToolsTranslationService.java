@@ -90,8 +90,7 @@ public class GodToolsTranslationService
 					languageCode);
 		}
 
-		List<TranslationElement> translationElementList = translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
-				pageId);
+		List<TranslationElement> translationElementList = getTranslationElements(pageId, translation);
 
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
@@ -106,6 +105,12 @@ public class GodToolsTranslationService
 		}
 
 		return pageStructure;
+	}
+
+	private List<TranslationElement> getTranslationElements(UUID pageStructureId, Translation translation)
+	{
+		return translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
+				pageStructureId);
 	}
 
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)

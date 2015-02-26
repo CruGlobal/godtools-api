@@ -1,13 +1,23 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.model.PageFile;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -25,6 +35,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,6 +55,16 @@ public class TranslationResource
 	GodToolsTranslationRetrieval translationRetrieval;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject
+	PageStructureService pageStructureService;
+	@Inject
+	LanguageService languageService;
+	@Inject
+	PackageService packageService;
+	@Inject
+	TranslationService translationService;
+	@Inject
+	TranslationElementService translationElementService;
 	@Inject
 	Clock clock;
 
@@ -177,9 +198,23 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return translationRetrieval
-				.setCompressed(false)
-				.buildSinglePageResponse(godToolsTranslationService.getPage(new LanguageCode(languageCode),pageId));
+		Optional<Response> optionalBadRequestResponse = verifyRequestedPageBelongsToPageAndLanguage(packageCode, languageCode, pageId);
+
+		if(optionalBadRequestResponse.isPresent())
+		{
+			return optionalBadRequestResponse.get();
+		}
+
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+
+		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
+				pageId);
+
+		PageFile pageFile = PageFile.fromTranslationElements(translationElements);
+
+		return Response
+				.ok(pageFile)
+				.build();
 	}
 
 	@GET
@@ -197,10 +232,51 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		PageStructure pageStructure = godToolsTranslationService.getPage(new LanguageCode(languageCode), pageId);
+		Optional<Response> optionalBadRequestResponse = verifyRequestedPageBelongsToPageAndLanguage(packageCode, languageCode, pageId);
 
-		return translationRetrieval
-				.setCompressed(false)
-				.buildSinglePageResponse(pageStructure);
+		if(optionalBadRequestResponse.isPresent())
+		{
+			return optionalBadRequestResponse.get();
+		}
+
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+
+		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
+				pageId);
+
+		PageFile pageFile = PageFile.fromTranslationElements(translationElements);
+
+		return Response
+				.ok(pageFile)
+				.build();
+	}
+
+	private Optional<Response> verifyRequestedPageBelongsToPageAndLanguage(String packageCode, String languageCode, UUID pageId)
+	{
+		Package packageFromCode = packageService.selectByCode(packageCode);
+		Language languageFromCode = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Package packageDerivedFromPage = packageService.selectById(translation.getPackageId());
+		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguageId());
+
+		if(!packageFromCode.getId().equals(packageDerivedFromPage.getId()))
+		{
+			return Optional.fromNullable(Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("Requested page %s does not belong to package %s", pageId.toString(), packageCode))
+					.build());
+
+		}
+
+		if(!languageFromCode.getId().equals(languageDerivedFromPage.getId()))
+		{
+			return Optional.fromNullable(Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("Requested page %s does not belong to language %s", pageId.toString(), languageCode))
+					.build());
+		}
+
+		return Optional.absent();
 	}
 }
