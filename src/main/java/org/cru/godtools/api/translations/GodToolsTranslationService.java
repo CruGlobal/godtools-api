@@ -4,9 +4,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import org.cru.godtools.api.translations.model.ConfigFile;
+
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.api.cache.GodToolsCache;
+import org.cru.godtools.api.translations.model.ConfigFile;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.images.ImageService;
@@ -82,35 +83,20 @@ public class GodToolsTranslationService
 		Package gtPackage = packageService.selectById(translation.getPackageId());
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
-		if(translation.isDraft())
-		{
-			draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
-					translation,
-					Lists.newArrayList(pageStructure),
-					languageCode);
-		}
+		draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
+				translation,
+				Lists.newArrayList(pageStructure),
+				languageCode);
 
-		List<TranslationElement> translationElementList = getTranslationElements(pageId, translation);
+		List<TranslationElement> translationElementList = translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
+				pageId);
 
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
 
-		/* When this method was initially created it was only used to interact with 'draft' translations.  Now this current update will use
-		 * this method to retrieve a page of a live translation as well.  Until more analysis can be done, assume the cache should only be
-		 * updated when fetching a draft page.  RTC 2/26/15
-		 */
-		if(translation.isDraft())
-		{
-			updateCache(translation, pageStructure);
-		}
+		updateCache(translation, pageStructure);
 
 		return pageStructure;
-	}
-
-	private List<TranslationElement> getTranslationElements(UUID pageStructureId, Translation translation)
-	{
-		return translationElementService.selectByTranslationIdPageStructureId(translation.getId(),
-				pageStructureId);
 	}
 
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
