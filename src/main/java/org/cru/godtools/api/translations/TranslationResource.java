@@ -185,47 +185,6 @@ public class TranslationResource
 
 	@GET
 	@Path("/{language}/{package}/pages/{pageId}")
-	@Produces("application/xml")
-	public Response getXmlPage(@PathParam("language") String languageCode,
-							@PathParam("package") String packageCode,
-							@PathParam("pageId") UUID pageId,
-							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-							@HeaderParam("Authorization") String authTokenHeader,
-							@QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
-	{
-		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		Optional<Response> optionalBadRequestResponse = verifyRequestedPageBelongsToPageAndLanguage(packageCode, languageCode, pageId);
-
-		if(optionalBadRequestResponse.isPresent())
-		{
-			return optionalBadRequestResponse.get();
-		}
-
-		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-
-		if(pageStructure == null)
-		{
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.build();
-		}
-
-		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
-				pageId);
-
-		PageFile pageFile = PageFile.fromTranslationElements(translationElements);
-
-		return Response
-				.ok(pageFile)
-				.build();
-	}
-
-	@GET
-	@Path("/{language}/{package}/pages/{pageId}")
 	@Produces("application/json")
 	public Response getJsonPage(@PathParam("language") String languageCode,
 							   @PathParam("package") String packageCode,
