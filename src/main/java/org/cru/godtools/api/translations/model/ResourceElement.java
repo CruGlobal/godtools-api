@@ -1,12 +1,13 @@
 package org.cru.godtools.api.translations.model;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import java.math.BigDecimal;
 
 /**
  * Represents a resource element in a @see Content file that has 'meta' information about a God Tools resource.
  *
- * There are various attibutes here within that have meaning in a God Tools resource
+ * There are various attributes here within that have meaning in a God Tools resource
  * *
  * Its XML representation looks like this example (some pages omitted):
  *
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
  *         <resource config="2c510fda-fb80-4c22-9792-195f36232b48.xml" icon="30adeee865dd2ff568b11715e9077ffbb851bb65.png" language="fr" name="Connaître Dieu Personnellement" package="kgp" status="live" version="1.1"/>
  *     </content>
  */
-public class Resource
+public class ResourceElement
 {
 	/**
 	 * Name of the config file.  This is the file that iOS or Android clients will use to know the structure of the God Tools resource

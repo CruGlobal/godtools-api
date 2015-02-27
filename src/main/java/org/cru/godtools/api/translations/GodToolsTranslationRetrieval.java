@@ -5,7 +5,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.model.Content;
+import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
@@ -41,62 +41,62 @@ import java.util.zip.ZipOutputStream;
 public class GodToolsTranslationRetrieval
 {
 	@Inject
-    protected GodToolsTranslationService godToolsTranslationService;
+	protected GodToolsTranslationService godToolsTranslationService;
 	@Inject
-    protected FileZipper fileZipper;
+	protected FileZipper fileZipper;
 
-    protected String packageCode;
+	protected String packageCode;
 	protected LanguageCode languageCode;
 	protected Integer minimumInterpreterVersion;
 	protected GodToolsVersion godToolsVersion;
-    protected boolean compressed;
+	protected boolean compressed;
 	protected PixelDensity pixelDensity;
 
 	protected Set<GodToolsTranslation> godToolsTranslations = Sets.newHashSet();
 
 	Logger log = Logger.getLogger(GodToolsTranslationRetrieval.class);
 
-    public GodToolsTranslationRetrieval setPackageCode(String packageCode)
-    {
+	public GodToolsTranslationRetrieval setPackageCode(String packageCode)
+	{
 		log.info("Setting package code: " + packageCode);
 		this.packageCode = packageCode;
-        return this;
-    }
+		return this;
+	}
 
-    public GodToolsTranslationRetrieval setLanguageCode(String languageCode)
-    {
+	public GodToolsTranslationRetrieval setLanguageCode(String languageCode)
+	{
 		log.info("Setting language code: " + languageCode);
 		this.languageCode = new LanguageCode(languageCode);
-        return this;
-    }
+		return this;
+	}
 
-    public GodToolsTranslationRetrieval setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
-    {
+	public GodToolsTranslationRetrieval setMinimumInterpreterVersion(Integer minimumInterpreterVersion)
+	{
 		log.info("Setting interpreter version: " + minimumInterpreterVersion);
-        this.minimumInterpreterVersion = minimumInterpreterVersion;
-        return this;
-    }
+		this.minimumInterpreterVersion = minimumInterpreterVersion;
+		return this;
+	}
 
-    public GodToolsTranslationRetrieval setVersionNumber(GodToolsVersion godToolsVersion)
-    {
+	public GodToolsTranslationRetrieval setVersionNumber(GodToolsVersion godToolsVersion)
+	{
 		log.info("Setting version number: " + godToolsVersion == null ? "Latest published" : godToolsVersion);
-        this.godToolsVersion = godToolsVersion;
-        return this;
-    }
+		this.godToolsVersion = godToolsVersion;
+		return this;
+	}
 
-    public GodToolsTranslationRetrieval setCompressed(boolean compressed)
-    {
+	public GodToolsTranslationRetrieval setCompressed(boolean compressed)
+	{
 		log.info("Setting compressed: " + compressed);
-        this.compressed = compressed;
-        return this;
-    }
+		this.compressed = compressed;
+		return this;
+	}
 
-    public GodToolsTranslationRetrieval setPixelDensity(PixelDensity pixelDensity)
-    {
+	public GodToolsTranslationRetrieval setPixelDensity(PixelDensity pixelDensity)
+	{
 		log.info("Setting pixelDensity: " + pixelDensity);
-        this.pixelDensity = pixelDensity;
-        return this;
-    }
+		this.pixelDensity = pixelDensity;
+		return this;
+	}
 
 	public GodToolsTranslationRetrieval loadTranslations()
 	{
@@ -157,19 +157,19 @@ public class GodToolsTranslationRetrieval
 		return this;
 	}
 
-    public Response buildResponse() throws IOException
-    {
-        if(compressed)
-        {
+	public Response buildResponse() throws IOException
+	{
+		if(compressed)
+		{
 			log.info("Building zipped response");
-            return buildZippedResponse();
-        }
-        else
-        {
+			return buildZippedResponse();
+		}
+		else
+		{
 			log.info("Building unzipped response");
-            return buildXmlContentsResponse();
-        }
-    }
+			return buildXmlContentsResponse();
+		}
+	}
 
 	public Response buildSinglePageResponse(PageStructure pageStructure) throws ParserConfigurationException
 	{
@@ -202,53 +202,53 @@ public class GodToolsTranslationRetrieval
 	}
 
 	protected Response buildXmlContentsResponse() throws IOException
-    {
-        if(godToolsTranslations.isEmpty())
-        {
-            throw new NotFoundException();
-        }
+	{
+		if(godToolsTranslations.isEmpty())
+		{
+			throw new NotFoundException();
+		}
 
-        return Response
-				.ok(Content.createContentsFile(godToolsTranslations, languageCode.toString()))
-                .build();
-    }
+		return Response
+				.ok(ContentsFile.createContentsFile(godToolsTranslations, languageCode.toString()))
+				.build();
+	}
 
 	protected Response buildZippedResponse() throws IOException
-    {
-        if(godToolsTranslations.isEmpty()) return Response.status(404).build();
+	{
+		if(godToolsTranslations.isEmpty()) return Response.status(404).build();
 
-        ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
+		ByteArrayOutputStream bundledStream = new ByteArrayOutputStream();
 
-        createZipFolder(new ZipOutputStream(bundledStream));
-        bundledStream.close();
+		createZipFolder(new ZipOutputStream(bundledStream));
+		bundledStream.close();
 
-        return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
-                .type("application/zip")
-                .build();
-    }
+		return Response.ok(new ByteArrayInputStream(bundledStream.toByteArray()))
+				.type("application/zip")
+				.build();
+	}
 
 	protected void createZipFolder(ZipOutputStream zipOutputStream)
-    {
-        try
-        {
-            for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
-            {
-                fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
+	{
+		try
+		{
+			for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
+			{
+				fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
 						godToolsTranslation.getTranslation(),
 						zipOutputStream);
 
-                fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
-            }
+				fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
+			}
 
-            fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
+			fileZipper.zipContentsFile(createContentsFile(), zipOutputStream);
 
-            zipOutputStream.close();
-        }
-        catch(Exception e)
-        {
-            Throwables.propagate(e);
-        }
-    }
+			zipOutputStream.close();
+		}
+		catch(Exception e)
+		{
+			Throwables.propagate(e);
+		}
+	}
 
 	protected Document createContentsFile()
 	{

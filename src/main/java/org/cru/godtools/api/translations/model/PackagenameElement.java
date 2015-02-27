@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  * Represents the package name element of a God Tools resource.
  *
  * This class PackageName isn't could be used to render content, but it's not likely that it would b/c its sibling elements
- * @see Page aren't build that way.
+ * @see PageElement aren't build that way.
  *
  * It is currently used by @see Config to build a list of XML elements or JSON objects that
  * represent a Page in a God Tools config file.
@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *  <packagename>Connaître Dieu Personnellement</packagename>
  * </document>
  */
-public class PackageName
+public class PackagenameElement
 {
 	String title;
 

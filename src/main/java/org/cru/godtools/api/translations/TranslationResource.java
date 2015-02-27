@@ -1,12 +1,23 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.model.PageFile;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
+import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -19,10 +30,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "translation" resources.
@@ -41,6 +55,16 @@ public class TranslationResource
 	GodToolsTranslationRetrieval translationRetrieval;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
+	@Inject
+	PageStructureService pageStructureService;
+	@Inject
+	LanguageService languageService;
+	@Inject
+	PackageService packageService;
+	@Inject
+	TranslationService translationService;
+	@Inject
+	TranslationElementService translationElementService;
 	@Inject
 	Clock clock;
 
@@ -137,5 +161,95 @@ public class TranslationResource
 			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/config")
+	@Produces("application/json")
+	public Response getJsonConfig(@PathParam("language") String languageCode,
+							  @PathParam("package") String packageCode,
+							  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							  @QueryParam("compressed") String compressed,
+							  @HeaderParam("Authorization") String authTokenHeader,
+							  @QueryParam("Authorization") String authTokenParam) throws IOException
+	{
+		log.info("Requesting config.xml for package: " + packageCode + " and language: " + languageCode);
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		return Response
+				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode)))
+				.build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Produces("application/json")
+	public Response getJsonPage(@PathParam("language") String languageCode,
+							   @PathParam("package") String packageCode,
+							   @PathParam("pageId") UUID pageId,
+							   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							   @HeaderParam("Authorization") String authTokenHeader,
+							   @QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
+	{
+		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+
+		Optional<Response> optionalBadRequestResponse = verifyRequestedPageBelongsToPageAndLanguage(packageCode, languageCode, pageId);
+
+		if(optionalBadRequestResponse.isPresent())
+		{
+			return optionalBadRequestResponse.get();
+		}
+
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+
+		if(pageStructure == null)
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
+
+		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
+				pageId);
+
+		PageFile pageFile = PageFile.fromTranslationElements(translationElements);
+
+		return Response
+				.ok(pageFile)
+				.build();
+	}
+
+	private Optional<Response> verifyRequestedPageBelongsToPageAndLanguage(String packageCode, String languageCode, UUID pageId)
+	{
+		Package packageFromCode = packageService.selectByCode(packageCode);
+		Language languageFromCode = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Package packageDerivedFromPage = packageService.selectById(translation.getPackageId());
+		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguageId());
+
+		if(!packageFromCode.getId().equals(packageDerivedFromPage.getId()))
+		{
+			return Optional.fromNullable(Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("Requested page %s does not belong to package %s", pageId.toString(), packageCode))
+					.build());
+
+		}
+
+		if(!languageFromCode.getId().equals(languageDerivedFromPage.getId()))
+		{
+			return Optional.fromNullable(Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("Requested page %s does not belong to language %s", pageId.toString(), languageCode))
+					.build());
+		}
+
+		return Optional.absent();
 	}
 }

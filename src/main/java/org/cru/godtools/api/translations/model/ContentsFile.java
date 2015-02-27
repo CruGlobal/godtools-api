@@ -6,7 +6,6 @@ import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.domain.GuavaHashGenerator;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;
 import java.util.Set;
@@ -26,18 +25,18 @@ import java.util.Set;
  *         <resource config="2c510fda-fb80-4c22-9792-195f36232b48.xml" icon="30adeee865dd2ff568b11715e9077ffbb851bb65.png" language="fr" name="Connaître Dieu Personnellement" package="kgp" status="live" version="1.1"/>
  *     </content>
  */
-@XmlRootElement
-public class Content
+@XmlRootElement(name="content")
+public class ContentsFile
 {
-	Set<Resource> resourceSet = Sets.newHashSet();
+	Set<ResourceElement> resourceSet = Sets.newHashSet();
 
-	public static Content createContentsFile(Collection<GodToolsTranslation> godToolsTranslations, String languageCode)
+	public static ContentsFile createContentsFile(Collection<GodToolsTranslation> godToolsTranslations, String languageCode)
 	{
-		Content content = new Content();
+		ContentsFile contentsFile = new ContentsFile();
 
 		for (GodToolsTranslation godToolsTranslation : godToolsTranslations)
 		{
-			Resource resource = new Resource();
+			ResourceElement resource = new ResourceElement();
 			resource.setPackageCode(godToolsTranslation.getPackageCode());
 			resource.setLanguage(languageCode);
 			resource.setConfig(godToolsTranslation.getTranslation().getId() + ".xml");
@@ -53,20 +52,19 @@ public class Content
 				resource.setIcon("missing");
 			}
 
-			content.resourceSet.add(resource);
+			contentsFile.resourceSet.add(resource);
 		}
 
-		return content;
+		return contentsFile;
 	}
 
-	@XmlElementWrapper(name = "resources")
 	@XmlElement(name = "resource")
-	public Set<Resource> getResourceSet()
+	public Set<ResourceElement> getResourceSet()
 	{
 		return resourceSet;
 	}
 
-	public void setResourceSet(Set<Resource> resourceSet)
+	public void setResourceSet(Set<ResourceElement> resourceSet)
 	{
 		this.resourceSet = resourceSet;
 	}

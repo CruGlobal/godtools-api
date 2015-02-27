@@ -1,8 +1,8 @@
 package org.cru.godtools.api.translations;
 
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.translations.model.Content;
-import org.cru.godtools.api.translations.model.Resource;
+import org.cru.godtools.api.translations.model.ContentsFile;
+import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -84,7 +84,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		// auth token does not have access to drafts
 		Response response = draftResource.getTranslation("en", "kgp", 1, null, "false", new BigDecimal("1.1"), "draft-access", null);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		// auth token does not have access to drafts
 		Response response = draftResource.getTranslations("en", 1, null, "false", "draft-access", null);
 
-		validateContentsXml((Content)response.getEntity());
+		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
 	@Test(expectedExceptions = UnauthorizedException.class)
@@ -103,11 +103,11 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		draftResource.getTranslation("en", "kgp", 1, null, "false", new BigDecimal("1.1"), "a", null);
 	}
 
-	private void validateContentsXml(Content xmlContentsFile)
+	private void validateContentsXml(ContentsFile xmlContentsFile)
 	{
 		Assert.assertEquals(xmlContentsFile.getResourceSet().size(), 1);
 
-		Resource firstResource = xmlContentsFile.getResourceSet().iterator().next();
+		ResourceElement firstResource = xmlContentsFile.getResourceSet().iterator().next();
 
 		Assert.assertEquals(firstResource.getLanguage(), "en");
 		Assert.assertEquals(firstResource.getPackageCode(), "kgp");
