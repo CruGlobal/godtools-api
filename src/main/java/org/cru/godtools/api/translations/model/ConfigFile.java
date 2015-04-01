@@ -55,7 +55,7 @@ public class ConfigFile
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "page"))
 		{
 			PageElement pageElement = new PageElement();
-			pageElement.setFilename(element.getAttribute("filename"));
+			pageElement.setFilename(element.getAttribute("filename").replace(".xml",""));
 			pageElement.setTitle(element.getTextContent());
 			configFile.pageElements.add(pageElement);
 		}
