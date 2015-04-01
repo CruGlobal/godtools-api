@@ -164,7 +164,19 @@ public class GodToolsTranslationService
 		Package gtPackage = packageService.selectByCode(packageCode);
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, version);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
-		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructureService.selectByTranslationId(translation.getId())));
+
+		packageStructure.replacePageNamesWithPageHashes(
+				PageStructure.createMapOfPageStructures(
+						pageStructureService.selectByTranslationId(translation.getId())
+				)
+		);
+
+		packageStructure.setTranslatedFields(
+				TranslationElement.createMapOfTranslationElements(
+						translationElementService.selectByTranslationId(translation.getId())
+				)
+		);
+
 		return ConfigFile.createConfigFile(packageStructure);
 	}
 
