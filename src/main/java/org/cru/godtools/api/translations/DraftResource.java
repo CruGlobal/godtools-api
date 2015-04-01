@@ -144,7 +144,7 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
 
-		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 
@@ -166,7 +166,7 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and page name: " + pageName);
 
-		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageName, packageCode, updatedPageLayout);
 

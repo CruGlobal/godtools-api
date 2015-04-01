@@ -31,6 +31,12 @@ public class AuthorizationRecord
 		if(!authorizationRecordOptional.get().hasDraftAccess()) throw new UnauthorizedException();
 	}
 
+    public static void checkAdminAccess(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
+    {
+        checkAuthorization(authorizationRecordOptional, currentTime);
+        if(!authorizationRecordOptional.get().isAdmin())  throw new UnauthorizedException();
+    }
+
     private boolean isCurrentlyActive(DateTime currentTime)
     {
         if(!currentTime.isBefore(grantedTimestamp))
