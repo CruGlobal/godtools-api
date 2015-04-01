@@ -227,8 +227,32 @@ public class TranslationResource
 	private Optional<Response> verifyRequestedPageBelongsToPageAndLanguage(String packageCode, String languageCode, UUID pageId)
 	{
 		Package packageFromCode = packageService.selectByCode(packageCode);
+		if(packageFromCode == null)
+		{
+			return Optional.fromNullable(
+					Response.status(Response.Status.NOT_FOUND)
+							.entity(String.format("Requested package %s was not found", packageCode))
+							.build());
+		}
+
 		Language languageFromCode = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+		if(languageFromCode == null)
+		{
+			return Optional.fromNullable(
+					Response.status(Response.Status.NOT_FOUND)
+							.entity(String.format("Requested language %s was not found", languageCode))
+							.build());
+		}
+
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		if(pageStructure == null)
+		{
+			return Optional.fromNullable(
+					Response.status(Response.Status.NOT_FOUND)
+							.entity(String.format("Requested page %s was not found", pageId.toString()))
+							.build());
+		}
+
 		Translation translation = translationService.selectById(pageStructure.getTranslationId());
 		Package packageDerivedFromPage = packageService.selectById(translation.getPackageId());
 		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguageId());
