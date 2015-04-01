@@ -179,7 +179,7 @@ public class TranslationResource
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		return Response
-				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode)))
+				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode), GodToolsVersion.LATEST_PUBLISHED_VERSION))
 				.build();
 	}
 

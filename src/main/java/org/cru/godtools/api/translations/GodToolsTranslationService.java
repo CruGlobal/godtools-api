@@ -159,10 +159,10 @@ public class GodToolsTranslationService
 		}
 	}
 
-	public ConfigFile getConfig(String packageCode, LanguageCode languageCode)
+	public ConfigFile getConfig(String packageCode, LanguageCode languageCode, GodToolsVersion version)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
-		Translation translation = getTranslationFromDatabase(languageCode, packageCode, GodToolsVersion.DRAFT_VERSION);
+		Translation translation = getTranslationFromDatabase(languageCode, packageCode, version);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		packageStructure.replacePageNamesWithPageHashes(PageStructure.createMapOfPageStructures(pageStructureService.selectByTranslationId(translation.getId())));
 		return ConfigFile.createConfigFile(packageStructure);
