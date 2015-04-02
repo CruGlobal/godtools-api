@@ -3,13 +3,18 @@ package org.cru.godtools.api.translations.model;
 import com.google.common.collect.Lists;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.translations.Translation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Represents a config file that is the structure of a God Tools resource.
@@ -55,7 +60,7 @@ public class ConfigFile
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "page"))
 		{
 			PageElement pageElement = new PageElement();
-			pageElement.setFilename(element.getAttribute("filename"));
+			pageElement.setFilename(element.getAttribute("filename").replace(".xml",""));
 			pageElement.setTitle(element.getTextContent());
 			configFile.pageElements.add(pageElement);
 		}

@@ -1,6 +1,7 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -105,7 +106,7 @@ public class DraftResource
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		return Response
-				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode)))
+				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode), GodToolsVersion.DRAFT_VERSION))
 				.build();
 	}
 
@@ -144,7 +145,7 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
 
-		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 
@@ -166,7 +167,7 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and page name: " + pageName);
 
-		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageName, packageCode, updatedPageLayout);
 
