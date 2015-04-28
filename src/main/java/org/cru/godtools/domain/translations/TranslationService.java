@@ -13,13 +13,13 @@ import java.util.UUID;
 public class TranslationService
 {
 
-    Connection sqlConnection;
+	Connection sqlConnection;
 
-    @Inject
-    public TranslationService(Connection sqlConnection)
-    {
-        this.sqlConnection = sqlConnection;
-    }
+	@Inject
+	public TranslationService(Connection sqlConnection)
+	{
+		this.sqlConnection = sqlConnection;
+	}
 
 	public Translation selectById(UUID id)
 	{
@@ -29,13 +29,13 @@ public class TranslationService
 				.executeAndFetchFirst(Translation.class);
 	}
 
-    public List<Translation> selectByLanguageId(UUID languageId)
-    {
-        return sqlConnection.createQuery(TranslationQueries.selectByLanguageId)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("languageId", languageId)
-                .executeAndFetch(Translation.class);
-    }
+	public List<Translation> selectByLanguageId(UUID languageId)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectByLanguageId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("languageId", languageId)
+				.executeAndFetch(Translation.class);
+	}
 
 	public List<Translation> selectByLanguageIdReleased(UUID languageId, boolean released)
 	{
@@ -46,22 +46,22 @@ public class TranslationService
 				.executeAndFetch(Translation.class);
 	}
 
-    public List<Translation> selectByPackageId(UUID packageId)
-    {
-        return sqlConnection.createQuery(TranslationQueries.selectByPackageId)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("packageId", packageId)
-                .executeAndFetch(Translation.class);
-    }
+	public List<Translation> selectByPackageId(UUID packageId)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectByPackageId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("packageId", packageId)
+				.executeAndFetch(Translation.class);
+	}
 
-    public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId)
-    {
-        return sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("packageId", packageId)
-                .addParameter("languageId", languageId)
-                .executeAndFetch(Translation.class);
-    }
+	public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectByLanguageIdPackageId)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("packageId", packageId)
+				.addParameter("languageId", languageId)
+				.executeAndFetch(Translation.class);
+	}
 
 	public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, GodToolsVersion godToolsVersion)
 	{
@@ -133,16 +133,16 @@ public class TranslationService
 	}
 
 	public void insert(Translation translation)
-    {
-        sqlConnection.createQuery(TranslationQueries.insert)
-                .addParameter("id", translation.getId())
-                .addParameter("packageId", translation.getPackageId())
-                .addParameter("languageId", translation.getLanguageId())
+	{
+		sqlConnection.createQuery(TranslationQueries.insert)
+				.addParameter("id", translation.getId())
+				.addParameter("packageId", translation.getPackageId())
+				.addParameter("languageId", translation.getLanguageId())
 				.addParameter("versionNumber", translation.getVersionNumber())
 				.addParameter("translatedName", translation.getTranslatedName())
 				.addParameter("released", translation.isReleased())
-                .executeUpdate();
-    }
+				.executeUpdate();
+	}
 
 	public void update(Translation translation)
 	{
@@ -158,15 +158,15 @@ public class TranslationService
 
 
 	public static class TranslationQueries
-    {
+	{
 		public static final String selectById = "SELECT * FROM translations WHERE id = :id";
-        public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
+		public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
 		public static final String selectByLanguageIdReleased = "SELECT * FROM translations WHERE language_id = :languageId AND released = :released";
-        public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
-        public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
+		public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
+		public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
 		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
-        public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, translated_name, released) VALUES(:id, :languageId, :packageId, :versionNumber, :translatedName, :released)";
+		public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, translated_name, released) VALUES(:id, :languageId, :packageId, :versionNumber, :translatedName, :released)";
 		public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, translated_name = :translatedName, released = :released WHERE id = :id";
-    }
+	}
 
 }
