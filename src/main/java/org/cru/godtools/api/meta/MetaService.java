@@ -9,6 +9,7 @@ import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PackageStructureList;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
@@ -96,6 +97,8 @@ public class MetaService
     {
         MetaLanguage metaLanguage = new MetaLanguage(language);
 
+        PackageStructureList packageStructures = new PackageStructureList(packageStructureService.selectAll());
+
         if(Strings.isNullOrEmpty(packageCode))
         {
             List<Translation> translations = allResults ?
@@ -105,7 +108,12 @@ public class MetaService
             {
                 Package gtPackage = packages.getPackageById(translation.getPackageId()).get();
 
-                metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+                metaLanguage.addPackage(
+                        gtPackage.getCode(),
+                        getVersionNumber(
+                                packageStructures.getByPackageId(gtPackage.getId()).get(),
+                                translation),
+                        translation.isReleased());
             }
         }
         else
@@ -117,20 +125,20 @@ public class MetaService
 
             if(translation != null)
             {
-                metaLanguage.addPackage(packageCode, getVersionNumber(translation, gtPackage), translation.isReleased());
+                metaLanguage.addPackage(
+                        packageCode,
+                        getVersionNumber(
+                                packageStructures.getByPackageId(gtPackage.getId()).get(),
+                                translation),
+                        translation.isReleased());
             }
         }
 
         return metaLanguage;
     }
 
-    private String getVersionNumber(Translation translation, Package gtPackage)
+    private String getVersionNumber(PackageStructure packageStructure, Translation translation)
     {
-        return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
-    }
-
-    private PackageStructure getPackageStructure(UUID packageId)
-    {
-        return packageStructureService.selectByPackageId(packageId);
+        return packageStructure.getVersionNumber() + "." + translation.getVersionNumber();
     }
 }
