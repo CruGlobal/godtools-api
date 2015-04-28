@@ -1,6 +1,10 @@
 package org.cru.godtools.api.meta;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.FluentIterable;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
@@ -14,8 +18,8 @@ import org.sql2o.Connection;
 
 import javax.inject.Inject;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -28,6 +32,8 @@ public class MetaService
     TranslationService translationService;
     PackageService packageService;
     PackageStructureService packageStructureService;
+
+    List<Package> packages;
 
     @Inject
     public MetaService(Connection sqlConnection, LanguageService languageService, TranslationService translationService, PackageService packageService, PackageStructureService packageStructureService)
@@ -52,15 +58,17 @@ public class MetaService
      */
     public MetaResults getMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
     {
+        packages = packageService.selectAllPackages();
+
         if(Strings.isNullOrEmpty(languageCode))
         {
-            return getMetaResultsForAllLanguages(packageCode, draftsOnly, allResults);
+            return getAllMetaResults(packageCode, draftsOnly, allResults);
         }
         else
         {
             MetaResults results = new MetaResults();
 
-            results.addLanguage(getSingleMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+            results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
                     packageCode,
                     draftsOnly,
                     allResults));
@@ -78,65 +86,43 @@ public class MetaService
      * @param packageCode
      * @return
      */
-    private MetaResults getMetaResultsForAllLanguages(String packageCode, boolean draftsOnly, boolean allResults)
+    private MetaResults getAllMetaResults(String packageCode, boolean draftsOnly, boolean allResults)
     {
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
         {
-            results.addLanguage(getSingleMetaLanguage(language, packageCode, draftsOnly, allResults));
+            results.addLanguage(buildMetaLanguage(language, packageCode, draftsOnly, allResults));
         }
 
         return results;
     }
 
-    /**
-     * Returns a JAX-B annotated object of type MetaLanguage.  This object returns the information on what resources are available on
-     * the given language with the passed in packageCode and interpreterVersion.
-     *
-     *
-     * @param packageCode
-     * @param draftsOnly
-     * @return
-     */
-    private MetaLanguage getSingleMetaLanguage(Language language, String packageCode, boolean draftsOnly, boolean allResults)
+    private MetaLanguage buildMetaLanguage(Language language, String packageCode, boolean draftsOnly, boolean allResults)
     {
+        MetaLanguage metaLanguage = new MetaLanguage(language);
+
         if(Strings.isNullOrEmpty(packageCode))
         {
-            return getMetaLanguageForMultiplePackages(language, draftsOnly, allResults);
+            List<Translation> translations = allResults ?
+                    translationService.selectByLanguageId(language.getId()) : translationService.selectByLanguageIdReleased(language.getId(), !draftsOnly);
+
+            for (Translation translation : translations)
+            {
+                Package gtPackage = getPackageById(translation.getPackageId()).get();
+
+                metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+            }
         }
         else
         {
-            return getMetaLanguageForSinglePackage(language, packageCode, draftsOnly);
-        }
-    }
+            Package gtPackage = getPackageByCode(packageCode).get();
+            Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+                    gtPackage.getId(),
+                    draftsOnly ? GodToolsVersion.DRAFT_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION);
 
-    private MetaLanguage getMetaLanguageForSinglePackage(Language language, String packageCode, boolean draftsOnly)
-    {
-        Package gtPackage = getPackage(packageCode);
-
-        MetaLanguage metaLanguage = new MetaLanguage(language);
-
-        Translation translation = getTranslation(language.getId(), gtPackage.getId());
-
-        if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
-        {
-            metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
-        }
-
-        return metaLanguage;
-    }
-
-    private MetaLanguage getMetaLanguageForMultiplePackages(Language language, boolean draftsOnly, boolean allResults)
-    {
-        MetaLanguage metaLanguage = new MetaLanguage(language);
-
-        for(Translation translation : translationService.selectByLanguageId(language.getId()))
-        {
-            if(allResults || (draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
+            if(translation != null)
             {
-                Package gtPackage = packageService.selectById(translation.getPackageId());
-
-                metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
+                metaLanguage.addPackage(packageCode, getVersionNumber(translation, gtPackage), translation.isReleased());
             }
         }
 
@@ -148,20 +134,30 @@ public class MetaService
         return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
     }
 
-    private Package getPackage(String packageCode)
+    private Optional<Package> getPackageByCode(final String packageCode)
     {
-        return packageService.selectByCode(packageCode);
+        return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
+        {
+            public boolean apply(Package input)
+            {
+                return packageCode.equals(input.getCode());
+            }
+        });
+    }
+
+    private Optional<Package> getPackageById(final UUID packageId)
+    {
+        return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
+        {
+            public boolean apply(Package input)
+            {
+                return packageId.equals(input.getId());
+            }
+        });
     }
 
     private PackageStructure getPackageStructure(UUID packageId)
     {
         return packageStructureService.selectByPackageId(packageId);
-    }
-
-    private Translation getTranslation(UUID languageId, UUID packageId)
-    {
-        List<Translation> translationList = translationService.selectByLanguageIdPackageId(languageId, packageId);
-
-        return translationList.get(0);
     }
 }
