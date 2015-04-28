@@ -11,6 +11,7 @@ import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureList;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationList;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.sql2o.Connection;
 
@@ -99,8 +100,14 @@ public class MetaService
 
         if(Strings.isNullOrEmpty(packageCode))
         {
-            List<Translation> translations = allResults ?
-                    translationService.selectByLanguageId(language.getId()) : translationService.selectByLanguageIdReleased(language.getId(), !draftsOnly);
+            TranslationList translations = allResults ?
+                    new TranslationList(translationService.selectByLanguageId(language.getId())) :
+                    new TranslationList(translationService.selectByLanguageIdReleased(language.getId(), !draftsOnly));
+
+            if(!allResults)
+            {
+                translations = new TranslationList(translations.pareResults());
+            }
 
             for (Translation translation : translations)
             {
