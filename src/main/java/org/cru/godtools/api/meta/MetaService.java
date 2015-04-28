@@ -59,12 +59,11 @@ public class MetaService
         else
         {
             MetaResults results = new MetaResults();
-            MetaLanguage metaLanguage = getSingleMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+
+            results.addLanguage(getSingleMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
                     packageCode,
                     draftsOnly,
-                    allResults);
-
-            results.addLanguage(metaLanguage);
+                    allResults));
 
             return results;
         }
@@ -116,8 +115,6 @@ public class MetaService
         Package gtPackage = getPackage(packageCode);
 
         MetaLanguage metaLanguage = new MetaLanguage(language);
-        metaLanguage.setCode(LanguageCode.fromLanguage(language).toString());
-        metaLanguage.setName(language.getName());
 
         Translation translation = getTranslation(language.getId(), gtPackage.getId());
 
@@ -131,13 +128,9 @@ public class MetaService
 
     private MetaLanguage getMetaLanguageForMultiplePackages(Language language, boolean draftsOnly, boolean allResults)
     {
-        List<Translation> translations = translationService.selectByLanguageId(language.getId());
+        MetaLanguage metaLanguage = new MetaLanguage(language);
 
-        MetaLanguage metaLanguage = new MetaLanguage();
-        metaLanguage.setCode(LanguageCode.fromLanguage(language).toString());
-        metaLanguage.setName(language.getName());
-
-        for(Translation translation : translations)
+        for(Translation translation : translationService.selectByLanguageId(language.getId()))
         {
             if(allResults || (draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
             {
