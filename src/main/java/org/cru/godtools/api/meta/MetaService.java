@@ -17,8 +17,6 @@ import org.sql2o.Connection;
 
 import javax.inject.Inject;
 
-import java.util.List;
-
 
 /**
  * Created by ryancarlson on 3/26/14.

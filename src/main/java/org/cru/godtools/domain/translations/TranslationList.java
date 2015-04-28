@@ -1,10 +1,10 @@
 package org.cru.godtools.domain.translations;
 
 import com.google.common.collect.ForwardingList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -14,11 +14,14 @@ import java.util.UUID;
  */
 public class TranslationList extends ForwardingList<Translation>
 {
-	final List<Translation> translationList;
+	final List<Translation> translationList = Lists.newArrayList();
 
 	public TranslationList(List<Translation> translationList)
 	{
-		this.translationList = translationList;
+		if(translationList != null)
+		{
+			this.translationList.addAll(translationList);
+		}
 	}
 
 	@Override
@@ -33,8 +36,6 @@ public class TranslationList extends ForwardingList<Translation>
 	 */
 	public TranslationList pareResults()
 	{
-		if(translationList == null || translationList.isEmpty()) return null;
-
 		Map<UUID, Translation> latestTranslationForPackageId = Maps.newHashMap();
 
 		for(Translation translation : translationList)
