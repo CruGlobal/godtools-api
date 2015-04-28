@@ -1,14 +1,12 @@
 package org.cru.godtools.api.meta;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.FluentIterable;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
@@ -19,8 +17,8 @@ import org.sql2o.Connection;
 import javax.inject.Inject;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+
 
 /**
  * Created by ryancarlson on 3/26/14.
@@ -58,7 +56,7 @@ public class MetaService
     {
         if(Strings.isNullOrEmpty(languageCode))
         {
-            return getAllMetaResults(packageCode, packageService.selectAllPackages(), draftsOnly, allResults);
+            return getAllMetaResults(packageCode, new PackageList(packageService.selectAllPackages()), draftsOnly, allResults);
         }
         else
         {
@@ -66,7 +64,7 @@ public class MetaService
 
             results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
                     packageCode,
-                    packageService.selectAllPackages(),
+                    new PackageList(packageService.selectAllPackages()),
                     draftsOnly,
                     allResults));
 
@@ -83,7 +81,7 @@ public class MetaService
      * @param packageCode
      * @return
      */
-    private MetaResults getAllMetaResults(String packageCode, List<Package> packages, boolean draftsOnly, boolean allResults)
+    private MetaResults getAllMetaResults(String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
     {
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
@@ -94,7 +92,7 @@ public class MetaService
         return results;
     }
 
-    private MetaLanguage buildMetaLanguage(Language language, String packageCode, List<Package> packages, boolean draftsOnly, boolean allResults)
+    private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
     {
         MetaLanguage metaLanguage = new MetaLanguage(language);
 
@@ -105,14 +103,14 @@ public class MetaService
 
             for (Translation translation : translations)
             {
-                Package gtPackage = getPackageById(translation.getPackageId(), packages).get();
+                Package gtPackage = packages.getPackageById(translation.getPackageId()).get();
 
                 metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
             }
         }
         else
         {
-            Package gtPackage = getPackageByCode(packageCode, packages).get();
+            Package gtPackage = packages.getPackageByCode(packageCode).get();
             Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
                     gtPackage.getId(),
                     draftsOnly ? GodToolsVersion.DRAFT_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION);
@@ -129,28 +127,6 @@ public class MetaService
     private String getVersionNumber(Translation translation, Package gtPackage)
     {
         return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
-    }
-
-    private Optional<Package> getPackageByCode(final String packageCode, List<Package> packages)
-    {
-        return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
-        {
-            public boolean apply(Package input)
-            {
-                return packageCode.equals(input.getCode());
-            }
-        });
-    }
-
-    private Optional<Package> getPackageById(final UUID packageId, List<Package> packages)
-    {
-        return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
-        {
-            public boolean apply(Package input)
-            {
-                return packageId.equals(input.getId());
-            }
-        });
     }
 
     private PackageStructure getPackageStructure(UUID packageId)
