@@ -8,7 +8,6 @@ import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.domain.packages.PackageService;
-import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureList;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
@@ -18,7 +17,6 @@ import org.sql2o.Connection;
 import javax.inject.Inject;
 
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -110,7 +108,7 @@ public class MetaService
 
                 metaLanguage.addPackage(
                         gtPackage.getCode(),
-                        getVersionNumber(
+                        new GodToolsVersion(
                                 packageStructures.getByPackageId(gtPackage.getId()).get(),
                                 translation),
                         translation.isReleased());
@@ -127,7 +125,7 @@ public class MetaService
             {
                 metaLanguage.addPackage(
                         packageCode,
-                        getVersionNumber(
+                        new GodToolsVersion(
                                 packageStructures.getByPackageId(gtPackage.getId()).get(),
                                 translation),
                         translation.isReleased());
@@ -135,10 +133,5 @@ public class MetaService
         }
 
         return metaLanguage;
-    }
-
-    private String getVersionNumber(PackageStructure packageStructure, Translation translation)
-    {
-        return packageStructure.getVersionNumber() + "." + translation.getVersionNumber();
     }
 }

@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.collect.Sets;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 
@@ -30,7 +31,7 @@ public class MetaLanguage
         name = language.getName();
     }
 
-    public void addPackage(String packageCode, String versionNumber, boolean isReleased)
+    public void addPackage(String packageCode, GodToolsVersion versionNumber, boolean isReleased)
     {
         packages.add(new MetaPackage(packageCode, versionNumber, isReleased));
     }

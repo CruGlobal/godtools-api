@@ -1,5 +1,7 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.domain.GodToolsVersion;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import java.math.BigDecimal;
 
@@ -9,10 +11,10 @@ import java.math.BigDecimal;
 public class MetaPackage  implements java.io.Serializable
 {
     String code;
-	String version;
+	GodToolsVersion version;
 	String status;
 
-    public MetaPackage(String packageCode, String versionNumber, boolean isReleased)
+    public MetaPackage(String packageCode, GodToolsVersion versionNumber, boolean isReleased)
     {
         setCode(packageCode);
         setVersion(versionNumber);
@@ -31,12 +33,12 @@ public class MetaPackage  implements java.io.Serializable
     }
 
     @XmlAttribute
-    public String getVersion()
+    public GodToolsVersion getVersion()
     {
         return version;
     }
 
-    public void setVersion(String version)
+    public void setVersion(GodToolsVersion version)
     {
         this.version = version;
     }
