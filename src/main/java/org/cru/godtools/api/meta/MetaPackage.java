@@ -11,13 +11,13 @@ import java.math.BigDecimal;
 public class MetaPackage  implements java.io.Serializable
 {
     String code;
-	GodToolsVersion version;
+	String version;
 	String status;
 
     public MetaPackage(String packageCode, GodToolsVersion versionNumber, boolean isReleased)
     {
         setCode(packageCode);
-        setVersion(versionNumber);
+        if(versionNumber != null)setVersion(versionNumber.toString());
 		setStatus(isReleased ? "live" : "draft");
     }
 
@@ -33,12 +33,12 @@ public class MetaPackage  implements java.io.Serializable
     }
 
     @XmlAttribute
-    public GodToolsVersion getVersion()
+    public String getVersion()
     {
         return version;
     }
 
-    public void setVersion(GodToolsVersion version)
+    public void setVersion(String version)
     {
         this.version = version;
     }
