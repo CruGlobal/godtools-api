@@ -63,7 +63,12 @@ public class MetaService
         else
         {
             MetaResults results = new MetaResults();
-            MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly, allResults);
+            MetaLanguage metaLanguage = getSingleMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+                    packageCode,
+                    minimumInterpreterVersion,
+                    draftsOnly,
+                    allResults);
+
             results.addLanguage(metaLanguage);
 
             return results;
@@ -85,7 +90,7 @@ public class MetaService
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
         {
-            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion, draftsOnly, allResults));
+            results.addLanguage(getSingleMetaLanguage(language, packageCode, minimumInterpreterVersion, draftsOnly, allResults));
         }
 
         return results;
@@ -101,25 +106,24 @@ public class MetaService
      * @param draftsOnly
      * @return
      */
-    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
+    private MetaLanguage getSingleMetaLanguage(Language language, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
         if(Strings.isNullOrEmpty(packageCode))
         {
-            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion, draftsOnly, allResults);
+            return getMetaLanguageForMultiplePackages(language, minimumInterpreterVersion, draftsOnly, allResults);
         }
         else
         {
-            return getMetaLanguageForSinglePackage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly);
+            return getMetaLanguageForSinglePackage(language, packageCode, minimumInterpreterVersion, draftsOnly);
         }
     }
 
-    private MetaLanguage getMetaLanguageForSinglePackage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+    private MetaLanguage getMetaLanguageForSinglePackage(Language language, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
     {
-        Language language = getLanguage(languageCode);
         Package gtPackage = getPackage(packageCode);
 
         MetaLanguage metaLanguage = new MetaLanguage(language);
-        metaLanguage.setCode(languageCode);
+        metaLanguage.setCode(LanguageCode.fromLanguage(language).toString());
         metaLanguage.setName(language.getName());
 
         Translation translation = getTranslation(language.getId(), gtPackage.getId());
@@ -132,13 +136,12 @@ public class MetaService
         return metaLanguage;
     }
 
-    private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
+    private MetaLanguage getMetaLanguageForMultiplePackages(Language language, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
     {
-        List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
-        Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+        List<Translation> translations = translationService.selectByLanguageId(language.getId());
 
         MetaLanguage metaLanguage = new MetaLanguage();
-        metaLanguage.setCode(languageCode);
+        metaLanguage.setCode(LanguageCode.fromLanguage(language).toString());
         metaLanguage.setName(language.getName());
 
         for(Translation translation : translations)
@@ -157,11 +160,6 @@ public class MetaService
     private String getVersionNumber(Translation translation, Package gtPackage)
     {
         return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
-    }
-
-    private Language getLanguage(String languageCode)
-    {
-        return languageService.selectByLanguageCode(new LanguageCode(languageCode));
     }
 
     private Package getPackage(String packageCode)
