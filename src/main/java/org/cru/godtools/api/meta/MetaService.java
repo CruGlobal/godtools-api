@@ -33,8 +33,6 @@ public class MetaService
     PackageService packageService;
     PackageStructureService packageStructureService;
 
-    List<Package> packages;
-
     @Inject
     public MetaService(Connection sqlConnection, LanguageService languageService, TranslationService translationService, PackageService packageService, PackageStructureService packageStructureService)
     {
@@ -58,11 +56,9 @@ public class MetaService
      */
     public MetaResults getMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
     {
-        packages = packageService.selectAllPackages();
-
         if(Strings.isNullOrEmpty(languageCode))
         {
-            return getAllMetaResults(packageCode, draftsOnly, allResults);
+            return getAllMetaResults(packageCode, packageService.selectAllPackages(), draftsOnly, allResults);
         }
         else
         {
@@ -70,6 +66,7 @@ public class MetaService
 
             results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
                     packageCode,
+                    packageService.selectAllPackages(),
                     draftsOnly,
                     allResults));
 
@@ -86,18 +83,18 @@ public class MetaService
      * @param packageCode
      * @return
      */
-    private MetaResults getAllMetaResults(String packageCode, boolean draftsOnly, boolean allResults)
+    private MetaResults getAllMetaResults(String packageCode, List<Package> packages, boolean draftsOnly, boolean allResults)
     {
         MetaResults results = new MetaResults();
         for(Language language : languageService.selectAllLanguages())
         {
-            results.addLanguage(buildMetaLanguage(language, packageCode, draftsOnly, allResults));
+            results.addLanguage(buildMetaLanguage(language, packageCode, packages, draftsOnly, allResults));
         }
 
         return results;
     }
 
-    private MetaLanguage buildMetaLanguage(Language language, String packageCode, boolean draftsOnly, boolean allResults)
+    private MetaLanguage buildMetaLanguage(Language language, String packageCode, List<Package> packages, boolean draftsOnly, boolean allResults)
     {
         MetaLanguage metaLanguage = new MetaLanguage(language);
 
@@ -108,14 +105,14 @@ public class MetaService
 
             for (Translation translation : translations)
             {
-                Package gtPackage = getPackageById(translation.getPackageId()).get();
+                Package gtPackage = getPackageById(translation.getPackageId(), packages).get();
 
                 metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
             }
         }
         else
         {
-            Package gtPackage = getPackageByCode(packageCode).get();
+            Package gtPackage = getPackageByCode(packageCode, packages).get();
             Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
                     gtPackage.getId(),
                     draftsOnly ? GodToolsVersion.DRAFT_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION);
@@ -134,7 +131,7 @@ public class MetaService
         return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
     }
 
-    private Optional<Package> getPackageByCode(final String packageCode)
+    private Optional<Package> getPackageByCode(final String packageCode, List<Package> packages)
     {
         return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
         {
@@ -145,7 +142,7 @@ public class MetaService
         });
     }
 
-    private Optional<Package> getPackageById(final UUID packageId)
+    private Optional<Package> getPackageById(final UUID packageId, List<Package> packages)
     {
         return FluentIterable.from(packages).firstMatch(new Predicate<Package>()
         {
