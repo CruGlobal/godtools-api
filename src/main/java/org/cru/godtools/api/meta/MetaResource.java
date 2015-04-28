@@ -104,7 +104,6 @@ public class MetaResource
 
 		MetaResults metaResults = metaService.getMetaResults(languageCode,
 				packageCode,
-				interpreterVersion,
 				authorizationRecordOptional.get().hasDraftAccess(),
 				authorizationRecordOptional.get().isAdmin());
 
