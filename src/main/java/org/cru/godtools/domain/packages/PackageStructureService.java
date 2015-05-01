@@ -3,6 +3,7 @@ package org.cru.godtools.domain.packages;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,10 +37,16 @@ public class PackageStructureService
 				.executeAndFetchFirst(PackageStructure.class);
 	}
 
+	public List<PackageStructure> selectAll()
+	{
+		return sqlConnection.createQuery(PackageStructureQueries.selectAll)
+				.setAutoDeriveColumnNames(true)
+				.executeAndFetch(PackageStructure.class);
+	}
 	public static class PackageStructureQueries
 	{
 		public static final String insert = "INSERT INTO package_structure(id, package_id, xml_content, version_number) VALUES(:id, :packageId, :xmlContent, :versionNumber)";
 		public static final String selectById = "SELECT * FROM package_structure WHERE package_id = :packageId";
-
+		public static final String selectAll = "SELECT * FROM package_structure";
 	}
 }

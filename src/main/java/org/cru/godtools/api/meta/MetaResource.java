@@ -33,10 +33,10 @@ import java.io.IOException;
 public class MetaResource
 {
 
-    @Inject
-    MetaService metaService;
-    @Inject
-    AuthorizationService authService;
+	@Inject
+	MetaService metaService;
+	@Inject
+	AuthorizationService authService;
 
 	@Inject
 	PackageService packageService;
@@ -64,19 +64,19 @@ public class MetaResource
 		return getLanguageAndPackageMetaInfo(null, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
 	}
 
-    @GET
+	@GET
 	@Path("/{language}")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getLanguageMetaInfo(@PathParam("language") String languageCode,
-                                @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-                                @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-                                @QueryParam("Authorization") String authCodeParam,
-                                @HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
-    {
+	@Produces(MediaType.APPLICATION_XML)
+	public Response getLanguageMetaInfo(@PathParam("language") String languageCode,
+								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+								@QueryParam("Authorization") String authCodeParam,
+								@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+	{
 		log.info("Getting all meta info for language: " + languageCode);
 
 		return getLanguageAndPackageMetaInfo(languageCode, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
-    }
+	}
 
 	@GET
 	@Path("/{language}/{package}")
@@ -104,7 +104,6 @@ public class MetaResource
 
 		MetaResults metaResults = metaService.getMetaResults(languageCode,
 				packageCode,
-				interpreterVersion,
 				authorizationRecordOptional.get().hasDraftAccess(),
 				authorizationRecordOptional.get().isAdmin());
 
@@ -114,7 +113,7 @@ public class MetaResource
 	}
 
 	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
-    {
-        return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
-    }
+	{
+		return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
+	}
 }

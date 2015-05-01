@@ -1,5 +1,7 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.domain.GodToolsVersion;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import java.math.BigDecimal;
 
@@ -12,10 +14,10 @@ public class MetaPackage  implements java.io.Serializable
 	String version;
 	String status;
 
-    public MetaPackage(String packageCode, String versionNumber, boolean isReleased)
+    public MetaPackage(String packageCode, GodToolsVersion versionNumber, boolean isReleased)
     {
         setCode(packageCode);
-        setVersion(versionNumber);
+        if(versionNumber != null)setVersion(versionNumber.toString());
 		setStatus(isReleased ? "live" : "draft");
     }
 

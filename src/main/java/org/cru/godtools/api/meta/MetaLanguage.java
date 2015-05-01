@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.collect.Sets;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 
@@ -15,54 +16,54 @@ import java.util.Set;
  */
 public class MetaLanguage
 {
-    String code;
-    String name;
-    Set<MetaPackage> packages = Sets.newHashSet();
+	String code;
+	String name;
+	Set<MetaPackage> packages = Sets.newHashSet();
 
-    public MetaLanguage()
-    {
+	public MetaLanguage()
+	{
 
-    }
+	}
 
-    public MetaLanguage(Language language)
-    {
-        code = LanguageCode.fromLanguage(language).toString();
-        name = language.getName();
-    }
+	public MetaLanguage(Language language)
+	{
+		code = LanguageCode.fromLanguage(language).toString();
+		name = language.getName();
+	}
 
-    public void addPackage(String packageCode, String versionNumber, boolean isReleased)
-    {
-        packages.add(new MetaPackage(packageCode, versionNumber, isReleased));
-    }
+	public void addPackage(String packageCode, GodToolsVersion versionNumber, boolean isReleased)
+	{
+		packages.add(new MetaPackage(packageCode, versionNumber, isReleased));
+	}
 
-    @XmlAttribute
-    public String getCode()
-    {
-        return code;
-    }
+	@XmlAttribute
+	public String getCode()
+	{
+		return code;
+	}
 
-    public MetaLanguage setCode(String code)
-    {
-        this.code = code;
-        return this;
-    }
+	public MetaLanguage setCode(String code)
+	{
+		this.code = code;
+		return this;
+	}
 
-    @XmlAttribute
-    public String getName()
-    {
-        return name;
-    }
+	@XmlAttribute
+	public String getName()
+	{
+		return name;
+	}
 
-    public MetaLanguage setName(String name)
-    {
-        this.name = name;
-        return this;
-    }
+	public MetaLanguage setName(String name)
+	{
+		this.name = name;
+		return this;
+	}
 
-    @XmlElementWrapper(name = "packages")
-    @XmlElement(name = "package")
-    public Set<MetaPackage> getPackages()
-    {
-        return packages;
-    }
+	@XmlElementWrapper(name = "packages")
+	@XmlElement(name = "package")
+	public Set<MetaPackage> getPackages()
+	{
+		return packages;
+	}
 }

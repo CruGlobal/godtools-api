@@ -1,183 +1,142 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.base.Strings;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.domain.packages.PackageService;
-import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.packages.PackageStructureList;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationList;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/26/14.
  */
 public class MetaService
 {
-    Connection sqlConnection;
-    LanguageService languageService;
-    TranslationService translationService;
-    PackageService packageService;
-    PackageStructureService packageStructureService;
+	Connection sqlConnection;
+	LanguageService languageService;
+	TranslationService translationService;
+	PackageService packageService;
+	PackageStructureService packageStructureService;
 
-    @Inject
-    public MetaService(Connection sqlConnection, LanguageService languageService, TranslationService translationService, PackageService packageService, PackageStructureService packageStructureService)
-    {
-        this.sqlConnection = sqlConnection;
-        this.languageService = languageService;
-        this.translationService = translationService;
-        this.packageService = packageService;
-        this.packageStructureService = packageStructureService;
-    }
-
-	public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
+	@Inject
+	public MetaService(Connection sqlConnection, LanguageService languageService, TranslationService translationService, PackageService packageService, PackageStructureService packageStructureService)
 	{
-		return getMetaResults(languageCode, packageCode, minimumInterpreterVersion, draftsOnly, false);
+		this.sqlConnection = sqlConnection;
+		this.languageService = languageService;
+		this.translationService = translationService;
+		this.packageService = packageService;
+		this.packageStructureService = packageStructureService;
 	}
-    /**
-     * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
-     * passed in languageCode, packageCode and interpreterVersion.
-     *
-     * Note, languageCode and packageCode could optionally either or both be null.
-     *
-     * Structure:
-     * MetaResults
-     * 	-Set<MetaLanguage>
-     *    -Set<MetaPackage>
-     */
-    public MetaResults getMetaResults(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
-    {
-        if(Strings.isNullOrEmpty(languageCode))
-        {
-            return getMetaResultsForAllLanguages(packageCode, minimumInterpreterVersion, draftsOnly, allResults);
-        }
-        else
-        {
-            MetaResults results = new MetaResults();
-            MetaLanguage metaLanguage = getSingleMetaLanguage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly, allResults);
-            results.addLanguage(metaLanguage);
 
-            return results;
-        }
-    }
+	/**
+	 * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
+	 * passed in languageCode, packageCode and interpreterVersion.
+	 *
+	 * Note, languageCode and packageCode could optionally either or both be null.
+	 *
+	 * Structure:
+	 * MetaResults
+	 * 	-Set<MetaLanguage>
+	 *    -Set<MetaPackage>
+	 */
+	public MetaResults getMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
+	{
+		if(Strings.isNullOrEmpty(languageCode))
+		{
+			return getAllMetaResults(packageCode, new PackageList(packageService.selectAllPackages()), draftsOnly, allResults);
+		}
+		else
+		{
+			MetaResults results = new MetaResults();
 
-    /**
-     * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
-     * passed in languageCode, packageCode and interpreterVersion.
-     *
-     * Assumes languageCode was null, so look up the package information across all languages.
-     *
-     * @param packageCode
-     * @param minimumInterpreterVersion
-     * @return
-     */
-    private MetaResults getMetaResultsForAllLanguages(String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
-    {
-        MetaResults results = new MetaResults();
-        for(Language language : languageService.selectAllLanguages())
-        {
-            results.addLanguage(getSingleMetaLanguage(language.getPath(), packageCode, minimumInterpreterVersion, draftsOnly, allResults));
-        }
+			results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
+					packageCode,
+					new PackageList(packageService.selectAllPackages()),
+					draftsOnly,
+					allResults));
 
-        return results;
-    }
+			return results;
+		}
+	}
 
-    /**
-     * Returns a JAX-B annotated object of type MetaLanguage.  This object returns the information on what resources are available on
-     * the given language with the passed in packageCode and interpreterVersion.
-     *
-     *
-     * @param packageCode
-     * @param minimumInterpreterVersion
-     * @param draftsOnly
-     * @return
-     */
-    private MetaLanguage getSingleMetaLanguage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
-    {
-        if(Strings.isNullOrEmpty(packageCode))
-        {
-            return getMetaLanguageForMultiplePackages(languageCode, minimumInterpreterVersion, draftsOnly, allResults);
-        }
-        else
-        {
-            return getMetaLanguageForSinglePackage(languageCode, packageCode, minimumInterpreterVersion, draftsOnly);
-        }
-    }
+	/**
+	 * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
+	 * passed in languageCode, packageCode and interpreterVersion.
+	 *
+	 * Assumes languageCode was null, so look up the package information across all languages.
+	 *
+	 * @param packageCode
+	 * @return
+	 */
+	private MetaResults getAllMetaResults(String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	{
+		MetaResults results = new MetaResults();
+		for(Language language : languageService.selectAllLanguages())
+		{
+			results.addLanguage(buildMetaLanguage(language, packageCode, packages, draftsOnly, allResults));
+		}
 
-    private MetaLanguage getMetaLanguageForSinglePackage(String languageCode, String packageCode, Integer minimumInterpreterVersion, boolean draftsOnly)
-    {
-        Language language = getLanguage(languageCode);
-        Package gtPackage = getPackage(packageCode);
+		return results;
+	}
 
-        MetaLanguage metaLanguage = new MetaLanguage(language);
-        metaLanguage.setCode(languageCode);
-        metaLanguage.setName(language.getName());
+	private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	{
+		MetaLanguage metaLanguage = new MetaLanguage(language);
 
-        Translation translation = getTranslation(language.getId(), gtPackage.getId());
+		PackageStructureList packageStructures = new PackageStructureList(packageStructureService.selectAll());
 
-        if((draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
-        {
-            metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
-        }
+		if(Strings.isNullOrEmpty(packageCode))
+		{
+			TranslationList translations = allResults ?
+					new TranslationList(translationService.selectByLanguageId(language.getId())) :
+					new TranslationList(translationService.selectByLanguageIdReleased(language.getId(), !draftsOnly));
 
-        return metaLanguage;
-    }
+			if(!allResults)
+			{
+				translations = new TranslationList(translations.pareResults());
+			}
 
-    private MetaLanguage getMetaLanguageForMultiplePackages(String languageCode, Integer minimumInterpreterVersion, boolean draftsOnly, boolean allResults)
-    {
-        List<Translation> translations = translationService.selectByLanguageId(getLanguage(languageCode).getId());
-        Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+			for (Translation translation : translations)
+			{
+				Package gtPackage = packages.getPackageById(translation.getPackageId()).get();
 
-        MetaLanguage metaLanguage = new MetaLanguage();
-        metaLanguage.setCode(languageCode);
-        metaLanguage.setName(language.getName());
+				metaLanguage.addPackage(
+						gtPackage.getCode(),
+						new GodToolsVersion(
+								packageStructures.getByPackageId(gtPackage.getId()).get(),
+								translation),
+						translation.isReleased());
+			}
+		}
+		else
+		{
+			Package gtPackage = packages.getPackageByCode(packageCode).get();
+			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+					gtPackage.getId(),
+					draftsOnly ? GodToolsVersion.DRAFT_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION);
 
-        for(Translation translation : translations)
-        {
-            if(allResults || (draftsOnly && translation.isDraft()) || (!draftsOnly && translation.isReleased()))
-            {
-                Package gtPackage = packageService.selectById(translation.getPackageId());
+			if(translation != null)
+			{
+				metaLanguage.addPackage(
+						packageCode,
+						new GodToolsVersion(
+								packageStructures.getByPackageId(gtPackage.getId()).get(),
+								translation),
+						translation.isReleased());
+			}
+		}
 
-                metaLanguage.addPackage(gtPackage.getCode(), getVersionNumber(translation, gtPackage), translation.isReleased());
-            }
-        }
-
-        return metaLanguage;
-    }
-
-    private String getVersionNumber(Translation translation, Package gtPackage)
-    {
-        return getPackageStructure(gtPackage.getId()).getVersionNumber() + "." + translation.getVersionNumber();
-    }
-
-    private Language getLanguage(String languageCode)
-    {
-        return languageService.selectByLanguageCode(new LanguageCode(languageCode));
-    }
-
-    private Package getPackage(String packageCode)
-    {
-        return packageService.selectByCode(packageCode);
-    }
-
-    private PackageStructure getPackageStructure(UUID packageId)
-    {
-        return packageStructureService.selectByPackageId(packageId);
-    }
-
-    private Translation getTranslation(UUID languageId, UUID packageId)
-    {
-        List<Translation> translationList = translationService.selectByLanguageIdPackageId(languageId, packageId);
-
-        return translationList.get(0);
-    }
+		return metaLanguage;
+	}
 }
