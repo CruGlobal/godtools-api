@@ -19,14 +19,6 @@ public class UncaughtExceptionMapper implements ExceptionMapper<ApplicationExcep
     {
         Throwable actualException = unwrapApplicationException(applicationException);
 
-		if(actualException instanceof ResourceNotFoundException)
-		{
-			ResourceNotFoundException notFoundException = (ResourceNotFoundException) actualException;
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					.entity(new ErrorResponse(notFoundException.getMissingType() + " was not found."))
-					.build();
-		}
         if(actualException instanceof WebApplicationException)
         {
             return ((WebApplicationException)actualException).getResponse();
