@@ -37,8 +37,6 @@ public class NotificationResource
 	@Inject
 	NotificationService notificationService;
 
-	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
-
 	Logger log = Logger.getLogger(AuthorizationResource.class);
 
 	@POST
