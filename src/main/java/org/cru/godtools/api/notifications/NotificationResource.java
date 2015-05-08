@@ -120,19 +120,38 @@ public class NotificationResource
 		// make sure the message is not empty
 		if (Strings.isNullOrEmpty(message)) throw new BadRequestException("Message is empty");
 
-		// get all of the registration ids
-		List<String> regIds = notificationService.getAllRegistrationIds();
+		// get the number of registered devices
+		Integer regIdCount = notificationService.countRegistrationIds();
 
-		// create the message to be sent
-		Message messageToSend = new Message.Builder().addData("msg", message).build();
+		// create a counter. This will be used for the offset. It will always increment by 1000
+		int counter = 0;
 
-		String apiKey = properties.getNonNullProperty("googleApiKey");
+		// find how many registered ids are remaining.
+		int remaining = regIdCount;
 
-		Sender sender = new Sender(apiKey);
+		while (remaining > 0)
+		{
 
-		MulticastResult result = sender.send(messageToSend, regIds, 2);
-		log.info(result.getMulticastId());
+			// get all of the registration ids with offset
+			List<String> regIds = notificationService.getAllRegistrationIds(counter);
 
-		return Response.ok(result).build();
+			// create the message to be sent
+			Message messageToSend = new Message.Builder().addData("msg", message).build();
+
+			String apiKey = properties.getNonNullProperty("googleApiKey");
+
+			Sender sender = new Sender(apiKey);
+
+			MulticastResult result = sender.send(messageToSend, regIds, 2);
+			log.info(result.getMulticastId());
+
+			// increment the counter for next run
+			counter = counter + 1000;
+
+			// remove however many regIds were just notified.
+			remaining = remaining - regIds.size();
+		}
+
+		return Response.noContent().build();
 	}
 }
