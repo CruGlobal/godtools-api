@@ -39,6 +39,13 @@ public class NotificationService
 				.executeAndFetchFirst(Notification.class);
 	}
 
+	public List<String> getAllRegistrationIds()
+	{
+		return sqlConnection.createQuery(notificationQueries.selectAllRegistrationIds)
+				.setAutoDeriveColumnNames(true)
+				.executeAndFetch(String.class);
+	}
+
 	public void updateNotification(Notification notification)
 	{
 		sqlConnection.createQuery(notificationQueries.updateNotification)
@@ -76,6 +83,7 @@ public class NotificationService
 	public static class notificationQueries
 	{
 		public final static String selectAllUnsent = "SELECT * FROM notifications WHERE notification_sent = 'f'";
+		public final static String selectAllRegistrationIds = "SELECT registration_id FROM notifications";
 		public final static String insertNotification = "INSERT INTO notifications (id, registration_id, notification_type, presentations, notification_sent, timestamp)" +
 				"VALUES (:id, :registrationId, :notificationType, :presentations, :notificationSent, :timestamp)";
 		public final static String updateNotification = "UPDATE notifications SET " +
