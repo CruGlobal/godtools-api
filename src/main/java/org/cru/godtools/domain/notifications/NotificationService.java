@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.notifications;
 
+import com.google.common.collect.Lists;
 import org.ccci.util.time.Clock;
 import org.sql2o.Connection;
 
@@ -48,10 +49,20 @@ public class NotificationService
 
 	public List<String> getAllRegistrationIds(int offset)
 	{
-		return sqlConnection.createQuery(notificationQueries.selectAllRegistrationIds)
+		List<Notification> notifications =  sqlConnection.createQuery(notificationQueries.selectAllRegistrationIds)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("offset", offset)
-				.executeAndFetch(String.class);
+				.executeAndFetch(Notification.class);
+
+		if (notifications.size() == 0) return null;
+
+		List<String> regIds = Lists.newArrayList();
+		for (Notification notification : notifications)
+		{
+			regIds.add(notification.getRegistrationId());
+		}
+
+		return regIds;
 	}
 
 	public void updateNotification(Notification notification)
@@ -91,7 +102,7 @@ public class NotificationService
 	public static class notificationQueries
 	{
 		public final static String selectAllUnsent = "SELECT * FROM notifications WHERE notification_sent = 'f'";
-		public final static String selectAllRegistrationIds = "SELECT registration_id FROM notifications limit 1000 offset :offset";
+		public final static String selectAllRegistrationIds = "SELECT * FROM notifications limit 1000 offset :offset";
 		public final static String countRegistrationIds = "SELECT COUNT(registration_id) FROM notifications";
 		public final static String insertNotification = "INSERT INTO notifications (id, registration_id, notification_type, presentations, notification_sent, timestamp)" +
 				"VALUES (:id, :registrationId, :notificationType, :presentations, :notificationSent, :timestamp)";
