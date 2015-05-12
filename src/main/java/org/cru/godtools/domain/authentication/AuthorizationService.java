@@ -39,6 +39,7 @@ public class AuthorizationService
 				.addParameter("id", authenticationRecord.getId())
 				.addParameter("username", authenticationRecord.getUsername())
 				.addParameter("grantedTimestamp", clock.currentDateTime())
+                .addParameter("revokedTimestamp", clock.currentDateTime().plusHours(12))
 				.addParameter("authToken", authenticationRecord.getAuthToken())
                 .addParameter("deviceId", authenticationRecord.getDeviceId())
                 .addParameter("draftAccess", authenticationRecord.hasDraftAccess())
@@ -57,7 +58,9 @@ public class AuthorizationService
     private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
-		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
+		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, revoked_timestamp, " +
+                "auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, " +
+                ":revokedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
         static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
     }
 }
