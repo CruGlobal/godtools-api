@@ -1,18 +1,14 @@
 package org.cru.godtools.domain.authentication;
 
-import org.cru.godtools.domain.AbstractServiceTest;
+import com.google.common.base.Optional;
 import org.cru.godtools.domain.TestClockImpl;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.properties.GodToolsProperties;
-import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -116,4 +112,33 @@ public class AuthorizationServiceTest extends Arquillian
 			throw exception;
 		}
 	}
+
+    @Test(expectedExceptions = UnauthorizedException.class)
+    /**
+     * Authorization should fail if current date-time is after revoked date-time.
+     */
+    public void testAuthorizationFailed()
+    {
+        AuthorizationRecord.checkAuthorization(authorizationService.getAuthorizationRecord("c", null), new
+                TestClockImpl().currentDateTime());
+    }
+
+    @Test
+    /**
+     * If the revoked timestamp is not set, authorization should not fail.
+     */
+    public void testAuthorizationWithNoRevokedTime()
+    {
+        Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord("a", null);
+        AuthorizationRecord.checkAuthorization(authorizationRecord, new TestClockImpl().currentDateTime());
+
+        /**
+         * Make sure there is no revoked timestamp set.
+         */
+        if(authorizationRecord.get().revokedTimestamp != null)
+        {
+            Assert.fail();
+        }
+
+    }
 }

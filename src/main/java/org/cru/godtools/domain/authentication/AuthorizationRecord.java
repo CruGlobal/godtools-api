@@ -23,6 +23,7 @@ public class AuthorizationRecord
 	{
 		if(!authorizationRecordOptional.isPresent()) throw new UnauthorizedException();
 		if(!authorizationRecordOptional.get().isCurrentlyActive(currentTime)) throw new UnauthorizedException();
+        if(authorizationRecordOptional.get().isExpired(currentTime)) throw new UnauthorizedException();
 	}
 
 	public static void checkAccessToDrafts(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
@@ -44,6 +45,11 @@ public class AuthorizationRecord
             if(revokedTimestamp == null || currentTime.isBefore(revokedTimestamp)) return true;
         }
         return false;
+    }
+
+    private boolean isExpired(DateTime currentTime)
+    {
+        return currentTime.isAfter(revokedTimestamp);
     }
 
     public UUID getId()
