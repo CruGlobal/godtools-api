@@ -32,10 +32,8 @@ public class DeviceServiceTest extends Arquillian
 	@Deployment
 	public static JavaArchive createDeployment()
 	{
-		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
-
 		return ShrinkWrap.create(JavaArchive.class)
-				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(DeviceService.class, ClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
