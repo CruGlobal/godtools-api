@@ -48,7 +48,8 @@ public class DeviceService
 		sqlConnection.createQuery(deviceQueries.update)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("id", device.getId())
-				.addParameter("registration_id", device.getRegistrationId())
+				.addParameter("registrationId", device.getRegistrationId())
+				.addParameter("deviceId", device.getDeviceId())
 				.executeUpdate();
 	}
 

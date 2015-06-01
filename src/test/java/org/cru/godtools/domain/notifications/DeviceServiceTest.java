@@ -82,11 +82,23 @@ public class DeviceServiceTest extends Arquillian
 	}
 
 	@Test
-	public void testInsertNotification()
+	public void testInsertDevice()
 	{
 		Device returnedDevice = deviceService.selectById(id);
 		Assert.assertNotNull(returnedDevice);
 
+	}
+
+	@Test
+	public void testUpdateDevice()
+	{
+		Device device = createNotificationRegistration(id);
+		device.setRegistrationId("Updated");
+		deviceService.update(device);
+
+		Device returned = deviceService.selectById(id);
+		Assert.assertNotNull(returned);
+		Assert.assertEquals(returned.getRegistrationId(), "Updated");
 	}
 
 	private Device createNotificationRegistration(UUID id)
