@@ -40,6 +40,7 @@ public class DeviceService
 				.addParameter("id", device.getId())
 				.addParameter("registrationId", device.getRegistrationId())
 				.addParameter("deviceId", device.getDeviceId())
+				.addParameter("notificationOn", device.getNotificationOn())
 				.executeUpdate();
 	}
 
@@ -49,6 +50,7 @@ public class DeviceService
 				.setAutoDeriveColumnNames(true)
 				.addParameter("id", device.getId())
 				.addParameter("registrationId", device.getRegistrationId())
+				.addParameter("notificationOn", device.getNotificationOn())
 				.addParameter("deviceId", device.getDeviceId())
 				.executeUpdate();
 	}
@@ -57,11 +59,12 @@ public class DeviceService
 	{
 		public final static String selectById = "SELECT * FROM devices WHERE id = :id";
 		public final static String selectByDeviceId = "SELECT * FROM devices WHERE device_id = :deviceId";
-		public final static String insert = "INSERT INTO devices(id, registration_id, device_id) " +
-				"VALUES (:id, :registrationId, :deviceId)";
+		public final static String insert = "INSERT INTO devices(id, registration_id, device_id, notification_on) " +
+				"VALUES (:id, :registrationId, :deviceId, :notificationOn)";
 		public final static String update = "UPDATE devices SET " +
 				"id = :id, " +
-				"registration_id = :registrationId " +
+				"registration_id = :registrationId, " +
+				"notification_on = :notificationOn " +
 				"WHERE device_id = :deviceId";
 	}
 }
