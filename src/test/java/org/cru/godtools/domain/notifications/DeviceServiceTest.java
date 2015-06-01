@@ -27,6 +27,7 @@ public class DeviceServiceTest extends Arquillian
 	DeviceService deviceService;
 
 	UUID id = UUID.randomUUID();
+	String deviceId = "Device";
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -74,6 +75,13 @@ public class DeviceServiceTest extends Arquillian
 	}
 
 	@Test
+	public void testIsDeviceRegistered()
+	{
+		Assert.assertTrue(deviceService.isDeviceRegistered(deviceId));
+		Assert.assertFalse(deviceService.isDeviceRegistered("Matthew"));
+	}
+
+	@Test
 	public void testInsertNotification()
 	{
 		Device returnedDevice = deviceService.selectById(id);
@@ -85,7 +93,7 @@ public class DeviceServiceTest extends Arquillian
 	{
 		Device device = new Device();
 		device.setId(id);
-		device.setDeviceId("Device");
+		device.setDeviceId(deviceId);
 		device.setRegistrationId("Registration");
 
 		return device;

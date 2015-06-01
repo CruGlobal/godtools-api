@@ -9,8 +9,6 @@ import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.notifications.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
 import org.cru.godtools.domain.notifications.NotificationService;
-import org.cru.godtools.domain.properties.GodToolsProperties;
-import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -53,7 +51,16 @@ public class NotificationResource
 		device.setRegistrationId(registrationId);
 		device.setDeviceId(id);
 
-		deviceService.insert(device);
+		// if the device id already exists then just update the device.
+		// this would be caused if a person uninstalls the app and re-installs it later.
+		if (deviceService.isDeviceRegistered(device.getDeviceId()))
+		{
+			deviceService.update(device);
+		}
+		else
+		{
+			deviceService.insert(device);
+		}
 
 		return Response.ok().build();
 	}
