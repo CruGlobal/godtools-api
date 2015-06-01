@@ -40,9 +40,11 @@ public class NotificationResource
 	@POST
 	@Path("/{registrationId}")
 	public Response registerDevice(@PathParam("registrationId")String registrationId,
-								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam)
+								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam,
+								   @HeaderParam("notificationsOn") Boolean notificationsHeader, @QueryParam("notificationsOn") Boolean notificationsParam)
 	{
 		String id = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
+		Boolean notificationsOn = notificationsHeader == null ? notificationsParam : notificationsHeader;
 
 		log.info("Registering device: " + id + " with registrationId: " + registrationId);
 
@@ -50,9 +52,11 @@ public class NotificationResource
 		device.setId(UUID.randomUUID());
 		device.setRegistrationId(registrationId);
 		device.setDeviceId(id);
+		device.setNotificationOn(notificationsOn);
 
 		// if the device id already exists then just update the device.
 		// this would be caused if a person uninstalls the app and re-installs it later.
+		// this also allows us to use this endpoint to update a device when the notification state changes.
 		if (deviceService.isDeviceRegistered(device.getDeviceId()))
 		{
 			deviceService.update(device);
