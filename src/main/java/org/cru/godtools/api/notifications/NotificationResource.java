@@ -41,12 +41,15 @@ public class NotificationResource
 	@Path("/{registrationId}")
 	public Response registerDevice(@PathParam("registrationId")String registrationId,
 								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam,
-								   @HeaderParam("notificationsOn") Boolean notificationsHeader, @QueryParam("notificationsOn") Boolean notificationsParam)
+								   @HeaderParam("notificationsOn") String notificationsHeader, @QueryParam("notificationsOn") String notificationsParam)
 	{
 		String id = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
-		Boolean notificationsOn = notificationsHeader == null ? notificationsParam : notificationsHeader;
+		String notificationsOnString = notificationsHeader == null ? notificationsParam : notificationsHeader;
 
 		log.info("Registering device: " + id + " with registrationId: " + registrationId);
+
+		Boolean notificationsOn = true;
+		if ("FALSE".equalsIgnoreCase(notificationsOnString)) notificationsOn = false;
 
 		Device device = new Device();
 		device.setId(UUID.randomUUID());
