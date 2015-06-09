@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 import java.sql.SQLException;
 
@@ -96,6 +97,19 @@ public class AuthorizationResourceTest extends Arquillian
 		Assert.assertNotNull(response.getHeaderString("Authorization"));
 
 		authorizationResource.requestAuthStatus(null, response.getHeaderString("Authorization"));
+	}
+
+	@Test
+	public void testRequestAuthStatus()
+	{
+		Response response = authorizationResource.requestAuthStatus("draft-access", null);
+		Assert.assertEquals(response.getStatus(), 204);
+	}
+
+	@Test(expectedExceptions = NotAuthorizedException.class)
+	public void testRequestAuthStatusNotFound()
+	{
+		Response response = authorizationResource.requestAuthStatus("1234", null);
 	}
 
 	/**
