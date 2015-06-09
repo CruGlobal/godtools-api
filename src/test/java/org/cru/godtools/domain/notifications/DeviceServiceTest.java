@@ -27,14 +27,13 @@ public class DeviceServiceTest extends Arquillian
 	DeviceService deviceService;
 
 	UUID id = UUID.randomUUID();
+	String deviceId = "Device";
 
 	@Deployment
 	public static JavaArchive createDeployment()
 	{
-		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
-
 		return ShrinkWrap.create(JavaArchive.class)
-				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(DeviceService.class, ClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
@@ -74,18 +73,37 @@ public class DeviceServiceTest extends Arquillian
 	}
 
 	@Test
-	public void testInsertNotification()
+	public void testIsDeviceRegistered()
+	{
+		Assert.assertTrue(deviceService.isDeviceRegistered(deviceId));
+		Assert.assertFalse(deviceService.isDeviceRegistered("Matthew"));
+	}
+
+	@Test
+	public void testInsertDevice()
 	{
 		Device returnedDevice = deviceService.selectById(id);
 		Assert.assertNotNull(returnedDevice);
 
 	}
 
+	@Test
+	public void testUpdateDevice()
+	{
+		Device device = createNotificationRegistration(id);
+		device.setRegistrationId("Updated");
+		deviceService.update(device);
+
+		Device returned = deviceService.selectById(id);
+		Assert.assertNotNull(returned);
+		Assert.assertEquals(returned.getRegistrationId(), "Updated");
+	}
+
 	private Device createNotificationRegistration(UUID id)
 	{
 		Device device = new Device();
 		device.setId(id);
-		device.setDeviceId("Device");
+		device.setDeviceId(deviceId);
 		device.setRegistrationId("Registration");
 
 		return device;

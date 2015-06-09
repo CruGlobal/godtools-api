@@ -9,8 +9,6 @@ import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.notifications.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
 import org.cru.godtools.domain.notifications.NotificationService;
-import org.cru.godtools.domain.properties.GodToolsProperties;
-import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -42,18 +40,35 @@ public class NotificationResource
 	@POST
 	@Path("/{registrationId}")
 	public Response registerDevice(@PathParam("registrationId")String registrationId,
-								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam)
+								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam,
+								   @HeaderParam("notificationsOn") String notificationsHeader ,
+								   @QueryParam("notificationsOn") String notificationsParam)
 	{
 		String id = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
+		String notificationsOnString = notificationsHeader == null ? notificationsParam : notificationsHeader;
 
 		log.info("Registering device: " + id + " with registrationId: " + registrationId);
+
+		Boolean notificationsOn = true;
+		if ("FALSE".equalsIgnoreCase(notificationsOnString)) notificationsOn = false;
 
 		Device device = new Device();
 		device.setId(UUID.randomUUID());
 		device.setRegistrationId(registrationId);
 		device.setDeviceId(id);
+		device.setNotificationOn(notificationsOn);
 
-		deviceService.insert(device);
+		// if the device id already exists then just update the device.
+		// this would be caused if a person uninstalls the app and re-installs it later.
+		// this also allows us to use this endpoint to update a device when the notification state changes.
+		if (deviceService.isDeviceRegistered(device.getDeviceId()))
+		{
+			deviceService.update(device);
+		}
+		else
+		{
+			deviceService.insert(device);
+		}
 
 		return Response.ok().build();
 	}

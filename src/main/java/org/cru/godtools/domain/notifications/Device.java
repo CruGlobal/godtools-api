@@ -1,7 +1,5 @@
 package org.cru.godtools.domain.notifications;
 
-import org.joda.time.DateTime;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -13,7 +11,7 @@ public class Device implements Serializable
 	UUID id;
 	String deviceId;
 	String registrationId;
-	DateTime createdTimestamp;
+	Boolean notificationOn;
 
 	public UUID getId()
 	{
@@ -43,5 +41,15 @@ public class Device implements Serializable
 	public void setRegistrationId(String registrationId)
 	{
 		this.registrationId = registrationId;
+	}
+
+	public Boolean getNotificationOn()
+	{
+		return notificationOn;
+	}
+
+	public void setNotificationOn(Boolean notificationOn)
+	{
+		this.notificationOn = notificationOn;
 	}
 }
