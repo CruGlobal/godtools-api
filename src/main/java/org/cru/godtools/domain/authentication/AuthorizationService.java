@@ -12,15 +12,15 @@ import javax.inject.Inject;
 public class AuthorizationService
 {
 	@Inject
-    Connection sqlConnection;
+	Connection sqlConnection;
 
-    @Inject
+	@Inject
 	Clock clock;
 
 	Logger log = Logger.getLogger(AuthorizationService.class);
 
-    public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
-    {
+	public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
+	{
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
 
 		log.info("Getting authorization for: " + authToken);
@@ -39,28 +39,28 @@ public class AuthorizationService
 				.addParameter("id", authenticationRecord.getId())
 				.addParameter("username", authenticationRecord.getUsername())
 				.addParameter("grantedTimestamp", clock.currentDateTime())
-                .addParameter("revokedTimestamp", clock.currentDateTime().plusHours(12))
+				.addParameter("revokedTimestamp", clock.currentDateTime().plusHours(12))
 				.addParameter("authToken", authenticationRecord.getAuthToken())
-                .addParameter("deviceId", authenticationRecord.getDeviceId())
-                .addParameter("draftAccess", authenticationRecord.hasDraftAccess())
+				.addParameter("deviceId", authenticationRecord.getDeviceId())
+				.addParameter("draftAccess", authenticationRecord.hasDraftAccess())
 				.addParameter("admin", authenticationRecord.isAdmin())
 				.executeUpdate();
 	}
 
-    public AccessCodeRecord getAccessCode(String accessCode)
-    {
-       return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("accessCode", accessCode)
-                .executeAndFetchFirst(AccessCodeRecord.class);
-    }
+	public AccessCodeRecord getAccessCode(String accessCode)
+	{
+	   return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("accessCode", accessCode)
+				.executeAndFetchFirst(AccessCodeRecord.class);
+	}
 
-    private class AuthenticationQueries
-    {
-        static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
+	private class AuthenticationQueries
+	{
+		static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
 		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, revoked_timestamp, " +
-                "auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, " +
-                ":revokedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
-        static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
-    }
+				"auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, " +
+				":revokedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
+		static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
+	}
 }
