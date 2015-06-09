@@ -13,7 +13,6 @@ import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -43,7 +42,7 @@ public class NotificationResource
 	public Response registerDevice(@PathParam("registrationId")String registrationId,
 								   @HeaderParam("deviceId") String deviceIdHeader, @QueryParam("deviceId") String deviceIdParam,
 								   @HeaderParam("notificationsOn") String notificationsHeader ,
-								   @DefaultValue("TRUE") @QueryParam("notificationsOn") String notificationsParam)
+								   @QueryParam("notificationsOn") String notificationsParam)
 	{
 		String id = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
 		String notificationsOnString = notificationsHeader == null ? notificationsParam : notificationsHeader;
