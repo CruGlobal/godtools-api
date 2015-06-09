@@ -1,6 +1,5 @@
 package org.cru.godtools.api.meta;
 
-import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -18,11 +17,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
 import java.sql.SQLException;
-
 import java.util.Set;
 
 /**
@@ -192,13 +188,13 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 	{
 		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
 		Assert.assertEquals(metaPackage.getStatus(), "live");
-		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.1")));
+		Assert.assertEquals(metaPackage.getVersion(), "1.1");
 	}
 
 	private void validateDraftMetaInfo(MetaResults metaResults)
 	{
 		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
 		Assert.assertEquals(metaPackage.getStatus(), "draft");
-		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.2")));
+		Assert.assertEquals(metaPackage.getVersion(), "1.2");
 	}
 }
