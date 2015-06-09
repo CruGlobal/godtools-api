@@ -67,7 +67,7 @@ public class AuthorizationService
 
 	public AccessCodeRecord getAccessCode(String accessCode)
 	{
-	   return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
+		return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("accessCode", accessCode)
 				.executeAndFetchFirst(AccessCodeRecord.class);
