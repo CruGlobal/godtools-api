@@ -2,6 +2,7 @@ package org.cru.godtools.domain.authentication;
 
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.joda.time.DateTime;
 import org.sql2o.Connection;
 import org.jboss.logging.Logger;
 import javax.inject.Inject;
@@ -35,16 +36,33 @@ public class AuthorizationService
 
 	public void recordNewAuthorization(AuthorizationRecord authenticationRecord)
 	{
+		DateTime expirationTimestamp = getExpirationTimestamp(authenticationRecord);
+
 		sqlConnection.createQuery(AuthenticationQueries.insert)
 				.addParameter("id", authenticationRecord.getId())
 				.addParameter("username", authenticationRecord.getUsername())
 				.addParameter("grantedTimestamp", clock.currentDateTime())
-				.addParameter("revokedTimestamp", clock.currentDateTime().plusHours(12))
+				.addParameter("revokedTimestamp", expirationTimestamp)
 				.addParameter("authToken", authenticationRecord.getAuthToken())
 				.addParameter("deviceId", authenticationRecord.getDeviceId())
 				.addParameter("draftAccess", authenticationRecord.hasDraftAccess())
 				.addParameter("admin", authenticationRecord.isAdmin())
 				.executeUpdate();
+	}
+
+	/**
+	 * Only authorization tokens with draft or admin access should get an expiration set.
+	 */
+	private DateTime getExpirationTimestamp(AuthorizationRecord authenticationRecord)
+	{
+		if(authenticationRecord.isAdmin() || authenticationRecord.hasDraftAccess())
+		{
+			return clock.currentDateTime().plusHours(12);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public AccessCodeRecord getAccessCode(String accessCode)
