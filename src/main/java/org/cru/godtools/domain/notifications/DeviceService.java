@@ -48,7 +48,6 @@ public class DeviceService
 	{
 		sqlConnection.createQuery(deviceQueries.update)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("id", device.getId())
 				.addParameter("registrationId", device.getRegistrationId())
 				.addParameter("notificationOn", device.getNotificationOn())
 				.addParameter("deviceId", device.getDeviceId())
@@ -62,7 +61,6 @@ public class DeviceService
 		public final static String insert = "INSERT INTO devices(id, registration_id, device_id, notification_on) " +
 				"VALUES (:id, :registrationId, :deviceId, :notificationOn)";
 		public final static String update = "UPDATE devices SET " +
-				"id = :id, " +
 				"registration_id = :registrationId, " +
 				"notification_on = :notificationOn " +
 				"WHERE device_id = :deviceId";
