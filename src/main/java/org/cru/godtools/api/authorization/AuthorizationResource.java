@@ -1,5 +1,6 @@
 package org.cru.godtools.api.authorization;
 
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
@@ -13,6 +14,7 @@ import org.xml.sax.SAXException;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -42,13 +44,18 @@ public class AuthorizationResource
 	public Response requestAuthStatus(@HeaderParam("Authorization") String authTokenParam,
 									  @QueryParam("Authorization") String authTokenHeader)
 	{
-		// method will throw an UnauthorizedException (401) if:
-		// - authToken is not provided in one of two parameters,
-		// - authToken is invalid
-		// - authToken has been revoked
-		authorizationService.getAuthorizationRecord(authTokenParam, authTokenHeader);
+		Optional<AuthorizationRecord> optionalRecord = authorizationService.getAuthorizationRecord(authTokenParam, authTokenHeader);
 
-		// if we get here, assume all is good and a 204 no content is fine.
+		// if record is not found
+		if (!optionalRecord.isPresent()) throw new NotAuthorizedException("Not Authorized");
+		else
+		{
+			AuthorizationRecord record = optionalRecord.get();
+
+			// if revoked timestamp is not null and is before now
+			if (record.getRevokedTimestamp() != null && record.getRevokedTimestamp().isBefore(clock.currentDateTime())) throw new NotAuthorizedException("Not Authorized");
+		}
+
 		return  Response.noContent().build();
 	}
 
