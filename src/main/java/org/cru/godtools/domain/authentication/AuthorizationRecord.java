@@ -40,7 +40,7 @@ public class AuthorizationRecord
     private boolean isCurrentlyActive(DateTime currentTime)
     {
         // if the current time is before when the token was granted, then it is not currently active
-        if(!currentTime.isBefore(grantedTimestamp)) return false;
+        if(currentTime.isBefore(grantedTimestamp)) return false;
 
         // if the revoked timestamp is not set, or if the current time is before it, then it is active.
         if(revokedTimestamp == null || currentTime.isBefore(revokedTimestamp)) return true;
