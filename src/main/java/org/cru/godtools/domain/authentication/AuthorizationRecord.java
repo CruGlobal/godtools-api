@@ -3,6 +3,7 @@ package org.cru.godtools.domain.authentication;
 import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 
+import javax.ws.rs.NotAuthorizedException;
 import java.util.UUID;
 
 /**
@@ -22,19 +23,19 @@ public class AuthorizationRecord
 	public static void checkAuthorization(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
 	{
 		if(!authorizationRecordOptional.isPresent()) throw new UnauthorizedException();
-		if(!authorizationRecordOptional.get().isCurrentlyActive(currentTime)) throw new UnauthorizedException();
+		if(!authorizationRecordOptional.get().isCurrentlyActive(currentTime)) throw new NotAuthorizedException("Expired");
 	}
 
 	public static void checkAccessToDrafts(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
 	{
 		checkAuthorization(authorizationRecordOptional, currentTime);
-		if(!authorizationRecordOptional.get().hasDraftAccess()) throw new UnauthorizedException();
+		if(!authorizationRecordOptional.get().hasDraftAccess()) throw new NotAuthorizedException("No access to drafts");
 	}
 
     public static void checkAdminAccess(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
     {
         checkAuthorization(authorizationRecordOptional, currentTime);
-        if(!authorizationRecordOptional.get().isAdmin())  throw new UnauthorizedException();
+        if(!authorizationRecordOptional.get().isAdmin()) throw new NotAuthorizedException("Not an admin");
     }
 
     private boolean isCurrentlyActive(DateTime currentTime)
