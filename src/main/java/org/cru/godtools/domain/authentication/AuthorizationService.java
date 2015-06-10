@@ -2,6 +2,7 @@ package org.cru.godtools.domain.authentication;
 
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.joda.time.DateTime;
 import org.sql2o.Connection;
 import org.jboss.logging.Logger;
 import javax.inject.Inject;
@@ -12,15 +13,15 @@ import javax.inject.Inject;
 public class AuthorizationService
 {
 	@Inject
-    Connection sqlConnection;
+	Connection sqlConnection;
 
-    @Inject
+	@Inject
 	Clock clock;
 
 	Logger log = Logger.getLogger(AuthorizationService.class);
 
-    public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
-    {
+	public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
+	{
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
 
 		log.info("Getting authorization for: " + authToken);
@@ -35,29 +36,49 @@ public class AuthorizationService
 
 	public void recordNewAuthorization(AuthorizationRecord authenticationRecord)
 	{
+		DateTime expirationTimestamp = getExpirationTimestamp(authenticationRecord);
+
 		sqlConnection.createQuery(AuthenticationQueries.insert)
 				.addParameter("id", authenticationRecord.getId())
 				.addParameter("username", authenticationRecord.getUsername())
 				.addParameter("grantedTimestamp", clock.currentDateTime())
+				.addParameter("revokedTimestamp", expirationTimestamp)
 				.addParameter("authToken", authenticationRecord.getAuthToken())
-                .addParameter("deviceId", authenticationRecord.getDeviceId())
-                .addParameter("draftAccess", authenticationRecord.hasDraftAccess())
+				.addParameter("deviceId", authenticationRecord.getDeviceId())
+				.addParameter("draftAccess", authenticationRecord.hasDraftAccess())
 				.addParameter("admin", authenticationRecord.isAdmin())
 				.executeUpdate();
 	}
 
-    public AccessCodeRecord getAccessCode(String accessCode)
-    {
-       return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("accessCode", accessCode)
-                .executeAndFetchFirst(AccessCodeRecord.class);
-    }
+	/**
+	 * Only authorization tokens with draft or admin access should get an expiration set.
+	 */
+	private DateTime getExpirationTimestamp(AuthorizationRecord authenticationRecord)
+	{
+		if(authenticationRecord.isAdmin() || authenticationRecord.hasDraftAccess())
+		{
+			return clock.currentDateTime().plusHours(12);
+		}
+		else
+		{
+			return null;
+		}
+	}
 
-    private class AuthenticationQueries
-    {
-        static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
-		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
-        static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
-    }
+	public AccessCodeRecord getAccessCode(String accessCode)
+	{
+		return sqlConnection.createQuery(AuthenticationQueries.findAccessCode)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("accessCode", accessCode)
+				.executeAndFetchFirst(AccessCodeRecord.class);
+	}
+
+	private class AuthenticationQueries
+	{
+		static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
+		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, revoked_timestamp, " +
+				"auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, " +
+				":revokedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
+		static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
+	}
 }

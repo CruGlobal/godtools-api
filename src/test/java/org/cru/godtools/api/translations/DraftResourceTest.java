@@ -21,6 +21,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -96,7 +97,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
-	@Test(expectedExceptions = UnauthorizedException.class)
+	@Test(expectedExceptions = NotAuthorizedException.class)
 	public void testGetDraftUnauthorized() throws Exception
 	{
 		// auth token does not have access to drafts
