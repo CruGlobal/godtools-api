@@ -1,9 +1,6 @@
 package org.cru.godtools.api.meta;
 
-import org.cru.godtools.domain.GodToolsVersion;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.*;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.tests.Sql2oTestClassCollection;
@@ -18,9 +15,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
+import java.math.*;
 import java.sql.SQLException;
 
 import java.util.Set;
@@ -36,7 +32,7 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(MetaResource.class, MetaService.class, AuthorizationService.class)
+				.addClasses(MetaResource.class, TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -192,13 +188,13 @@ public class MetaResourceTest extends AbstractFullPackageServiceTest
 	{
 		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
 		Assert.assertEquals(metaPackage.getStatus(), "live");
-		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.1")));
+		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.1")).toString());
 	}
 
 	private void validateDraftMetaInfo(MetaResults metaResults)
 	{
 		MetaPackage metaPackage = validateCommonMetaInfo(metaResults);
 		Assert.assertEquals(metaPackage.getStatus(), "draft");
-		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.2")));
+		Assert.assertEquals(metaPackage.getVersion(), new GodToolsVersion(new BigDecimal("1.2")).toString());
 	}
 }
