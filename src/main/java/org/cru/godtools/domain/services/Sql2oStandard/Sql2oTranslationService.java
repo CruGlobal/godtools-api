@@ -4,8 +4,10 @@ import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.translations.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -169,8 +171,27 @@ public class Sql2oTranslationService implements TranslationService
         public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, translated_name = :translatedName, released = :released WHERE id = :id";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

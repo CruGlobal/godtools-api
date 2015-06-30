@@ -18,5 +18,7 @@ public interface PackageStructureService
 
 	List<PackageStructure> selectAll();
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 }

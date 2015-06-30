@@ -62,14 +62,7 @@ public class TranslationElementServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			packageService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		packageService.setAutoCommit(false);
 		TranslationServiceTestMockData.persistLanguage(languageService);
 		TranslationServiceTestMockData.persistPackage(packageService);
 		TranslationServiceTestMockData.persistTranslation(translationService);
@@ -80,14 +73,7 @@ public class TranslationElementServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			packageService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		packageService.rollback();
 	}
 
 	@Test

@@ -57,14 +57,7 @@ public class TranslationServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			translationService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		translationService.setAutoCommit(false);
 		TranslationServiceTestMockData.persistLanguage(languageService);
 		TranslationServiceTestMockData.persistPackage(packageService);
 		TranslationServiceTestMockData.persistTranslation(translationService);
@@ -73,13 +66,7 @@ public class TranslationServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			translationService.getSqlConnection().getJdbcConnection().rollback();
-		} catch (SQLException e)
-		{
-			/*yawn*/
-		}
+		translationService.rollback();
 	}
 
 	@Test

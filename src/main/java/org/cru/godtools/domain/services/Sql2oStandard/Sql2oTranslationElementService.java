@@ -3,8 +3,10 @@ package org.cru.godtools.domain.services.Sql2oStandard;
 import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -101,8 +103,27 @@ public class Sql2oTranslationElementService implements TranslationElementService
                 "element_type = :elementType, page_name = :pageName, display_order = :displayOrder, page_structure_id = :pageStructureId WHERE id = :id AND translation_id = :translationId";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

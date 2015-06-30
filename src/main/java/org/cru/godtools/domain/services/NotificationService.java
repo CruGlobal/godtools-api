@@ -23,6 +23,8 @@ public interface NotificationService
 
 	void setNotificationAsSent(UUID id);
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 
 }

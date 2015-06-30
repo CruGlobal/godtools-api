@@ -22,5 +22,7 @@ public interface PageStructureService
 
 	void update(PageStructure pageStructure);
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 }

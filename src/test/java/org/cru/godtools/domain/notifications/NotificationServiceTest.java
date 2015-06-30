@@ -49,14 +49,7 @@ public class NotificationServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			notificationService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		notificationService.setAutoCommit(false);
 		notificationService.insertNotification(createNotification(id));
 
 	}
@@ -64,14 +57,7 @@ public class NotificationServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			notificationService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		notificationService.rollback();
 	}
 
 	@Test

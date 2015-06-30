@@ -29,6 +29,8 @@ public interface TranslationService
 
 	void update(Translation translation);
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 
 }

@@ -4,8 +4,10 @@ import org.ccci.util.time.*;
 import org.cru.godtools.domain.notifications.*;
 import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -90,8 +92,27 @@ public class Sql2oNotificationService implements NotificationService
         public final static String setNotificationAsSent = "UPDATE notifications SET notification_sent = 't' WHERE id = :id";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

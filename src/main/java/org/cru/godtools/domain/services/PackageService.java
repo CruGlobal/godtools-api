@@ -11,9 +11,16 @@ import java.util.UUID;
 public interface PackageService
 {
     Package selectById(UUID id);
+
     Package selectByCode(String code);
+
     List<Package> selectAllPackages();
-	Package selectByOneskyProjectId(Integer translationProjectId);
-	void insert(Package godToolsPackage);
-    Connection getSqlConnection();
+
+    Package selectByOneskyProjectId(Integer translationProjectId);
+
+    void insert(Package godToolsPackage);
+
+    void setAutoCommit(boolean autoCommit);
+
+    void rollback();
 }
