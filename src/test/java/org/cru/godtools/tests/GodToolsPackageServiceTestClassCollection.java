@@ -13,7 +13,7 @@ import org.cru.godtools.api.services.ReferencedImageService;
 import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.api.services.PackageStructureService;
-import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.api.services.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.NoOpTranslationUpload;
@@ -34,7 +34,7 @@ public class GodToolsPackageServiceTestClassCollection
 				TranslationService.class,
 				LanguageService.class, Sql2oLanguageService.class,
 				PackageStructureService.class, Sql2oPackageStructureService.class,
-				PageStructureService.class,
+				PageStructureService.class, Sql2oPageStructureService.class,
 				TranslationElementService.class,
 				OneSkyDataService.class,
 				AuthorizationService.class, Sql2oAuthorizationService.class, JPAAuthorizationService.class,

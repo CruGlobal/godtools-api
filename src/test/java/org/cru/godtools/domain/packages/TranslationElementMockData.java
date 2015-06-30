@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.api.services.*;
 import org.cru.godtools.domain.translations.TranslationServiceTest;
 import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;

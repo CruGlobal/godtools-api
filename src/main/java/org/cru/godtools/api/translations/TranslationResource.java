@@ -13,7 +13,7 @@ import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.domain.packages.PageStructure;
-import org.cru.godtools.domain.packages.PageStructureService;
+import org.cru.godtools.api.services.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
