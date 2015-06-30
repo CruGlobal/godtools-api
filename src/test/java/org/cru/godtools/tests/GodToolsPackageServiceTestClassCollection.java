@@ -14,7 +14,7 @@ import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.api.services.PageStructureService;
-import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.api.services.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.NoOpTranslationUpload;
 import org.cru.godtools.translate.client.onesky.FileClient;
@@ -29,16 +29,16 @@ public class GodToolsPackageServiceTestClassCollection
 {
 	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(
 				GodToolsTranslationService.class,
+				ImageService.class, Sql2oImageService.class,
 				ReferencedImageService.class, Sql2oReferencedImageService.class,
 				PackageService.class, Sql2oPackageService.class,
-				TranslationService.class,
-				LanguageService.class, Sql2oLanguageService.class,
 				PackageStructureService.class, Sql2oPackageStructureService.class,
+				LanguageService.class, Sql2oLanguageService.class,
 				PageStructureService.class, Sql2oPageStructureService.class,
-				TranslationElementService.class,
+				TranslationService.class,
+				TranslationElementService.class, Sql2oTranslationElementService.class,
 				OneSkyDataService.class,
 				AuthorizationService.class, Sql2oAuthorizationService.class, JPAAuthorizationService.class,
-				ImageService.class, Sql2oImageService.class,
 				NotificationService.class, Sql2oNotificationService.class,
 				MetaService.class,
 				DeviceService.class, Sql2oDeviceService.class,

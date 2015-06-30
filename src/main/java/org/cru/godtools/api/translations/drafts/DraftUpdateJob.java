@@ -6,7 +6,7 @@ import org.cru.godtools.api.cache.MemcachedClientProducer;
 import org.cru.godtools.api.cache.MemcachedGodToolsCache;
 import org.cru.godtools.domain.database.SqlConnectionProducer;
 import org.cru.godtools.domain.packages.TranslationElement;
-import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.api.services.TranslationElementService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.domain.translations.Translation;
@@ -19,6 +19,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import javax.inject.*;
 import java.util.Set;
 import java.util.UUID;
 
@@ -68,7 +69,8 @@ public class DraftUpdateJob implements Job
 
 	TranslationDownload translationDownload = new OneSkyTranslationDownload(new TranslationClient(), properties);
 
-	TranslationElementService translationElementService = new TranslationElementService(new SqlConnectionProducer().getSqlConnection());
+	@Inject
+	TranslationElementService translationElementService;
 
 	GodToolsCache cache = new MemcachedGodToolsCache(new MemcachedClientProducer().getClient(),
 			properties);

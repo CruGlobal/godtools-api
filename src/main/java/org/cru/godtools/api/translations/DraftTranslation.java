@@ -5,7 +5,7 @@ import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.api.services.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
-import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.api.services.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
