@@ -2,8 +2,7 @@ package org.cru.godtools.api.notifications;
 
 import junit.framework.Assert;
 import org.cru.godtools.api.utilities.ClockImpl;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
+import org.cru.godtools.domain.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -30,7 +29,7 @@ public class NotificationResourceTest extends Arquillian
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(NotificationResource.class, ClockImpl.class)
+				.addClasses(NotificationResource.class, TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 

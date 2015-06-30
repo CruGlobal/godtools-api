@@ -11,7 +11,6 @@ import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationCreation;
 import org.cru.godtools.api.services.ReferencedImageService;
 import org.cru.godtools.api.services.LanguageService;
-import org.cru.godtools.domain.notifications.*;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
@@ -40,7 +39,7 @@ public class GodToolsPackageServiceTestClassCollection
 				OneSkyDataService.class,
 				AuthorizationService.class, Sql2oAuthorizationService.class, JPAAuthorizationService.class,
 				ImageService.class, Sql2oImageService.class,
-				NotificationService.class,
+				NotificationService.class, Sql2oNotificationService.class,
 				MetaService.class,
 				DeviceService.class, Sql2oDeviceService.class,
 			NewTranslationCreation.class,

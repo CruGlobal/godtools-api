@@ -8,7 +8,7 @@ import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.api.services.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
-import org.cru.godtools.domain.notifications.NotificationService;
+import org.cru.godtools.api.services.NotificationService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
