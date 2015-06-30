@@ -2,13 +2,16 @@ package org.cru.godtools.tests;
 
 import com.google.common.collect.ImmutableSet;
 import org.cru.godtools.api.cache.NoOpCache;
+import org.cru.godtools.api.meta.*;
+import org.cru.godtools.api.services.*;
+import org.cru.godtools.api.services.JPAStandard.*;
+import org.cru.godtools.api.services.Sql2oStandard.*;
 import org.cru.godtools.api.translations.DraftTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationCreation;
-import org.cru.godtools.domain.TestClockImpl;
-import org.cru.godtools.domain.images.ImageService;
-import org.cru.godtools.domain.images.ReferencedImageService;
-import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.api.services.ReferencedImageService;
+import org.cru.godtools.api.services.LanguageService;
+import org.cru.godtools.domain.notifications.*;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
@@ -25,13 +28,28 @@ import org.cru.godtools.translate.client.onesky.TranslationClient;
  */
 public class GodToolsPackageServiceTestClassCollection
 {
-	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(GodToolsTranslationService.class, ImageService.class,
-			ReferencedImageService.class, PackageService.class,
-			TranslationService.class, LanguageService.class, PackageStructureService.class,
-			PageStructureService.class, TranslationElementService.class, NewTranslationCreation.class,
-			DraftTranslation.class, OneSkyTranslationDownload.class,
-			NoOpTranslationUpload.class, FileClient.class, TranslationClient.class, TestClockImpl.class,
-			OneSkyDataService.class, NoOpCache.class);
+	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(
+				GodToolsTranslationService.class,
+				ReferencedImageService.class, Sql2oReferencedImageService.class,
+				PackageService.class,
+				TranslationService.class,
+				LanguageService.class, Sql2oLanguageService.class,
+				PackageStructureService.class,
+				PageStructureService.class,
+				TranslationElementService.class,
+				OneSkyDataService.class,
+				AuthorizationService.class, Sql2oAuthorizationService.class, JPAAuthorizationService.class,
+				ImageService.class, Sql2oImageService.class,
+				NotificationService.class,
+				MetaService.class,
+				DeviceService.class, Sql2oDeviceService.class,
+			NewTranslationCreation.class,
+			DraftTranslation.class,
+			OneSkyTranslationDownload.class,
+			NoOpTranslationUpload.class,
+			FileClient.class,
+			TranslationClient.class,
+			NoOpCache.class);
 
 	public static Class<?>[] getClasses()
 	{

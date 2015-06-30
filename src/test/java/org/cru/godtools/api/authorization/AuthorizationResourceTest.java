@@ -1,11 +1,12 @@
 package org.cru.godtools.api.authorization;
 
+import org.cru.godtools.api.services.Sql2oStandard.*;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,7 +32,8 @@ public class AuthorizationResourceTest extends Arquillian
 	{
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
-				.addClasses(AuthorizationResource.class, AuthorizationService.class, TestClockImpl.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClasses(AuthorizationResource.class, TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 

@@ -3,9 +3,8 @@ package org.cru.godtools.api.translations;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.*;
+import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
@@ -36,7 +35,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
 				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClasses(DraftResource.class, AuthorizationService.class, FileZipper.class, GodToolsTranslationRetrieval.class)
+				.addClasses(DraftResource.class, FileZipper.class, GodToolsTranslationRetrieval.class, TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 

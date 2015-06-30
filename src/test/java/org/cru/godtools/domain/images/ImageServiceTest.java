@@ -1,8 +1,8 @@
 package org.cru.godtools.domain.images;
 
-import org.cru.godtools.domain.AbstractServiceTest;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.api.services.*;
+import org.cru.godtools.domain.*;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,7 +35,8 @@ public class ImageServiceTest extends Arquillian
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(ImageService.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClasses(TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -50,7 +51,7 @@ public class ImageServiceTest extends Arquillian
 	{
 		try
 		{
-			imageService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+			imageService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
 		}
 		catch(SQLException e)
 		{
@@ -65,7 +66,7 @@ public class ImageServiceTest extends Arquillian
 	{
 		try
 		{
-			imageService.sqlConnection.getJdbcConnection().rollback();
+			imageService.getSqlConnection().getJdbcConnection().rollback();
 		}
 		catch(SQLException e)
 		{

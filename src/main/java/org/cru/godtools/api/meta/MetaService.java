@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.domain.packages.PackageService;

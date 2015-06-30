@@ -4,10 +4,7 @@ import junit.framework.Assert;
 import org.cru.godtools.api.utilities.ClockImpl;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.notifications.DeviceService;
-import org.cru.godtools.domain.notifications.NotificationService;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -32,8 +29,8 @@ public class NotificationResourceTest extends Arquillian
 	{
 		return ShrinkWrap.create(WebArchive.class)
 				.addClasses(Sql2oTestClassCollection.getClasses())
-				.addClasses(NotificationResource.class, DeviceService.class, AuthorizationService.class, NotificationService.class,
-						ClockImpl.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClasses(NotificationResource.class, ClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 

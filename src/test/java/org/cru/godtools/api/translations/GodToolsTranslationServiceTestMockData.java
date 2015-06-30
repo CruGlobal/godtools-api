@@ -2,11 +2,11 @@ package org.cru.godtools.api.translations;
 
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.images.Image;
-import org.cru.godtools.domain.images.ImageService;
+import org.cru.godtools.api.services.ImageService;
 import org.cru.godtools.domain.images.ReferencedImage;
-import org.cru.godtools.domain.images.ReferencedImageService;
+import org.cru.godtools.api.services.ReferencedImageService;
 import org.cru.godtools.domain.languages.Language;
-import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.ImageReader;
 import org.cru.godtools.domain.packages.PackageService;

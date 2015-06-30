@@ -1,8 +1,9 @@
 package org.cru.godtools.domain.languages;
 
-import org.cru.godtools.domain.AbstractServiceTest;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.ccci.util.time.*;
+import org.cru.godtools.api.services.*;
+import org.cru.godtools.domain.*;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,7 +29,7 @@ public class LanguageServiceTest extends Arquillian
 	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
 
 	@Inject
-    LanguageService languageService;
+	LanguageService languageService;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -37,7 +38,8 @@ public class LanguageServiceTest extends Arquillian
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(LanguageService.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClass(TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -52,7 +54,7 @@ public class LanguageServiceTest extends Arquillian
 	{
 		try
 		{
-			languageService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+			languageService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
 		}
 		catch(SQLException e)
 		{
@@ -66,7 +68,7 @@ public class LanguageServiceTest extends Arquillian
 	{
 		try
 		{
-			languageService.sqlConnection.getJdbcConnection().rollback();
+			languageService.getSqlConnection().getJdbcConnection().rollback();
 		}
 		catch(SQLException e)
 		{

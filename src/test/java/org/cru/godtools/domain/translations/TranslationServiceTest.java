@@ -1,12 +1,10 @@
 package org.cru.godtools.domain.translations;
 
-import org.cru.godtools.domain.AbstractServiceTest;
-import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.domain.*;
+import org.cru.godtools.api.services.LanguageService;
 
 import org.cru.godtools.domain.packages.PackageService;
-import org.cru.godtools.domain.packages.PackageServiceTestMockData;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -46,7 +44,8 @@ public class TranslationServiceTest extends Arquillian
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(TranslationService.class, PackageService.class, LanguageService.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClasses(TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 

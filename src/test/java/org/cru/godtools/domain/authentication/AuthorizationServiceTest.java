@@ -1,18 +1,15 @@
 package org.cru.godtools.domain.authentication;
 
-import org.cru.godtools.domain.AbstractServiceTest;
+import org.cru.godtools.api.services.*;
+import org.cru.godtools.api.services.Sql2oStandard.Sql2oAuthorizationService;
 import org.cru.godtools.domain.TestClockImpl;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.domain.properties.GodToolsProperties;
-import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -31,7 +28,7 @@ public class AuthorizationServiceTest extends Arquillian
 	public static final UUID TEST_AUTHORIZATION_ID = UUID.randomUUID();
 
 	@Inject
-	private AuthorizationService authorizationService;
+	private Sql2oAuthorizationService authorizationService;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -40,7 +37,8 @@ public class AuthorizationServiceTest extends Arquillian
 
 		return ShrinkWrap.create(JavaArchive.class)
 				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(AuthorizationService.class, TestClockImpl.class)
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClasses(TestClockImpl.class)
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
@@ -55,7 +53,7 @@ public class AuthorizationServiceTest extends Arquillian
 	{
 		try
 		{
-			authorizationService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+			authorizationService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
 		}
 		catch(SQLException e)
 		{
@@ -69,7 +67,7 @@ public class AuthorizationServiceTest extends Arquillian
 	{
 		try
 		{
-			authorizationService.sqlConnection.getJdbcConnection().rollback();
+			authorizationService.getSqlConnection().getJdbcConnection().rollback();
 		}
 		catch(SQLException e)
 		{

@@ -3,14 +3,12 @@ package org.cru.godtools.api.languages;
 import com.google.common.base.Optional;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationCreation;
-import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
-import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.languages.LanguageService;
+import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.domain.packages.*;
-import org.cru.godtools.domain.translations.TranslationService;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;

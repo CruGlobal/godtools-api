@@ -29,6 +29,15 @@
         </dependencies>
     </dependencyManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn_repo</url>
+        </repository>
+    </distributionManagement>
+
+
     <dependencies>
         <!-- Import external dependencies that we like -->
         <dependency>
@@ -241,6 +250,13 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
+        </dependency>
+
+        <!-- dependencies to run Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.3.1.Final</version>
         </dependency>
     </dependencies>
 

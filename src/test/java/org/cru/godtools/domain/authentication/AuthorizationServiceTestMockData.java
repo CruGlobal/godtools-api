@@ -1,5 +1,7 @@
 package org.cru.godtools.domain.authentication;
 
+import org.cru.godtools.api.services.*;
+
 /**
  * Created by ryancarlson on 4/3/14.
  */

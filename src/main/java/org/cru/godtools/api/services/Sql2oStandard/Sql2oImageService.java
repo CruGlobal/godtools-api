@@ -1,19 +1,24 @@
-package org.cru.godtools.domain.images;
+package org.cru.godtools.api.services.Sql2oStandard;
 
+import org.cru.godtools.api.services.ImageService;
+import org.cru.godtools.domain.images.Image;
 import org.sql2o.Connection;
 
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * Created by ryancarlson on 3/21/14.
+ * Created by justinsturm on 6/30/15.
  */
-public class ImageService
+@Default
+public class Sql2oImageService implements ImageService
 {
-    Connection sqlConnection;
+    @Inject
+    private Connection sqlConnection;
 
     @Inject
-    public ImageService(Connection sqlConnection)
+    public Sql2oImageService(Connection sqlConnection)
     {
         this.sqlConnection = sqlConnection;
     }
@@ -26,19 +31,19 @@ public class ImageService
                 .executeAndFetchFirst(Image.class);
     }
 
-	public Image selectByFilename(String filename)
-	{
-		return sqlConnection.createQuery(ImageQueries.selectByFilename)
-				.setAutoDeriveColumnNames(true)
-				.addParameter("filename", filename)
-				.executeAndFetchFirst(Image.class);
-	}
+    public Image selectByFilename(String filename)
+    {
+        return sqlConnection.createQuery(ImageQueries.selectByFilename)
+                .setAutoDeriveColumnNames(true)
+                .addParameter("filename", filename)
+                .executeAndFetchFirst(Image.class);
+    }
 
     public void update(Image image)
     {
         sqlConnection.createQuery(ImageQueries.update)
                 .addParameter("id", image.getId())
-				.addParameter("filename", image.getFilename())
+                .addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -48,7 +53,7 @@ public class ImageService
     {
         sqlConnection.createQuery(ImageQueries.insert)
                 .addParameter("id", image.getId())
-				.addParameter("filename", image.getFilename())
+                .addParameter("filename", image.getFilename())
                 .addParameter("imageContent", image.getImageContent())
                 .addParameter("resolution", image.getResolution())
                 .executeUpdate();
@@ -59,6 +64,11 @@ public class ImageService
         public static final String selectById = "SELECT * FROM images where id = :id";
         public static final String insert = "INSERT INTO images(id, filename, image_content, resolution) VALUES(:id, :filename, :imageContent, :resolution)";
         public static final String update = "UPDATE images SET filename = :filename, image_content = :imageContent, resolution = :resolution WHERE id = :id";
-		public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
-	}
+        public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
+    }
+
+    public Connection getSqlConnection()
+    {
+        return sqlConnection;
+    }
 }
