@@ -8,7 +8,7 @@ import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.api.services.PackageService;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.api.services.TranslationService;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;

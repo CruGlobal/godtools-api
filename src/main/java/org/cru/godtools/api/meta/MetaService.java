@@ -12,7 +12,7 @@ import org.cru.godtools.domain.packages.PackageStructureList;
 import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationList;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.api.services.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;

@@ -7,7 +7,7 @@ import org.cru.godtools.api.services.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.api.services.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.api.services.TranslationService;
 import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;

@@ -2,7 +2,7 @@ package org.cru.godtools.domain.packages;
 
 import org.cru.godtools.api.services.*;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.api.services.TranslationService;
 import org.cru.godtools.domain.translations.TranslationServiceTest;
 import org.cru.godtools.domain.translations.TranslationServiceTestMockData;
 import org.cru.godtools.tests.*;

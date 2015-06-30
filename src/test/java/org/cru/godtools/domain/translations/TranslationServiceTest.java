@@ -1,9 +1,8 @@
 package org.cru.godtools.domain.translations;
 
+import org.cru.godtools.api.services.*;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.api.services.LanguageService;
 
-import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -60,7 +59,7 @@ public class TranslationServiceTest extends Arquillian
 	{
 		try
 		{
-			translationService.sqlConnection.getJdbcConnection().setAutoCommit(false);
+			translationService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
 		}
 		catch(SQLException e)
 		{
@@ -76,7 +75,7 @@ public class TranslationServiceTest extends Arquillian
 	{
 		try
 		{
-			translationService.sqlConnection.getJdbcConnection().rollback();
+			translationService.getSqlConnection().getJdbcConnection().rollback();
 		} catch (SQLException e)
 		{
 			/*yawn*/
