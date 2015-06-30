@@ -17,7 +17,7 @@ import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.domain.packages.Package;
-import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructure;
