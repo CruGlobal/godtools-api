@@ -49,29 +49,15 @@ public class DeviceServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			deviceService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
-		deviceService.insert(createNotificationRegistration(id));
+		deviceService.setAutoCommit(false);
 
+		deviceService.insert(createNotificationRegistration(id));
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			deviceService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		deviceService.rollback();
 	}
 
 	@Test

@@ -15,6 +15,8 @@ public interface AuthorizationService
 
     AccessCodeRecord getAccessCode(String accessCode);
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+    void rollback();
 
 }

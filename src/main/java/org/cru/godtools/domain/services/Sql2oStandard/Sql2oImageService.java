@@ -6,6 +6,7 @@ import org.sql2o.Connection;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -67,8 +68,27 @@ public class Sql2oImageService implements ImageService
         public static final String selectByFilename = "SELECT * FROM images where filename = :filename";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

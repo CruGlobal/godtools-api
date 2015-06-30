@@ -26,5 +26,7 @@ public interface LanguageService
 
     void insert(Language language);
 
-    Connection getSqlConnection();
+    void setAutoCommit(boolean autoCommit);
+
+    void rollback();
 }

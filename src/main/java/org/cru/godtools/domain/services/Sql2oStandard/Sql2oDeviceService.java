@@ -3,8 +3,10 @@ package org.cru.godtools.domain.services.Sql2oStandard;
 import org.cru.godtools.domain.notifications.*;
 import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -44,8 +46,27 @@ public class Sql2oDeviceService implements DeviceService
                 "VALUES (:id, :registrationId, :deviceId)";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

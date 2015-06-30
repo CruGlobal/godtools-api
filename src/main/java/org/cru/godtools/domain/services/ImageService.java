@@ -19,6 +19,8 @@ public interface ImageService
 
     void insert(Image image);
 
-    Connection getSqlConnection();
+    void setAutoCommit(boolean autoCommit);
+
+    void rollback();
 
 }

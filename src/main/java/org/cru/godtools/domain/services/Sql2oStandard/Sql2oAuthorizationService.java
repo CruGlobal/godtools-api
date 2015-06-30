@@ -10,6 +10,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import java.sql.*;
 
 /**
  * Created by justinsturm on 6/29/15.
@@ -67,8 +68,27 @@ public class Sql2oAuthorizationService implements AuthorizationService
         static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

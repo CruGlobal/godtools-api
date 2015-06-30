@@ -15,5 +15,7 @@ public interface DeviceService
 
 	void insert(Device device);
 
-	Connection getSqlConnection();
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 }

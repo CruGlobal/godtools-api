@@ -8,7 +8,6 @@ import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.jboss.logging.*;
-import org.sql2o.*;
 
 /**
  * Created by justinsturm on 6/29/15.
@@ -131,7 +130,13 @@ public class JPAAuthorizationService implements AuthorizationService
         }
     }
 
-    public Connection getSqlConnection() {
-        return null;
+    public void setAutoCommit(boolean autoCommit)
+    {
+        /*Do Nothing*/
+    }
+
+    public void rollback()
+    {
+        /*Do Nothing*/
     }
 }

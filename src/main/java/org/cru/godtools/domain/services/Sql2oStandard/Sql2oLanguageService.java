@@ -4,8 +4,10 @@ import com.google.common.base.*;
 import org.cru.godtools.domain.languages.*;
 import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -119,8 +121,27 @@ public class Sql2oLanguageService implements LanguageService
         public final static String selectByCode = "SELECT * FROM languages WHERE code = :code";        public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
     }
 
-    public Connection getSqlConnection()
+    public void setAutoCommit(boolean autoCommit)
     {
-        return sqlConnection;
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

@@ -1,8 +1,10 @@
 package org.cru.godtools.domain.authentication;
 
+import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.Sql2oStandard.Sql2oAuthorizationService;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -27,7 +29,7 @@ public class AuthorizationServiceTest extends Arquillian
 	public static final UUID TEST_AUTHORIZATION_ID = UUID.randomUUID();
 
 	@Inject
-	private Sql2oAuthorizationService authorizationService;
+	private AuthorizationService authorizationService;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -50,28 +52,15 @@ public class AuthorizationServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			authorizationService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		authorizationService.setAutoCommit(false);
+
 		AuthorizationServiceTestMockData.persistAuthorization(authorizationService);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			authorizationService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+			authorizationService.rollback();
 	}
 
 	@Test

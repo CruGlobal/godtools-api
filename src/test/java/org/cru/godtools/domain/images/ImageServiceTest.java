@@ -49,14 +49,7 @@ public class ImageServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			imageService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		imageService.setAutoCommit(false);
 		ImageServiceTestMockData.persistImage(imageService);
 		ImageServiceTestMockData.persistRetinaImage(imageService);
 	}
@@ -64,14 +57,7 @@ public class ImageServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			imageService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		imageService.rollback();
 	}
 
 	@Test

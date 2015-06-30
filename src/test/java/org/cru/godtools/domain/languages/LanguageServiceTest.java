@@ -51,28 +51,14 @@ public class LanguageServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			languageService.getSqlConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		languageService.setAutoCommit(false);
 		LanguageServiceTestMockData.persistLanguages(languageService);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			languageService.getSqlConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		languageService.rollback();
 	}
 
     @Test
