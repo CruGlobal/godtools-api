@@ -1,7 +1,7 @@
-package org.cru.godtools.api.services.Sql2oStandard;
+package org.cru.godtools.domain.services.Sql2oStandard;
 
-import org.cru.godtools.api.services.*;
 import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
 
 import javax.inject.*;

@@ -1,4 +1,4 @@
-package org.cru.godtools.api.services.annotations;
+package org.cru.godtools.domain.services.annotations;
 
 import javax.inject.*;
 import java.lang.annotation.*;

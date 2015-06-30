@@ -4,7 +4,7 @@ import org.ccci.util.time.Clock;
 import org.cru.godtools.api.utilities.TimerControls;
 import org.cru.godtools.domain.database.SqlConnectionProducer;
 import org.cru.godtools.domain.notifications.Notification;
-import org.cru.godtools.api.services.NotificationService;
+import org.cru.godtools.domain.services.NotificationService;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.jboss.logging.Logger;

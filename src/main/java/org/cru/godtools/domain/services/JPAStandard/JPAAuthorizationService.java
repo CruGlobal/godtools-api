@@ -1,9 +1,9 @@
-package org.cru.godtools.api.services.JPAStandard;
+package org.cru.godtools.domain.services.JPAStandard;
 
 import com.google.common.base.*;
-import org.cru.godtools.api.services.*;
-import org.cru.godtools.api.services.annotations.JPAStandard;
+import org.cru.godtools.domain.services.annotations.JPAStandard;
 import org.cru.godtools.domain.authentication.*;
+import org.cru.godtools.domain.services.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;

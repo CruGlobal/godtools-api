@@ -1,10 +1,8 @@
 package org.cru.godtools.api.authorization;
 
-import org.cru.godtools.api.services.Sql2oStandard.*;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
-import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;

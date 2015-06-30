@@ -1,15 +1,15 @@
 package org.cru.godtools.tests;
 
 import org.cru.godtools.api.translations.GodToolsTranslationServiceTestMockData;
-import org.cru.godtools.api.services.ImageService;
-import org.cru.godtools.api.services.ReferencedImageService;
-import org.cru.godtools.api.services.LanguageService;
-import org.cru.godtools.api.services.PackageService;
-import org.cru.godtools.api.services.PackageStructureService;
-import org.cru.godtools.api.services.PageStructureService;
-import org.cru.godtools.api.services.TranslationElementService;
+import org.cru.godtools.domain.services.ImageService;
+import org.cru.godtools.domain.services.ReferencedImageService;
+import org.cru.godtools.domain.services.LanguageService;
+import org.cru.godtools.domain.services.PackageService;
+import org.cru.godtools.domain.services.PackageStructureService;
+import org.cru.godtools.domain.services.PageStructureService;
+import org.cru.godtools.domain.services.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.api.services.TranslationService;
+import org.cru.godtools.domain.services.TranslationService;
 import org.jboss.arquillian.testng.Arquillian;
 
 import javax.inject.Inject;

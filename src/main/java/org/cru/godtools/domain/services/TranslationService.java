@@ -1,4 +1,4 @@
-package org.cru.godtools.api.services;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.translations.*;

@@ -1,6 +1,6 @@
 package org.cru.godtools.domain.languages;
 
-import org.cru.godtools.api.services.*;
+import org.cru.godtools.domain.services.*;
 import org.testng.Assert;
 
 import java.util.List;

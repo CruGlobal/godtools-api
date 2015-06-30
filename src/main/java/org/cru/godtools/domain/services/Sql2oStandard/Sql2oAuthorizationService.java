@@ -1,8 +1,8 @@
-package org.cru.godtools.api.services.Sql2oStandard;
+package org.cru.godtools.domain.services.Sql2oStandard;
 
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.services.AuthorizationService;
+import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.sql2o.Connection;

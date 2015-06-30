@@ -3,7 +3,7 @@ package org.cru.godtools.api.packages;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.packages.utils.ProvidesImages;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
-import org.cru.godtools.api.services.AuthorizationService;
+import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.packages.PixelDensity;
 import org.jboss.logging.Logger;

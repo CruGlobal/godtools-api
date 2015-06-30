@@ -1,7 +1,6 @@
 package org.cru.godtools.domain.authentication;
 
-import org.cru.godtools.api.services.*;
-import org.cru.godtools.api.services.Sql2oStandard.Sql2oAuthorizationService;
+import org.cru.godtools.domain.services.Sql2oStandard.Sql2oAuthorizationService;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.tests.*;

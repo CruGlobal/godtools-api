@@ -3,12 +3,12 @@ package org.cru.godtools.api.notifications;
 import com.google.common.base.Optional;
 import org.cru.godtools.api.authorization.AuthorizationResource;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
-import org.cru.godtools.api.services.AuthorizationService;
+import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.notifications.Device;
-import org.cru.godtools.api.services.DeviceService;
+import org.cru.godtools.domain.services.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
-import org.cru.godtools.api.services.NotificationService;
+import org.cru.godtools.domain.services.NotificationService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;

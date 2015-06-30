@@ -1,4 +1,4 @@
-package org.cru.godtools.api.services;
+package org.cru.godtools.domain.services;
 
 import com.google.common.base.Optional;
 import org.cru.godtools.domain.authentication.*;

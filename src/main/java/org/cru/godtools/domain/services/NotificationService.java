@@ -1,4 +1,4 @@
-package org.cru.godtools.api.services;
+package org.cru.godtools.domain.services;
 
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.notifications.*;

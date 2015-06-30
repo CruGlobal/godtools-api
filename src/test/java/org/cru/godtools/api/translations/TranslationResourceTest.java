@@ -5,7 +5,6 @@ import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.api.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;

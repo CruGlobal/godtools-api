@@ -5,7 +5,7 @@ import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
-import org.cru.godtools.api.services.AuthorizationService;
+import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;

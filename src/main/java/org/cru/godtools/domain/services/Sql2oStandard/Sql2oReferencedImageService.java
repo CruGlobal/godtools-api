@@ -1,8 +1,8 @@
-package org.cru.godtools.api.services.Sql2oStandard;
+package org.cru.godtools.domain.services.Sql2oStandard;
 
 import com.google.common.collect.*;
-import org.cru.godtools.api.services.*;
 import org.cru.godtools.domain.images.*;
+import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
 
 import javax.enterprise.inject.*;

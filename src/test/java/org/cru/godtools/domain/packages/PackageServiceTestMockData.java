@@ -1,6 +1,6 @@
 package org.cru.godtools.domain.packages;
 
-import org.cru.godtools.api.services.*;
+import org.cru.godtools.domain.services.*;
 import org.testng.Assert;
 
 /**

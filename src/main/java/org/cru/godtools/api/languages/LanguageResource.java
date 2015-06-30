@@ -1,12 +1,12 @@
 package org.cru.godtools.api.languages;
 
 import com.google.common.base.Optional;
-import org.cru.godtools.api.services.*;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
 import org.cru.godtools.api.translations.NewTranslationCreation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.cru.godtools.domain.services.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;

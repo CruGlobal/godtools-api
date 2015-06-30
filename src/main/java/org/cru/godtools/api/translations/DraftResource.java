@@ -3,7 +3,7 @@ package org.cru.godtools.api.translations;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
-import org.cru.godtools.api.services.AuthorizationService;
+import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;

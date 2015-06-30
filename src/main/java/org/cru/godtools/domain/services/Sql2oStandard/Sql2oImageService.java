@@ -1,6 +1,6 @@
-package org.cru.godtools.api.services.Sql2oStandard;
+package org.cru.godtools.domain.services.Sql2oStandard;
 
-import org.cru.godtools.api.services.ImageService;
+import org.cru.godtools.domain.services.ImageService;
 import org.cru.godtools.domain.images.Image;
 import org.sql2o.Connection;
 
