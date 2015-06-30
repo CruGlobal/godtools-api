@@ -12,7 +12,7 @@ import org.cru.godtools.api.translations.NewTranslationCreation;
 import org.cru.godtools.api.services.ReferencedImageService;
 import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.api.services.PackageService;
-import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.TranslationService;
@@ -30,10 +30,10 @@ public class GodToolsPackageServiceTestClassCollection
 	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(
 				GodToolsTranslationService.class,
 				ReferencedImageService.class, Sql2oReferencedImageService.class,
-				PackageService.class,
+				PackageService.class, Sql2oPackageService.class,
 				TranslationService.class,
 				LanguageService.class, Sql2oLanguageService.class,
-				PackageStructureService.class, Sql2oPackageService.class,
+				PackageStructureService.class, Sql2oPackageStructureService.class,
 				PageStructureService.class,
 				TranslationElementService.class,
 				OneSkyDataService.class,

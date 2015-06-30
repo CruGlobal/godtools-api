@@ -19,7 +19,7 @@ import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.domain.packages.PackageStructure;
-import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;

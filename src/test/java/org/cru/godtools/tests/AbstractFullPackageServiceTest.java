@@ -5,7 +5,7 @@ import org.cru.godtools.api.services.ImageService;
 import org.cru.godtools.api.services.ReferencedImageService;
 import org.cru.godtools.api.services.LanguageService;
 import org.cru.godtools.api.services.PackageService;
-import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;

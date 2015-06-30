@@ -9,7 +9,7 @@ import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageList;
 import org.cru.godtools.api.services.PackageService;
 import org.cru.godtools.domain.packages.PackageStructureList;
-import org.cru.godtools.domain.packages.PackageStructureService;
+import org.cru.godtools.api.services.PackageStructureService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationList;
 import org.cru.godtools.domain.translations.TranslationService;
