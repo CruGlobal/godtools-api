@@ -7,6 +7,7 @@ import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
+import org.cru.godtools.domain.services.annotations.*;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -33,7 +34,8 @@ public class AuthorizationResource
 	Clock clock;
 
     @Inject
-	AuthorizationService authorizationService;
+	@JPAStandard
+	private AuthorizationService authorizationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);
 
@@ -153,5 +155,10 @@ public class AuthorizationResource
 		authorizationRecord.setId(UUID.randomUUID());
 
 		return authorizationRecord;
+	}
+
+	public AuthorizationService getAuthorizationService()
+	{
+		return authorizationService;
 	}
 }

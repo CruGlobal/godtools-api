@@ -16,5 +16,6 @@
 
       <!-- Use Annotation-based mapping metadata -->
       <mapping class="org.cru.godtools.domain.authentication.AuthorizationRecord"/>
+      <mapping class="org.cru.godtools.domain.authentication.AccessCodeRecord"/>
   </session-factory>
 </hibernate-configuration>

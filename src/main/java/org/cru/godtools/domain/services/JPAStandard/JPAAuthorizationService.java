@@ -149,7 +149,7 @@ public class JPAAuthorizationService implements AuthorizationService
         {
             try {
                 txn.begin();
-                Query q1 = session.createSQLQuery("DELETE FROM AUTH_TOKENS WHERE AUTH_TOKEN = 'a'");
+                Query q1 = session.createSQLQuery("DELETE FROM AUTH_TOKENS");
                 q1.executeUpdate();
                 txn.commit();
             } catch (Exception e) {

@@ -47,27 +47,13 @@ public class AuthorizationResourceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch (SQLException e)
-		{
-			/*yawn*/
-		}
+		authorizationResource.getAuthorizationService().setAutoCommit(false);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().rollback();
-		}
-		catch (SQLException e)
-		{
-			/*yawn*/
-		}
+		authorizationResource.getAuthorizationService().rollback();
 	}
 
 	/**
