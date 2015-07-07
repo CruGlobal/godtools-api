@@ -2,6 +2,8 @@ package org.cru.godtools.domain.notifications;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.JPAStandard.*;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class DeviceServiceTest extends Arquillian
 {
 	@Inject
+	@JPAStandard
 	DeviceService deviceService;
 
 	UUID id = UUID.randomUUID();

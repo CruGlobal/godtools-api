@@ -34,7 +34,7 @@ public class GodToolsPackageServiceTestClassCollection
 				AuthorizationService.class, Sql2oAuthorizationService.class, JPAAuthorizationService.class,
 				NotificationService.class, Sql2oNotificationService.class,
 				MetaService.class,
-				DeviceService.class, Sql2oDeviceService.class,
+				DeviceService.class, Sql2oDeviceService.class, JPADeviceService.class,
 			NewTranslationCreation.class,
 			DraftTranslation.class,
 			OneSkyTranslationDownload.class,
