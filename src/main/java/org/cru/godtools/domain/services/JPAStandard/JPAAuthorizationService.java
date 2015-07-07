@@ -20,12 +20,16 @@ public class JPAAuthorizationService implements AuthorizationService
 
     Logger log = Logger.getLogger(JPAAuthorizationService.class);
 
+    private boolean autoCommit = true;
+
     private static final SessionFactory buildSessionFactory()
     {
         try
         {
-            Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-            return configuration.buildSessionFactory( new StandardServiceRegistryBuilder().applySettings( configuration.getProperties()).build());
+            Configuration configuration = new Configuration().configure();
+            StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
+            standardServiceRegistryBuilder.applySettings(configuration.getProperties());
+            return configuration.buildSessionFactory( standardServiceRegistryBuilder.build());
         }
         catch( Throwable ex )
         {
@@ -132,11 +136,32 @@ public class JPAAuthorizationService implements AuthorizationService
 
     public void setAutoCommit(boolean autoCommit)
     {
-        /*Do Nothing*/
+        this.autoCommit = autoCommit;
     }
 
     public void rollback()
     {
-        /*Do Nothing*/
+        log.info("JPA Delete for Testing");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        if(!autoCommit)
+        {
+            try {
+                txn.begin();
+                Query q1 = session.createSQLQuery("DELETE FROM AUTH_TOKENS WHERE AUTH_TOKEN = 'a'");
+                q1.executeUpdate();
+                txn.commit();
+            } catch (Exception e) {
+                if (txn != null) {
+                    txn.rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                if (session != null) {
+                    session.close();
+                }
+            }
+        }
     }
 }
