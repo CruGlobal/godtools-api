@@ -52,9 +52,11 @@ public class MetaService
 	 */
 	public MetaResults getMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
 	{
+		PackageStructureList packageStructures = new PackageStructureList(packageStructureService.selectAll());
+
 		if(Strings.isNullOrEmpty(languageCode))
 		{
-			return getAllMetaResults(packageCode, new PackageList(packageService.selectAllPackages()), draftsOnly, allResults);
+			return getAllMetaResults(packageCode, new PackageList(packageService.selectAllPackages()), packageStructures, draftsOnly, allResults);
 		}
 		else
 		{
@@ -63,6 +65,7 @@ public class MetaService
 			results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
 					packageCode,
 					new PackageList(packageService.selectAllPackages()),
+					packageStructures,
 					draftsOnly,
 					allResults));
 
@@ -79,22 +82,20 @@ public class MetaService
 	 * @param packageCode
 	 * @return
 	 */
-	private MetaResults getAllMetaResults(String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	private MetaResults getAllMetaResults(String packageCode, PackageList packages, PackageStructureList packageStructures, boolean draftsOnly, boolean allResults)
 	{
 		MetaResults results = new MetaResults();
 		for(Language language : languageService.selectAllLanguages())
 		{
-			results.addLanguage(buildMetaLanguage(language, packageCode, packages, draftsOnly, allResults));
+			results.addLanguage(buildMetaLanguage(language, packageCode, packages, packageStructures, draftsOnly, allResults));
 		}
 
 		return results;
 	}
 
-	private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, PackageStructureList packageStructures, boolean draftsOnly, boolean allResults)
 	{
 		MetaLanguage metaLanguage = new MetaLanguage(language);
-
-		PackageStructureList packageStructures = new PackageStructureList(packageStructureService.selectAll());
 
 		if(Strings.isNullOrEmpty(packageCode))
 		{
