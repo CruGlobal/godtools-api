@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * migration class used to remove double quotes from translation text
  */
-public class V2_4__remove_extra_quotes implements JdbcMigration
+public class V2_5__remove_extra_quotes implements JdbcMigration
 {
 	org.sql2o.Connection sqlConnection;
 
@@ -56,7 +56,7 @@ public class V2_4__remove_extra_quotes implements JdbcMigration
 
 	private void update(TranslationElement element)
 	{
-		sqlConnection.createQuery("UPDATE translation_element SET translated_text = :translatedText " +
+		sqlConnection.createQuery("UPDATE translation_elements SET translated_text = :translatedText " +
 				"WHERE id = :id AND translation_id = :translationId")
 				.addParameter("translatedText", element.getTranslatedText())
 				.addParameter("id", element.getId())

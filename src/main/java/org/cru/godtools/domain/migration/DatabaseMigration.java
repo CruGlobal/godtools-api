@@ -29,6 +29,7 @@ public class DatabaseMigration
 				properties.getProperty(environmentPrefix + "databaseUsername"),
 				properties.getProperty(environmentPrefix + "databasePassword"));
 		flyway.setInitVersion("0");
+		flyway.setLocations("db.migration", "org.cru.godtools.domain.migration.versions");
 		flyway.migrate();
 	}
 
