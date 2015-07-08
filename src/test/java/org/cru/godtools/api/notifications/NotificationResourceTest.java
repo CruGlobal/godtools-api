@@ -46,25 +46,17 @@ public class NotificationResourceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch (SQLException e)
-		{
-		}
+		notificationResource.getAuthorizationService().setAutoCommit(false);
+		notificationResource.getDeviceService().setAutoCommit(false);
+		notificationResource.getNotificationService().setAutoCommit(false);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().rollback();
-		}
-		catch (SQLException e)
-		{
-		}
+		notificationResource.getAuthorizationService().rollback();
+		notificationResource.getDeviceService().rollback();
+		notificationResource.getNotificationService().rollback();
 	}
 
 	@Test

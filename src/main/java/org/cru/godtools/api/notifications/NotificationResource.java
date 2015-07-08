@@ -9,6 +9,7 @@ import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.services.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
 import org.cru.godtools.domain.services.NotificationService;
+import org.cru.godtools.domain.services.annotations.*;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -29,11 +30,14 @@ import java.util.UUID;
 public class NotificationResource
 {
 	@Inject
-	DeviceService deviceService;
+	@JPAStandard
+	private DeviceService deviceService;
 	@Inject
-	AuthorizationService authorizationService;
+	@JPAStandard
+	private AuthorizationService authorizationService;
 	@Inject
-	NotificationService notificationService;
+	@JPAStandard
+	private NotificationService notificationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);
 
@@ -92,5 +96,17 @@ public class NotificationResource
 		}
 
 		return Response.noContent().build();
+	}
+
+	public DeviceService getDeviceService() {
+		return deviceService;
+	}
+
+	public AuthorizationService getAuthorizationService() {
+		return authorizationService;
+	}
+
+	public NotificationService getNotificationService() {
+		return notificationService;
 	}
 }
