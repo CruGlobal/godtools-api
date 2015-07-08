@@ -2,7 +2,11 @@ package org.cru.godtools.domain.images;
 
 import com.google.common.collect.Maps;
 import org.cru.godtools.domain.GuavaHashGenerator;
+import org.hibernate.annotations.*;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +15,19 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 3/21/14.
  */
+@Entity
+@Table(name="images")
 public class Image implements Serializable
 {
+    @Id
+    @Column(name="id")
+    @Type(type="pg-uuid")
     private UUID id;
+    @Column(name="filename")
 	private String filename;
+    @Column(name="image_content")
     private byte[] imageContent;
+    @Column(name="resolution")
     private String resolution;
 
 	public static Map<String, Image> createMapOfImages(List<Image> imageList)

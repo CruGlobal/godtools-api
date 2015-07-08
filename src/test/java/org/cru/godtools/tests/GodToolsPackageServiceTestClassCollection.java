@@ -22,7 +22,7 @@ public class GodToolsPackageServiceTestClassCollection
 {
 	static ImmutableSet<Class<?>> classSet = ImmutableSet.of(
 				GodToolsTranslationService.class,
-				ImageService.class, Sql2oImageService.class,
+				ImageService.class, Sql2oImageService.class, JPAImageService.class,
 				ReferencedImageService.class, Sql2oReferencedImageService.class,
 				PackageService.class, Sql2oPackageService.class,
 				PackageStructureService.class, Sql2oPackageStructureService.class,
