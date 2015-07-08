@@ -1,20 +1,35 @@
 package org.cru.godtools.domain.notifications;
 
+import org.hibernate.annotations.*;
 import org.joda.time.DateTime;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by matthewfrederick on 1/5/15.
  */
+@Entity
+@Table(name="notifications")
 public class Notification implements Serializable
 {
+	@Id
+	@Column(name="id")
+	@Type(type="pg-uuid")
 	UUID id;
+	@Column(name="registration_id")
 	String registrationId;
+	@Column(name="timestamp")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	DateTime timestamp;
+	@Column(name="presentations")
 	int presentations;
+	@Column(name="notification_type")
 	int notificationType;
+	@Column(name="notification_sent")
 	boolean notificationSent;
 
 	public boolean isReadyForNotification(DateTime dateTime)

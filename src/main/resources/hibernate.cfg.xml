@@ -18,5 +18,6 @@
       <mapping class="org.cru.godtools.domain.authentication.AuthorizationRecord"/>
       <mapping class="org.cru.godtools.domain.authentication.AccessCodeRecord"/>
       <mapping class="org.cru.godtools.domain.notifications.Device"/>
+      <mapping class="org.cru.godtools.domain.notifications.Notification"/>
   </session-factory>
 </hibernate-configuration>

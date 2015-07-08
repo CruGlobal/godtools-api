@@ -2,6 +2,7 @@ package org.cru.godtools.domain.notifications;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class NotificationServiceTest extends Arquillian
 {
 	@Inject
+	@JPAStandard
 	NotificationService notificationService;
 
 	UUID id = UUID.randomUUID();
