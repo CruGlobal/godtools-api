@@ -29,6 +29,13 @@ public class TranslationService
 				.executeAndFetchFirst(Translation.class);
 	}
 
+	public List<Translation> selectAll()
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectAll)
+				.setAutoDeriveColumnNames(true)
+				.executeAndFetch(Translation.class);
+	}
+
 	public List<Translation> selectByLanguageId(UUID languageId)
 	{
 		return sqlConnection.createQuery(TranslationQueries.selectByLanguageId)
@@ -43,6 +50,14 @@ public class TranslationService
 				.setAutoDeriveColumnNames(true)
 				.addParameter("languageId", languageId)
 				.addParameter("released", released)
+				.executeAndFetch(Translation.class);
+	}
+
+	public List<Translation> selectAllByReleased(boolean released)
+	{
+		return sqlConnection.createQuery(TranslationQueries.selectAllReleased)
+				.addParameter("released", released)
+				.setAutoDeriveColumnNames(true)
 				.executeAndFetch(Translation.class);
 	}
 
@@ -160,8 +175,10 @@ public class TranslationService
 	public static class TranslationQueries
 	{
 		public static final String selectById = "SELECT * FROM translations WHERE id = :id";
+		public static final String selectAll = "SELECT * FROM translations;";
 		public static final String selectByLanguageId = "SELECT * FROM translations WHERE language_id = :languageId";
 		public static final String selectByLanguageIdReleased = "SELECT * FROM translations WHERE language_id = :languageId AND released = :released";
+		public static final String selectAllReleased = "SELECT * FROM translations WHERE released = :released";
 		public static final String selectByPackageId = "SELECT * FROM translations WHERE package_id = :packageId";
 		public static final String selectByLanguageIdPackageId = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId";
 		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
