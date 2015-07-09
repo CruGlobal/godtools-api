@@ -110,7 +110,7 @@ public class MetaService
 
 			if(!allResults)
 			{
-				translations = new TranslationList(translations.pareResults());
+				translations = translations.pareResults();
 			}
 
 			for (Translation translation : translations)
@@ -127,28 +127,12 @@ public class MetaService
 		}
 		else
 		{
-			Translation translation = null;
 			Package gtPackage = packages.getPackageByCode(packageCode).get();
-			for(Translation translationT : new TranslationList((List<Translation>) translationsMap.get(language.getId())))
-			{
-				if(translationT.getPackageId().equals(gtPackage.getId()))
-				{
-					if(draftsOnly)
-					{
-						if(!translationT.isReleased())
-						{
-							translation = translationT;
-						}
-					}
-					else
-					{
-						if(translationT.isReleased() && (translation == null || translationT.getVersionNumber().compareTo(translation.getVersionNumber()) > 0))
-						{
-							translation = translationT;
-						}
-					}
-				}
-			}
+			TranslationList translations = new TranslationList((List<Translation>) translationsMap.get(language.getId()))
+					.pareResults(!draftsOnly)
+					.pareResults(gtPackage.getId());
+			translations = draftsOnly ? translations : translations.pareResults();
+			Translation translation = !translations.isEmpty() ? translations.get(0) : null;
 
 			if(translation != null)
 			{

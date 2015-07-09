@@ -49,4 +49,36 @@ public class TranslationList extends ForwardingList<Translation>
 
 		return new TranslationList(new ArrayList<>(latestTranslationForPackageId.values()));
 	}
+
+	public TranslationList pareResults(Boolean released)
+	{
+		List<Translation> translations = Lists.newArrayList();
+
+		for(Translation translation : translationList)
+		{
+			if(translation.isReleased() == released)
+			{
+				translations.add(translation);
+			}
+		}
+
+		return new TranslationList(translations);
+	}
+
+	public TranslationList pareResults(UUID packageId)
+	{
+		List<Translation> translations = Lists.newArrayList();
+
+		for(Translation translation : translationList)
+		{
+			if(translation.getPackageId().equals(packageId))
+			{
+				translations.add(translation);
+			}
+		}
+
+		return new TranslationList(translations);
+	}
+
+
 }
