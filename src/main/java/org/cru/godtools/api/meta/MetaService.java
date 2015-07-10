@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.*;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -16,6 +17,7 @@ import org.cru.godtools.domain.translations.TranslationService;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
+import java.util.*;
 
 
 /**
@@ -54,7 +56,12 @@ public class MetaService
 	{
 		if(Strings.isNullOrEmpty(languageCode))
 		{
-			return getAllMetaResults(packageCode, new PackageList(packageService.selectAllPackages()), draftsOnly, allResults);
+			return getAllMetaResults(packageCode,
+					new PackageList(packageService.selectAllPackages()),
+					new PackageStructureList(packageStructureService.selectAll()),
+					allResults ? createTranslationsMap() : createReleasedTranslationsMap(!draftsOnly),
+					draftsOnly,
+					allResults);
 		}
 		else
 		{
@@ -63,6 +70,8 @@ public class MetaService
 			results.addLanguage(buildMetaLanguage(languageService.selectByLanguageCode(new LanguageCode(languageCode)),
 					packageCode,
 					new PackageList(packageService.selectAllPackages()),
+					new PackageStructureList(packageStructureService.selectAll()),
+					(allResults || !Strings.isNullOrEmpty(packageCode)) ? createTranslationsMap() : createReleasedTranslationsMap(!draftsOnly),
 					draftsOnly,
 					allResults));
 
@@ -79,32 +88,29 @@ public class MetaService
 	 * @param packageCode
 	 * @return
 	 */
-	private MetaResults getAllMetaResults(String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	private MetaResults getAllMetaResults(String packageCode, PackageList packages, PackageStructureList packageStructures, Multimap<UUID, Translation> translationsMap, boolean draftsOnly, boolean allResults)
 	{
 		MetaResults results = new MetaResults();
+
 		for(Language language : languageService.selectAllLanguages())
 		{
-			results.addLanguage(buildMetaLanguage(language, packageCode, packages, draftsOnly, allResults));
+			results.addLanguage(buildMetaLanguage(language, packageCode, packages, packageStructures, translationsMap, draftsOnly, allResults));
 		}
 
 		return results;
 	}
 
-	private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, boolean draftsOnly, boolean allResults)
+	private MetaLanguage buildMetaLanguage(Language language, String packageCode, PackageList packages, PackageStructureList packageStructures, Multimap<UUID, Translation> translationsMap, boolean draftsOnly, boolean allResults)
 	{
 		MetaLanguage metaLanguage = new MetaLanguage(language);
 
-		PackageStructureList packageStructures = new PackageStructureList(packageStructureService.selectAll());
-
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			TranslationList translations = allResults ?
-					new TranslationList(translationService.selectByLanguageId(language.getId())) :
-					new TranslationList(translationService.selectByLanguageIdReleased(language.getId(), !draftsOnly));
+			TranslationList translations = new TranslationList((List<Translation>) translationsMap.get(language.getId()));
 
 			if(!allResults)
 			{
-				translations = new TranslationList(translations.pareResults());
+				translations = translations.pareResults();
 			}
 
 			for (Translation translation : translations)
@@ -122,9 +128,11 @@ public class MetaService
 		else
 		{
 			Package gtPackage = packages.getPackageByCode(packageCode).get();
-			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
-					gtPackage.getId(),
-					draftsOnly ? GodToolsVersion.DRAFT_VERSION : GodToolsVersion.LATEST_PUBLISHED_VERSION);
+			TranslationList translations = new TranslationList((List<Translation>) translationsMap.get(language.getId()))
+					.pareResults(!draftsOnly)
+					.pareResults(gtPackage.getId());
+			translations = draftsOnly ? translations : translations.pareResults();
+			Translation translation = !translations.isEmpty() ? translations.get(0) : null;
 
 			if(translation != null)
 			{
@@ -138,5 +146,31 @@ public class MetaService
 		}
 
 		return metaLanguage;
+	}
+
+	private Multimap<UUID,Translation> createTranslationsMap()
+	{
+		List<Translation> translations = translationService.selectAll();
+		Multimap<UUID,Translation> translationsMap = ArrayListMultimap.create();
+
+		for(Translation translation : translations)
+		{
+			translationsMap.put(translation.getLanguageId(),translation);
+		}
+
+		return translationsMap;
+	}
+
+	private Multimap<UUID,Translation> createReleasedTranslationsMap(boolean draftsOnly)
+	{
+		List<Translation> translations = translationService.selectAllByReleased(draftsOnly);
+		Multimap<UUID,Translation> translationsMap = ArrayListMultimap.create();
+
+		for(Translation translation : translations)
+		{
+			translationsMap.put(translation.getLanguageId(),translation);
+		}
+
+		return translationsMap;
 	}
 }
