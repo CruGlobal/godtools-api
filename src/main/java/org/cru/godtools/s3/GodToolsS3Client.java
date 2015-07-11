@@ -1,6 +1,7 @@
 package org.cru.godtools.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -12,7 +13,7 @@ import javax.inject.Inject;
 public class GodToolsS3Client
 {
 	@Inject
-	AmazonS3 s3Client;
+	AmazonS3Client s3Client;
 
 	public S3Object getMetaFile()
 	{
