@@ -1,12 +1,8 @@
 package org.cru.godtools.api.packages;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.packages.utils.ProvidesImages;
-import org.cru.godtools.api.translations.GodToolsTranslationRetrieval;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.GodToolsVersion;
-import org.cru.godtools.domain.packages.PixelDensity;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -34,41 +30,22 @@ import java.math.BigDecimal;
 @Path("/packages")
 public class PackageResource
 {
-
-    @Inject @ProvidesImages
-	GodToolsPackageRetrieval packageRetrieval;
     @Inject
     AuthorizationService authService;
 	@Inject
 	Clock clock;
 
-	private Logger log = Logger.getLogger(PackageResource.class);
+	private Logger log = Logger.getLogger(this.getClass());
 
 	/**
 	 * GET - get all packages for the language specified by @param languageCode.
-	 *
-	 * @param languageCode
-	 * @param minimumInterpreterVersionParam
-	 * @param minimumInterpreterVersionHeader
-	 * @param compressed
-	 * @param versionNumber
-	 * @param desiredPixelDensity
-	 * @param authTokenHeader
-	 * @param authTokenParam
-	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
 	 */
     @GET
 	@Path("/{language}")
     @Produces({"application/zip", "application/xml"})
     public Response getAllPackagesForLanguage(@PathParam("language") String languageCode,
-											  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 											  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 											  @QueryParam("compressed") String compressed,
-											  @QueryParam("version") BigDecimal versionNumber,
-											  @QueryParam("density") String desiredPixelDensity,
 											  @HeaderParam("Authorization") String authTokenHeader,
 											  @QueryParam("Authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
@@ -76,42 +53,18 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return packageRetrieval.setLanguageCode(languageCode)
-                .setCompressed(Boolean.parseBoolean(compressed))
-                .setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
-                .setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
-                .setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.loadTranslations()
-				.buildResponse();
+		return Response.noContent().build();
 	}
 
 	/**
 	 * GET - get all the package specified by @param packageCode for the language specified by @param languageCode.
-	 *
-	 * @param languageCode
-	 * @param packageCode
-	 * @param minimumInterpreterVersionParam
-	 * @param minimumInterpreterVersionHeader
-	 * @param compressed
-	 * @param versionNumber
-	 * @param desiredPixelDensity
-	 * @param authTokenHeader
-	 * @param authTokenParam
-	 * @return
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
 	 */
 	@GET
 	@Path("/{language}/{package}")
 	@Produces({"application/zip", "application/xml"})
 	public Response getPackage(@PathParam("language") String languageCode,
 							   @PathParam("package") String packageCode,
-							   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-							   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 							   @QueryParam("compressed") String compressed,
-							   @QueryParam("version") BigDecimal versionNumber,
-							   @QueryParam("density") String desiredPixelDensity,
 							   @HeaderParam("Authorization") String authTokenHeader,
 							   @QueryParam("Authorization") String authTokenParam) throws Exception
 	{
@@ -119,14 +72,6 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return packageRetrieval
-				.setLanguageCode(languageCode)
-				.setPackageCode(packageCode)
-				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_PUBLISHED_VERSION : new GodToolsVersion(versionNumber))
-				.setPixelDensity(PixelDensity.getEnumWithFallback(desiredPixelDensity, PixelDensity.HIGH))
-				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.loadTranslations()
-				.buildResponse();
+		return Response.noContent().build();
 	}
 }
