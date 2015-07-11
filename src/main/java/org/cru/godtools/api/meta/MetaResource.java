@@ -1,13 +1,10 @@
 package org.cru.godtools.api.meta;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.s3.AmazonS3GodToolsConfig;
+import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -22,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -37,6 +33,9 @@ public class MetaResource
 	@Inject
 	Clock clock;
 
+	@Inject
+	GodToolsS3Client godToolsS3Client;
+
 	private Logger log = Logger.getLogger(MetaResource.class);
 
 	@GET
@@ -50,16 +49,11 @@ public class MetaResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getMetaKey(null, null)));
-
-		InputStream metaStream = (InputStream) object.getObjectContent();
+		S3Object metaFile = godToolsS3Client.getMetaFile();
 
 		return Response
-				.ok(metaStream)
-				.type("application/zip")
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
 				.build();
 	}
 
@@ -76,16 +70,11 @@ public class MetaResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getMetaKey(languageCode, null)));
-
-		InputStream metaStream = (InputStream) object.getObjectContent();
+		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
 
 		return Response
-				.ok(metaStream)
-				.type("application/zip")
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
 				.build();
 	}
 
@@ -103,16 +92,11 @@ public class MetaResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getMetaKey(languageCode, packageCode)));
-
-		InputStream metaStream = (InputStream) object.getObjectContent();
+		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
 
 		return Response
-				.ok(metaStream)
-				.type("application/zip")
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
 				.build();
 	}
 }

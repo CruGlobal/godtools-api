@@ -1,12 +1,10 @@
 package org.cru.godtools.api.translations;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.s3.AmazonS3GodToolsConfig;
+import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,8 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 7/11/15.
@@ -29,6 +25,12 @@ public class TranslationDownloadResource
 
 	@Inject
 	AuthorizationService authService;
+
+	@Inject
+	GodToolsS3Client godToolsS3Client;
+
+	@Inject
+	Clock clock;
 
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -46,15 +48,10 @@ public class TranslationDownloadResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getLanguagesKey(languageCode, null)));
-
-		InputStream zippedLanguagesStream = (InputStream) object.getObjectContent();
+		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
 
 		return Response
-				.ok(zippedLanguagesStream)
+				.ok(languagesZippedFolder.getObjectContent())
 				.type("application/zip")
 				.build();
 	}
@@ -66,23 +63,17 @@ public class TranslationDownloadResource
 								   @PathParam("package") String packageCode,
 								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-								   @QueryParam("compressed") String compressed,
-								   @QueryParam("version") BigDecimal versionNumber,
 								   @HeaderParam("Authorization") String authTokenHeader,
 								   @QueryParam("Authorization") String authTokenParam) throws IOException
 	{
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getLanguagesKey(languageCode, packageCode)));
-
-		InputStream zippedLanguagesStream = (InputStream) object.getObjectContent();
+		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode, packageCode);
 
 		return Response
-				.ok(zippedLanguagesStream)
+				.ok(languagesZippedFolder.getObjectContent())
 				.type("application/zip")
 				.build();
+
 	}
 }

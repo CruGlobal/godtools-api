@@ -1,13 +1,10 @@
 package org.cru.godtools.api.packages;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.s3.AmazonS3GodToolsConfig;
+import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -21,7 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "package" resources.
@@ -37,6 +33,10 @@ public class PackageResource
 {
     @Inject
     AuthorizationService authService;
+
+	@Inject
+	GodToolsS3Client godToolsS3Client;
+
 	@Inject
 	Clock clock;
 
@@ -58,15 +58,10 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
-
-		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getPackagesKey(languageCode, null)));
-
-		InputStream zippedPackageStream = (InputStream) object.getObjectContent();
+		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode, null);
 
 		return Response
-				.ok(zippedPackageStream)
+				.ok(packagesZippedFolder.getObjectContent())
 				.type("application/zip")
 				.build();
 	}
@@ -87,6 +82,6 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return Response.noContent().build();
+		return Response.status(Response.Status.NOT_FOUND).build();
 	}
 }
