@@ -1,9 +1,9 @@
 package org.cru.godtools.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -14,6 +14,8 @@ public class GodToolsS3Client
 {
 	@Inject
 	AmazonS3Client s3Client;
+
+	private Logger log = Logger.getLogger(this.getClass());
 
 	public S3Object getMetaFile()
 	{
@@ -27,20 +29,27 @@ public class GodToolsS3Client
 
 	public S3Object getMetaFile(String languageCode, String packageCode)
 	{
+		String metaKey = AmazonS3GodToolsConfig.getMetaKey(languageCode, packageCode);
+
+		log.info(String.format("Getting meta info file w/ key %s", metaKey));
+
 		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getMetaKey(languageCode, packageCode)));
+				metaKey));
 	}
 
 	public S3Object getLanguagesZippedFolder(String languageCode)
 	{
-		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getLanguagesKey(languageCode, null)));
+		return getLanguagesZippedFolder(languageCode, null);
 	}
 
 	public S3Object getLanguagesZippedFolder(String languageCode, String packageCode)
 	{
+		String languagesKey = AmazonS3GodToolsConfig.getLanguagesKey(languageCode, packageCode);
+
+		log.info(String.format("Getting languages file w/ key %s", languagesKey));
+
 		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getLanguagesKey(languageCode, packageCode)));
+				languagesKey));
 	}
 
 	public S3Object getPackagesZippedFolder(String languageCode)
@@ -50,7 +59,11 @@ public class GodToolsS3Client
 
 	public S3Object getPackagesZippedFolder(String languageCode, String packageCode)
 	{
+		String packagesKey = AmazonS3GodToolsConfig.getPackagesKey(languageCode, packageCode);
+
+		log.info(String.format("Getting packages file w/ key %s", packagesKey));
+
 		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				AmazonS3GodToolsConfig.getPackagesKey(languageCode, packageCode)));
+				packagesKey));
 	}
 }
