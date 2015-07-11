@@ -1,15 +1,13 @@
 package org.cru.godtools.api.meta;
 
-import org.cru.godtools.api.utilities.ErrorResponse;
-import com.google.common.base.Optional;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.domain.packages.PackageService;
-import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.translate.client.TranslationUpload;
+import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -24,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by ryancarlson on 3/14/14.
@@ -32,20 +31,8 @@ import java.io.IOException;
 @Path("/meta")
 public class MetaResource
 {
-
-	@Inject
-	MetaService metaService;
 	@Inject
 	AuthorizationService authService;
-
-	@Inject
-	PackageService packageService;
-	@Inject
-	TranslationService translationService;
-	@Inject
-	TranslationUpload translationUpload;
-	@Inject
-	private LanguageService languageService;
 
 	@Inject
 	Clock clock;
@@ -61,7 +48,19 @@ public class MetaResource
 	{
 		log.info("Getting all meta info");
 
-		return getLanguageAndPackageMetaInfo(null, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+
+		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
+
+		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
+				AmazonS3GodToolsConfig.getMetaKey(null, null)));
+
+		InputStream metaStream = (InputStream) object.getObjectContent();
+
+		return Response
+				.ok(metaStream)
+				.type("application/zip")
+				.build();
 	}
 
 	@GET
@@ -71,11 +70,23 @@ public class MetaResource
 								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
-								@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+								@HeaderParam("Authorization") String authCodeHeader)
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		return getLanguageAndPackageMetaInfo(languageCode, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+
+		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
+
+		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
+				AmazonS3GodToolsConfig.getMetaKey(languageCode, null)));
+
+		InputStream metaStream = (InputStream) object.getObjectContent();
+
+		return Response
+				.ok(metaStream)
+				.type("application/zip")
+				.build();
 	}
 
 	@GET
@@ -90,30 +101,18 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecordOptional = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
-		AuthorizationRecord.checkAuthorization(authorizationRecordOptional, clock.currentDateTime());
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
 
-		Integer interpreterVersion = getMinimumInterpreterVersion(minimumInterpreterVersionParam, minimumInterpreterVersionHeader);
+		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
 
-		if(interpreterVersion == null)
-		{
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity(new ErrorResponse("parameter or header \"interpreter\" is required"))
-					.build();
-		}
+		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
+				AmazonS3GodToolsConfig.getMetaKey(languageCode, packageCode)));
 
-		MetaResults metaResults = metaService.getMetaResults(languageCode,
-				packageCode,
-				authorizationRecordOptional.get().hasDraftAccess(),
-				authorizationRecordOptional.get().isAdmin());
+		InputStream metaStream = (InputStream) object.getObjectContent();
 
-		Simply.logObject(metaResults, MetaResource.class);
-
-		return Response.ok(metaResults).build();
-	}
-
-	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
-	{
-		return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
+		return Response
+				.ok(metaStream)
+				.type("application/zip")
+				.build();
 	}
 }

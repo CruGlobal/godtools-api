@@ -1,8 +1,13 @@
 package org.cru.godtools.api.packages;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -16,7 +21,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.io.InputStream;
 
 /**
  * Contains RESTful endpoints for delivering GodTools "package" resources.
@@ -53,7 +58,17 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		return Response.noContent().build();
+		AmazonS3 s3Client = new AmazonS3Client(new ProfileCredentialsProvider());
+
+		S3Object object = s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
+				AmazonS3GodToolsConfig.getPackagesKey(languageCode, null)));
+
+		InputStream zippedPackageStream = (InputStream) object.getObjectContent();
+
+		return Response
+				.ok(zippedPackageStream)
+				.type("application/zip")
+				.build();
 	}
 
 	/**
