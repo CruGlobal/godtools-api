@@ -21,5 +21,6 @@
       <mapping class="org.cru.godtools.domain.images.Image"/>
       <mapping class="org.cru.godtools.domain.languages.Language"/>
       <mapping class="org.cru.godtools.domain.notifications.Notification"/>
+      <mapping class="org.cru.godtools.domain.packages.Package"/>
   </session-factory>
 </hibernate-configuration>

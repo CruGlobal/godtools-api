@@ -1,18 +1,33 @@
 package org.cru.godtools.domain.packages;
 
+import org.hibernate.annotations.*;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
+@Entity
+@Table(name="packages")
 public class Package implements Serializable
 {
+    @Id
+    @Column(name="id")
+    @Type(type="pg-uuid")
     UUID id;
+    @Column(name="name")
     String name;
+    @Column(name="code")
     String code;
+    @Column(name="default_language_id")
+    @Type(type="pg-uuid")
     UUID defaultLanguageId;
-	Integer translationProjectId;
+	@Column(name="translation_project_id")
+    Integer translationProjectId;
 
 
     public UUID getId()

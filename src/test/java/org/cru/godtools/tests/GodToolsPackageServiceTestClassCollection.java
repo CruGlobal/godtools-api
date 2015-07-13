@@ -24,7 +24,7 @@ public class GodToolsPackageServiceTestClassCollection
 				GodToolsTranslationService.class,
 				ImageService.class, Sql2oImageService.class, JPAImageService.class,
 				ReferencedImageService.class, Sql2oReferencedImageService.class,
-				PackageService.class, Sql2oPackageService.class,
+				PackageService.class, Sql2oPackageService.class, JPAPackageService.class,
 				PackageStructureService.class, Sql2oPackageStructureService.class,
 				LanguageService.class, Sql2oLanguageService.class, JPALanguageService.class,
 				PageStructureService.class, Sql2oPageStructureService.class,
