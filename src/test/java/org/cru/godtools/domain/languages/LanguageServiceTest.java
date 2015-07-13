@@ -2,6 +2,7 @@ package org.cru.godtools.domain.languages;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -28,6 +29,7 @@ public class LanguageServiceTest extends Arquillian
 	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
 
 	@Inject
+	@JPAStandard
 	LanguageService languageService;
 
 	@Deployment

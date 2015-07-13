@@ -1,20 +1,32 @@
 package org.cru.godtools.domain.languages;
 
 import com.google.common.base.Strings;
+import org.hibernate.annotations.*;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
+@Entity
+@Table(name="languages")
 public class Language implements Serializable
 {
-
+    @Id
+    @Column(name="id")
+    @Type(type="pg-uuid")
     UUID id;
+    @Column(name="name")
     String name;
+    @Column(name="code")
     String code;
+    @Column(name="locale")
     String locale;
+    @Column(name="subculture")
     String subculture;
 
     public String getPath()

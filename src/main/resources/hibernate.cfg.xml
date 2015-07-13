@@ -19,6 +19,7 @@
       <mapping class="org.cru.godtools.domain.authentication.AccessCodeRecord"/>
       <mapping class="org.cru.godtools.domain.notifications.Device"/>
       <mapping class="org.cru.godtools.domain.images.Image"/>
+      <mapping class="org.cru.godtools.domain.languages.Language"/>
       <mapping class="org.cru.godtools.domain.notifications.Notification"/>
   </session-factory>
 </hibernate-configuration>

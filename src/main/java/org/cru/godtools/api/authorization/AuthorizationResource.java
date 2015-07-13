@@ -34,7 +34,7 @@ public class AuthorizationResource
 	Clock clock;
 
     @Inject
-	@JPAStandard
+	//@JPAStandard
 	private AuthorizationService authorizationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);
