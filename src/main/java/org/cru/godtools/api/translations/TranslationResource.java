@@ -1,5 +1,9 @@
 package org.cru.godtools.api.translations;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.model.PageFile;
@@ -18,6 +22,7 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -32,6 +37,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -71,53 +77,7 @@ public class TranslationResource
 	private Logger log = Logger.getLogger(TranslationResource.class);
 	static boolean BYPASS_ASYNC_UPDATE = false;
 
-	@GET
-	@Path("/{language}")
-	@Produces({"application/zip", "application/xml"})
-	public Response getTranslations(@PathParam("language") String languageCode,
-									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-									@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-									@QueryParam("compressed") String compressed,
-									@HeaderParam("Authorization") String authTokenHeader,
-									@QueryParam("Authorization") String authTokenParam) throws IOException
-	{
-		log.info("Requesting all translations for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		return translationRetrieval
-				.setLanguageCode(languageCode)
-				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.setCompressed(Boolean.parseBoolean(compressed))
-				.loadTranslations()
-				.buildResponse();
-	}
-
-	@GET
-	@Path("/{language}/{package}")
-	@Produces({"application/zip", "application/xml"})
-	public Response getTranslation(@PathParam("language") String languageCode,
-								   @PathParam("package") String packageCode,
-								   @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
-								   @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
-								   @QueryParam("compressed") String compressed,
-								   @QueryParam("version") BigDecimal versionNumber,
-								   @HeaderParam("Authorization") String authTokenHeader,
-								   @QueryParam("Authorization") String authTokenParam) throws IOException
-	{
-		log.info("Requesting translation for package: " + packageCode + " and language: " + languageCode);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		return translationRetrieval
-				.setLanguageCode(languageCode)
-				.setPackageCode(packageCode)
-				.setMinimumInterpreterVersion(minimumInterpreterVersionHeader == null ? minimumInterpreterVersionParam : minimumInterpreterVersionHeader)
-				.setCompressed(Boolean.parseBoolean(compressed))
-				.setVersionNumber(versionNumber == null ? GodToolsVersion.LATEST_VERSION : new GodToolsVersion(versionNumber))
-				.loadTranslations()
-				.buildResponse();
-	}
 
 	@POST
 	@Path("/{language}/{package}")

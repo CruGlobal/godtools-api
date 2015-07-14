@@ -1,15 +1,10 @@
 package org.cru.godtools.api.meta;
 
-import org.cru.godtools.api.utilities.ErrorResponse;
-import com.google.common.base.Optional;
+import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.domain.packages.PackageService;
-import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.translate.client.TranslationUpload;
+import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
@@ -32,25 +27,16 @@ import java.io.IOException;
 @Path("/meta")
 public class MetaResource
 {
-
-	@Inject
-	MetaService metaService;
 	@Inject
 	AuthorizationService authService;
 
 	@Inject
-	PackageService packageService;
-	@Inject
-	TranslationService translationService;
-	@Inject
-	TranslationUpload translationUpload;
-	@Inject
-	private LanguageService languageService;
-
-	@Inject
 	Clock clock;
 
-	private Logger log = Logger.getLogger(MetaResource.class);
+	@Inject
+	GodToolsS3Client godToolsS3Client;
+
+	private Logger log = Logger.getLogger(this.getClass());
 
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -61,7 +47,14 @@ public class MetaResource
 	{
 		log.info("Getting all meta info");
 
-		return getLanguageAndPackageMetaInfo(null, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+
+		S3Object metaFile = godToolsS3Client.getMetaFile();
+
+		return Response
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
+				.build();
 	}
 
 	@GET
@@ -71,11 +64,18 @@ public class MetaResource
 								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
-								@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+								@HeaderParam("Authorization") String authCodeHeader)
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		return getLanguageAndPackageMetaInfo(languageCode, null, minimumInterpreterVersionParam, minimumInterpreterVersionHeader, authCodeParam, authCodeHeader);
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+
+		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
+
+		return Response
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
+				.build();
 	}
 
 	@GET
@@ -90,30 +90,13 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecordOptional = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
-		AuthorizationRecord.checkAuthorization(authorizationRecordOptional, clock.currentDateTime());
+		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
 
-		Integer interpreterVersion = getMinimumInterpreterVersion(minimumInterpreterVersionParam, minimumInterpreterVersionHeader);
+		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
 
-		if(interpreterVersion == null)
-		{
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity(new ErrorResponse("parameter or header \"interpreter\" is required"))
-					.build();
-		}
-
-		MetaResults metaResults = metaService.getMetaResults(languageCode,
-				packageCode,
-				authorizationRecordOptional.get().hasDraftAccess(),
-				authorizationRecordOptional.get().isAdmin());
-
-		Simply.logObject(metaResults, MetaResource.class);
-
-		return Response.ok(metaResults).build();
-	}
-
-	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
-	{
-		return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
+		return Response
+				.ok(metaFile.getObjectContent())
+				.type("application/xml")
+				.build();
 	}
 }
