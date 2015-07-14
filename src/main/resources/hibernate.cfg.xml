@@ -23,5 +23,6 @@
       <mapping class="org.cru.godtools.domain.notifications.Notification"/>
       <mapping class="org.cru.godtools.domain.packages.Package"/>
       <mapping class="org.cru.godtools.domain.packages.PackageStructure"/>
+      <mapping class="org.cru.godtools.domain.packages.PageStructure"/>
   </session-factory>
 </hibernate-configuration>

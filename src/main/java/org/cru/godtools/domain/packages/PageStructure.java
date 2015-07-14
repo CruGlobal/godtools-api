@@ -4,13 +4,18 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
+import org.cru.godtools.domain.services.annotations.SQLXMLType;
 import org.cru.godtools.domain.images.Image;
+import org.hibernate.annotations.*;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.Serializable;
@@ -23,19 +28,34 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/30/14.
  */
+@Entity
+@Table(name="page_structure")
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
 
+	@Id
+	@Column(name="id")
+	@Type(type="pg-uuid")
 	private UUID id;
+	@Column(name="translation_id")
+	@Type(type="pg-uuid")
 	private UUID translationId;
+	@Column(name="xml_content")
+	@Type(type="org.cru.godtools.domain.services.annotations.SQLXMLType")
 	private Document xmlContent;
+	@Column(name="description")
 	private String description;
+	@Column(name="filename")
 	private String filename;
-
+	@Column(name="percent_completed")
 	private BigDecimal percentCompleted;
+	@Column(name="string_count")
 	private Integer stringCount;
+	@Column(name="word_count")
 	private Integer wordCount;
+	@Column(name="last_updated")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private DateTime lastUpdated;
 
 	private final Logger logger = Logger.getLogger(PackageStructure.class);
