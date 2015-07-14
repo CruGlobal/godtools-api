@@ -3,10 +3,15 @@ package org.cru.godtools.domain.packages;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.services.annotations.SQLXMLType;
+import org.hibernate.annotations.*;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +19,23 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/30/14.
  */
+@Entity
+@Table(name="package_structure")
 public class PackageStructure implements Serializable
 {
+	@Id
+	@Column(name="id")
+	@Type(type="pg-uuid")
 	private UUID id;
+	@Column(name="package_id")
+	@Type(type="pg-uuid")
 	private UUID packageId;
+	@Column(name="version_number")
 	private Integer versionNumber;
+	@Column(name="xml_content")
+	@Type(type="org.cru.godtools.domain.services.annotations.SQLXMLType")
 	private Document xmlContent;
+	@Column(name="filename")
 	private String filename;
 
 	private final Logger logger = Logger.getLogger(PackageStructure.class);
