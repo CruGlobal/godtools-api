@@ -1,7 +1,11 @@
 package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
+import org.hibernate.annotations.*;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -9,15 +13,29 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/30/14.
  */
+@Entity
+@Table(name="translation_elements")
 public class TranslationElement
 {
+	@Id
+	private TranslationElementKey translationElementId;
+	@Column(insertable = false, updatable = false)
 	private UUID id;
-	private UUID pageStructureId;
+	@Column(insertable = false, updatable = false)
 	private UUID translationId;
+
+	@Column(name="page_structure_id")
+	@Type(type="pg-uuid")
+	private UUID pageStructureId;
+	@Column(name="base_text")
 	private String baseText;
+	@Column(name="translated_text")
 	private String translatedText;
+	@Column(name="element_type")
 	private String elementType;
+	@Column(name="page_name")
 	private String pageName;
+	@Column(name="display_order")
 	private Integer displayOrder;
 
 	public static Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)
@@ -47,6 +65,10 @@ public class TranslationElement
 
 		return translationElementCopy;
 	}
+
+	public TranslationElementKey getTranslationElementId() { return translationElementId; }
+
+	public void setTranslationElementId() { this.translationElementId = translationElementId; }
 
 	public UUID getId()
 	{

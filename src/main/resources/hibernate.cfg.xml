@@ -25,5 +25,6 @@
       <mapping class="org.cru.godtools.domain.packages.PackageStructure"/>
       <mapping class="org.cru.godtools.domain.packages.PageStructure"/>
       <mapping class="org.cru.godtools.domain.images.ReferencedImage"/>
+      <mapping class="org.cru.godtools.domain.packages.TranslationElement"/>
   </session-factory>
 </hibernate-configuration>
