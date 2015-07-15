@@ -3,20 +3,36 @@ package org.cru.godtools.domain.translations;
 
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.packages.Package;
+import org.hibernate.annotations.*;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
+@Entity
+@Table(name="translations")
 public class Translation implements Serializable
 {
+	@Id
+	@Column(name="id")
+	@Type(type="pg-uuid")
 	private UUID id;
+	@Column(name="package_id")
+	@Type(type="pg-uuid")
 	private UUID packageId;
+	@Column(name="language_id")
+	@Type(type="pg-uuid")
 	private UUID languageId;
+	@Column(name="translated_name")
 	private String translatedName;
+	@Column(name="version_number")
 	private Integer versionNumber;
+	@Column(name="released")
 	private boolean released;
 
     public Translation()
