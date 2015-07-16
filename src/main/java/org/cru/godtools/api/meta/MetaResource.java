@@ -9,6 +9,7 @@ import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.services.LanguageService;
 import org.cru.godtools.domain.services.PackageService;
 import org.cru.godtools.domain.services.TranslationService;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
@@ -38,13 +39,13 @@ public class MetaResource
 	@Inject
 	AuthorizationService authService;
 
-	@Inject
+	@Inject @JPAStandard
 	PackageService packageService;
-	@Inject
+	@Inject @JPAStandard
 	TranslationService translationService;
 	@Inject
 	TranslationUpload translationUpload;
-	@Inject
+	@Inject @JPAStandard
 	private LanguageService languageService;
 
 	@Inject
