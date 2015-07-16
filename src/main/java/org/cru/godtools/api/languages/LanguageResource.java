@@ -7,6 +7,7 @@ import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.languages.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.annotations.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -26,9 +27,9 @@ public class LanguageResource
 
 	@Inject
 	AuthorizationService authorizationService;
-	@Inject
+	@Inject @JPAStandard
 	LanguageService languageService;
-	@Inject
+	@Inject @JPAStandard
 	PackageService packageService;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
