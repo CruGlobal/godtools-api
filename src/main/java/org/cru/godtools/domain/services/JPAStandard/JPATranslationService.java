@@ -83,7 +83,7 @@ public class JPATranslationService implements TranslationService
         {
             txn.begin();
             List translations = session.createQuery("FROM Translation WHERE languageId = :languageId")
-                    .setEntity("languageId",languageId)
+                    .setParameter("languageId",languageId)
                     .list();
             txn.commit();
 
@@ -119,8 +119,8 @@ public class JPATranslationService implements TranslationService
         {
             txn.begin();
             List translations = session.createQuery("FROM Translation WHERE languageId = :languageId AND released = :released")
-                    .setEntity("languageId",languageId)
-                    .setEntity("released",released)
+                    .setParameter("languageId", languageId)
+                    .setBoolean("released",released)
                     .list();
             txn.commit();
 
@@ -156,7 +156,7 @@ public class JPATranslationService implements TranslationService
         {
             txn.begin();
             List translations = session.createQuery("FROM Translation WHERE packageId = :packageId")
-                    .setEntity("packageId",packageId)
+                    .setParameter("packageId",packageId)
                     .list();
             txn.commit();
 
@@ -191,8 +191,8 @@ public class JPATranslationService implements TranslationService
         try {
             txn.begin();
             List translations = session.createQuery("FROM Translation WHERE languageId = :languageId AND packageId = :packageId")
-                    .setEntity("languageId",languageId)
-                    .setEntity("packageId",packageId)
+                    .setParameter("languageId", languageId)
+                    .setParameter("packageId", packageId)
                     .list();
             txn.commit();
 
@@ -224,36 +224,93 @@ public class JPATranslationService implements TranslationService
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 
-        try
+        if(godToolsVersion == GodToolsVersion.LATEST_VERSION)
         {
-            txn.begin();
-            Translation translation = (Translation) session.createQuery("FROM Translation WHERE languageId = :languageId AND packageId = :packageId AND versionNumber = :versionNumber")
-                    .setEntity("languageId",languageId)
-                    .setEntity("packageId",packageId)
-                    .setInteger("versionNumber",godToolsVersion.getTranslationVersion())
-                    .uniqueResult();
-            txn.commit();
-
-            return translation;
+            return returnLatestVersion(languageId, packageId);
         }
-        catch (Exception e)
+        else if(godToolsVersion == GodToolsVersion.LATEST_PUBLISHED_VERSION)
         {
-            if(txn!=null)
+            return returnLatestPublishedVersion(languageId, packageId);
+        }
+        else if(godToolsVersion == GodToolsVersion.DRAFT_VERSION)
+        {
+            return returnDraftVersion(languageId, packageId);
+        }
+        else
+        {
+            try
             {
-                txn.rollback();
+                txn.begin();
+                Translation translation = (Translation) session.createQuery("FROM Translation WHERE languageId = :languageId AND packageId = :packageId AND versionNumber = :versionNumber")
+                        .setParameter("languageId",languageId)
+                        .setParameter("packageId",packageId)
+                        .setInteger("versionNumber",godToolsVersion.getTranslationVersion())
+                        .uniqueResult();
+                txn.commit();
+
+                return translation;
             }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
+            catch (Exception e)
             {
-                session.close();
+                if(txn!=null)
+                {
+                    txn.rollback();
+                }
+
+                e.printStackTrace();
+
+                return null;
+            }
+            finally
+            {
+                if(session!=null)
+                {
+                    session.close();
+                }
             }
         }
+    }
+
+    private Translation returnDraftVersion(UUID languageId, UUID packageId)
+    {
+        for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+        {
+            if(!translation.isReleased())
+            {
+                return translation;
+            }
+        }
+        return null;
+    }
+
+    private Translation returnLatestPublishedVersion(UUID languageId, UUID packageId)
+    {
+        Translation highestFoundVersionTranslation = null;
+
+        for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+        {
+            if(translation.isReleased() && (highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0))
+            {
+                highestFoundVersionTranslation = translation;
+            }
+        }
+
+        return highestFoundVersionTranslation;
+    }
+
+    private Translation returnLatestVersion(UUID languageId, UUID packageId)
+    {
+        Translation highestFoundVersionTranslation = null;
+
+        for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+        {
+            if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
+            {
+                highestFoundVersionTranslation = translation;
+            }
+        }
+
+        return highestFoundVersionTranslation;
     }
 
     public void insert(Translation translation)
@@ -265,7 +322,7 @@ public class JPATranslationService implements TranslationService
         try
         {
             txn.begin();
-            session.update(translation);
+            session.save(translation);
             txn.commit();
         }
         catch (Exception e)
