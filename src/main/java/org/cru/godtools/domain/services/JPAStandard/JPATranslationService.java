@@ -384,27 +384,30 @@ public class JPATranslationService implements TranslationService
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 
-        try
+        if(!autoCommit)
         {
-            txn.begin();
-            Query q1 = session.createQuery("DELETE FROM Translation");
-            q1.executeUpdate();
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
+            try
             {
-                txn.rollback();
+                txn.begin();
+                Query q1 = session.createQuery("DELETE FROM Translation");
+                q1.executeUpdate();
+                txn.commit();
             }
-
-            e.printStackTrace();
-        }
-        finally
-        {
-            if(session!=null)
+            catch (Exception e)
             {
-                session.close();
+                if(txn!=null)
+                {
+                    txn.rollback();
+                }
+
+                e.printStackTrace();
+            }
+            finally
+            {
+                if(session!=null)
+                {
+                    session.close();
+                }
             }
         }
     }
