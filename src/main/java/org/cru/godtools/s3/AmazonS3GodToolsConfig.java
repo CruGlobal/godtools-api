@@ -56,11 +56,11 @@ public class AmazonS3GodToolsConfig
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			return new URL(BASE_URL + PACKAGES + languageCode + "all" + ZIP);
+			return new URL(BASE_URL + PACKAGES + languageCode + "/" + "all" + ZIP);
 		}
 		else
 		{
-			return new URL(BASE_URL + PACKAGES + languageCode + packageCode + ZIP);
+			return new URL(BASE_URL + PACKAGES + languageCode + "/" +  packageCode + ZIP);
 		}
 	}
 
