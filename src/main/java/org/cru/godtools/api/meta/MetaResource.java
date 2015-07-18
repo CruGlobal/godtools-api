@@ -1,6 +1,7 @@
 package org.cru.godtools.api.meta;
 
 import com.amazonaws.services.s3.model.S3Object;
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -31,6 +32,9 @@ public class MetaResource
 	AuthorizationService authService;
 
 	@Inject
+	MetaService metaService;
+
+	@Inject
 	Clock clock;
 
 	@Inject
@@ -47,14 +51,33 @@ public class MetaResource
 	{
 		log.info("Getting all meta info");
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean retrieveDrafts = authorizationRecord.isPresent() &&
+				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
 
-		S3Object metaFile = godToolsS3Client.getMetaFile();
+		if(retrieveDrafts)
+		{
+			// draft meta file is built from the database
+			MetaResults metaResults = metaService.getMetaResults(null,
+					null,
+					retrieveDrafts,
+					false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type("application/xml")
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile();
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type("application/xml")
+					.build();
+		}
 	}
 
 	@GET
@@ -68,14 +91,29 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean retrieveDrafts = authorizationRecord.isPresent() &&
+				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
 
-		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
+		if(retrieveDrafts)
+		{
+			MetaResults metaResults = metaService.getMetaResults(languageCode, null, retrieveDrafts, false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type("application/xml")
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type("application/xml")
+					.build();
+		}
 	}
 
 	@GET
@@ -90,13 +128,28 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean retrieveDrafts = authorizationRecord.isPresent() &&
+				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
 
-		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
+		if(retrieveDrafts)
+		{
+			MetaResults metaResults = metaService.getMetaResults(languageCode, packageCode, retrieveDrafts, false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type("application/xml")
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type("application/xml")
+					.build();
+		}
 	}
 }

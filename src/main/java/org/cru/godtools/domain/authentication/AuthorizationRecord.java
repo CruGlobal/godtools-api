@@ -31,6 +31,11 @@ public class AuthorizationRecord
 		if(!authorizationRecordOptional.get().hasDraftAccess()) throw new UnauthorizedException();
 	}
 
+    public boolean hasDraftAccess(DateTime currentTime)
+    {
+        return hasDraftAccess() && isCurrentlyActive(currentTime);
+    }
+
     public static void checkAdminAccess(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
     {
         checkAuthorization(authorizationRecordOptional, currentTime);
