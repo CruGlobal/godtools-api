@@ -1,10 +1,7 @@
 package org.cru.godtools.api.notifications;
 
-import com.google.common.base.Optional;
 import org.cru.godtools.api.authorization.AuthorizationResource;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
-import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.domain.notifications.Device;
 import org.cru.godtools.domain.notifications.DeviceService;
 import org.cru.godtools.domain.notifications.Notification;
@@ -22,9 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
-/**
- * Created by matthewfrederick on 12/30/14.
- */
 @Path("/notification")
 public class NotificationResource
 {
@@ -79,9 +73,6 @@ public class NotificationResource
 	public Response updateNotification(Notification notification, @HeaderParam(value="Authorization") String authcode)
 	{
 		log.info("Notification update for registrationId: " + notification.getRegistrationId());
-
-		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(null, authcode);
-		if (!authorizationRecord.isPresent()) throw new UnauthorizedException();
 
 		Notification originalNotification = notificationService.selectNotificationByRegistrationIdAndType(notification);
 
