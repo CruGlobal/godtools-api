@@ -4,9 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-
-import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
-import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.api.translations.model.ConfigFile;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
@@ -68,8 +65,6 @@ public class GodToolsTranslationService
 	private NewTranslationCreation newTranslationProcess;
 	@Inject
 	private DraftTranslation draftTranslationProcess;
-	@Inject
-	private GodToolsCache cache;
 
 	private Logger logger = Logger.getLogger(GodToolsTranslationService.class);
 
@@ -94,8 +89,6 @@ public class GodToolsTranslationService
 		pageStructure.setTranslatedFields(TranslationElement.createMapOfTranslationElements(translationElementList));
 		pageStructure.replaceImageNamesWithImageHashes(Image.createMapOfImages(getImagesUsedInThisTranslation(packageStructure)));
 
-		updateCache(translation, pageStructure);
-
 		return pageStructure;
 	}
 
@@ -106,8 +99,6 @@ public class GodToolsTranslationService
 		pageStructure.mergeXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);
-
-		updateCache(translation, pageStructure);
 	}
 
 	/**
@@ -146,7 +137,6 @@ public class GodToolsTranslationService
 			pageStructure.mergeXmlContent(updatedPageLayout);
 
 			pageStructureService.update(pageStructure);
-			updateCache(translation, pageStructure);
 		}
 
 		for(Translation translation : publishedTranslations)
@@ -182,13 +172,6 @@ public class GodToolsTranslationService
 
 	public GodToolsTranslation getTranslation(Translation translation)
 	{
-		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
-		if(possibleTranslation.isPresent())
-		{
-			logger.info(String.format("found translation %s in cache", translation.getId()));
-			return possibleTranslation.get();
-		}
-
 		Package gtPackage = packageService.selectById(translation.getPackageId());
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
@@ -204,7 +187,6 @@ public class GodToolsTranslationService
 				loadIcon(gtPackage.getCode()));
 
 		logger.info(String.format("adding translation %s to cache", translation.getId()));
-		cache.add(godToolsTranslation);
 
 		return godToolsTranslation;
 	}
@@ -219,13 +201,6 @@ public class GodToolsTranslationService
 		Translation translation = getTranslationFromDatabase(languageCode, packageCode, godToolsVersion);
 
 		if(translation == null) throw new NotFoundException();
-
-		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
-		if(possibleTranslation.isPresent())
-		{
-			logger.info(String.format("found translation %s in cache", translation.getId()));
-			return possibleTranslation.get();
-		}
 
 		return getTranslation(translation);
 	}
@@ -306,23 +281,6 @@ public class GodToolsTranslationService
 	{
 		translation.setReleased(true);
 		translationService.update(translation);
-
-		GodToolsTranslation godToolsTranslation = getTranslation(translation);
-
-		if(TranslationResource.BYPASS_ASYNC_UPDATE) return;
-
-		try
-		{
-			// job will delete draft from the cache when it is finished
-			DraftUpdateJobScheduler.scheduleOneUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
-					godToolsTranslation.getLanguage().getPath(),
-					godToolsTranslation.getFilenameSet(),
-					godToolsTranslation.getTranslation());
-		}
-		catch (SchedulerException e)
-		{
-			logger.error("Error scheduling draft update on publish", e);
-		}
 	}
 
 	private List<Image> getImagesUsedInThisTranslation(PackageStructure packageStructure)
@@ -357,18 +315,5 @@ public class GodToolsTranslationService
 	private Image loadIcon(String packageCode)
 	{
 		return imageService.selectByFilename(Image.buildFilename(packageCode, "icon@2x.png"));
-	}
-
-	private void updateCache(Translation translation, PageStructure pageStructure)
-	{
-		Optional<GodToolsTranslation> possibleTranslation = cache.get(translation.getId());
-		if(possibleTranslation.isPresent())
-		{
-			GodToolsTranslation godToolsTranslation = possibleTranslation.get();
-
-			godToolsTranslation.replacePageXml(pageStructure);
-			logger.info(String.format("replacing page %s in cached translation %s", pageStructure.getId(), translation.getId()));
-			cache.replace(godToolsTranslation);
-		}
 	}
 }
