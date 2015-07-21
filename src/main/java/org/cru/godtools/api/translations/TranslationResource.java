@@ -1,9 +1,5 @@
 package org.cru.godtools.api.translations;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.model.PageFile;
@@ -22,7 +18,6 @@ import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
-import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -37,8 +32,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -53,6 +46,7 @@ import java.util.UUID;
  * Created by ryancarlson on 4/8/14.
  */
 @Path("/translations")
+@Deprecated
 public class TranslationResource
 {
 	@Inject
@@ -74,13 +68,11 @@ public class TranslationResource
 	@Inject
 	Clock clock;
 
-	private Logger log = Logger.getLogger(TranslationResource.class);
-	static boolean BYPASS_ASYNC_UPDATE = false;
-
-
+	private Logger log = Logger.getLogger(this.getClass());
 
 	@POST
 	@Path("/{language}/{package}")
+	@Deprecated
 	public Response createTranslation(@PathParam("language") String languageCode,
 									  @PathParam("package") String packageCode,
 									  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
@@ -104,6 +96,7 @@ public class TranslationResource
 
 	@PUT
 	@Path("/{language}/{package}")
+	@Deprecated
 	public Response updateTranslation(@PathParam("language") String languageCode,
 									  @PathParam("package") String packageCode,
 									  @HeaderParam("Authorization") String authTokenHeader,

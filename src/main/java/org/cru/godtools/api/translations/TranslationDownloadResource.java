@@ -20,6 +20,7 @@ import java.io.IOException;
 /**
  * Created by ryancarlson on 7/11/15.
  */
+@Path("/translations")
 public class TranslationDownloadResource
 {
 
@@ -35,7 +36,7 @@ public class TranslationDownloadResource
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@GET
-	@Path("/translations/{language}")
+	@Path("/{language}")
 	@Produces({"application/zip"})
 	public Response getTranslations(@PathParam("language") String languageCode,
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,

@@ -42,7 +42,7 @@ import java.util.UUID;
  *
  * Created by ryancarlson on 4/8/14.
  */
-
+@Deprecated
 public class GodToolsTranslationService
 {
 	@Inject
