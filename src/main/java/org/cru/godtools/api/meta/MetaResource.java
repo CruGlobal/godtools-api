@@ -35,18 +35,18 @@ public class MetaResource
 {
 
 	@Inject
-	MetaService metaService;
+	private MetaService metaService;
 	@Inject
-	AuthorizationService authService;
-
+	private AuthorizationService authService;
 	@Inject @JPAStandard
-	PackageService packageService;
+	private PackageService packageService;
 	@Inject @JPAStandard
-	TranslationService translationService;
-	@Inject
-	TranslationUpload translationUpload;
+	private TranslationService translationService;
 	@Inject @JPAStandard
 	private LanguageService languageService;
+
+	@Inject
+	private TranslationUpload translationUpload;
 
 	@Inject
 	Clock clock;
@@ -116,5 +116,21 @@ public class MetaResource
 	private Integer getMinimumInterpreterVersion(Integer minimumInterpreterVersionParam, Integer minimumInterpreterVersionHeader)
 	{
 		return minimumInterpreterVersionParam == null ? minimumInterpreterVersionHeader : minimumInterpreterVersionParam;
+	}
+
+	public void setAutoCommit(boolean autoCommit)
+	{
+		authService.setAutoCommit(autoCommit);
+		packageService.setAutoCommit(autoCommit);
+		translationService.setAutoCommit(autoCommit);
+		languageService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		authService.rollback();
+		packageService.rollback();
+		translationService.rollback();
+		languageService.rollback();
 	}
 }

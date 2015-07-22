@@ -157,8 +157,13 @@ public class AuthorizationResource
 		return authorizationRecord;
 	}
 
-	public AuthorizationService getAuthorizationService()
+	public void setAutoCommit(boolean autoCommit)
 	{
-		return authorizationService;
+		authorizationService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		authorizationService.rollback();
 	}
 }

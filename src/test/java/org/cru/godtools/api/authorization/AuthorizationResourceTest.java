@@ -47,13 +47,13 @@ public class AuthorizationResourceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		authorizationResource.getAuthorizationService().setAutoCommit(false);
+		authorizationResource.setAutoCommit(false);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		authorizationResource.getAuthorizationService().rollback();
+		authorizationResource.rollback();
 	}
 
 	/**
