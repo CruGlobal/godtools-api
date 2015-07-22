@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.services.annotations;
 
+import org.apache.xerces.dom.*;
 import org.hibernate.*;
 import org.hibernate.engine.spi.*;
 import org.hibernate.usertype.*;
@@ -58,7 +59,10 @@ public class SQLXMLType implements UserType
     public Object deepCopy(Object value) throws HibernateException {
         if (value == null)
             return null;
-        return new String( (String)value );
+        else if (value.getClass() == DeferredDocumentImpl.class)
+            return value;
+        else
+            return new String( (String)value );
     }
 
     @Override
