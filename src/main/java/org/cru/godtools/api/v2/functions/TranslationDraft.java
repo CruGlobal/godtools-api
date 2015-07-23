@@ -21,7 +21,6 @@ import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
