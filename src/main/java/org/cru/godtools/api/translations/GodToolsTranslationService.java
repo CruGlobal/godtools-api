@@ -371,4 +371,28 @@ public class GodToolsTranslationService
 			cache.replace(godToolsTranslation);
 		}
 	}
+
+	public void setAutoCommit(boolean autoCommit)
+	{
+		packageService.setAutoCommit(autoCommit);
+		translationService.setAutoCommit(autoCommit);
+		languageService.setAutoCommit(autoCommit);
+		packageStructureService.setAutoCommit(autoCommit);
+		pageStructureService.setAutoCommit(autoCommit);
+		translationElementService.setAutoCommit(autoCommit);
+		referencedImageService.setAutoCommit(autoCommit);
+		imageService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		packageService.rollback();
+		translationService.rollback();
+		languageService.rollback();
+		packageStructureService.rollback();
+		pageStructureService.rollback();
+		translationElementService.rollback();
+		referencedImageService.rollback();
+		imageService.rollback();
+	}
 }

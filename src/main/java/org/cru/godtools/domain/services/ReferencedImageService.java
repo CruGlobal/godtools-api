@@ -14,4 +14,8 @@ public interface ReferencedImageService
 	List<ReferencedImage> selectByPackageStructureId(UUID packageStructureId, boolean filter);
 
 	void insert(ReferencedImage referencedImage);
+
+	void setAutoCommit(boolean autoCommit);
+
+	void rollback();
 }

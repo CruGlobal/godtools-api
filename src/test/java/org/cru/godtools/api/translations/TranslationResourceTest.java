@@ -78,28 +78,16 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		translationResource.setAutoCommit(false);
+		draftResource.setAutoCommit(false);
 		saveTestPackage();
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		translationResource.rollback();
+		draftResource.rollback();
 	}
 
 	@Test

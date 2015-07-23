@@ -175,4 +175,16 @@ public class DraftResource
 				.noContent()
 				.build();
 	}
+
+	public void setAutoCommit(boolean autoCommit)
+	{
+		authService.setAutoCommit(autoCommit);
+		godToolsTranslationService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		authService.rollback();
+		godToolsTranslationService.rollback();
+	}
 }

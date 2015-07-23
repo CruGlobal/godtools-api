@@ -4,9 +4,11 @@ import com.google.common.collect.*;
 import org.cru.godtools.domain.images.*;
 import org.cru.godtools.domain.services.*;
 import org.sql2o.*;
+import org.sql2o.Connection;
 
 import javax.enterprise.inject.*;
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -74,5 +76,29 @@ public class Sql2oReferencedImageService implements ReferencedImageService
     {
         public static String insert = "INSERT into referenced_images(image_id, package_structure_id) VALUES(:imageId, :packageStructureId)";
         public static String selectByPackageStructureId = "SELECT * FROM referenced_images WHERE package_structure_id = :packageStructureId";
+    }
+
+    public void setAutoCommit(boolean autoCommit)
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(autoCommit);
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
+    }
+
+    public void rollback()
+    {
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+            /*Do Nothing*/
+        }
     }
 }

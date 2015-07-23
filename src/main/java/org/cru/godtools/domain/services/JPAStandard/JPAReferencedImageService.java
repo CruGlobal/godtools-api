@@ -135,4 +135,43 @@ public class JPAReferencedImageService implements ReferencedImageService
             }
         }
     }
+
+    public void setAutoCommit(boolean autoCommit)
+    {
+        this.autoCommit = autoCommit;
+    }
+
+    public void rollback()
+    {
+        log.info("JPA Delete for Testing");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        if(!autoCommit)
+        {
+            try
+            {
+                txn.begin();
+                Query q1 = session.createQuery("DELETE FROM ReferencedImage");
+                q1.executeUpdate();
+                txn.commit();
+            }
+            catch(Exception e)
+            {
+                if(txn!=null)
+                {
+                    txn.rollback();
+                }
+
+                e.printStackTrace();
+            }
+            finally
+            {
+                if(session!=null)
+                {
+                    session.close();
+                }
+            }
+        }
+    }
 }

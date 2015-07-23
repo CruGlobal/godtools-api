@@ -50,14 +50,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch (SQLException e)
-		{
-			/*yawn*/
-		}
+		draftResource.setAutoCommit(false);
 		saveTestPackage();
 		setTestPackageDraftStatus();
 		DraftResource.BYPASS_ASYNC_UPDATE = true;
@@ -66,14 +59,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().rollback();
-		}
-		catch (SQLException e)
-		{
-			/*yawn*/
-		}
+		draftResource.rollback();
 	}
 
 	@Test

@@ -276,4 +276,26 @@ public class TranslationResource
 
 		return Optional.absent();
 	}
+
+	public void setAutoCommit(boolean autoCommit)
+	{
+		authService.setAutoCommit(autoCommit);
+		godToolsTranslationService.setAutoCommit(autoCommit);
+		pageStructureService.setAutoCommit(autoCommit);
+		languageService.setAutoCommit(autoCommit);
+		packageService.setAutoCommit(autoCommit);
+		translationService.setAutoCommit(autoCommit);
+		translationElementService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		authService.rollback();
+		godToolsTranslationService.rollback();
+		pageStructureService.rollback();
+		languageService.rollback();
+		packageService.rollback();
+		translationService.rollback();
+		translationElementService.rollback();
+	}
 }
