@@ -1,8 +1,10 @@
 package org.cru.godtools.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import org.jboss.logging.Logger;
 
@@ -77,6 +79,9 @@ public class GodToolsS3Client
 
 		ObjectMetadata metadata = new ObjectMetadata();
 
-		s3Client.putObject("cru-godtools",packagesKey,compressedTranslation, metadata);
+		PutObjectRequest putObjectRequest = new PutObjectRequest("cru-godtools", packagesKey, compressedTranslation, metadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools packages are meant to be downloaded w/o authz
+
+		s3Client.putObject(putObjectRequest);
 	}
 }
