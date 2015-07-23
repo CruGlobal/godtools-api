@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 7/28/14.
- */
-
+@Deprecated
 @Path("/drafts")
 public class DraftResource
 {
@@ -38,7 +35,7 @@ public class DraftResource
 	GodToolsTranslationService godToolsTranslationService;
 	@Inject private Clock clock;
 
-	private Logger log = Logger.getLogger(DraftResource.class);
+	private Logger log = Logger.getLogger(getClass());
 	static boolean BYPASS_ASYNC_UPDATE = false;
 
 	@GET

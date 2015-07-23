@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream;
  * Created by ryancarlson on 3/17/14.
  */
 @Default
+@Deprecated
 public class GodToolsTranslationRetrieval
 {
 	@Inject

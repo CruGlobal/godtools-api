@@ -17,9 +17,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-/**
- * Created by ryancarlson on 7/11/15.
- */
+@Deprecated
 @Path("/translations")
 public class TranslationDownloadResource
 {

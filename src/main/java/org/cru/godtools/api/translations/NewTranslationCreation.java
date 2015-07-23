@@ -13,9 +13,7 @@ import org.cru.godtools.translate.client.TranslationUpload;
 import javax.inject.Inject;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 7/18/14.
- */
+@Deprecated
 public class NewTranslationCreation
 {
 

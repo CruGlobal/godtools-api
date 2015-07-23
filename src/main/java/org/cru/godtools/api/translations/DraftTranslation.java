@@ -15,9 +15,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 7/24/14.
- */
+@Deprecated
 public class DraftTranslation
 {
 
