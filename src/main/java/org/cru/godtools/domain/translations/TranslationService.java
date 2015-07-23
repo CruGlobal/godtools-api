@@ -136,7 +136,8 @@ public class TranslationService
 	{
 		Translation highestFoundVersionTranslation = null;
 
-		for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
+		List<Translation> translations = selectByLanguageIdPackageId(languageId, packageId);
+		for(Translation translation : translations)
 		{
 			if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
 			{

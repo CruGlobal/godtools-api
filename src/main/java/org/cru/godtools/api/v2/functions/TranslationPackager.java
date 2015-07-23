@@ -2,6 +2,7 @@ package org.cru.godtools.api.v2.functions;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.domain.GuavaHashGenerator;
@@ -14,26 +15,29 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
 public class TranslationPackager
 {
-	protected FileZipper fileZipper = new FileZipper();
+	FileZipper fileZipper = new FileZipper();
+
+	Set<String> imagesAlreadyZipped = Sets.newHashSet();
+
+	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
+	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
 
 	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList)
 	{
 		try
 		{
-			ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
-			ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
-
 			if (!godToolsTranslationList.isEmpty())
 			{
 				fileZipper.zipContentsFile(createContentsFile(godToolsTranslationList), zipOutputStream);
 
 				for (GodToolsTranslation godToolsTranslation : godToolsTranslationList)
 				{
-					addTranslationToZipStream(godToolsTranslation, zipOutputStream);
+					addTranslationToZipStream(godToolsTranslation);
 				}
 			}
 
@@ -52,12 +56,9 @@ public class TranslationPackager
 	{
 		try
 		{
-			ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
-			ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
-
 			fileZipper.zipContentsFile(createContentsFile(Lists.newArrayList(godToolsTranslation)), zipOutputStream);
 
-			addTranslationToZipStream(godToolsTranslation, zipOutputStream);
+			addTranslationToZipStream(godToolsTranslation);
 
 			zipOutputStream.close();
 			bundledOutputStream.close();
@@ -70,13 +71,15 @@ public class TranslationPackager
 		}
 	}
 
-	private void addTranslationToZipStream(GodToolsTranslation godToolsTranslation, ZipOutputStream zipOutputStream) throws Exception
+	private void addTranslationToZipStream(GodToolsTranslation godToolsTranslation) throws Exception
 	{
 		fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
 				godToolsTranslation.getTranslation(),
 				zipOutputStream);
 
 		fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
+
+		fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
 	}
 
 	private Document createContentsFile(List<GodToolsTranslation> godToolsTranslationList) throws ParserConfigurationException

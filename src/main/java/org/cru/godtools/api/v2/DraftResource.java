@@ -3,7 +3,7 @@ package org.cru.godtools.api.v2;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
-import org.cru.godtools.api.v2.functions.TranslationDraft;
+import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.TranslationPackager;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -18,7 +18,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.List;
 
 @Path("/v2/drafts")
 public class DraftResource
@@ -28,7 +27,7 @@ public class DraftResource
 	AuthorizationService authService;
 
 	@Inject
-	TranslationDraft translationDraft;
+	DraftTranslation draftTranslation;
 
 	@Inject
 	Clock clock;
@@ -49,7 +48,7 @@ public class DraftResource
 		TranslationPackager packager = new TranslationPackager();
 
 		return Response
-				.ok(packager.compress(translationDraft.retrieve(languageCode)))
+				.ok(packager.compress(draftTranslation.retrieve(languageCode)))
 				.build();
 	}
 
@@ -67,7 +66,7 @@ public class DraftResource
 
 		TranslationPackager packager = new TranslationPackager();
 
-		Optional<GodToolsTranslation> godToolsTranslationOptional = translationDraft.retrieve(languageCode, packageCode);
+		Optional<GodToolsTranslation> godToolsTranslationOptional = draftTranslation.retrieve(languageCode, packageCode);
 
 		if(godToolsTranslationOptional.isPresent())
 		{

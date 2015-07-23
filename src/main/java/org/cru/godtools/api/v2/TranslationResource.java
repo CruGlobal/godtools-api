@@ -1,7 +1,8 @@
 package org.cru.godtools.api.v2;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.v2.functions.TranslationDraft;
+import org.cru.godtools.api.v2.functions.DraftTranslation;
+import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
@@ -27,7 +28,10 @@ public class TranslationResource
 	AuthorizationService authService;
 
 	@Inject
-	TranslationDraft translationDraft;
+	PublishedTranslation publishedTranslation;
+
+	@Inject
+	DraftTranslation draftTranslation;
 
 	@Inject
 	Clock clock;
@@ -70,7 +74,7 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		translationDraft.create(languageCode, packageCode);
+		draftTranslation.create(languageCode, packageCode);
 
 		return Response
 				.created(new URI("/drafts" + languageCode + "/" + packageCode))
@@ -91,7 +95,8 @@ public class TranslationResource
 
 		if(Boolean.parseBoolean(publish))
 		{
-			translationDraft.publish(languageCode, packageCode);
+			draftTranslation.publish(languageCode, packageCode);
+			publishedTranslation.pushToS3(languageCode);
 		}
 
 		return Response.accepted().build();

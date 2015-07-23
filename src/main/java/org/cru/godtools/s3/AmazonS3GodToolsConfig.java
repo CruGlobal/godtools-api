@@ -18,11 +18,17 @@ public class AmazonS3GodToolsConfig
 	private static final String PACKAGES = "packages/";
 	private static final String LANGUAGES = "languages/";
 	private static final String META_FILE = "meta";
+	private static final String ALL_FILE = "all";
 	private static final String ALL = "all/";
 	private static final String CURRENT = "current/";
 	private static final String XML = ".xml";
 	private static final String ZIP = ".zip";
 
+	/**
+	 * e.g. meta/current/en/kgp/meta.xml  OR
+	 *      meta/current/en/meta.xml      OR
+	 *      meta/current/meta.xml
+	 */
 	public static String getMetaKey(String languageCode, String packageCode)
 	{
 		if(!Strings.isNullOrEmpty(languageCode) && !Strings.isNullOrEmpty(packageCode))
@@ -37,14 +43,38 @@ public class AmazonS3GodToolsConfig
 		return META + CURRENT + META_FILE + XML;
 	}
 
+	/**
+	 * e.g. packages/current/en/all/en.zip  OR
+	 */
+	@Deprecated
 	public static String getPackagesKey(String languageCode, String packageCode)
 	{
 		return PACKAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
 	}
 
+	/**
+	 * e.g. languages/current/en/all/en.zip  OR
+	 */
+	@Deprecated
 	public static String getLanguagesKey(String languageCode, String packagesCode)
 	{
 		return LANGUAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
+	}
+
+	/**
+	 * e.g. packages/current/en/all/en.zip  OR
+	 */
+	public static String getPackagesKeyV2(String languageCode)
+	{
+		return PACKAGES + languageCode + "/" + ALL_FILE + ZIP;
+	}
+
+	/**
+	 * e.g. languages/current/en/all/en.zip  OR
+	 */
+	public static String getLanguagesKeyV2(String languageCode)
+	{
+		return LANGUAGES + languageCode + "/" + ALL_FILE + ZIP;
 	}
 
 	public static URL getPackagesRedirectUrl(String languageCode) throws MalformedURLException
@@ -56,7 +86,7 @@ public class AmazonS3GodToolsConfig
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			return new URL(BASE_URL + PACKAGES + languageCode + "/" + "all" + ZIP);
+			return new URL(BASE_URL + PACKAGES + languageCode + "/" + ALL_FILE + ZIP);
 		}
 		else
 		{
@@ -66,7 +96,7 @@ public class AmazonS3GodToolsConfig
 
 	public static URL getMetaRedirectUrl() throws MalformedURLException
 	{
-		return new URL(BASE_URL + META + "all" + XML);
+		return new URL(BASE_URL + META + ALL_FILE + XML);
 	}
 
 	public static URL getLanguagesRedirectUrl(String languageCode) throws MalformedURLException
@@ -78,11 +108,11 @@ public class AmazonS3GodToolsConfig
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			return new URL(BASE_URL + LANGUAGES + languageCode + "all" + ZIP);
+			return new URL(BASE_URL + LANGUAGES + languageCode + "/" + ALL_FILE + ZIP);
 		}
 		else
 		{
-			return new URL(BASE_URL + LANGUAGES + languageCode + packageCode + ZIP);
+			return new URL(BASE_URL + LANGUAGES + languageCode + "/" + packageCode + ZIP);
 		}
 	}
 }

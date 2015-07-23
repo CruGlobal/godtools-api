@@ -2,10 +2,12 @@ package org.cru.godtools.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 
 /**
  * Created by ryancarlson on 7/11/15.
@@ -65,5 +67,16 @@ public class GodToolsS3Client
 
 		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
 				packagesKey));
+	}
+
+	public void pushPackagesZippedFolder(String languageCode, InputStream compressedTranslation)
+	{
+		String packagesKey = AmazonS3GodToolsConfig.getPackagesKeyV2(languageCode);
+
+		log.info(String.format("Pushing packages file w/ key %s", packagesKey));
+
+		ObjectMetadata metadata = new ObjectMetadata();
+
+		s3Client.putObject("cru-godtools",packagesKey,compressedTranslation, metadata);
 	}
 }
