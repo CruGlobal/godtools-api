@@ -21,10 +21,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
-/**
- * Created by ryancarlson on 3/14/14.
- */
-
+@Deprecated
 @Path("/meta")
 public class MetaResource
 {
