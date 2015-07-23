@@ -63,28 +63,14 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 	@BeforeMethod
 	public void setup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		packageResource.setAutoCommit(false);
 		saveTestPackage();
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		try
-		{
-			TestSqlConnectionProducer.getConnection().getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-			/*yawn*/
-		}
+		packageResource.rollback();
 	}
 
 	/**

@@ -29,14 +29,11 @@ import java.util.UUID;
 @Path("/notification")
 public class NotificationResource
 {
-	@Inject
-	@JPAStandard
+	@Inject @JPAStandard
 	private DeviceService deviceService;
-	@Inject
-	@JPAStandard
+	@Inject @JPAStandard
 	private AuthorizationService authorizationService;
-	@Inject
-	@JPAStandard
+	@Inject @JPAStandard
 	private NotificationService notificationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);
@@ -98,15 +95,17 @@ public class NotificationResource
 		return Response.noContent().build();
 	}
 
-	public DeviceService getDeviceService() {
-		return deviceService;
+	public void setAutoCommit(boolean autoCommit)
+	{
+		deviceService.setAutoCommit(autoCommit);
+		authorizationService.setAutoCommit(autoCommit);
+		notificationService.setAutoCommit(autoCommit);
 	}
 
-	public AuthorizationService getAuthorizationService() {
-		return authorizationService;
-	}
-
-	public NotificationService getNotificationService() {
-		return notificationService;
+	public void rollback()
+	{
+		deviceService.rollback();
+		authorizationService.rollback();
+		notificationService.rollback();
 	}
 }

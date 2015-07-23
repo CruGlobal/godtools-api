@@ -46,17 +46,13 @@ public class NotificationResourceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		notificationResource.getAuthorizationService().setAutoCommit(false);
-		notificationResource.getDeviceService().setAutoCommit(false);
-		notificationResource.getNotificationService().setAutoCommit(false);
+		notificationResource.setAutoCommit(false);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		notificationResource.getAuthorizationService().rollback();
-		notificationResource.getDeviceService().rollback();
-		notificationResource.getNotificationService().rollback();
+		notificationResource.rollback();
 	}
 
 	@Test

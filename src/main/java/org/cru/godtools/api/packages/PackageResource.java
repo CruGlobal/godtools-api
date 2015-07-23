@@ -128,4 +128,14 @@ public class PackageResource
 				.loadTranslations()
 				.buildResponse();
 	}
+
+	public void setAutoCommit(boolean autoCommit)
+	{
+		authService.setAutoCommit(autoCommit);
+	}
+
+	public void rollback()
+	{
+		authService.rollback();
+	}
 }
