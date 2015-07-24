@@ -25,6 +25,6 @@ public class PackageServiceTestMockData
 		Assert.assertEquals(gtPackage.getId(), PackageServiceTest.TEST_PACKAGE_ID);
 		Assert.assertEquals(gtPackage.getName(), "Test Package");
 		Assert.assertEquals(gtPackage.getCode(), "tp");
-		Assert.assertNull(gtPackage.getDefaultLanguage());
+		Assert.assertNull(gtPackage.getDefaultLanguageId());
 	}
 }

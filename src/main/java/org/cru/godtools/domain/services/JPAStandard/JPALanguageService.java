@@ -1,16 +1,16 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
 import com.google.common.base.*;
+import org.cru.godtools.domain.images.*;
 import org.cru.godtools.domain.languages.*;
-import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
+import org.hibernate.mapping.*;
 import org.jboss.logging.*;
 
-import javax.inject.*;
 import java.util.*;
 import java.util.List;
 
@@ -25,9 +25,6 @@ public class JPALanguageService implements LanguageService
     Logger log = Logger.getLogger(JPAImageService.class);
 
     private boolean autoCommit = true;
-
-    @Inject @JPAStandard
-    private PackageService packageService;
 
     private static final SessionFactory buildSessionFactory() {
         try {
@@ -255,17 +252,8 @@ public class JPALanguageService implements LanguageService
         if(!autoCommit) {
             try {
                 txn.begin();
-
-                for(Language language : selectAllLanguages())
-                {
-                    for(Package packageWithDefaultLanguage : language.getPackages())
-                    {
-                        packageWithDefaultLanguage.setDefaultLanguage(null);
-                    }
-
-                    session.delete(language);
-                }
-
+                Query q1 = session.createQuery("DELETE FROM Language");
+                q1.executeUpdate();
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {

@@ -1,16 +1,13 @@
 package org.cru.godtools.domain.languages;
 
 import com.google.common.base.Strings;
-import org.cru.godtools.domain.packages.*;
-import org.cru.godtools.domain.packages.Package;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.*;
+import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
@@ -31,9 +28,6 @@ public class Language implements Serializable
     String locale;
     @Column(name="subculture")
     String subculture;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "defaultLanguage", cascade = {CascadeType.PERSIST})
-    Set<Package> packages = new HashSet<>();
 
     public String getPath()
     {
@@ -98,18 +92,5 @@ public class Language implements Serializable
     public void setSubculture(String subculture)
     {
         this.subculture = subculture;
-    }
-
-    public Set<Package> getPackages() {
-        return packages;
-    }
-
-    public void setPackages(Set<Package> packages) {
-        this.packages = packages;
-    }
-
-    public void addPackageWithDefaultLanguage(Package packageWithDefaultLanguage)
-    {
-        packages.add(packageWithDefaultLanguage);
     }
 }

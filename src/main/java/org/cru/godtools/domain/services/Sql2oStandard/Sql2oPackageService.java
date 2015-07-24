@@ -58,8 +58,7 @@ public class Sql2oPackageService implements PackageService
                 .addParameter("id", godToolsPackage.getId())
                 .addParameter("code", godToolsPackage.getCode())
                 .addParameter("name", godToolsPackage.getName())
-                .addParameter("defaultLanguageId", godToolsPackage.getDefaultLanguage() != null
-                        ? godToolsPackage.getDefaultLanguage().getId() : null)
+                .addParameter("defaultLanguageId", godToolsPackage.getDefaultLanguageId())
                 .addParameter("translationProjectId", godToolsPackage.getTranslationProjectId())
                 .executeUpdate();
     }

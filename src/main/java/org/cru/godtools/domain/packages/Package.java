@@ -1,10 +1,8 @@
 package org.cru.godtools.domain.packages;
 
-import org.cru.godtools.domain.languages.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -25,10 +23,8 @@ public class Package implements Serializable
     String name;
     @Column(name="code")
     String code;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
-    @JoinColumn(name="default_language_id")
-    Language defaultLanguage;
-    @Transient
+    @Column(name="default_language_id")
+    @Type(type="pg-uuid")
     UUID defaultLanguageId;
 	@Column(name="translation_project_id")
     Integer translationProjectId;
@@ -64,22 +60,17 @@ public class Package implements Serializable
         this.code = code;
     }
 
-    public Language getDefaultLanguage() { return defaultLanguage; }
-
-    public void setDefaultLanguage(Language defaultLanguage)
+    public UUID getDefaultLanguageId()
     {
-        this.defaultLanguage = defaultLanguage;
-    }
-
-    public UUID getDefaultLanguageId() {
         return defaultLanguageId;
     }
 
-    public void setDefaultLanguageId(UUID defaultLanguageId) {
+    public void setDefaultLanguageId(UUID defaultLanguageId)
+    {
         this.defaultLanguageId = defaultLanguageId;
     }
 
-    public Integer getTranslationProjectId()
+	public Integer getTranslationProjectId()
 	{
 		return translationProjectId;
 	}
