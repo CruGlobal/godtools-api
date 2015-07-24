@@ -1,17 +1,13 @@
 package org.cru.godtools.api.meta;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.beans.XMLEncoder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Set;
 
 /**
@@ -43,18 +39,8 @@ public class MetaResults implements java.io.Serializable
 
     public InputStream asStream()
     {
-        try
-        {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            objectMapper.writeValue(byteArrayOutputStream, this);
-
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        }
-        catch (IOException e)
-        {
-            throw Throwables.propagate(e);
-        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        new XMLEncoder(byteArrayOutputStream).writeObject(this);
+        return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 }
