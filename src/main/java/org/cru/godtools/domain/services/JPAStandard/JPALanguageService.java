@@ -1,14 +1,14 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
 import com.google.common.base.*;
-import org.cru.godtools.domain.images.*;
 import org.cru.godtools.domain.languages.*;
+import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
+import org.cru.godtools.domain.translations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
-import org.hibernate.mapping.*;
 import org.jboss.logging.*;
 
 import java.util.*;
@@ -245,15 +245,43 @@ public class JPALanguageService implements LanguageService
 
     public void rollback()
     {
-        log.info("Deleting for JPA Testing");
+        log.info("Deleting all Languages for JPA Testing");
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 
         if(!autoCommit) {
             try {
                 txn.begin();
-                Query q1 = session.createQuery("DELETE FROM Language");
-                q1.executeUpdate();
+
+                List<Language> languages = selectAllLanguages();
+
+                for(Language language : languages)
+                {
+                    //Orphan associated Package records
+                    List<Package> packages = session.createQuery("FROM Package WHERE defaultLanguageId = :languageId")
+                            .setParameter("languageId",language.getId())
+                            .list();
+
+                    //Orphan associated Translation records
+                    List<Translation> translations = session.createQuery("FROM Translation WHERE languageId = :languageId")
+                            .setParameter("languageId",language.getId())
+                            .list();
+
+                    for(Package gtPackage : packages)
+                    {
+                        gtPackage.setDefaultLanguageId(null);
+                        session.update(gtPackage);
+                    }
+
+                    for(Translation translation : translations)
+                    {
+                        translation.setLanguageId(null);
+                        session.update(translation);
+                    }
+
+                    session.delete(language);
+                }
+
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {
