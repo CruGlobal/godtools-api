@@ -52,10 +52,7 @@ public class MetaResource
 		if(retrieveDrafts)
 		{
 			// draft meta file is built from the database
-			MetaResults metaResults = metaService.getMetaResults(null,
-					null,
-					retrieveDrafts,
-					false);
+			MetaResults metaResults = metaService.getAllMetaResults(retrieveDrafts, false);
 
 			return Response
 					.ok(metaResults)
@@ -89,7 +86,9 @@ public class MetaResource
 
 		if(retrieveDrafts)
 		{
-			MetaResults metaResults = metaService.getMetaResults(languageCode, null, retrieveDrafts, false);
+			MetaResults metaResults = metaService.getLanguageMetaResults(languageCode,
+					retrieveDrafts,
+					false);
 
 			return Response
 					.ok(metaResults)
@@ -124,7 +123,10 @@ public class MetaResource
 
 		if(retrieveDrafts)
 		{
-			MetaResults metaResults = metaService.getMetaResults(languageCode, packageCode, retrieveDrafts, false);
+			MetaResults metaResults = metaService.getPackageMetaResults(languageCode,
+					packageCode,
+					retrieveDrafts,
+					false);
 
 			return Response
 					.ok(metaResults)
