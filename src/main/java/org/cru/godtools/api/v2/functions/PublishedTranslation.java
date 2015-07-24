@@ -1,5 +1,6 @@
 package org.cru.godtools.api.v2.functions;
 
+import org.cru.godtools.api.meta.MetaService;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.s3.GodToolsS3Client;
 
@@ -12,6 +13,9 @@ public class PublishedTranslation extends AbstractTranslation
 	@Inject
 	GodToolsS3Client godToolsS3Client;
 
+	@Inject
+	MetaService metaService;
+
 	public void pushToS3(String languageCode)
 	{
 		List<GodToolsTranslation> godToolsTranslations = retrieve(languageCode);
@@ -23,5 +27,7 @@ public class PublishedTranslation extends AbstractTranslation
 		InputStream compressedTranslation = translationPackager.compress(godToolsTranslations);
 
 		godToolsS3Client.pushPackagesZippedFolder(languageCode, compressedTranslation);
+
+		godToolsS3Client.pushMetaFile(metaService.getAllMetaResults(false, false).asStream());
 	}
 }

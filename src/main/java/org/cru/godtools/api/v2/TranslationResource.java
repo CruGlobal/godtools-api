@@ -6,6 +6,7 @@ import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
+import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -32,6 +33,9 @@ public class TranslationResource
 
 	@Inject
 	DraftTranslation draftTranslation;
+
+	@Inject
+	GodToolsS3Client godToolsS3Client;
 
 	@Inject
 	Clock clock;

@@ -29,6 +29,7 @@ public class AmazonS3GodToolsConfig
 	 *      meta/current/en/meta.xml      OR
 	 *      meta/current/meta.xml
 	 */
+	@Deprecated
 	public static String getMetaKey(String languageCode, String packageCode)
 	{
 		if(!Strings.isNullOrEmpty(languageCode) && !Strings.isNullOrEmpty(packageCode))
@@ -41,6 +42,11 @@ public class AmazonS3GodToolsConfig
 		}
 
 		return META + CURRENT + META_FILE + XML;
+	}
+
+	public static String getMetaKeyV2()
+	{
+		return META + ALL_FILE + XML;
 	}
 
 	/**

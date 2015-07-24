@@ -84,4 +84,18 @@ public class GodToolsS3Client
 
 		s3Client.putObject(putObjectRequest);
 	}
+
+	public void pushMetaFile(InputStream metaFile)
+	{
+		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2();
+
+		log.info(String.format("Pushing meta file w/ key %s", metaKey));
+
+		ObjectMetadata metadata = new ObjectMetadata();
+
+		PutObjectRequest putObjectRequest = new PutObjectRequest("cru-godtools", metaKey, metaFile, metadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools meta is meant to be downloaded w/o authz
+
+		s3Client.putObject(putObjectRequest);
+	}
 }
