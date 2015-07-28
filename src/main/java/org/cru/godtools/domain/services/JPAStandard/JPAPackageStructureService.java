@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
+import org.cru.godtools.domain.images.*;
 import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
@@ -59,6 +60,40 @@ public class JPAPackageStructureService implements PackageStructureService
             }
 
             e.printStackTrace();
+        }
+        finally
+        {
+            if(session!=null)
+            {
+                session.close();
+            }
+        }
+    }
+
+    public List<PackageStructure> packageStructures()
+    {
+        log.info("Select All Package Structures");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        try
+        {
+            txn.begin();
+            List<PackageStructure> packageStructures = session.createQuery("FROM PackageStructure").list();
+            txn.commit();
+
+            return packageStructures;
+        }
+        catch (Exception e)
+        {
+            if(txn!=null)
+            {
+                txn.rollback();
+            }
+
+            e.printStackTrace();
+
+            return null;
         }
         finally
         {
@@ -142,8 +177,24 @@ public class JPAPackageStructureService implements PackageStructureService
             try
             {
                 txn.begin();
-                Query q1 = session.createQuery("DELETE FROM PackageStructure");
-                q1.executeUpdate();
+
+                List<PackageStructure> packageStructures = selectAll();
+
+                for(PackageStructure packageStructure : packageStructures)
+                {
+                    //Delete associated Referenced Image records
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructureId = :packageStructureId")
+                            .setParameter("packageStructureId",packageStructure.getId())
+                            .list();
+
+                    for(ReferencedImage referencedImage : referencedImages)
+                    {
+                        session.delete(referencedImage);
+                    }
+
+                    session.delete(packageStructure);
+                }
+
                 txn.commit();
             }
             catch (Exception e)

@@ -109,7 +109,9 @@ public class GodToolsTranslationServiceTestMockData
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(AbstractFullPackageServiceTest.IMAGE_ID);
+		referencedImage.getId().setImageId(AbstractFullPackageServiceTest.IMAGE_ID);
 		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.getId().setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
 		referencedImageService.insert(referencedImage);
 	}
 
@@ -117,7 +119,9 @@ public class GodToolsTranslationServiceTestMockData
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
 		referencedImage.setImageId(AbstractFullPackageServiceTest.ICON_ID);
+		referencedImage.getId().setImageId(AbstractFullPackageServiceTest.ICON_ID);
 		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.getId().setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
 		referencedImageService.insert(referencedImage);
 	}
 

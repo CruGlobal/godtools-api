@@ -1,6 +1,10 @@
 package org.cru.godtools.domain.images;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.UUID;
 
 /**
@@ -10,32 +14,34 @@ import java.util.UUID;
 @Table(name="referenced_images")
 public class ReferencedImage
 {
-	@Id
-	private ReferencedImageKey id;
+	@EmbeddedId
+	@AttributeOverrides({
+			@AttributeOverride(name="imageId", column = @Column(name="image_id")),
+			@AttributeOverride(name="packageStructureId", column = @Column(name="package_structure_id"))
+	})
+	private ReferencedImageKey id = new ReferencedImageKey();
 
-	@Column(insertable = false, updatable = false)
+	@Transient
 	private UUID imageId;
-	@Column(insertable = false, updatable = false)
+	@Transient
 	private UUID packageStructureId;
 
-	public UUID getImageId()
-	{
+	public UUID getImageId() {
 		return imageId;
 	}
 
-	public void setImageId(UUID imageId)
-	{
-		this.imageId = imageId;
-	}
-
-	public UUID getPackageStructureId()
-	{
+	public UUID getPackageStructureId() {
 		return packageStructureId;
 	}
 
-	public void setPackageStructureId(UUID packageStructureId)
-	{
+	public void setImageId(UUID imageId) {
+		this.imageId = imageId;
+		id.setImageId(imageId);
+	}
+
+	public void setPackageStructureId(UUID packageStructureId) {
 		this.packageStructureId = packageStructureId;
+		id.setPackageStructureId(packageStructureId);
 	}
 
 	public ReferencedImageKey getId()

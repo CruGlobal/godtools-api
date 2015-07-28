@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -59,6 +60,32 @@ public class JPAImageService implements ImageService{
         }
     }
 
+    public List<Image> selectAll()
+    {
+        log.info("Select All Images");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        try {
+            txn.begin();
+            List<Image> images = session.createQuery("FROM Image").list();
+            txn.commit();
+
+            return images;
+        } catch (Exception e) {
+            if (txn != null) {
+                txn.rollback();
+            }
+
+            e.printStackTrace();
+
+            return null;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
 
     public Image selectByFilename(String filename) {
         log.info("Getting image with filename: " + filename);
@@ -154,7 +181,24 @@ public class JPAImageService implements ImageService{
         {
             try {
                 txn.begin();
-                session.createQuery("DELETE FROM Image").executeUpdate();
+
+                List<Image> images = selectAll();
+
+                for(Image image : images)
+                {
+                    //Delete associated Referenced Image records
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.imageId = :imageId")
+                            .setParameter("imageId",image.getId())
+                            .list();
+
+                    for(ReferencedImage referencedImage : referencedImages)
+                    {
+                        session.delete(referencedImage);
+                    }
+
+                    session.delete(image);
+                }
+
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {

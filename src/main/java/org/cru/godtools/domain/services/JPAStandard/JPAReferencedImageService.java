@@ -48,7 +48,7 @@ public class JPAReferencedImageService implements ReferencedImageService
         try
         {
             txn.begin();
-            List referencedImages = session.createQuery("FROM ReferencedImage WHERE packageStructureId = :packageStructureId")
+            List referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructureId = :packageStructureId")
                     .setEntity("packageStructureId",packageStructureId)
                     .list();
             txn.commit();
@@ -96,20 +96,20 @@ public class JPAReferencedImageService implements ReferencedImageService
         {
             ReferencedImage nextReferencedImage = i.next();
 
-            if(foundIds.contains(nextReferencedImage.getImageId()))
+            if(foundIds.contains(nextReferencedImage.getId().getImageId()))
             {
                 i.remove();
             }
             else
             {
-                foundIds.add(nextReferencedImage.getImageId());
+                foundIds.add(nextReferencedImage.getId().getImageId());
             }
         }
     }
 
     public void insert(ReferencedImage referencedImage)
     {
-        log.info("Selecting by Referenced Image with Package Structure Id " + referencedImage.getId().toString());
+        log.info("Selecting by Referenced Image with Package Structure Id " + referencedImage.getId().getPackageStructureId());
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 
@@ -152,6 +152,9 @@ public class JPAReferencedImageService implements ReferencedImageService
             try
             {
                 txn.begin();
+
+
+
                 Query q1 = session.createQuery("DELETE FROM ReferencedImage");
                 q1.executeUpdate();
                 txn.commit();

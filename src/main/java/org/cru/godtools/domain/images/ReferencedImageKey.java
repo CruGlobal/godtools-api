@@ -1,5 +1,7 @@
 package org.cru.godtools.domain.images;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
 import java.io.*;
 import java.util.*;
@@ -10,10 +12,14 @@ import java.util.*;
 @Embeddable
 public class ReferencedImageKey implements Serializable
 {
+    @Type(type = "pg-uuid")
     private UUID imageId;
+    @Type(type = "pg-uuid")
     private UUID packageStructureId;
 
-    @Column(name="image_id")
+    public ReferencedImageKey() {}
+
+
     public UUID getImageId()
     {
         return imageId;
@@ -24,7 +30,6 @@ public class ReferencedImageKey implements Serializable
         this.imageId = imageId;
     }
 
-    @Column(name="package_structure_id")
     public UUID getPackageStructureId()
     {
         return packageStructureId;

@@ -53,13 +53,13 @@ public class Sql2oReferencedImageService implements ReferencedImageService
         {
             ReferencedImage nextReferencedImage = i.next();
 
-            if(foundIds.contains(nextReferencedImage.getImageId()))
+            if(foundIds.contains(nextReferencedImage.getId().getImageId()))
             {
                 i.remove();
             }
             else
             {
-                foundIds.add(nextReferencedImage.getImageId());
+                foundIds.add(nextReferencedImage.getId().getImageId());
             }
         }
     }
@@ -67,8 +67,8 @@ public class Sql2oReferencedImageService implements ReferencedImageService
     public void insert(ReferencedImage referencedImage)
     {
         sqlConnection.createQuery(ReferencedImageQueries.insert)
-                .addParameter("imageId", referencedImage.getImageId())
-                .addParameter("packageStructureId", referencedImage.getPackageStructureId())
+                .addParameter("imageId", referencedImage.getId().getImageId())
+                .addParameter("packageStructureId", referencedImage.getId().getPackageStructureId())
                 .executeUpdate();
     }
 

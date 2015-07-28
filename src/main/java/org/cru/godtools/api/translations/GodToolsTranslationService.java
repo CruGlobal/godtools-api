@@ -333,7 +333,7 @@ public class GodToolsTranslationService
 
 		for(ReferencedImage referencedImage : referencedImages)
 		{
-			imageList.add(imageService.selectById(referencedImage.getImageId()));
+			imageList.add(imageService.selectById(referencedImage.getId().getImageId()));
 		}
 
 		return imageList;
