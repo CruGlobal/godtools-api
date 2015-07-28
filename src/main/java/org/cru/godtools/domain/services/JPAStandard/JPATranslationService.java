@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
 import org.cru.godtools.domain.*;
+import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.domain.translations.*;
@@ -52,6 +53,40 @@ public class JPATranslationService implements TranslationService
             txn.commit();
 
             return translation;
+        }
+        catch (Exception e)
+        {
+            if(txn!=null)
+            {
+                txn.rollback();
+            }
+
+            e.printStackTrace();
+
+            return null;
+        }
+        finally
+        {
+            if(session!=null)
+            {
+                session.close();
+            }
+        }
+    }
+
+    public List<Translation> selectAll()
+    {
+        log.info("Select All Translations");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        try
+        {
+            txn.begin();
+            List<Translation> translations = session.createQuery("FROM Translation").list();
+            txn.commit();
+
+            return translations;
         }
         catch (Exception e)
         {
@@ -389,8 +424,35 @@ public class JPATranslationService implements TranslationService
             try
             {
                 txn.begin();
-                Query q1 = session.createQuery("DELETE FROM Translation");
-                q1.executeUpdate();
+
+                List<Translation> translations = selectAll();
+
+                for(Translation translation : translations)
+                {
+                    //Orphan associated Page Structure records
+                    List<PageStructure> pageStructures = session.createQuery("FROM PageStructure WHERE translationId = :translationId")
+                            .setParameter("translationId",translation.getId())
+                            .list();
+
+                    //Delete associated Translation Element records
+                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE translationId = :translationId")
+                            .setParameter("translationId",translation.getId())
+                            .list();
+
+                    for(PageStructure pageStructure : pageStructures)
+                    {
+                        pageStructure.setTranslationId(null);
+                        session.update(pageStructure);
+                    }
+
+                    for(TranslationElement translationElement : translationElements)
+                    {
+                        session.delete(translationElement);
+                    }
+
+                    session.delete(translation);
+                }
+
                 txn.commit();
             }
             catch (Exception e)
