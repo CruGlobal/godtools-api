@@ -3,6 +3,7 @@ package org.cru.godtools.domain.services.JPAStandard;
 import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
+import org.cru.godtools.domain.translations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
@@ -35,6 +36,40 @@ public class JPAPageStructureService implements PageStructureService
         {
             System.err.println("Initial SessionFactory creation failed");
             throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public List<PageStructure> selectAll()
+    {
+        log.info("Select All Page Structures");
+        Session session = sessionFactory.openSession();
+        Transaction txn = session.getTransaction();
+
+        try
+        {
+            txn.begin();
+            List<PageStructure> pageStructures = session.createQuery("FROM PackageStructure").list();
+            txn.commit();
+
+            return pageStructures;
+        }
+        catch(Exception e)
+        {
+            if(txn!=null)
+            {
+                txn.rollback();
+            }
+
+            e.printStackTrace();
+
+            return null;
+        }
+        finally
+        {
+            if(session!=null)
+            {
+                session.close();
+            }
         }
     }
 
@@ -218,8 +253,25 @@ public class JPAPageStructureService implements PageStructureService
             try
             {
                 txn.begin();
-                Query q1 = session.createQuery("DELETE FROM PageStructure");
-                q1.executeUpdate();
+
+                List<PageStructure> pageStructures = selectAll();
+
+                for(PageStructure pageStructure : pageStructures)
+                {
+                    //Orphan associated Translation Element records
+                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructureId = :pageStructureId")
+                            .setParameter("pageStructureId",pageStructure.getId())
+                            .list();
+
+                    for(TranslationElement translationElement : translationElements)
+                    {
+                        translationElement.setPageStructureId(pageStructure.getId());
+                        session.update(translationElement);
+                    }
+
+                    session.delete(pageStructure);
+                }
+
                 txn.commit();
             }
             catch (Exception e)
