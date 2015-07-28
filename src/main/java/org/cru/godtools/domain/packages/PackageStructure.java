@@ -38,6 +38,7 @@ public class PackageStructure implements Serializable
 	@Column(name="filename")
 	private String filename;
 
+	@Transient
 	private final Logger logger = Logger.getLogger(PackageStructure.class);
 
 	public void setTranslatedFields(Map<UUID, TranslationElement> translationElementMap)
