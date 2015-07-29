@@ -26,7 +26,7 @@ public class Sql2oPackageStructureService implements PackageStructureService
     {
         sqlConnection.createQuery(PackageStructureQueries.insert)
                 .addParameter("id", packageStructure.getId())
-                .addParameter("packageId", packageStructure.getPackageId())
+                .addParameter("packageId", packageStructure.getPackage() != null ? packageStructure.getPackage().getId() : null)
                 .addParameter("xmlContent", packageStructure.getXmlContent())
                 .addParameter("versionNumber", packageStructure.getVersionNumber())
                 .executeUpdate();

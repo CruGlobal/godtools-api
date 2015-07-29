@@ -40,7 +40,7 @@ public class GodToolsTranslationServiceTestMockData
 	{
 		Language language = persistLanguage(languageService);
 		Package gtPackage = persistPackage(packageService);
-		persistPackageStructure(packageStructureService);
+		persistPackageStructure(packageStructureService, gtPackage);
 		Translation translation = persistTranslation(translationService, language, gtPackage);
 		persistPageStructure(pageStructureService, translation);
 		persistTranslationElements(translationElementService);
@@ -131,11 +131,11 @@ public class GodToolsTranslationServiceTestMockData
 		referencedImageService.insert(referencedImage);
 	}
 
-	private static void persistPackageStructure(PackageStructureService packageStructureService)
+	private static void persistPackageStructure(PackageStructureService packageStructureService, Package gtPackage)
 	{
 		PackageStructure packageStructure = new PackageStructure();
 		packageStructure.setId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
-		packageStructure.setPackageId(AbstractFullPackageServiceTest.PACKAGE_ID);
+		packageStructure.setPackage(gtPackage);
 		packageStructure.setVersionNumber(1);
 		packageStructure.setXmlContent(XmlDocumentFromFile.get("/package.xml"));
 		packageStructureService.insert(packageStructure);

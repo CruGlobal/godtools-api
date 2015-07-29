@@ -27,9 +27,11 @@ public class PackageStructure implements Serializable
 	@Column(name="id")
 	@Type(type="pg-uuid")
 	private UUID id;
-	@Column(name="package_id")
-	@Type(type="pg-uuid")
-	private UUID packageId;
+	@ManyToOne
+	@JoinColumn(name="package_id")
+	Package gtPackage;
+	@Transient
+	private UUID packageId; //Keep for SQL2O
 	@Column(name="version_number")
 	private Integer versionNumber;
 	@Column(name="xml_content")
@@ -131,14 +133,29 @@ public class PackageStructure implements Serializable
 		this.id = id;
 	}
 
-	public UUID getPackageId()
-	{
-		return packageId;
+	public Package getPackage() {
+		return gtPackage;
 	}
 
+	public void setPackage(Package gtPackage)
+	{
+		this.gtPackage = gtPackage;
+		this.packageId = gtPackage != null ? gtPackage.getId() : null;
+	}
+
+	//Required for SQL2O to test properly
 	public void setPackageId(UUID packageId)
 	{
-		this.packageId = packageId;
+		if(gtPackage == null)
+		{
+			gtPackage = new Package();
+			gtPackage.setId(packageId);
+			this.packageId = packageId;
+		}
+		else
+		{
+			this.packageId = gtPackage.getId();
+		}
 	}
 
 	public Integer getVersionNumber()

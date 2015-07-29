@@ -26,7 +26,7 @@ public class PackageStructureList extends ForwardingList<PackageStructure>
 		{
 			public boolean apply(PackageStructure input)
 			{
-				return packageId.equals(input.getPackageId());
+				return packageId.equals(input.getPackage() != null ? input.getPackage().getId() : null);
 			}
 		});
 	}

@@ -239,7 +239,7 @@ public class JPAPackageService implements PackageService
                             .list();
 
                     //Orphan associated Package Structure records
-                    List<PackageStructure> packageStructures = session.createQuery("FROM PackageStructure WHERE packageId = :packageId")
+                    List<PackageStructure> packageStructures = session.createQuery("FROM PackageStructure WHERE gtPackage.id = :packageId")
                             .setParameter("packageId",gtPackage.getId())
                             .list();
 
@@ -251,7 +251,7 @@ public class JPAPackageService implements PackageService
 
                     for(PackageStructure packageStructure : packageStructures)
                     {
-                        packageStructure.setPackageId(null);
+                        packageStructure.setPackage(null);
                         session.update(packageStructure);
                     }
 
