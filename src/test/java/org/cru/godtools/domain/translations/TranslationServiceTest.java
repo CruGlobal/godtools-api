@@ -3,6 +3,8 @@ package org.cru.godtools.domain.translations;
 import org.cru.godtools.domain.*;
 
 import org.cru.godtools.domain.languages.*;
+import org.cru.godtools.domain.packages.*;
+import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -60,8 +62,8 @@ public class TranslationServiceTest extends Arquillian
 	{
 		translationService.setAutoCommit(false);
 		Language language = TranslationServiceTestMockData.persistLanguage(languageService);
-		TranslationServiceTestMockData.persistPackage(packageService);
-		TranslationServiceTestMockData.persistTranslation(translationService, language);
+		Package gtPackage = TranslationServiceTestMockData.persistPackage(packageService);
+		TranslationServiceTestMockData.persistTranslation(translationService, language, gtPackage);
 	}
 
 	@AfterMethod

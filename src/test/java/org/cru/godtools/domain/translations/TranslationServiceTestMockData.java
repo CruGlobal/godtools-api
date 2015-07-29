@@ -21,19 +21,21 @@ public class TranslationServiceTestMockData
 		return language;
 	}
 
-	public static void persistPackage(PackageService packageService)
+	public static Package persistPackage(PackageService packageService)
 	{
 		Package gtPackage = new Package();
 		gtPackage.setId(TranslationServiceTest.TEST_PACKAGE_ID);
 
 		packageService.insert(gtPackage);
+
+		return gtPackage;
 	}
 
-	public static Translation persistTranslation(TranslationService translationService, Language language)
+	public static Translation persistTranslation(TranslationService translationService, Language language, Package gtPackage)
 	{
 		Translation translation = new Translation();
 		translation.setId(TranslationServiceTest.TEST_TRANSLATION_ID);
-		translation.setPackageId(TranslationServiceTest.TEST_PACKAGE_ID);
+		translation.setPackage(gtPackage);
 		translation.setLanguage(language);
 
 		translationService.insert(translation);

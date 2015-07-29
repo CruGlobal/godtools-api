@@ -22,8 +22,10 @@ public class Translation implements Serializable
 	@Column(name="id")
 	@Type(type="pg-uuid")
 	private UUID id;
-	@Column(name="package_id")
-	@Type(type="pg-uuid")
+	@ManyToOne
+	@JoinColumn(name="package_id")
+	Package gtPackage;
+	@Transient
 	private UUID packageId;
 	@ManyToOne
 	@JoinColumn(name="language_id")
@@ -45,7 +47,7 @@ public class Translation implements Serializable
     public Translation(Package gtPackage, Language language)
     {
         setId(UUID.randomUUID());
-        setPackageId(gtPackage.getId());
+        setPackage(gtPackage);
         setLanguage(language);
     }
 
@@ -69,14 +71,33 @@ public class Translation implements Serializable
         this.id = id;
     }
 
-    public UUID getPackageId()
+	public Package getPackage() {
+		return gtPackage;
+	}
+
+	public void setPackage(Package gtPackage) {
+		this.gtPackage = gtPackage;
+		this.packageId = gtPackage != null ? gtPackage.getId() : null;
+	}
+
+	public UUID getPackageId()
     {
         return packageId;
     }
 
+	//required for SQL2O tests to work
     public void setPackageId(UUID packageId)
     {
-        this.packageId = packageId;
+        if(gtPackage == null)
+		{
+			gtPackage = new Package();
+			gtPackage.setId(packageId);
+			this.packageId = packageId;
+		}
+		else
+		{
+			this.packageId = gtPackage.getId();
+		}
     }
 
 	public Language getLanguage() {
@@ -88,14 +109,18 @@ public class Translation implements Serializable
 		this.languageId = language != null ? language.getId() : null;
 	}
 
+	//required for SQL2O tests to work
 	public void setLanguageId(UUID languageId)
 	{
-		this.languageId = languageId;
-
 		if(language == null)
 		{
 			language = new Language();
 			language.setId(languageId);
+			this.languageId = languageId;
+		}
+		else
+		{
+			this.languageId = language.getId();
 		}
 	}
 

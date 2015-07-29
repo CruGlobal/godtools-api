@@ -234,7 +234,7 @@ public class JPAPackageService implements PackageService
                 for(Package gtPackage : packages)
                 {
                     //Orphan associated Translation records
-                    List<Translation> translations = session.createQuery("FROM Translation WHERE packageId = :packageId")
+                    List<Translation> translations = session.createQuery("FROM Translation WHERE gtPackage.id = :packageId")
                             .setParameter("packageId",gtPackage.getId())
                             .list();
 
@@ -245,7 +245,7 @@ public class JPAPackageService implements PackageService
 
                     for(Translation translation : translations)
                     {
-                        translation.setPackageId(null);
+                        translation.setPackage(null);
                         session.update(translation);
                     }
 

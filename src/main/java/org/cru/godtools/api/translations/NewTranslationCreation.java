@@ -37,7 +37,7 @@ public class NewTranslationCreation
 		Translation newTranslation = new Translation();
 		newTranslation.setId(UUID.randomUUID());
 		newTranslation.setLanguage(language);
-		newTranslation.setPackageId(gtPackage.getId());
+		newTranslation.setPackage(gtPackage);
 		newTranslation.setVersionNumber(nextVersionNumber);
 		newTranslation.setReleased(false);
 		newTranslation.setTranslatedName(currentTranslation == null ? gtPackage.getName() : currentTranslation.getTranslatedName());
