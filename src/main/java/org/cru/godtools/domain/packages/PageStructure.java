@@ -214,6 +214,21 @@ public class PageStructure implements Serializable
 		this.translationId = translation != null ? translation.getId() : null;
 	}
 
+	//Required for SQL2O to test properly
+	public void setTranslationId(UUID translationId)
+	{
+		if(translation == null)
+		{
+			translation = new Translation();
+			translation.setId(translationId);
+			this.translationId = translationId;
+		}
+		else
+		{
+			this.translationId = translation.getId();
+		}
+	}
+
 	public Document getXmlContent()
 	{
 		return xmlContent;

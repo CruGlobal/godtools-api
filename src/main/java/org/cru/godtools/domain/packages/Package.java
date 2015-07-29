@@ -72,6 +72,21 @@ public class Package implements Serializable
         this.defaultLanguage = defaultLanguage;
     }
 
+    //Required by SQL2O to test properly
+    public void setDefaultLanguageId(UUID defaultLanguageId)
+    {
+        if(defaultLanguage == null)
+        {
+            defaultLanguage = new Language();
+            defaultLanguage.setId(defaultLanguageId);
+            this.defaultLanguageId = defaultLanguageId;
+        }
+        else
+        {
+            this.defaultLanguageId = defaultLanguage.getId();
+        }
+    }
+
 	public Integer getTranslationProjectId()
 	{
 		return translationProjectId;
