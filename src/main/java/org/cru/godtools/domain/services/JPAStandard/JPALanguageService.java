@@ -258,7 +258,7 @@ public class JPALanguageService implements LanguageService
                 for(Language language : languages)
                 {
                     //Orphan associated Package records
-                    List<Package> packages = session.createQuery("FROM Package WHERE defaultLanguageId = :languageId")
+                    List<Package> packages = session.createQuery("FROM Package WHERE defaultLanguage.id = :languageId")
                             .setParameter("languageId",language.getId())
                             .list();
 
@@ -269,7 +269,7 @@ public class JPALanguageService implements LanguageService
 
                     for(Package gtPackage : packages)
                     {
-                        gtPackage.setDefaultLanguageId(null);
+                        gtPackage.setDefaultLanguage(null);
                         session.update(gtPackage);
                     }
 

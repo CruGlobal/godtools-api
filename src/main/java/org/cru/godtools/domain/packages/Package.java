@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.domain.languages.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -23,9 +24,11 @@ public class Package implements Serializable
     String name;
     @Column(name="code")
     String code;
-    @Column(name="default_language_id")
-    @Type(type="pg-uuid")
-    UUID defaultLanguageId;
+    @ManyToOne
+    @JoinColumn(name="default_language_id")
+    Language defaultLanguage;
+    @Transient
+    UUID defaultLanguageId; //Keep for deprecated SQL2O auto-column names
 	@Column(name="translation_project_id")
     Integer translationProjectId;
 
@@ -60,14 +63,13 @@ public class Package implements Serializable
         this.code = code;
     }
 
-    public UUID getDefaultLanguageId()
-    {
-        return defaultLanguageId;
+    public Language getDefaultLanguage() {
+        return defaultLanguage;
     }
 
-    public void setDefaultLanguageId(UUID defaultLanguageId)
+    public void setDefaultLanguage(Language defaultLanguage)
     {
-        this.defaultLanguageId = defaultLanguageId;
+        this.defaultLanguage = defaultLanguage;
     }
 
 	public Integer getTranslationProjectId()
