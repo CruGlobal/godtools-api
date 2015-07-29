@@ -263,7 +263,7 @@ public class JPALanguageService implements LanguageService
                             .list();
 
                     //Orphan associated Translation records
-                    List<Translation> translations = session.createQuery("FROM Translation WHERE languageId = :languageId")
+                    List<Translation> translations = session.createQuery("FROM Translation WHERE language.id = :languageId")
                             .setParameter("languageId",language.getId())
                             .list();
 
@@ -275,7 +275,7 @@ public class JPALanguageService implements LanguageService
 
                     for(Translation translation : translations)
                     {
-                        translation.setLanguageId(null);
+                        translation.setLanguage(null);
                         session.update(translation);
                     }
 

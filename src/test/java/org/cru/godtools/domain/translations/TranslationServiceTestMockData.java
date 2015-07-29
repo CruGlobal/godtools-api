@@ -11,12 +11,14 @@ import org.testng.Assert;
 public class TranslationServiceTestMockData
 {
 
-	public static void persistLanguage(LanguageService languageService)
+	public static Language persistLanguage(LanguageService languageService)
 	{
 		Language language = new Language();
 		language.setId(TranslationServiceTest.TEST_LANGUAGE_ID);
 
 		languageService.insert(language);
+
+		return language;
 	}
 
 	public static void persistPackage(PackageService packageService)
@@ -27,12 +29,12 @@ public class TranslationServiceTestMockData
 		packageService.insert(gtPackage);
 	}
 
-	public static Translation persistTranslation(TranslationService translationService)
+	public static Translation persistTranslation(TranslationService translationService, Language language)
 	{
 		Translation translation = new Translation();
 		translation.setId(TranslationServiceTest.TEST_TRANSLATION_ID);
 		translation.setPackageId(TranslationServiceTest.TEST_PACKAGE_ID);
-		translation.setLanguageId(TranslationServiceTest.TEST_LANGUAGE_ID);
+		translation.setLanguage(language);
 
 		translationService.insert(translation);
 
@@ -43,7 +45,7 @@ public class TranslationServiceTestMockData
 	{
 		Assert.assertNotNull(translation);
 		Assert.assertEquals(translation.getId(), TranslationServiceTest.TEST_TRANSLATION_ID);
-		Assert.assertEquals(translation.getLanguageId(), TranslationServiceTest.TEST_LANGUAGE_ID);
+		Assert.assertEquals(translation.getLanguage().getId(), TranslationServiceTest.TEST_LANGUAGE_ID);
 		Assert.assertEquals(translation.getPackageId(), TranslationServiceTest.TEST_PACKAGE_ID);
 	}
 

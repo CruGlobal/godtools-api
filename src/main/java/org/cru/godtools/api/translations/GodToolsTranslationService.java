@@ -195,7 +195,7 @@ public class GodToolsTranslationService
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());
 
 		GodToolsTranslation godToolsTranslation = GodToolsTranslation.assembleFromComponents(gtPackage,
-				languageService.selectLanguageById(translation.getLanguageId()),
+				languageService.selectLanguageById(translation.getLanguage() != null ? translation.getLanguage().getId() : null),
 				translation,
 				packageStructure,
 				pageStructures,

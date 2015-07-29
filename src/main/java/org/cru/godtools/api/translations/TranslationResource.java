@@ -257,7 +257,7 @@ public class TranslationResource
 
 		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		Package packageDerivedFromPage = packageService.selectById(translation.getPackageId());
-		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguageId());
+		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguage() != null ? translation.getLanguage().getId() : null);
 
 		if(!packageFromCode.getId().equals(packageDerivedFromPage.getId()))
 		{

@@ -38,10 +38,10 @@ public class GodToolsTranslationServiceTestMockData
 							   ImageService imageService,
 							   ReferencedImageService referencedImageService)
 	{
-		persistLanguage(languageService);
+		Language language = persistLanguage(languageService);
 		persistPackage(packageService);
 		persistPackageStructure(packageStructureService);
-		Translation translation = persistTranslation(translationService);
+		Translation translation = persistTranslation(translationService, language);
 		persistPageStructure(pageStructureService, translation);
 		persistTranslationElements(translationElementService);
 		persistImage(imageService);
@@ -53,7 +53,7 @@ public class GodToolsTranslationServiceTestMockData
 
 
 
-	private static void persistLanguage(LanguageService languageService)
+	private static Language persistLanguage(LanguageService languageService)
 	{
 		Language language = new Language();
 		language.setId(AbstractFullPackageServiceTest.LANGUAGE_ID);
@@ -61,6 +61,8 @@ public class GodToolsTranslationServiceTestMockData
 		language.setName("English");
 
 		languageService.insert(language);
+
+		return language;
 	}
 
 	private static void persistPackage(PackageService packageService)
@@ -73,12 +75,12 @@ public class GodToolsTranslationServiceTestMockData
 		packageService.insert(gtPackage);
 	}
 
-	private static Translation persistTranslation(TranslationService translationService)
+	private static Translation persistTranslation(TranslationService translationService, Language language)
 	{
 		Translation translation = new Translation();
 		translation.setId(AbstractFullPackageServiceTest.TRANSLATION_ID);
 		translation.setPackageId(AbstractFullPackageServiceTest.PACKAGE_ID);
-		translation.setLanguageId(AbstractFullPackageServiceTest.LANGUAGE_ID);
+		translation.setLanguage(language);
 		translation.setVersionNumber(1);
 		translation.setTranslatedName("Knowing God Personally");
 		translation.setReleased(true);
