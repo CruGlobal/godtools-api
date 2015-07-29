@@ -27,7 +27,7 @@ public class TranslationServiceTestMockData
 		packageService.insert(gtPackage);
 	}
 
-	public static void persistTranslation(TranslationService translationService)
+	public static Translation persistTranslation(TranslationService translationService)
 	{
 		Translation translation = new Translation();
 		translation.setId(TranslationServiceTest.TEST_TRANSLATION_ID);
@@ -35,6 +35,8 @@ public class TranslationServiceTestMockData
 		translation.setLanguageId(TranslationServiceTest.TEST_LANGUAGE_ID);
 
 		translationService.insert(translation);
+
+		return translation;
 	}
 
 	public static void validateTranslation(Translation translation)

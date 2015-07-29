@@ -441,7 +441,7 @@ public class JPATranslationService implements TranslationService
 
                     for(PageStructure pageStructure : pageStructures)
                     {
-                        pageStructure.setTranslationId(null);
+                        pageStructure.setTranslation(null);
                         session.update(pageStructure);
                     }
 

@@ -1,7 +1,7 @@
 package org.cru.godtools.domain.packages;
 
 import org.cru.godtools.domain.services.*;
-import org.cru.godtools.domain.translations.TranslationServiceTest;
+import org.cru.godtools.domain.translations.*;
 import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;
 
@@ -12,11 +12,11 @@ import java.util.List;
  */
 public class TranslationElementMockData
 {
-	public static void persistPageStructure(PageStructureService pageStructureService)
+	public static void persistPageStructure(PageStructureService pageStructureService, Translation translation)
 	{
 		PageStructure pageStructure = new PageStructure();
 		pageStructure.setId(TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
-		pageStructure.setTranslationId(TranslationServiceTest.TEST_TRANSLATION_ID);
+		pageStructure.setTranslation(translation);
 		pageStructure.setFilename("page_1.xml");
 		pageStructure.setXmlContent(XmlDocumentFromFile.get("/page_1.xml"));
 

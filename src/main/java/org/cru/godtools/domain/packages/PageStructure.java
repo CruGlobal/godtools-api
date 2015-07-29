@@ -6,6 +6,7 @@ import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.services.annotations.SQLXMLType;
 import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.translations.*;
 import org.hibernate.annotations.*;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
@@ -38,9 +39,11 @@ public class PageStructure implements Serializable
 	@Column(name="id")
 	@Type(type="pg-uuid")
 	private UUID id;
-	@Column(name="translation_id")
-	@Type(type="pg-uuid")
-	private UUID translationId;
+	@ManyToOne
+	@JoinColumn(name="translation_id")
+	private Translation translation;
+	@Transient
+	private UUID translationId; //Keep for SQL2O Auto-Column Names
 	@Column(name="xml_content")
 	@Type(type="org.cru.godtools.domain.services.annotations.SQLXMLType")
 	private Document xmlContent;
@@ -64,7 +67,7 @@ public class PageStructure implements Serializable
 	{
 		PageStructure pageStructureCopy = new PageStructure();
 		pageStructureCopy.setId(pageStructure.getId());
-		pageStructureCopy.setTranslationId(pageStructure.getTranslationId());
+		pageStructureCopy.setTranslation(pageStructure.getTranslation());
 		pageStructureCopy.setXmlContent(pageStructure.getXmlContent());
 		pageStructureCopy.setDescription(pageStructure.getDescription());
 		pageStructureCopy.setFilename(pageStructure.getFilename());
@@ -200,14 +203,15 @@ public class PageStructure implements Serializable
 		this.id = id;
 	}
 
-	public UUID getTranslationId()
+	public Translation getTranslation()
 	{
-		return translationId;
+		return translation;
 	}
 
-	public void setTranslationId(UUID translationId)
+	public void setTranslation(Translation translation)
 	{
-		this.translationId = translationId;
+		this.translation = translation;
+		this.translationId = translation != null ? translation.getId() : null;
 	}
 
 	public Document getXmlContent()

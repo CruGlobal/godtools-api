@@ -51,7 +51,7 @@ public class Sql2oPageStructureService implements PageStructureService
     {
         sqlConnection.createQuery(PageStructureQueries.insert)
                 .addParameter("id", pageStructure.getId())
-                .addParameter("translationId", pageStructure.getTranslationId())
+                .addParameter("translationId", pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null)
                 .addParameter("xmlContent", pageStructure.getXmlContent())
                 .addParameter("description", pageStructure.getDescription())
                 .addParameter("filename", pageStructure.getFilename())
@@ -66,7 +66,7 @@ public class Sql2oPageStructureService implements PageStructureService
     {
         sqlConnection.createQuery(PageStructureQueries.update)
                 .addParameter("id", pageStructure.getId())
-                .addParameter("translationId", pageStructure.getTranslationId())
+                .addParameter("translationId", pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null)
                 .addParameter("xmlContent", pageStructure.getXmlContent())
                 .addParameter("description", pageStructure.getDescription())
                 .addParameter("filename", pageStructure.getFilename())

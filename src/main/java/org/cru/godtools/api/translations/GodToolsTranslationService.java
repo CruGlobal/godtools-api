@@ -79,7 +79,7 @@ public class GodToolsTranslationService
 	public PageStructure getPage(LanguageCode languageCode, UUID pageId)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		Package gtPackage = packageService.selectById(translation.getPackageId());
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
@@ -102,7 +102,7 @@ public class GodToolsTranslationService
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		pageStructure.mergeXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);

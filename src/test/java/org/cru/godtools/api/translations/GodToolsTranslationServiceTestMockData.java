@@ -41,8 +41,8 @@ public class GodToolsTranslationServiceTestMockData
 		persistLanguage(languageService);
 		persistPackage(packageService);
 		persistPackageStructure(packageStructureService);
-		persistTranslation(translationService);
-		persistPageStructure(pageStructureService);
+		Translation translation = persistTranslation(translationService);
+		persistPageStructure(pageStructureService, translation);
 		persistTranslationElements(translationElementService);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
@@ -73,7 +73,7 @@ public class GodToolsTranslationServiceTestMockData
 		packageService.insert(gtPackage);
 	}
 
-	private static void persistTranslation(TranslationService translationService)
+	private static Translation persistTranslation(TranslationService translationService)
 	{
 		Translation translation = new Translation();
 		translation.setId(AbstractFullPackageServiceTest.TRANSLATION_ID);
@@ -83,6 +83,8 @@ public class GodToolsTranslationServiceTestMockData
 		translation.setTranslatedName("Knowing God Personally");
 		translation.setReleased(true);
 		translationService.insert(translation);
+
+		return translation;
 	}
 
 	private static void persistImage(ImageService imageService)
@@ -135,11 +137,11 @@ public class GodToolsTranslationServiceTestMockData
 		packageStructureService.insert(packageStructure);
 	}
 
-	private static void persistPageStructure(PageStructureService pageStructureService)
+	private static void persistPageStructure(PageStructureService pageStructureService, Translation translation)
 	{
 		PageStructure pageStructure = new PageStructure();
 		pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
-		pageStructure.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
+		pageStructure.setTranslation(translation);
 		pageStructure.setFilename("page_1.xml");
 		pageStructure.setXmlContent(XmlDocumentFromFile.get("/page_1.xml"));
 		pageStructureService.insert(pageStructure);

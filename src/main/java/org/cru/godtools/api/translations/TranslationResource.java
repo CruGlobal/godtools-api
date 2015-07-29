@@ -214,8 +214,10 @@ public class TranslationResource
 					.build();
 		}
 
-		List<TranslationElement> translationElements = translationElementService.selectByTranslationIdPageStructureId(translationService.selectById(pageStructure.getTranslationId()).getId(),
-				pageId);
+		List<TranslationElement> translationElements =
+				translationElementService.selectByTranslationIdPageStructureId(
+						translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null).getId(),
+						pageId);
 
 		PageFile pageFile = PageFile.fromTranslationElements(translationElements);
 
@@ -253,7 +255,7 @@ public class TranslationResource
 							.build());
 		}
 
-		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		Package packageDerivedFromPage = packageService.selectById(translation.getPackageId());
 		Language languageDerivedFromPage = languageService.selectLanguageById(translation.getLanguageId());
 

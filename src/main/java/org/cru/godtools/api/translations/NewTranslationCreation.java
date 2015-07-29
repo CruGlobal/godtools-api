@@ -57,7 +57,7 @@ public class NewTranslationCreation
 		{
 			PageStructure copy = PageStructure.copyOf(currentPageStructure);
 			copy.setId(UUID.randomUUID());
-			copy.setTranslationId(newTranslation.getId());
+			copy.setTranslation(newTranslation);
 
 			// when starting a new translation, set these fields to null so they get pushed to OneSky
 			if(translationIsNew)
