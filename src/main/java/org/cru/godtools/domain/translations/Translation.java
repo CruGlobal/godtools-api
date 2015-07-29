@@ -26,7 +26,7 @@ public class Translation implements Serializable
 	@JoinColumn(name="package_id")
 	Package gtPackage;
 	@Transient
-	private UUID packageId;
+	private UUID packageId; //Keep for deprecated SQL2O code
 	@ManyToOne
 	@JoinColumn(name="language_id")
 	private Language language;
@@ -79,11 +79,6 @@ public class Translation implements Serializable
 		this.gtPackage = gtPackage;
 		this.packageId = gtPackage != null ? gtPackage.getId() : null;
 	}
-
-	public UUID getPackageId()
-    {
-        return packageId;
-    }
 
 	//required for SQL2O tests to work
     public void setPackageId(UUID packageId)

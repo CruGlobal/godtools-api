@@ -80,7 +80,7 @@ public class GodToolsTranslationService
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
-		Package gtPackage = packageService.selectById(translation.getPackageId());
+		Package gtPackage = packageService.selectById(translation.getPackage() != null ? translation.getPackage().getId() : null);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
 		draftTranslationProcess.updateFromTranslationTool(gtPackage.getTranslationProjectId(),
@@ -189,7 +189,7 @@ public class GodToolsTranslationService
 			return possibleTranslation.get();
 		}
 
-		Package gtPackage = packageService.selectById(translation.getPackageId());
+		Package gtPackage = packageService.selectById(translation.getPackage() != null ? translation.getPackage().getId() : null);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(translation.getId());
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(translation.getId());

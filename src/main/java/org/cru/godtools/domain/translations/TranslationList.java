@@ -40,10 +40,10 @@ public class TranslationList extends ForwardingList<Translation>
 
 		for(Translation translation : translationList)
 		{
-			if(!latestTranslationForPackageId.containsKey(translation.getPackageId()) ||
-					latestTranslationForPackageId.get(translation.getPackageId()).getVersionNumber() < translation.getVersionNumber())
+			if(!latestTranslationForPackageId.containsKey(translation.getPackage() != null ? translation.getPackage().getId() : null) ||
+					latestTranslationForPackageId.get(translation.getPackage() != null ? translation.getPackage().getId() : null).getVersionNumber() < translation.getVersionNumber())
 			{
-				latestTranslationForPackageId.put(translation.getPackageId(), translation);
+				latestTranslationForPackageId.put(translation.getPackage() != null ? translation.getPackage().getId() : null, translation);
 			}
 		}
 

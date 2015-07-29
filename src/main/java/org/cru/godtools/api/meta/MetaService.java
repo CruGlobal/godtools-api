@@ -109,7 +109,7 @@ public class MetaService
 
 			for (Translation translation : translations)
 			{
-				Package gtPackage = packages.getPackageById(translation.getPackageId()).get();
+				Package gtPackage = packages.getPackageById(translation.getPackage() != null ? translation.getPackage().getId() : null).get();
 
 				metaLanguage.addPackage(
 						gtPackage.getCode(),

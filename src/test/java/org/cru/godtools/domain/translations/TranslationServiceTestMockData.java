@@ -48,7 +48,7 @@ public class TranslationServiceTestMockData
 		Assert.assertNotNull(translation);
 		Assert.assertEquals(translation.getId(), TranslationServiceTest.TEST_TRANSLATION_ID);
 		Assert.assertEquals(translation.getLanguage().getId(), TranslationServiceTest.TEST_LANGUAGE_ID);
-		Assert.assertEquals(translation.getPackageId(), TranslationServiceTest.TEST_PACKAGE_ID);
+		Assert.assertEquals(translation.getPackage().getId(), TranslationServiceTest.TEST_PACKAGE_ID);
 	}
 
 	public void modifyTranslation()

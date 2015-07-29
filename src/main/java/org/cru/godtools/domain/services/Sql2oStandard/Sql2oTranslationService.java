@@ -138,7 +138,7 @@ public class Sql2oTranslationService implements TranslationService
     {
         sqlConnection.createQuery(TranslationQueries.insert)
                 .addParameter("id", translation.getId())
-                .addParameter("packageId", translation.getPackageId())
+                .addParameter("packageId", translation.getPackage() != null ? translation.getPackage().getId() : null)
                 .addParameter("languageId", translation.getLanguage() != null ? translation.getLanguage().getId() : null)
                 .addParameter("versionNumber", translation.getVersionNumber())
                 .addParameter("translatedName", translation.getTranslatedName())
@@ -152,12 +152,12 @@ public class Sql2oTranslationService implements TranslationService
 
         sqlConnection.createQuery(TranslationQueries.update)
                 .addParameter("id", translation.getId())
-                .addParameter("packageId", translation.getPackageId())
+                .addParameter("packageId", translation.getPackage() != null ? translation.getPackage().getId() : null)
                 .addParameter("languageId", translation.getLanguage() != null ? translation.getLanguage().getId() : null)
                 .addParameter("versionNumber", translation.getVersionNumber())
                 .addParameter("translatedName", translation.getTranslatedName())
                 .addParameter("released", translation.isReleased())
-                .executeUpdate();
+            .executeUpdate();
     }
 
 
