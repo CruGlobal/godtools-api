@@ -98,7 +98,7 @@ public class JPATranslationElementService implements TranslationElementService
         try
         {
             txn.begin();
-            List translationElements = session.createQuery("FROM TranslationElement WHERE translationId = :translationId AND pageStructureId = :pageStructureId")
+            List translationElements = session.createQuery("FROM TranslationElement WHERE translationElementId.translation.id = :translationId AND pageStructure.id = :pageStructureId")
                     .setEntity("translationId",translationId)
                     .setEntity("pageStructureId",pageStructureId)
                     .list();
@@ -136,7 +136,7 @@ public class JPATranslationElementService implements TranslationElementService
         try
         {
             txn.begin();
-            TranslationElement translationElement = (TranslationElement) session.createQuery("FROM TranslationElement WHERE id = :id AND translationId = :translationId")
+            TranslationElement translationElement = (TranslationElement) session.createQuery("FROM TranslationElement WHERE id = :id AND translationElementId.translation.id = :translationId")
                     .setEntity("id", id)
                     .setEntity("translationId", translationId)
                     .uniqueResult();

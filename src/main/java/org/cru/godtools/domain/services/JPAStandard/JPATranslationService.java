@@ -117,7 +117,7 @@ public class JPATranslationService implements TranslationService
         try
         {
             txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE languageId = :languageId")
+            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId")
                     .setParameter("languageId",languageId)
                     .list();
             txn.commit();
@@ -153,7 +153,7 @@ public class JPATranslationService implements TranslationService
         try
         {
             txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE languageId = :languageId AND released = :released")
+            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId AND released = :released")
                     .setParameter("languageId", languageId)
                     .setBoolean("released",released)
                     .list();
@@ -190,7 +190,7 @@ public class JPATranslationService implements TranslationService
         try
         {
             txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE packageId = :packageId")
+            List translations = session.createQuery("FROM Translation WHERE gtPackage.id = :packageId")
                     .setParameter("packageId",packageId)
                     .list();
             txn.commit();
@@ -225,7 +225,7 @@ public class JPATranslationService implements TranslationService
 
         try {
             txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE languageId = :languageId AND packageId = :packageId")
+            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId")
                     .setParameter("languageId", languageId)
                     .setParameter("packageId", packageId)
                     .list();
@@ -276,7 +276,7 @@ public class JPATranslationService implements TranslationService
             try
             {
                 txn.begin();
-                Translation translation = (Translation) session.createQuery("FROM Translation WHERE languageId = :languageId AND packageId = :packageId AND versionNumber = :versionNumber")
+                Translation translation = (Translation) session.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId AND versionNumber = :versionNumber")
                         .setParameter("languageId",languageId)
                         .setParameter("packageId",packageId)
                         .setInteger("versionNumber",godToolsVersion.getTranslationVersion())
@@ -430,12 +430,12 @@ public class JPATranslationService implements TranslationService
                 for(Translation translation : translations)
                 {
                     //Orphan associated Page Structure records
-                    List<PageStructure> pageStructures = session.createQuery("FROM PageStructure WHERE translationId = :translationId")
+                    List<PageStructure> pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
                             .setParameter("translationId",translation.getId())
                             .list();
 
                     //Delete associated Translation Element records
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE translationId = :translationId")
+                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE translationElementId.translation.id = :translationId")
                             .setParameter("translationId",translation.getId())
                             .list();
 

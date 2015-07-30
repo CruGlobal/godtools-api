@@ -113,7 +113,7 @@ public class JPAPackageStructureService implements PackageStructureService
         try
         {
             txn.begin();
-            PackageStructure packageStructure = (PackageStructure) session.createQuery("FROM PackageStructure WHERE packageId = :packageId")
+            PackageStructure packageStructure = (PackageStructure) session.createQuery("FROM PackageStructure WHERE gtPackage.id = :packageId")
                     .setEntity("packageId", packageId)
                     .uniqueResult();
             txn.commit();
@@ -183,7 +183,7 @@ public class JPAPackageStructureService implements PackageStructureService
                 for(PackageStructure packageStructure : packageStructures)
                 {
                     //Delete associated Referenced Image records
-                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructureId = :packageStructureId")
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructure.id = :packageStructureId")
                             .setParameter("packageStructureId",packageStructure.getId())
                             .list();
 

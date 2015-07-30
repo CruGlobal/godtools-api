@@ -48,7 +48,7 @@ public class JPAReferencedImageService implements ReferencedImageService
         try
         {
             txn.begin();
-            List referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructureId = :packageStructureId")
+            List referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructure.id = :packageStructureId")
                     .setEntity("packageStructureId",packageStructureId)
                     .list();
             txn.commit();
