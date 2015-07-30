@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.images;
 
+import org.cru.godtools.domain.packages.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -15,42 +16,31 @@ import java.util.UUID;
 public class ReferencedImage
 {
 	@EmbeddedId
-	@AttributeOverrides({
-			@AttributeOverride(name="imageId", column = @Column(name="image_id")),
-			@AttributeOverride(name="packageStructureId", column = @Column(name="package_structure_id"))
-	})
 	private ReferencedImageKey id = new ReferencedImageKey();
 
-	@Transient
-	private UUID imageId;
-	@Transient
-	private UUID packageStructureId;
+	public Image getImage() { return id.getImage(); }
+	public void setImage(Image image) { id.setImage(image); }
 
-	public UUID getImageId() {
-		return imageId;
-	}
+	public PackageStructure getPackageStructure() { return id.getPackageStructure(); }
+	public void setPackageStructure(PackageStructure packageStructure) { id.setPackageStructure(packageStructure); }
 
-	public UUID getPackageStructureId() {
-		return packageStructureId;
-	}
-
-	public void setImageId(UUID imageId) {
-		this.imageId = imageId;
-		id.setImageId(imageId);
-	}
-
-	public void setPackageStructureId(UUID packageStructureId) {
-		this.packageStructureId = packageStructureId;
-		id.setPackageStructureId(packageStructureId);
-	}
-
-	public ReferencedImageKey getId()
+	//Deprecated, keep for SQL2O
+	public void setImageId(UUID imageId)
 	{
-		return id;
+		if(id.getImage() == null)
+		{
+			id.setImage(new Image());
+			id.getImage().setId(imageId);
+		}
 	}
 
-	public void setId(ReferencedImageKey id)
+	//Deprecated, keep for SQL2O
+	public void setPackageStructureId(UUID packageStructureId)
 	{
-		this.id = id;
+		if(id.getPackageStructure() == null)
+		{
+			id.setPackageStructure(new PackageStructure());
+			id.getPackageStructure().setId(packageStructureId);
+		}
 	}
 }

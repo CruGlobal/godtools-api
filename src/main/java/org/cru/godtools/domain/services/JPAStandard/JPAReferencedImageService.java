@@ -96,20 +96,21 @@ public class JPAReferencedImageService implements ReferencedImageService
         {
             ReferencedImage nextReferencedImage = i.next();
 
-            if(foundIds.contains(nextReferencedImage.getId().getImageId()))
+            if(foundIds.contains(nextReferencedImage.getImage() != null ? nextReferencedImage.getImage().getId() : null))
             {
                 i.remove();
             }
             else
             {
-                foundIds.add(nextReferencedImage.getId().getImageId());
+                foundIds.add(nextReferencedImage.getImage() != null ? nextReferencedImage.getImage().getId() : null);
             }
         }
     }
 
     public void insert(ReferencedImage referencedImage)
     {
-        log.info("Selecting by Referenced Image with Package Structure Id " + referencedImage.getId().getPackageStructureId());
+        log.info("Inserting Referenced Image with Package Structure Id " + referencedImage.getPackageStructure().getId()
+            + " and Image Id " + referencedImage.getImage().getId());
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 

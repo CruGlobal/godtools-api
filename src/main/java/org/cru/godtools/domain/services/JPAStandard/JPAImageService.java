@@ -187,7 +187,7 @@ public class JPAImageService implements ImageService{
                 for(Image image : images)
                 {
                     //Delete associated Referenced Image records
-                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.imageId = :imageId")
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.image.id = :imageId")
                             .setParameter("imageId",image.getId())
                             .list();
 

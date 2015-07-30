@@ -40,15 +40,14 @@ public class GodToolsTranslationServiceTestMockData
 	{
 		Language language = persistLanguage(languageService);
 		Package gtPackage = persistPackage(packageService);
-		persistPackageStructure(packageStructureService, gtPackage);
+		PackageStructure packageStructure = persistPackageStructure(packageStructureService, gtPackage);
 		Translation translation = persistTranslation(translationService, language, gtPackage);
 		PageStructure pageStructure = persistPageStructure(pageStructureService, translation);
 		persistTranslationElements(translationElementService, pageStructure, translation);
-		persistImage(imageService);
-		persistReferencedImage(referencedImageService);
-
-		persistIcon(imageService);
-		persistReferencedImageIcon(referencedImageService);
+		Image image = persistImage(imageService);
+		Image icon = persistIcon(imageService);
+		persistReferencedImage(referencedImageService, image, packageStructure);
+		persistReferencedImageIcon(referencedImageService, icon, packageStructure);
 	}
 
 
@@ -91,7 +90,7 @@ public class GodToolsTranslationServiceTestMockData
 		return translation;
 	}
 
-	private static void persistImage(ImageService imageService)
+	private static Image persistImage(ImageService imageService)
 	{
 		Image image = new Image();
 		image.setId(AbstractFullPackageServiceTest.IMAGE_ID);
@@ -99,9 +98,11 @@ public class GodToolsTranslationServiceTestMockData
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setFilename("test_image_1.png");
 		imageService.insert(image);
+
+		return image;
 	}
 
-	private static void persistIcon(ImageService imageService)
+	private static Image persistIcon(ImageService imageService)
 	{
 		Image image = new Image();
 		image.setId(AbstractFullPackageServiceTest.ICON_ID);
@@ -109,29 +110,27 @@ public class GodToolsTranslationServiceTestMockData
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setFilename(Image.buildFilename(PACKAGE_CODE, "icon@2x.png"));
 		imageService.insert(image);
+
+		return image;
 	}
 
-	private static void persistReferencedImage(ReferencedImageService referencedImageService)
+	private static void persistReferencedImage(ReferencedImageService referencedImageService, Image image, PackageStructure packageStructure)
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
-		referencedImage.setImageId(AbstractFullPackageServiceTest.IMAGE_ID);
-		referencedImage.getId().setImageId(AbstractFullPackageServiceTest.IMAGE_ID);
-		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
-		referencedImage.getId().setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.setImage(image);
+		referencedImage.setPackageStructure(packageStructure);
 		referencedImageService.insert(referencedImage);
 	}
 
-	private static void persistReferencedImageIcon(ReferencedImageService referencedImageService)
+	private static void persistReferencedImageIcon(ReferencedImageService referencedImageService, Image image, PackageStructure packageStructure)
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
-		referencedImage.setImageId(AbstractFullPackageServiceTest.ICON_ID);
-		referencedImage.getId().setImageId(AbstractFullPackageServiceTest.ICON_ID);
-		referencedImage.setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
-		referencedImage.getId().setPackageStructureId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		referencedImage.setImage(image);
+		referencedImage.setPackageStructure(packageStructure);
 		referencedImageService.insert(referencedImage);
 	}
 
-	private static void persistPackageStructure(PackageStructureService packageStructureService, Package gtPackage)
+	private static PackageStructure persistPackageStructure(PackageStructureService packageStructureService, Package gtPackage)
 	{
 		PackageStructure packageStructure = new PackageStructure();
 		packageStructure.setId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
@@ -139,6 +138,8 @@ public class GodToolsTranslationServiceTestMockData
 		packageStructure.setVersionNumber(1);
 		packageStructure.setXmlContent(XmlDocumentFromFile.get("/package.xml"));
 		packageStructureService.insert(packageStructure);
+
+		return packageStructure;
 	}
 
 	private static PageStructure persistPageStructure(PageStructureService pageStructureService, Translation translation)
