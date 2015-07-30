@@ -6,6 +6,7 @@ import org.cru.godtools.domain.languages.*;
 import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
@@ -32,11 +33,11 @@ public class TranslationServiceTest extends Arquillian
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 
-	@Inject
+	@Inject @JPAStandard
 	TranslationService translationService;
-	@Inject
+	@Inject @JPAStandard
 	PackageService packageService;
-	@Inject
+	@Inject @JPAStandard
 	LanguageService languageService;
 
 	@Deployment
@@ -61,6 +62,8 @@ public class TranslationServiceTest extends Arquillian
 	public void setup()
 	{
 		translationService.setAutoCommit(false);
+		packageService.setAutoCommit(false);
+		languageService.setAutoCommit(false);
 		Language language = TranslationServiceTestMockData.persistLanguage(languageService);
 		Package gtPackage = TranslationServiceTestMockData.persistPackage(packageService);
 		TranslationServiceTestMockData.persistTranslation(translationService, language, gtPackage);
@@ -70,6 +73,8 @@ public class TranslationServiceTest extends Arquillian
 	public void cleanup()
 	{
 		translationService.rollback();
+		packageService.rollback();
+		languageService.rollback();
 	}
 
 	@Test
