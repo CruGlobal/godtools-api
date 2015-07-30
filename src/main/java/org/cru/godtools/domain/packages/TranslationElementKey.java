@@ -1,5 +1,7 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.domain.translations.*;
+
 import javax.persistence.*;
 import java.io.*;
 import java.util.*;
@@ -10,28 +12,28 @@ import java.util.*;
 @Embeddable
 public class TranslationElementKey implements Serializable
 {
-    private UUID id;
-    private UUID translationId;
-
     @Column(name="id")
-    public UUID getImageId()
+    private UUID id;
+    @ManyToOne
+    @JoinColumn(name="translation_id")
+    private Translation translation;
+
+
+    public UUID getId()
     {
         return id;
     }
-
-    public void setImageId(UUID id)
+    public void setId(UUID id)
     {
         this.id = id;
     }
 
-    @Column(name="translation_id")
-    public UUID getPackageStructureId()
+    public Translation getTranslation()
     {
-        return translationId;
+        return translation;
     }
-
-    public void setPackageStructureId(UUID translationId)
+    public void setTranslation(Translation translation)
     {
-        this.translationId = translationId;
+        this.translation = translation;
     }
 }

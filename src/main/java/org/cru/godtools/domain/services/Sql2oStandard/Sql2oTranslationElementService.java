@@ -68,8 +68,8 @@ public class Sql2oTranslationElementService implements TranslationElementService
     {
         sqlConnection.createQuery(TranslationElementQueries.insert)
                 .addParameter("id", translationElement.getId())
-                .addParameter("translationId", translationElement.getTranslationId())
-                .addParameter("pageStructureId", translationElement.getPageStructureId())
+                .addParameter("translationId", translationElement.getTranslation() != null ? translationElement.getTranslation().getId() : null)
+                .addParameter("pageStructureId", translationElement.getPageStructure() != null ? translationElement.getPageStructure().getId() : null)
                 .addParameter("baseText", translationElement.getBaseText())
                 .addParameter("translatedText", translationElement.getTranslatedText())
                 .addParameter("elementType", translationElement.getElementType())
@@ -82,8 +82,8 @@ public class Sql2oTranslationElementService implements TranslationElementService
     {
         sqlConnection.createQuery(TranslationElementQueries.update)
                 .addParameter("id", translationElement.getId())
-                .addParameter("translationId", translationElement.getTranslationId())
-                .addParameter("pageStructureId", translationElement.getPageStructureId())
+                .addParameter("translationId", translationElement.getTranslation() != null ? translationElement.getTranslation().getId() : null)
+                .addParameter("pageStructureId", translationElement.getPageStructure() != null ? translationElement.getPageStructure().getId() : null)
                 .addParameter("baseText", translationElement.getBaseText())
                 .addParameter("translatedText", translationElement.getTranslatedText())
                 .addParameter("elementType", translationElement.getElementType())

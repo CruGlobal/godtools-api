@@ -116,7 +116,7 @@ public class JPAPageStructureService implements PageStructureService
         try
         {
             txn.begin();
-            List pageStructures = session.createQuery("FROM PageStructure WHERE translationId = :translationId")
+            List pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
                     .setEntity("translationId", translationId)
                     .list();
             txn.commit();
@@ -152,7 +152,7 @@ public class JPAPageStructureService implements PageStructureService
         try
         {
             txn.begin();
-            PageStructure pageStructure = (PageStructure) session.createQuery("FROM PageStructure WHERE translationId = :translationId AND filename = :filename")
+            PageStructure pageStructure = (PageStructure) session.createQuery("FROM PageStructure WHERE translation.id = :translationId AND filename = :filename")
                     .setEntity("translationId",translationId)
                     .setString("filename",filename)
                     .uniqueResult();
@@ -259,13 +259,13 @@ public class JPAPageStructureService implements PageStructureService
                 for(PageStructure pageStructure : pageStructures)
                 {
                     //Orphan associated Translation Element records
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructureId = :pageStructureId")
+                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructure.id = :pageStructureId")
                             .setParameter("pageStructureId",pageStructure.getId())
                             .list();
 
                     for(TranslationElement translationElement : translationElements)
                     {
-                        translationElement.setPageStructureId(pageStructure.getId());
+                        translationElement.setPageStructure(pageStructure);
                         session.update(translationElement);
                     }
 

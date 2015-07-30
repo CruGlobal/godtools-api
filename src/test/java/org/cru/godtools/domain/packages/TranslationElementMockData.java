@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class TranslationElementMockData
 {
-	public static void persistPageStructure(PageStructureService pageStructureService, Translation translation)
+	public static PageStructure persistPageStructure(PageStructureService pageStructureService, Translation translation)
 	{
 		PageStructure pageStructure = new PageStructure();
 		pageStructure.setId(TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
@@ -21,14 +21,16 @@ public class TranslationElementMockData
 		pageStructure.setXmlContent(XmlDocumentFromFile.get("/page_1.xml"));
 
 		pageStructureService.insert(pageStructure);
+
+		return pageStructure;
 	}
 
-	public static void persistTranslationElements(TranslationElementService translationElementService)
+	public static void persistTranslationElements(TranslationElementService translationElementService, PageStructure pageStructure, Translation translation)
 	{
 		TranslationElement translationElementOne = new TranslationElement();
 		translationElementOne.setId(TranslationElementServiceTest.TEST_TRANSLATION_ELEMENT_ONE_ID);
-		translationElementOne.setTranslationId(TranslationServiceTest.TEST_TRANSLATION_ID);
-		translationElementOne.setPageStructureId(TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
+		translationElementOne.setTranslation(translation);
+		translationElementOne.setPageStructure(pageStructure);
 		translationElementOne.setElementType("greeting");
 		translationElementOne.setDisplayOrder(0);
 		translationElementOne.setPageName("page_1.xml");
@@ -38,8 +40,8 @@ public class TranslationElementMockData
 
 		TranslationElement translationElementTwo = new TranslationElement();
 		translationElementTwo.setId(TranslationElementServiceTest.TEST_TRANSLATION_ELEMENT_TWO_ID);
-		translationElementTwo.setTranslationId(TranslationServiceTest.TEST_TRANSLATION_ID);
-		translationElementTwo.setPageStructureId(TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
+		translationElementTwo.setTranslation(translation);
+		translationElementTwo.setPageStructure(pageStructure);
 		translationElementTwo.setElementType("question");
 		translationElementTwo.setDisplayOrder(1);
 		translationElementTwo.setPageName("page_1.xml");
@@ -74,9 +76,9 @@ public class TranslationElementMockData
 		Assert.assertEquals((int)translationElement.getDisplayOrder(), 0);
 		Assert.assertEquals(translationElement.getElementType(), "greeting");
 		Assert.assertEquals(translationElement.getPageName(), "page_1.xml");
-		Assert.assertEquals(translationElement.getPageStructureId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
+		Assert.assertEquals(translationElement.getPageStructure().getId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
 		Assert.assertEquals(translationElement.getTranslatedText(), "Bonjour tout le monde");
-		Assert.assertEquals(translationElement.getTranslationId(),TranslationServiceTest.TEST_TRANSLATION_ID);
+		Assert.assertEquals(translationElement.getTranslation().getId(),TranslationServiceTest.TEST_TRANSLATION_ID);
 	}
 
 	public static void validateTranslationElementsTwo(TranslationElement translationElement)
@@ -85,9 +87,9 @@ public class TranslationElementMockData
 		Assert.assertEquals((int)translationElement.getDisplayOrder(), 1);
 		Assert.assertEquals(translationElement.getElementType(), "question");
 		Assert.assertEquals(translationElement.getPageName(), "page_1.xml");
-		Assert.assertEquals(translationElement.getPageStructureId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
+		Assert.assertEquals(translationElement.getPageStructure().getId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
 		Assert.assertEquals(translationElement.getTranslatedText(), "Quelle heure est-til?");
-		Assert.assertEquals(translationElement.getTranslationId(),TranslationServiceTest.TEST_TRANSLATION_ID);
+		Assert.assertEquals(translationElement.getTranslation().getId(),TranslationServiceTest.TEST_TRANSLATION_ID);
 	}
 
 	public static void validateUpdatedTranslationElement(TranslationElement translationElement)
@@ -96,8 +98,8 @@ public class TranslationElementMockData
 		Assert.assertEquals((int)translationElement.getDisplayOrder(), 21);
 		Assert.assertEquals(translationElement.getElementType(), "greeting");
 		Assert.assertEquals(translationElement.getPageName(), "page_1.xml");
-		Assert.assertEquals(translationElement.getPageStructureId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
+		Assert.assertEquals(translationElement.getPageStructure().getId(), TranslationElementServiceTest.TEST_PAGE_STRUCTURE_ID);
 		Assert.assertEquals(translationElement.getTranslatedText(), "Bonjour touts les peuples");
-		Assert.assertEquals(translationElement.getTranslationId(),TranslationServiceTest.TEST_TRANSLATION_ID);
+		Assert.assertEquals(translationElement.getTranslation().getId(),TranslationServiceTest.TEST_TRANSLATION_ID);
 	}
 }

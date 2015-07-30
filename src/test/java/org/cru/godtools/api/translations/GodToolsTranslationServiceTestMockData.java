@@ -42,8 +42,8 @@ public class GodToolsTranslationServiceTestMockData
 		Package gtPackage = persistPackage(packageService);
 		persistPackageStructure(packageStructureService, gtPackage);
 		Translation translation = persistTranslation(translationService, language, gtPackage);
-		persistPageStructure(pageStructureService, translation);
-		persistTranslationElements(translationElementService);
+		PageStructure pageStructure = persistPageStructure(pageStructureService, translation);
+		persistTranslationElements(translationElementService, pageStructure, translation);
 		persistImage(imageService);
 		persistReferencedImage(referencedImageService);
 
@@ -141,7 +141,7 @@ public class GodToolsTranslationServiceTestMockData
 		packageStructureService.insert(packageStructure);
 	}
 
-	private static void persistPageStructure(PageStructureService pageStructureService, Translation translation)
+	private static PageStructure persistPageStructure(PageStructureService pageStructureService, Translation translation)
 	{
 		PageStructure pageStructure = new PageStructure();
 		pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
@@ -149,6 +149,8 @@ public class GodToolsTranslationServiceTestMockData
 		pageStructure.setFilename("page_1.xml");
 		pageStructure.setXmlContent(XmlDocumentFromFile.get("/page_1.xml"));
 		pageStructureService.insert(pageStructure);
+
+		return pageStructure;
 	}
 
 
@@ -156,12 +158,12 @@ public class GodToolsTranslationServiceTestMockData
 	 * The element IDs here are hard coded b/c they correspond with IDs in the file
 	 * src/main/resources/page_1.xml
 	 */
-	private static void persistTranslationElements(TranslationElementService translationElementService)
+	private static void persistTranslationElements(TranslationElementService translationElementService, PageStructure pageStructure, Translation translation)
 	{
 		TranslationElement elementOne = new TranslationElement();
 		elementOne.setId(UUID.fromString("d32fce50-df42-4ab7-9815-e0a151213a01"));
-		elementOne.setPageStructureId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
-		elementOne.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
+		elementOne.setPageStructure(pageStructure);
+		elementOne.setTranslation(translation);
 		elementOne.setBaseText("KNOWING GOD");
 		elementOne.setTranslatedText("KNOWING GOD");
 		elementOne.setDisplayOrder(0);
@@ -171,8 +173,8 @@ public class GodToolsTranslationServiceTestMockData
 
 		TranslationElement elementTwo = new TranslationElement();
 		elementTwo.setId(UUID.fromString("6f2678f1-93d2-42d9-bca5-bc2e16593216"));
-		elementTwo.setPageStructureId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
-		elementTwo.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
+		elementTwo.setPageStructure(pageStructure);
+		elementTwo.setTranslation(translation);
 		elementTwo.setBaseText("personally");
 		elementTwo.setTranslatedText("personally");
 		elementTwo.setDisplayOrder(1);
@@ -182,8 +184,8 @@ public class GodToolsTranslationServiceTestMockData
 
 		TranslationElement elementThree = new TranslationElement();
 		elementThree.setId(UUID.fromString("5d1e91d4-6a9f-44cd-ac01-f45800ef1fd7"));
-		elementThree.setPageStructureId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
-		elementThree.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
+		elementThree.setPageStructure(pageStructure);
+		elementThree.setTranslation(translation);
 		elementThree.setBaseText("These four points explain how to enter into a personal relationship with God and experience the life for which you were created.");
 		elementThree.setTranslatedText("These four points explain how to enter into a personal relationship with God and experience the life for which you were created.");
 		elementThree.setDisplayOrder(2);

@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
+import org.cru.godtools.domain.translations.*;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;
@@ -17,16 +18,16 @@ import java.util.UUID;
 @Table(name="translation_elements")
 public class TranslationElement
 {
-	@Id
-	private TranslationElementKey translationElementId;
-	@Column(insertable = false, updatable = false)
-	private UUID id;
-	@Column(insertable = false, updatable = false)
-	private UUID translationId;
+	@EmbeddedId
+	/*@AttributeOverrides({
+			@AttributeOverride(name="id", column = @Column(name="id")),
+			@AttributeOverride(name="translationId", column = @Column(name="translation_id"))
+	})*/
+	private TranslationElementKey translationElementId = new TranslationElementKey();
 
-	@Column(name="page_structure_id")
-	@Type(type="pg-uuid")
-	private UUID pageStructureId;
+	@ManyToOne
+	@JoinColumn(name="page_structure_id")
+	private PageStructure pageStructure;
 	@Column(name="base_text")
 	private String baseText;
 	@Column(name="translated_text")
@@ -54,8 +55,8 @@ public class TranslationElement
 	{
 		TranslationElement translationElementCopy = new TranslationElement();
 
-		translationElementCopy.setPageStructureId(translationElement.getPageStructureId());
-		translationElementCopy.setTranslationId((translationElement.getTranslationId()));
+		translationElementCopy.setPageStructure(translationElement.getPageStructure());
+		translationElementCopy.setTranslation((translationElement.getTranslation()));
 		translationElementCopy.setId(translationElement.getId());
 		translationElementCopy.setBaseText(translationElement.getBaseText());
 		translationElementCopy.setTranslatedText(translationElement.getTranslatedText());
@@ -66,38 +67,36 @@ public class TranslationElement
 		return translationElementCopy;
 	}
 
-	public TranslationElementKey getTranslationElementId() { return translationElementId; }
+	public UUID getId() { return translationElementId.getId(); }
 
-	public void setTranslationElementId() { this.translationElementId = translationElementId; }
+	public void setId(UUID id) { translationElementId.setId(id); }
 
-	public UUID getId()
-	{
-		return id;
-	}
+	public PageStructure getPageStructure() { return pageStructure; }
 
-	public void setId(UUID id)
-	{
-		this.id = id;
-	}
+	public void setPageStructure(PageStructure pageStructure) { this.pageStructure = pageStructure; }
 
-	public UUID getPageStructureId()
-	{
-		return pageStructureId;
-	}
+	public Translation getTranslation() { return translationElementId.getTranslation(); }
 
+	public void setTranslation(Translation translation) { translationElementId.setTranslation(translation); }
+
+	//deprecated method, keep for SQL2O
 	public void setPageStructureId(UUID pageStructureId)
 	{
-		this.pageStructureId = pageStructureId;
+		if(pageStructure == null)
+		{
+			pageStructure = new PageStructure();
+			pageStructure.setId(pageStructureId);
+		}
 	}
 
-	public UUID getTranslationId()
-	{
-		return translationId;
-	}
-
+	//deprecated mathod, keep for SQL2O
 	public void setTranslationId(UUID translationId)
 	{
-		this.translationId = translationId;
+		if(translationElementId.getTranslation() == null)
+		{
+			translationElementId.setTranslation(new Translation());
+			translationElementId.getTranslation().setId(translationId);
+		}
 	}
 
 	public String getBaseText()

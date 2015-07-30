@@ -80,10 +80,10 @@ public class NewTranslationCreation
 	{
 		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationId(currentTranslation.getId()))
 		{
-			if(currentTranslationElement.getPageStructureId() == null)
+			if(currentTranslationElement.getPageStructure() == null)
 			{
 				TranslationElement copy = TranslationElement.copyOf(currentTranslationElement);
-				copy.setTranslationId(newTranslation.getId());
+				copy.setTranslation(newTranslation);
 				translationElementService.insert(copy);
 			}
 		}
@@ -100,8 +100,8 @@ public class NewTranslationCreation
 		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationIdPageStructureId(currentTranslation.getId(), currentPage.getId()))
 		{
 			TranslationElement copy = TranslationElement.copyOf(currentTranslationElement);
-			copy.setTranslationId(newTranslation.getId());
-			copy.setPageStructureId(newPage.getId());
+			copy.setTranslation(newTranslation);
+			copy.setPageStructure(newPage);
 			translationElementService.insert(copy);
 		}
 	}

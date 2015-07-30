@@ -66,8 +66,8 @@ public class TranslationElementServiceTest extends Arquillian
 		Language language = TranslationServiceTestMockData.persistLanguage(languageService);
 		Package gtPackage = TranslationServiceTestMockData.persistPackage(packageService);
 		Translation translation = TranslationServiceTestMockData.persistTranslation(translationService, language, gtPackage);
-		TranslationElementMockData.persistPageStructure(pageStructureService, translation);
-		TranslationElementMockData.persistTranslationElements(translationElementService);
+		PageStructure pageStructure = TranslationElementMockData.persistPageStructure(pageStructureService, translation);
+		TranslationElementMockData.persistTranslationElements(translationElementService, pageStructure, translation);
 	}
 
 	@AfterMethod
