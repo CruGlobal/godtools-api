@@ -61,6 +61,7 @@ public class PageStructure implements Serializable
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private DateTime lastUpdated;
 
+	@Transient
 	private final Logger logger = Logger.getLogger(PackageStructure.class);
 
 	public static PageStructure copyOf(PageStructure pageStructure)

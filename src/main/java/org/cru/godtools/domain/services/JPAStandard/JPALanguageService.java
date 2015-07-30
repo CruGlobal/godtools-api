@@ -2,10 +2,8 @@ package org.cru.godtools.domain.services.JPAStandard;
 
 import com.google.common.base.*;
 import org.cru.godtools.domain.languages.*;
-import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
-import org.cru.godtools.domain.translations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
@@ -253,33 +251,14 @@ public class JPALanguageService implements LanguageService
             try {
                 txn.begin();
 
+                Language persistentLanguage;
                 List<Language> languages = selectAllLanguages();
 
                 for(Language language : languages)
                 {
-                    //Orphan associated Package records
-                    List<Package> packages = session.createQuery("FROM Package WHERE defaultLanguage.id = :languageId")
-                            .setParameter("languageId",language.getId())
-                            .list();
+                    persistentLanguage = (Language) session.load(Language.class, language.getId());
 
-                    //Orphan associated Translation records
-                    List<Translation> translations = session.createQuery("FROM Translation WHERE language.id = :languageId")
-                            .setParameter("languageId",language.getId())
-                            .list();
-
-                    for(Package gtPackage : packages)
-                    {
-                        gtPackage.setDefaultLanguage(null);
-                        session.update(gtPackage);
-                    }
-
-                    for(Translation translation : translations)
-                    {
-                        translation.setLanguage(null);
-                        session.update(translation);
-                    }
-
-                    session.delete(language);
+                    session.delete(persistentLanguage);
                 }
 
                 txn.commit();

@@ -16,12 +16,12 @@ import java.util.UUID;
 @Table(name="auth_tokens")
 public class AuthorizationRecord
 {
+    @Id
     @Column(name="id")
     @Type(type="pg-uuid")
     UUID id;
     @Column(name="username")
     String username;
-    @Id
     @Column(name="auth_token")
     String authToken;
     @Column(name="granted_timestamp")

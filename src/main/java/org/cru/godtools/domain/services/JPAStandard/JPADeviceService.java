@@ -116,8 +116,16 @@ public class JPADeviceService implements DeviceService
         {
             try {
                 txn.begin();
-                Query q1 = session.createSQLQuery("DELETE FROM DEVICES");
-                q1.executeUpdate();
+
+                Device persistentDevice;
+                List<Device> devices = session.createQuery("FROM Device").list();
+
+                for(Device device : devices)
+                {
+                    persistentDevice = (Device) session.load(Device.class, device.getId());
+                    session.delete(persistentDevice);
+                }
+
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {

@@ -178,21 +178,13 @@ public class JPAPackageStructureService implements PackageStructureService
             {
                 txn.begin();
 
+                PackageStructure persistentPackageStrucure;
                 List<PackageStructure> packageStructures = selectAll();
 
                 for(PackageStructure packageStructure : packageStructures)
                 {
-                    //Delete associated Referenced Image records
-                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructure.id = :packageStructureId")
-                            .setParameter("packageStructureId",packageStructure.getId())
-                            .list();
-
-                    for(ReferencedImage referencedImage : referencedImages)
-                    {
-                        session.delete(referencedImage);
-                    }
-
-                    session.delete(packageStructure);
+                    persistentPackageStrucure = (PackageStructure) session.load(PackageStructure.class, packageStructure.getId());
+                    session.delete(persistentPackageStrucure);
                 }
 
                 txn.commit();

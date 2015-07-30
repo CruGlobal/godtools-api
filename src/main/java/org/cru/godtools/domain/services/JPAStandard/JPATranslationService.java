@@ -1,7 +1,6 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
 import org.cru.godtools.domain.*;
-import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.domain.translations.*;
@@ -425,32 +424,13 @@ public class JPATranslationService implements TranslationService
             {
                 txn.begin();
 
+                Translation persistentTranslation;
                 List<Translation> translations = selectAll();
 
                 for(Translation translation : translations)
                 {
-                    //Orphan associated Page Structure records
-                    List<PageStructure> pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
-                            .setParameter("translationId",translation.getId())
-                            .list();
-
-                    //Delete associated Translation Element records
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE translationElementId.translation.id = :translationId")
-                            .setParameter("translationId",translation.getId())
-                            .list();
-
-                    for(PageStructure pageStructure : pageStructures)
-                    {
-                        pageStructure.setTranslation(null);
-                        session.update(pageStructure);
-                    }
-
-                    for(TranslationElement translationElement : translationElements)
-                    {
-                        session.delete(translationElement);
-                    }
-
-                    session.delete(translation);
+                    persistentTranslation = (Translation) session.load(Translation.class, translation.getId());
+                    session.delete(persistentTranslation);
                 }
 
                 txn.commit();

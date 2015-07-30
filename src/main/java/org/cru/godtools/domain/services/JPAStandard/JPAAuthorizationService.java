@@ -9,6 +9,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.jboss.logging.*;
 
+import java.util.*;
+
 /**
  * Created by justinsturm on 6/29/15.
  */
@@ -48,7 +50,9 @@ public class JPAAuthorizationService implements AuthorizationService
         try
         {
             txn.begin();
-            AuthorizationRecord authorizationRecord = (AuthorizationRecord) session.get(AuthorizationRecord.class, authToken);
+            AuthorizationRecord authorizationRecord = (AuthorizationRecord) session.createQuery("FROM AuthorizationRecord WHERE authToken = :authToken")
+                    .setString("authToken",authToken)
+                    .uniqueResult();
             txn.commit();
 
             return Optional.fromNullable(authorizationRecord);
@@ -149,8 +153,25 @@ public class JPAAuthorizationService implements AuthorizationService
         {
             try {
                 txn.begin();
-                Query q1 = session.createSQLQuery("DELETE FROM AUTH_TOKENS");
-                q1.executeUpdate();
+
+                AuthorizationRecord persistentAuthorizationRecord;
+                List<AuthorizationRecord> authorizationRecords = session.createQuery("FROM AuthorizationRecord").list();
+
+                for(AuthorizationRecord authorizationRecord : authorizationRecords)
+                {
+                    persistentAuthorizationRecord = (AuthorizationRecord) session.load(AuthorizationRecord.class, authorizationRecord.getId());
+                    session.delete(persistentAuthorizationRecord);
+                }
+
+                AccessCodeRecord persistentAccessCodeRecord;
+                List<AccessCodeRecord> accessCodeRecords = session.createQuery("FROM AccessCodeRecord").list();
+
+                for(AccessCodeRecord accessCodeRecord : accessCodeRecords)
+                {
+                    persistentAccessCodeRecord = (AccessCodeRecord) session.load(AccessCodeRecord.class, accessCodeRecord.getCode());
+                    session.delete(persistentAccessCodeRecord);
+                }
+
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {

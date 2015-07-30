@@ -254,22 +254,13 @@ public class JPAPageStructureService implements PageStructureService
             {
                 txn.begin();
 
+                PageStructure persistentPageStructure;
                 List<PageStructure> pageStructures = selectAll();
 
                 for(PageStructure pageStructure : pageStructures)
                 {
-                    //Orphan associated Translation Element records
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructure.id = :pageStructureId")
-                            .setParameter("pageStructureId",pageStructure.getId())
-                            .list();
-
-                    for(TranslationElement translationElement : translationElements)
-                    {
-                        translationElement.setPageStructure(pageStructure);
-                        session.update(translationElement);
-                    }
-
-                    session.delete(pageStructure);
+                    persistentPageStructure = (PageStructure) session.load(PageStructure.class,pageStructure.getId());
+                    session.delete(persistentPageStructure);
                 }
 
                 txn.commit();

@@ -208,8 +208,16 @@ public class JPANotificationService implements NotificationService{
         {
             try {
                 txn.begin();
-                Query q1 = session.createSQLQuery("DELETE FROM NOTIFICATIONS");
-                q1.executeUpdate();
+
+                Notification persistentNotification;
+                List<Notification> notifications = session.createQuery("FROM Notification").list();
+
+                for(Notification notification : notifications)
+                {
+                    persistentNotification = (Notification) session.load(Notification.class, notification.getId());
+                    session.delete(persistentNotification);
+                }
+
                 txn.commit();
             } catch (Exception e) {
                 if (txn != null) {
