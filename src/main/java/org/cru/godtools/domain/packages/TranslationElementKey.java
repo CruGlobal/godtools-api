@@ -23,10 +23,7 @@ public class TranslationElementKey implements Serializable
     {
         return id;
     }
-    public void setId(UUID id)
-    {
-        this.id = id;
-    }
+    public void setId(UUID id) { this.id = id; }
 
     public Translation getTranslation()
     {

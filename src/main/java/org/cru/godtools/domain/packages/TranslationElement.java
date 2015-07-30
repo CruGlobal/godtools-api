@@ -19,10 +19,6 @@ import java.util.UUID;
 public class TranslationElement
 {
 	@EmbeddedId
-	/*@AttributeOverrides({
-			@AttributeOverride(name="id", column = @Column(name="id")),
-			@AttributeOverride(name="translationId", column = @Column(name="translation_id"))
-	})*/
 	private TranslationElementKey translationElementId = new TranslationElementKey();
 
 	@ManyToOne
