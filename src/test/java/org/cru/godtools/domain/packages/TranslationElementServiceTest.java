@@ -17,7 +17,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,9 +62,9 @@ public class TranslationElementServiceTest extends Arquillian
 	public void setup()
 	{
 		packageService.setAutoCommit(false);
-		Language language = TranslationServiceTestMockData.persistLanguage(languageService);
-		Package gtPackage = TranslationServiceTestMockData.persistPackage(packageService);
-		Translation translation = TranslationServiceTestMockData.persistTranslation(translationService, language, gtPackage);
+		Language language = TranslationMockData.persistLanguage(languageService);
+		Package gtPackage = TranslationMockData.persistPackage(packageService);
+		Translation translation = TranslationMockData.persistTranslation(translationService, language, gtPackage);
 		PageStructure pageStructure = TranslationElementMockData.persistPageStructure(pageStructureService, translation);
 		TranslationElementMockData.persistTranslationElements(translationElementService, pageStructure, translation);
 	}

@@ -8,7 +8,7 @@ import org.testng.Assert;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class TranslationServiceTestMockData
+public class TranslationMockData
 {
 
 	public static Language persistLanguage(LanguageService languageService)

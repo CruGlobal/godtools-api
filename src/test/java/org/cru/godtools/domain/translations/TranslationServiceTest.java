@@ -3,7 +3,6 @@ package org.cru.godtools.domain.translations;
 import org.cru.godtools.domain.*;
 
 import org.cru.godtools.domain.languages.*;
-import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
@@ -20,7 +19,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,9 +62,9 @@ public class TranslationServiceTest extends Arquillian
 		translationService.setAutoCommit(false);
 		packageService.setAutoCommit(false);
 		languageService.setAutoCommit(false);
-		Language language = TranslationServiceTestMockData.persistLanguage(languageService);
-		Package gtPackage = TranslationServiceTestMockData.persistPackage(packageService);
-		TranslationServiceTestMockData.persistTranslation(translationService, language, gtPackage);
+		Language language = TranslationMockData.persistLanguage(languageService);
+		Package gtPackage = TranslationMockData.persistPackage(packageService);
+		TranslationMockData.persistTranslation(translationService, language, gtPackage);
 	}
 
 	@AfterMethod
@@ -83,7 +81,7 @@ public class TranslationServiceTest extends Arquillian
 		List<Translation> translations = translationService.selectByLanguageId(TEST_LANGUAGE_ID);
 
 		Assert.assertEquals(translations.size(), 1);
-		TranslationServiceTestMockData.validateTranslation(translations.get(0));
+		TranslationMockData.validateTranslation(translations.get(0));
 	}
 
 	@Test
@@ -92,7 +90,7 @@ public class TranslationServiceTest extends Arquillian
 		List<Translation> translations = translationService.selectByPackageId(TEST_PACKAGE_ID);
 
 		Assert.assertEquals(translations.size(), 1);
-		TranslationServiceTestMockData.validateTranslation(translations.get(0));
+		TranslationMockData.validateTranslation(translations.get(0));
 	}
 
 	@Test
@@ -100,6 +98,6 @@ public class TranslationServiceTest extends Arquillian
 	{
 		List<Translation> translation = translationService.selectByLanguageIdPackageId(TEST_LANGUAGE_ID, TEST_PACKAGE_ID);
 
-		TranslationServiceTestMockData.validateTranslation(translation.get(0));
+		TranslationMockData.validateTranslation(translation.get(0));
 	}
 }
