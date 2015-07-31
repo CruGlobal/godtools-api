@@ -187,6 +187,15 @@ public class JPAImageService implements ImageService{
 
                 for(Image image : images)
                 {
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.image.id = :imageId")
+                            .setParameter("imageId", image.getId())
+                            .list();
+
+                    for (ReferencedImage referencedImage : referencedImages)
+                    {
+                        session.delete(referencedImage);
+                    }
+
                     persistentImage = (Image) session.load(Image.class, image.getId());
                     session.delete(persistentImage);
                 }

@@ -1,8 +1,10 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
+import org.cru.godtools.domain.packages.*;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
+import org.cru.godtools.domain.translations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
@@ -232,6 +234,26 @@ public class JPAPackageService implements PackageService
 
                 for(Package gtPackage : packages)
                 {
+                    List<PackageStructure> packageStructures = session.createQuery("FROM PackageStructure WHERE gtPackage.id = :packageId")
+                            .setParameter("packageId",gtPackage.getId())
+                            .list();
+
+                    List<Translation> translations = session.createQuery("FROM Translation WHERE gtPackage.id = :packageId")
+                            .setParameter("packageId", gtPackage.getId())
+                            .list();
+
+                    for(PackageStructure packageStructure : packageStructures)
+                    {
+                        packageStructure.setPackage(null);
+                        session.update(packageStructure);
+                    }
+
+                    for(Translation translation : translations)
+                    {
+                        translation.setPackage(null);
+                        session.update(translation);
+                    }
+
                     persistentPackage = (Package) session.load(Package.class, gtPackage.getId());
                     session.delete(persistentPackage);
                 }

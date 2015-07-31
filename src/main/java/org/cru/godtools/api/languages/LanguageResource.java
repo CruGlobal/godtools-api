@@ -25,7 +25,7 @@ import java.util.UUID;
 public class LanguageResource
 {
 
-	@Inject
+	@Inject @JPAStandard
 	AuthorizationService authorizationService;
 	@Inject @JPAStandard
 	LanguageService languageService;

@@ -259,6 +259,16 @@ public class JPAPageStructureService implements PageStructureService
 
                 for(PageStructure pageStructure : pageStructures)
                 {
+                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructure.id = :pageStructureId")
+                            .setParameter("pageStructureId",pageStructure.getId())
+                            .list();
+
+                    for(TranslationElement translationElement : translationElements)
+                    {
+                        translationElement.setPageStructure(null);
+                        session.update(translationElement);
+                    }
+
                     persistentPageStructure = (PageStructure) session.load(PageStructure.class,pageStructure.getId());
                     session.delete(persistentPageStructure);
                 }

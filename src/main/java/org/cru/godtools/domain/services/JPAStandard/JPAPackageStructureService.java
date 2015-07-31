@@ -70,40 +70,6 @@ public class JPAPackageStructureService implements PackageStructureService
         }
     }
 
-    public List<PackageStructure> packageStructures()
-    {
-        log.info("Select All Package Structures");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List<PackageStructure> packageStructures = session.createQuery("FROM PackageStructure").list();
-            txn.commit();
-
-            return packageStructures;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
     public PackageStructure selectByPackageId(UUID packageId)
     {
         log.info("Select Package Structure with Package Id " + packageId);
@@ -114,7 +80,7 @@ public class JPAPackageStructureService implements PackageStructureService
         {
             txn.begin();
             PackageStructure packageStructure = (PackageStructure) session.createQuery("FROM PackageStructure WHERE gtPackage.id = :packageId")
-                    .setEntity("packageId", packageId)
+                    .setParameter("packageId", packageId)
                     .uniqueResult();
             txn.commit();
 
@@ -183,6 +149,15 @@ public class JPAPackageStructureService implements PackageStructureService
 
                 for(PackageStructure packageStructure : packageStructures)
                 {
+                    List<ReferencedImage> referencedImages = session.createQuery("FROM ReferencedImage WHERE id.packageStructure.id = :packageStructureId")
+                            .setParameter("packageStructureId", packageStructure.getId())
+                            .list();
+
+                    for (ReferencedImage referencedImage : referencedImages)
+                    {
+                        session.delete(referencedImage);
+                    }
+
                     persistentPackageStrucure = (PackageStructure) session.load(PackageStructure.class, packageStructure.getId());
                     session.delete(persistentPackageStrucure);
                 }
