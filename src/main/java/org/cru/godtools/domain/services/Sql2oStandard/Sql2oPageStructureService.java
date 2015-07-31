@@ -22,7 +22,7 @@ public class Sql2oPageStructureService implements PageStructureService
         this.sqlConnection = sqlConnection;
     }
 
-    public PageStructure selectByid(UUID id)
+    public PageStructure selectById(UUID id)
     {
         return sqlConnection.createQuery(PageStructureQueries.selectById)
                 .setAutoDeriveColumnNames(true)

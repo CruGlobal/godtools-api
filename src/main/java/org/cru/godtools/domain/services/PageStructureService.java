@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public interface PageStructureService
 {
-	PageStructure selectByid(UUID id);
+	PageStructure selectById(UUID id);
 
 	List<PageStructure> selectByTranslationId(UUID translationId);
 

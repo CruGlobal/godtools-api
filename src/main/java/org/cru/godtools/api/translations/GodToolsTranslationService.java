@@ -78,7 +78,7 @@ public class GodToolsTranslationService
 	 */
 	public PageStructure getPage(LanguageCode languageCode, UUID pageId)
 	{
-		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		PageStructure pageStructure = pageStructureService.selectById(pageId);
 		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		Package gtPackage = packageService.selectById(translation.getPackage() != null ? translation.getPackage().getId() : null);
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
@@ -101,7 +101,7 @@ public class GodToolsTranslationService
 
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
-		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		PageStructure pageStructure = pageStructureService.selectById(pageId);
 		Translation translation = translationService.selectById(pageStructure.getTranslation() != null ? pageStructure.getTranslation().getId() : null);
 		pageStructure.mergeXmlContent(updatedPageLayout);
 
@@ -119,7 +119,7 @@ public class GodToolsTranslationService
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
 		Translation englishTranslation = loadBaseTranslation(gtPackage);
-		PageStructure baseEnglishPage = pageStructureService.selectByid(UUID.fromString(pageName));
+		PageStructure baseEnglishPage = pageStructureService.selectById(UUID.fromString(pageName));
 		List<Translation> publishedTranslations = Lists.newArrayList();
 		List<Translation> draftTranslations = Lists.newArrayList();
 

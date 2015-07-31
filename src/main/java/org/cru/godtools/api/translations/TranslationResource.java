@@ -205,7 +205,7 @@ public class TranslationResource
 			return optionalBadRequestResponse.get();
 		}
 
-		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		PageStructure pageStructure = pageStructureService.selectById(pageId);
 
 		if(pageStructure == null)
 		{
@@ -246,7 +246,7 @@ public class TranslationResource
 							.build());
 		}
 
-		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		PageStructure pageStructure = pageStructureService.selectById(pageId);
 		if(pageStructure == null)
 		{
 			return Optional.fromNullable(

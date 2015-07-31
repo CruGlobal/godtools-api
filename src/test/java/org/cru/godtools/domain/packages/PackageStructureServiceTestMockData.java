@@ -8,8 +8,6 @@ import org.testng.*;
  */
 public class PackageStructureServiceTestMockData
 {
-
-
     public static Package persistPackage(PackageService packageService)
     {
         Package gtPackage = new Package();

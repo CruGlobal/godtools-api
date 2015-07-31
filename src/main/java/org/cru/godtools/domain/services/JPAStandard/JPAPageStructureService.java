@@ -39,41 +39,7 @@ public class JPAPageStructureService implements PageStructureService
         }
     }
 
-    public List<PageStructure> selectAll()
-    {
-        log.info("Select All Page Structures");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List<PageStructure> pageStructures = session.createQuery("FROM PackageStructure").list();
-            txn.commit();
-
-            return pageStructures;
-        }
-        catch(Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public PageStructure selectByid(UUID id)
+    public PageStructure selectById(UUID id)
     {
         log.info("Select Page Structure with Id " + id);
         Session session = sessionFactory.openSession();
@@ -117,7 +83,7 @@ public class JPAPageStructureService implements PageStructureService
         {
             txn.begin();
             List pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
-                    .setEntity("translationId", translationId)
+                    .setParameter("translationId", translationId)
                     .list();
             txn.commit();
 
@@ -153,7 +119,7 @@ public class JPAPageStructureService implements PageStructureService
         {
             txn.begin();
             PageStructure pageStructure = (PageStructure) session.createQuery("FROM PageStructure WHERE translation.id = :translationId AND filename = :filename")
-                    .setEntity("translationId",translationId)
+                    .setParameter("translationId",translationId)
                     .setString("filename",filename)
                     .uniqueResult();
             txn.commit();
@@ -182,6 +148,7 @@ public class JPAPageStructureService implements PageStructureService
     public void insert(PageStructure pageStructure)
     {
         log.info("Inserting Page Structure with Id " + pageStructure.getId());
+
         Session session = sessionFactory.openSession();
         Transaction txn = session.getTransaction();
 
@@ -255,7 +222,7 @@ public class JPAPageStructureService implements PageStructureService
                 txn.begin();
 
                 PageStructure persistentPageStructure;
-                List<PageStructure> pageStructures = selectAll();
+                List<PageStructure> pageStructures = session.createQuery("FROM PageStructure").list();
 
                 for(PageStructure pageStructure : pageStructures)
                 {

@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
-import org.cru.godtools.domain.services.annotations.SQLXMLType;
 import org.cru.godtools.domain.images.Image;
 import org.cru.godtools.domain.translations.*;
 import org.hibernate.annotations.*;
@@ -42,8 +41,6 @@ public class PageStructure implements Serializable
 	@ManyToOne
 	@JoinColumn(name="translation_id")
 	private Translation translation;
-	@Transient
-	private UUID translationId; //Keep for SQL2O Auto-Column Names
 	@Column(name="xml_content")
 	@Type(type="org.cru.godtools.domain.services.annotations.SQLXMLType")
 	private Document xmlContent;
@@ -212,21 +209,15 @@ public class PageStructure implements Serializable
 	public void setTranslation(Translation translation)
 	{
 		this.translation = translation;
-		this.translationId = translation != null ? translation.getId() : null;
 	}
 
-	//Required for SQL2O to test properly
+	//Required for SQL2O
 	public void setTranslationId(UUID translationId)
 	{
 		if(translation == null)
 		{
 			translation = new Translation();
 			translation.setId(translationId);
-			this.translationId = translationId;
-		}
-		else
-		{
-			this.translationId = translation.getId();
 		}
 	}
 

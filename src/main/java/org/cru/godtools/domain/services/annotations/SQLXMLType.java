@@ -5,6 +5,7 @@ import org.hibernate.*;
 import org.hibernate.engine.spi.*;
 import org.hibernate.usertype.*;
 
+import javax.xml.parsers.*;
 import java.io.*;
 import java.sql.*;
 
@@ -42,8 +43,26 @@ public class SQLXMLType implements UserType
     @Override
     public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor sessionImplementor, Object owner) throws HibernateException, SQLException {
         assert(names.length == 1);
-        String xmldoc = rs.getString( names[0] );
-        return rs.wasNull() ? null : xmldoc;
+        String xmlstr = rs.getString( names[0] );
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try
+        {
+            if(!rs.wasNull())
+            {
+                return null;
+                //TODO FIX THIS USERTYPE!!!  IT DOES NOT WORK RIGHT NOW!!!
+                //DocumentBuilder builder = dbf.newDocumentBuilder();
+                //Document xmldoc = builder.parse(xmlstr);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+
+        return null;
     }
 
     @Override
