@@ -6,7 +6,7 @@ import org.testng.*;
 /**
  * Created by justinsturm on 7/31/15.
  */
-public class PackageStructureServiceTestMockData
+public class PackageStructureMockData
 {
     public static Package persistPackage(PackageService packageService)
     {

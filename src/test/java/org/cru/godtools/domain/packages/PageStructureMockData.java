@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by justinsturm on 7/31/15.
  */
-public class PageStructureServiceTestMockData
+public class PageStructureMockData
 {
     public static Translation persistTranslation(TranslationService translationService)
     {

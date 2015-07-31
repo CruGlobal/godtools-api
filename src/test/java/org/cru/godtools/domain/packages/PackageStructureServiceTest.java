@@ -9,12 +9,10 @@ import org.jboss.arquillian.testng.*;
 import org.jboss.shrinkwrap.api.*;
 import org.jboss.shrinkwrap.api.asset.*;
 import org.jboss.shrinkwrap.api.spec.*;
-import org.sql2o.Connection;
 import org.testng.*;
 import org.testng.annotations.*;
 
 import javax.inject.*;
-import java.sql.*;
 import java.util.*;
 
 /**
@@ -54,8 +52,8 @@ public class PackageStructureServiceTest extends Arquillian
         packageService.setAutoCommit(false);
         packageStructureService.setAutoCommit(false);
 
-        Package gtPackage = PackageStructureServiceTestMockData.persistPackage(packageService);
-        PackageStructureServiceTestMockData.persistPackageStructure(packageStructureService, gtPackage);
+        Package gtPackage = PackageStructureMockData.persistPackage(packageService);
+        PackageStructureMockData.persistPackageStructure(packageStructureService, gtPackage);
     }
 
     @AfterMethod
@@ -70,7 +68,7 @@ public class PackageStructureServiceTest extends Arquillian
     {
         PackageStructure packageStructure = packageStructureService.selectByPackageId(TEST_PACKAGE_ID);
 
-        PackageStructureServiceTestMockData.validatePackageStructure(packageStructure);
+        PackageStructureMockData.validatePackageStructure(packageStructure);
     }
 
     @Test

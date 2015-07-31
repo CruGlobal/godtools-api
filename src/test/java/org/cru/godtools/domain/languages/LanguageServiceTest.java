@@ -16,7 +16,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,7 +53,7 @@ public class LanguageServiceTest extends Arquillian
 	public void setup()
 	{
 		languageService.setAutoCommit(false);
-		LanguageServiceTestMockData.persistLanguages(languageService);
+		LanguageMockData.persistLanguages(languageService);
 	}
 
 	@AfterMethod
@@ -69,7 +68,7 @@ public class LanguageServiceTest extends Arquillian
 		List<Language> languages = languageService.selectAllLanguages();
 
 		Assert.assertEquals(languages.size(), 2);
-		LanguageServiceTestMockData.validateLanguages(languages);
+		LanguageMockData.validateLanguages(languages);
     }
 
     @Test
@@ -78,12 +77,12 @@ public class LanguageServiceTest extends Arquillian
 		Language language = languageService.selectLanguageById(TEST_LANGUAGE_ID);
 
 		Assert.assertNotNull(language);
-		LanguageServiceTestMockData.validateLanguage(language);
+		LanguageMockData.validateLanguage(language);
 
 		Language language2 = languageService.selectLanguageById(TEST_LANGUAGE2_ID);
 
 		Assert.assertNotNull(language2);
-		LanguageServiceTestMockData.validateLanguage2(language2);
+		LanguageMockData.validateLanguage2(language2);
     }
 
     @Test
@@ -93,13 +92,13 @@ public class LanguageServiceTest extends Arquillian
 		Language language = languageService.selectByLanguageCode(languageCode);
 
 		Assert.assertNotNull(language);
-		LanguageServiceTestMockData.validateLanguage(language);
+		LanguageMockData.validateLanguage(language);
 
 		LanguageCode languageCode2 = new LanguageCode("en");
 		Language language2 = languageService.selectByLanguageCode(languageCode2);
 
 		Assert.assertNotNull(language2);
-		LanguageServiceTestMockData.validateLanguage2(language2);
+		LanguageMockData.validateLanguage2(language2);
 	}
 
 	@Test()
@@ -121,7 +120,7 @@ public class LanguageServiceTest extends Arquillian
 
 		Assert.assertTrue(languageService.languageExists(language2));
 
-		Language nonExistantLanguage = LanguageServiceTestMockData.getNonExistantLanguage();
+		Language nonExistantLanguage = LanguageMockData.getNonExistantLanguage();
 
 		Assert.assertFalse(languageService.languageExists(nonExistantLanguage));
 	}

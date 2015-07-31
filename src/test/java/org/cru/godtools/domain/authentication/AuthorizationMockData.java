@@ -5,7 +5,7 @@ import org.cru.godtools.domain.services.*;
 /**
  * Created by ryancarlson on 4/3/14.
  */
-public class AuthorizationServiceTestMockData
+public class AuthorizationMockData
 {
 	public static void persistAuthorization(AuthorizationService authorizationService)
 	{

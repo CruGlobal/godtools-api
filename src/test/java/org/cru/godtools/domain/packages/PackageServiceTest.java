@@ -51,7 +51,7 @@ public class PackageServiceTest extends Arquillian
 	{
 		packageService.setAutoCommit(false);
 
-		PackageServiceTestMockData.persistPackage(packageService);
+		PackageMockData.persistPackage(packageService);
 	}
 
 	@AfterMethod
@@ -65,7 +65,7 @@ public class PackageServiceTest extends Arquillian
 	{
 		Package gtPackage = packageService.selectById(TEST_PACKAGE_ID);
 
-		PackageServiceTestMockData.validatePackage(gtPackage);
+		PackageMockData.validatePackage(gtPackage);
 	}
 
 	@Test
@@ -73,6 +73,6 @@ public class PackageServiceTest extends Arquillian
 	{
 		Package gtPackage = packageService.selectByCode("tp");
 
-		PackageServiceTestMockData.validatePackage(gtPackage);
+		PackageMockData.validatePackage(gtPackage);
 	}
 }

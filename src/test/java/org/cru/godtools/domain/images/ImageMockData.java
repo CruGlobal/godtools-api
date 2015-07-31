@@ -6,7 +6,7 @@ import org.testng.Assert;
 /**
  * Created by ryancarlson on 4/1/14.
  */
-public class ImageServiceTestMockData
+public class ImageMockData
 {
 	public static void persistImage(ImageService imageService)
 	{

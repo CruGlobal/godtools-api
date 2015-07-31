@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class LanguageServiceTestMockData
+public class LanguageMockData
 {
 
 	public static void persistLanguages(LanguageService languageService)

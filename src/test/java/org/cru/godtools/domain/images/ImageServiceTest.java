@@ -15,7 +15,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -52,8 +51,8 @@ public class ImageServiceTest extends Arquillian
 	public void setup()
 	{
 		imageService.setAutoCommit(false);
-		ImageServiceTestMockData.persistImage(imageService);
-		ImageServiceTestMockData.persistRetinaImage(imageService);
+		ImageMockData.persistImage(imageService);
+		ImageMockData.persistRetinaImage(imageService);
 	}
 
 	@AfterMethod
@@ -67,14 +66,14 @@ public class ImageServiceTest extends Arquillian
 	{
 		Image image = imageService.selectById(TEST_IMAGE_ID);
 
-		ImageServiceTestMockData.validateImage(image);
+		ImageMockData.validateImage(image);
 	}
 
 	@Test
 	public void testUpdate() throws Exception
 	{
-		ImageServiceTestMockData.modifyImage(imageService);
-		ImageServiceTestMockData.validateModifiedImage(imageService.selectById(TEST_IMAGE_ID));
+		ImageMockData.modifyImage(imageService);
+		ImageMockData.validateModifiedImage(imageService.selectById(TEST_IMAGE_ID));
 	}
 
 }

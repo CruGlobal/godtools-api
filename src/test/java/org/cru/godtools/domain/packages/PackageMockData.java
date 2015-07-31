@@ -6,7 +6,7 @@ import org.testng.Assert;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class PackageServiceTestMockData
+public class PackageMockData
 {
 	public static void persistPackage(PackageService packageService)
 	{

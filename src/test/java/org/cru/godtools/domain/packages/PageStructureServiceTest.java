@@ -53,8 +53,8 @@ public class PageStructureServiceTest extends Arquillian
     {
         translationService.setAutoCommit(false);
         pageStructureService.setAutoCommit(false);
-        Translation translation = PageStructureServiceTestMockData.persistTranslation(translationService);
-        PageStructureServiceTestMockData.persistPageStructures(pageStructureService, translation);
+        Translation translation = PageStructureMockData.persistTranslation(translationService);
+        PageStructureMockData.persistPageStructures(pageStructureService, translation);
     }
 
     @AfterMethod
@@ -69,7 +69,7 @@ public class PageStructureServiceTest extends Arquillian
     {
         PageStructure pageStructure = pageStructureService.selectById(TEST_PAGE_STRUCTURE_ID_1);
 
-        PageStructureServiceTestMockData.validatePageStructureById(pageStructure);
+        PageStructureMockData.validatePageStructureById(pageStructure);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PageStructureServiceTest extends Arquillian
     {
         List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(TEST_TRANSLATION_ID);
 
-        PageStructureServiceTestMockData.validatePageStructuresByTranslation(pageStructures);
+        PageStructureMockData.validatePageStructuresByTranslation(pageStructures);
     }
 
     @Test
@@ -85,18 +85,18 @@ public class PageStructureServiceTest extends Arquillian
     {
         PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(TEST_TRANSLATION_ID, "test_file_1.xml");
 
-        PageStructureServiceTestMockData.validatePageStructureByTranslationAndFile(pageStructure);
+        PageStructureMockData.validatePageStructureByTranslationAndFile(pageStructure);
     }
 
     @Test
     public void testUpdate()
     {
         PageStructure pageStructure = pageStructureService.selectById(TEST_PAGE_STRUCTURE_ID_3);
-        PageStructureServiceTestMockData.validatePageStructureUpdate(pageStructure, null, null);
+        PageStructureMockData.validatePageStructureUpdate(pageStructure, null, null);
         pageStructure.setTranslation(pageStructureService.selectById(TEST_PAGE_STRUCTURE_ID_1).getTranslation());
         pageStructure.setFilename(pageStructureService.selectById(TEST_PAGE_STRUCTURE_ID_2).getFilename());
         pageStructureService.update(pageStructure);
-        PageStructureServiceTestMockData.validatePageStructureUpdate(pageStructure,TEST_TRANSLATION_ID,"test_file_1.xml");
+        PageStructureMockData.validatePageStructureUpdate(pageStructure, TEST_TRANSLATION_ID, "test_file_1.xml");
     }
 
 }
