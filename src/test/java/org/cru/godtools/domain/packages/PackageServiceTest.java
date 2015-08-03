@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.packages;
 
 import org.cru.godtools.domain.*;
+import org.cru.godtools.domain.languages.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
@@ -22,11 +23,13 @@ import java.util.UUID;
  */
 public class PackageServiceTest extends Arquillian
 {
+	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 
-	@Inject
-	@JPAStandard
+	@Inject @JPAStandard
 	PackageService packageService;
+	@Inject @JPAStandard
+	LanguageService languageService;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -50,14 +53,17 @@ public class PackageServiceTest extends Arquillian
 	public void setup()
 	{
 		packageService.setAutoCommit(false);
+		languageService.setAutoCommit(false);
 
-		PackageMockData.persistPackage(packageService);
+		Language language = PackageMockData.persistLanguage(languageService);
+		PackageMockData.persistPackage(packageService, language);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
 		packageService.rollback();
+		languageService.rollback();
 	}
 
 	@Test
@@ -74,5 +80,15 @@ public class PackageServiceTest extends Arquillian
 		Package gtPackage = packageService.selectByCode("tp");
 
 		PackageMockData.validatePackage(gtPackage);
+	}
+
+	@Test
+	public void testOrphanedByLanguage()
+	{
+		languageService.rollback();
+
+		Package gtPackage = packageService.selectById(TEST_PACKAGE_ID);
+
+		PackageMockData.validateOrphanLanguagePackage(gtPackage);
 	}
 }
