@@ -101,7 +101,7 @@ public class MetaResource
 		else
 		{
 			// published meta file is retrieved from S3
-			S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
+			S3Object metaFile = godToolsS3Client.getMetaFile();
 
 			return Response
 					.ok(metaFile.getObjectContent())
@@ -138,7 +138,7 @@ public class MetaResource
 		else
 		{
 			// published meta file is retrieved from S3
-			S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
+			S3Object metaFile = godToolsS3Client.getMetaFile();
 
 			return Response
 					.ok(metaFile.getObjectContent())

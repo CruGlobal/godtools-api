@@ -58,7 +58,7 @@ public class PackageResource
 
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode, null);
+		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode);
 
 		return Response
 				.ok(packagesZippedFolder.getObjectContent())

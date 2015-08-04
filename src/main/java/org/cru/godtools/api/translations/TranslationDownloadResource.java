@@ -67,7 +67,7 @@ public class TranslationDownloadResource
 	{
 		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode, packageCode);
+		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
 
 		return Response
 				.ok(languagesZippedFolder.getObjectContent())

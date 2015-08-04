@@ -23,17 +23,7 @@ public class GodToolsS3Client
 
 	public S3Object getMetaFile()
 	{
-		return getMetaFile(null, null);
-	}
-
-	public S3Object getMetaFile(String languageCode)
-	{
-		return getMetaFile(languageCode, null);
-	}
-
-	public S3Object getMetaFile(String languageCode, String packageCode)
-	{
-		String metaKey = AmazonS3GodToolsConfig.getMetaKey(languageCode, packageCode);
+		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2();
 
 		log.info(String.format("Getting meta info file w/ key %s", metaKey));
 
@@ -43,12 +33,7 @@ public class GodToolsS3Client
 
 	public S3Object getLanguagesZippedFolder(String languageCode)
 	{
-		return getLanguagesZippedFolder(languageCode, null);
-	}
-
-	public S3Object getLanguagesZippedFolder(String languageCode, String packageCode)
-	{
-		String languagesKey = AmazonS3GodToolsConfig.getLanguagesKey(languageCode, packageCode);
+		String languagesKey = AmazonS3GodToolsConfig.getLanguagesKeyV2(languageCode);
 
 		log.info(String.format("Getting languages file w/ key %s", languagesKey));
 
@@ -58,12 +43,7 @@ public class GodToolsS3Client
 
 	public S3Object getPackagesZippedFolder(String languageCode)
 	{
-		return getPackagesZippedFolder(languageCode, null);
-	}
-
-	public S3Object getPackagesZippedFolder(String languageCode, String packageCode)
-	{
-		String packagesKey = AmazonS3GodToolsConfig.getPackagesKey(languageCode, packageCode);
+		String packagesKey = AmazonS3GodToolsConfig.getPackagesKeyV2(languageCode);
 
 		log.info(String.format("Getting packages file w/ key %s", packagesKey));
 
