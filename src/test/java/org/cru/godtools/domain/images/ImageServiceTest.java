@@ -26,7 +26,6 @@ public class ImageServiceTest extends Arquillian
 	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
 
 	@Inject
-	@JPAStandard
 	ImageService imageService;
 
 	@Deployment

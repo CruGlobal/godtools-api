@@ -28,7 +28,6 @@ public class LanguageServiceTest extends Arquillian
 	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
 
 	@Inject
-	@JPAStandard
 	LanguageService languageService;
 
 	@Deployment

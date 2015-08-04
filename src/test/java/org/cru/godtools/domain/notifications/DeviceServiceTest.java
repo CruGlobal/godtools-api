@@ -26,7 +26,6 @@ import java.util.UUID;
 public class DeviceServiceTest extends Arquillian
 {
 	@Inject
-	@JPAStandard
 	DeviceService deviceService;
 
 	UUID id = UUID.randomUUID();

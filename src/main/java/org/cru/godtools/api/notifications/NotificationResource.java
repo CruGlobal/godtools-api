@@ -29,11 +29,11 @@ import java.util.UUID;
 @Path("/notification")
 public class NotificationResource
 {
-	@Inject @JPAStandard
+	@Inject
 	private DeviceService deviceService;
-	@Inject @JPAStandard
+	@Inject
 	private AuthorizationService authorizationService;
-	@Inject @JPAStandard
+	@Inject
 	private NotificationService notificationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);

@@ -27,7 +27,6 @@ public class AuthorizationServiceTest extends Arquillian
 	public static final UUID TEST_AUTHORIZATION_ID = UUID.randomUUID();
 
 	@Inject
-	@JPAStandard
 	private AuthorizationService authorizationService;
 
 	@Deployment

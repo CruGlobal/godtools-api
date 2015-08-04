@@ -25,11 +25,11 @@ import java.util.UUID;
 public class LanguageResource
 {
 
-	@Inject @JPAStandard
+	@Inject
 	AuthorizationService authorizationService;
-	@Inject @JPAStandard
+	@Inject
 	LanguageService languageService;
-	@Inject @JPAStandard
+	@Inject
 	PackageService packageService;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;

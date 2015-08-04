@@ -25,7 +25,6 @@ import java.util.UUID;
 public class NotificationServiceTest extends Arquillian
 {
 	@Inject
-	@JPAStandard
 	NotificationService notificationService;
 
 	UUID id = UUID.randomUUID();

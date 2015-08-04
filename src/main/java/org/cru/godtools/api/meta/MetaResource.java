@@ -38,11 +38,11 @@ public class MetaResource
 	private MetaService metaService;
 	@Inject
 	private AuthorizationService authService;
-	@Inject @JPAStandard
+	@Inject
 	private PackageService packageService;
-	@Inject @JPAStandard
+	@Inject
 	private TranslationService translationService;
-	@Inject @JPAStandard
+	@Inject
 	private LanguageService languageService;
 
 	@Inject

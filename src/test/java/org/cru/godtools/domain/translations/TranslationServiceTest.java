@@ -31,11 +31,11 @@ public class TranslationServiceTest extends Arquillian
 	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
 
-	@Inject @JPAStandard
+	@Inject
 	TranslationService translationService;
-	@Inject @JPAStandard
+	@Inject
 	PackageService packageService;
-	@Inject @JPAStandard
+	@Inject
 	LanguageService languageService;
 
 	@Deployment
