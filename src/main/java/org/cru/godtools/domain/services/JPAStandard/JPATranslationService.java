@@ -9,6 +9,7 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
+import javax.persistence.*;
 import java.util.*;
 
 /**
@@ -17,462 +18,111 @@ import java.util.*;
 @JPAStandard
 public class JPATranslationService implements TranslationService
 {
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    @PersistenceContext(name = "gtDatasource")
+    EntityManager entityManager;
 
-    Logger log = Logger.getLogger(JPANotificationService.class);
+    public Translation selectById(UUID id) { return entityManager.find(Translation.class, id); }
 
-    private boolean autoCommit = true;
-
-    private static final SessionFactory buildSessionFactory()
-    {
-        try
-        {
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
-            standardServiceRegistryBuilder.applySettings(configuration.getProperties());
-            return configuration.buildSessionFactory( standardServiceRegistryBuilder.build());
-        }
-        catch( Throwable ex )
-        {
-            System.err.println("Initial SessionFactory creation failed");
-            throw new ExceptionInInitializerError(ex);
-        }
+    public List<Translation> selectAll() {
+        return entityManager.createQuery("FROM Translation").getResultList();
     }
 
-    public Translation selectById(UUID id)
-    {
-        log.info("Select Translation with Id " + id);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            Translation translation = (Translation) session.get(Translation.class, id);
-            txn.commit();
-
-            return translation;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+    public List<Translation> selectByLanguageId(UUID languageId) {
+        return entityManager.createQuery("FROM Translation WHERE language.id = :languageId")
+                .setParameter("languageId", languageId)
+                .getResultList();
     }
 
-    public List<Translation> selectAll()
-    {
-        log.info("Select All Translations");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List<Translation> translations = session.createQuery("FROM Translation").list();
-            txn.commit();
-
-            return translations;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public List<Translation> selectByLanguageId(UUID languageId)
-    {
-        log.info("Select Translation with Language Id " + languageId);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId")
-                    .setParameter("languageId",languageId)
-                    .list();
-            txn.commit();
-
-            return translations;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public List<Translation> selectByLanguageIdReleased(UUID languageId, boolean released)
-    {
-        log.info("Select Translation with Language Id " + languageId + " and released = " + released);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId AND released = :released")
+    public List<Translation> selectByLanguageIdReleased(UUID languageId, boolean released) {
+        return entityManager.createQuery("FROM Translation WHERE language.id = :languageId AND released = :released")
                     .setParameter("languageId", languageId)
-                    .setBoolean("released",released)
-                    .list();
-            txn.commit();
-
-            return translations;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+                    .setParameter("released", released)
+                    .getResultList();
     }
 
-    public List<Translation> selectByPackageId(UUID packageId)
-    {
-        log.info("Select Translation with Package Id " + packageId);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE gtPackage.id = :packageId")
+    public List<Translation> selectByPackageId(UUID packageId) {
+        return entityManager.createQuery("FROM Translation WHERE gtPackage.id = :packageId")
                     .setParameter("packageId",packageId)
-                    .list();
-            txn.commit();
-
-            return translations;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+                    .getResultList();
     }
 
-    public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId)
-    {
-        log.info("Select Translation with Language Id " + languageId + " and Package Id " + packageId);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try {
-            txn.begin();
-            List translations = session.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId")
+    public List<Translation> selectByLanguageIdPackageId(UUID languageId, UUID packageId) {
+        return entityManager.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId")
                     .setParameter("languageId", languageId)
                     .setParameter("packageId", packageId)
-                    .list();
-            txn.commit();
-
-            return translations;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+                    .getResultList();
     }
 
     public Translation selectByLanguageIdPackageIdVersionNumber(UUID languageId, UUID packageId, GodToolsVersion godToolsVersion)
     {
-        log.info("Select Translation with Language Id " + languageId + " and Package Id " + packageId + " and Version Number " + godToolsVersion.getTranslationVersion());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
         if(godToolsVersion == GodToolsVersion.LATEST_VERSION)
-        {
             return returnLatestVersion(languageId, packageId);
-        }
         else if(godToolsVersion == GodToolsVersion.LATEST_PUBLISHED_VERSION)
-        {
             return returnLatestPublishedVersion(languageId, packageId);
-        }
         else if(godToolsVersion == GodToolsVersion.DRAFT_VERSION)
-        {
             return returnDraftVersion(languageId, packageId);
-        }
         else
-        {
-            try
-            {
-                txn.begin();
-                Translation translation = (Translation) session.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId AND versionNumber = :versionNumber")
-                        .setParameter("languageId",languageId)
-                        .setParameter("packageId",packageId)
-                        .setInteger("versionNumber",godToolsVersion.getTranslationVersion())
-                        .uniqueResult();
-                txn.commit();
-
-                return translation;
-            }
-            catch (Exception e)
-            {
-                if(txn!=null)
-                {
-                    txn.rollback();
-                }
-
-                e.printStackTrace();
-
-                return null;
-            }
-            finally
-            {
-                if(session!=null)
-                {
-                    session.close();
-                }
-            }
-        }
+            return (Translation) entityManager.createQuery("FROM Translation WHERE language.id = :languageId AND gtPackage.id = :packageId AND versionNumber = :versionNumber")
+                    .setParameter("languageId",languageId)
+                    .setParameter("packageId",packageId)
+                    .setParameter("versionNumber",godToolsVersion.getTranslationVersion())
+                    .getSingleResult();
     }
 
     private Translation returnDraftVersion(UUID languageId, UUID packageId)
     {
         for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
-        {
             if(!translation.isReleased())
-            {
                 return translation;
-            }
-        }
         return null;
     }
 
     private Translation returnLatestPublishedVersion(UUID languageId, UUID packageId)
     {
         Translation highestFoundVersionTranslation = null;
-
         for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
-        {
             if(translation.isReleased() && (highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0))
-            {
                 highestFoundVersionTranslation = translation;
-            }
-        }
-
         return highestFoundVersionTranslation;
     }
 
     private Translation returnLatestVersion(UUID languageId, UUID packageId)
     {
         Translation highestFoundVersionTranslation = null;
-
         for(Translation translation : selectByLanguageIdPackageId(languageId, packageId))
-        {
             if(highestFoundVersionTranslation == null || translation.getVersionNumber().compareTo(highestFoundVersionTranslation.getVersionNumber()) > 0)
-            {
                 highestFoundVersionTranslation = translation;
-            }
-        }
-
         return highestFoundVersionTranslation;
     }
 
-    public void insert(Translation translation)
+    public void insert(Translation translation) { entityManager.persist(translation); }
+
+    public void update(Translation translation) { entityManager.merge(translation); }
+
+    public void setAutoCommit(boolean autoCommit) { /* Do Nothing */ }
+
+    public void rollback() { clear(); }
+
+    private void clear()
     {
-        log.info("Insert Translation with Id " + translation.getId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+        List<Translation> translations = selectAll();
 
-        try
-        {
-            txn.begin();
-            session.save(translation);
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
+        for(Translation translation : translations) {
+            List<PageStructure> pageStructures = entityManager.createQuery("FROM PageStructure WHERE translation.id = :translationId")
+                    .setParameter("translationId", translation.getId())
+                    .getResultList();
 
-            e.printStackTrace();
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
+            for (PageStructure pageStructure : pageStructures)
+                entityManager.find(PageStructure.class, pageStructure.getId()).setTranslation(null);
 
-    public void update(Translation translation)
-    {
-        log.info("Update Translation with Id " + translation.getId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+            List<TranslationElement> translationElements = entityManager.createQuery("FROM TranslationElement WHERE id.translation.id = :translationId")
+                    .setParameter("translationId", translation.getId())
+                    .getResultList();
 
-        try
-        {
-            txn.begin();
-            session.update(translation);
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
+            for (TranslationElement translationElement : translationElements)
+                entityManager.find(TranslationElement.class, translationElement.getId()).setTranslation(null);
 
-            e.printStackTrace();
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public void setAutoCommit(boolean autoCommit)
-    {
-        this.autoCommit = autoCommit;
-    }
-
-    public void rollback()
-    {
-        log.info("JPA Delete for Testing");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        if(!autoCommit)
-        {
-            try
-            {
-                txn.begin();
-
-                Translation persistentTranslation;
-                TranslationElement persistentTranslationElement;
-                List<Translation> translations = selectAll();
-
-                for(Translation translation : translations)
-                {
-                    List<PageStructure> pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
-                            .setParameter("translationId",translation.getId())
-                            .list();
-
-                    for(PageStructure pageStructure : pageStructures)
-                    {
-                        pageStructure.setTranslation(null);
-                        session.update(pageStructure);
-                    }
-
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE id.translation.id = :translationId")
-                            .setParameter("translationId",translation.getId())
-                            .list();
-
-                    for(TranslationElement translationElement : translationElements)
-                    {
-                        persistentTranslationElement = (TranslationElement) session.load(TranslationElement.class, translationElement.getId());
-                        session.delete(persistentTranslationElement);
-                    }
-
-
-                    persistentTranslation = (Translation) session.load(Translation.class, translation.getId());
-                    session.delete(persistentTranslation);
-                }
-
-                txn.commit();
-            }
-            catch (Exception e)
-            {
-                if(txn!=null)
-                {
-                    txn.rollback();
-                }
-
-                e.printStackTrace();
-            }
-            finally
-            {
-                if(session!=null)
-                {
-                    session.close();
-                }
-            }
+            entityManager.remove(entityManager.find(Translation.class, translation.getId()));
         }
     }
 }

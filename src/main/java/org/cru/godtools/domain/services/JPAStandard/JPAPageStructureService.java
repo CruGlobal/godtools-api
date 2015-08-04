@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
+import javax.persistence.*;
 import java.util.*;
 
 /**
@@ -16,246 +17,48 @@ import java.util.*;
 @JPAStandard
 public class JPAPageStructureService implements PageStructureService
 {
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    @PersistenceContext(name = "gtDatasource")
+    EntityManager entityManager;
 
-    Logger log = Logger.getLogger(JPANotificationService.class);
-
-    private boolean autoCommit = true;
-
-    private static final SessionFactory buildSessionFactory()
-    {
-        try
-        {
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
-            standardServiceRegistryBuilder.applySettings(configuration.getProperties());
-            return configuration.buildSessionFactory( standardServiceRegistryBuilder.build());
-        }
-        catch( Throwable ex )
-        {
-            System.err.println("Initial SessionFactory creation failed");
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
-
-    public PageStructure selectById(UUID id)
-    {
-        log.info("Select Page Structure with Id " + id);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            PageStructure pageStructure = (PageStructure) session.get(PageStructure.class, id);
-            txn.commit();
-
-            return pageStructure;
-        }
-        catch(Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
+    public PageStructure selectById(UUID id) { return entityManager.find(PageStructure.class, id); }
 
     public List<PageStructure> selectByTranslationId(UUID translationId)
     {
-        log.info("Selecting Page Structure with Translation Id " + translationId);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            List pageStructures = session.createQuery("FROM PageStructure WHERE translation.id = :translationId")
-                    .setParameter("translationId", translationId)
-                    .list();
-            txn.commit();
-
-            return pageStructures;
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+        return entityManager.createQuery("FROM PageStructure WHERE translation.id = :translationId")
+                .setParameter("translationId", translationId)
+                .getResultList();
     }
 
     public PageStructure selectByTranslationIdAndFilename(UUID translationId, String filename)
     {
-        log.info("Selecting Page Structure with Translation Id " + translationId + " and File Name " + filename);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            PageStructure pageStructure = (PageStructure) session.createQuery("FROM PageStructure WHERE translation.id = :translationId AND filename = :filename")
-                    .setParameter("translationId",translationId)
-                    .setString("filename",filename)
-                    .uniqueResult();
-            txn.commit();
-
-            return pageStructure;
-        }
-        catch(Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        }
-        finally {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+        return (PageStructure) entityManager.createQuery("FROM PageStructure WHERE translation.id = :translationId AND filename = :filename")
+                .setParameter("translationId",translationId)
+                .setParameter("filename",filename)
+                .getSingleResult();
     }
 
-    public void insert(PageStructure pageStructure)
+    public void insert(PageStructure pageStructure) { entityManager.persist(pageStructure); }
+
+    public void update(PageStructure pageStructure) { entityManager.merge(pageStructure); }
+
+    public void setAutoCommit(boolean autoCommit) { /* Do Nothing */ }
+
+    public void rollback() { clear(); }
+
+    private void clear()
     {
-        log.info("Inserting Page Structure with Id " + pageStructure.getId());
+        List<PageStructure> pageStructures = entityManager.createQuery("FROM PageStructure").getResultList();
 
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
+        for(PageStructure pageStructure : pageStructures)
         {
-            txn.begin();
-            session.save(pageStructure);
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
+            List<TranslationElement> translationElements = entityManager.createQuery("FROM TranslationElement WHERE pageStructure.id = :pageStructureId")
+                    .setParameter("pageStructureId",pageStructure.getId())
+                    .getResultList();
 
-            e.printStackTrace();
-        }
-        finally {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
+            for(TranslationElement translationElement : translationElements)
+                (entityManager.find(TranslationElement.class, translationElement)).setPageStructure(null);
 
-    public void update(PageStructure pageStructure)
-    {
-        log.info("Updating Page Structure with Id" + pageStructure.getId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            session.update(pageStructure);
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-        }
-        finally {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public void setAutoCommit(boolean autoCommit)
-    {
-        this.autoCommit = autoCommit;
-    }
-
-    public void rollback()
-    {
-        log.info("JPA Delete for Testing");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        if(!autoCommit)
-        {
-            try
-            {
-                txn.begin();
-
-                PageStructure persistentPageStructure;
-                List<PageStructure> pageStructures = session.createQuery("FROM PageStructure").list();
-
-                for(PageStructure pageStructure : pageStructures)
-                {
-                    List<TranslationElement> translationElements = session.createQuery("FROM TranslationElement WHERE pageStructure.id = :pageStructureId")
-                            .setParameter("pageStructureId",pageStructure.getId())
-                            .list();
-
-                    for(TranslationElement translationElement : translationElements)
-                    {
-                        translationElement.setPageStructure(null);
-                        session.update(translationElement);
-                    }
-
-                    persistentPageStructure = (PageStructure) session.load(PageStructure.class,pageStructure.getId());
-                    session.delete(persistentPageStructure);
-                }
-
-                txn.commit();
-            }
-            catch (Exception e)
-            {
-                if (txn!=null)
-                {
-                    txn.rollback();
-                }
-
-                e.printStackTrace();
-            }
-            finally {
-                if(session!=null)
-                {
-                    session.close();
-                }
-            }
+            entityManager.remove(entityManager.find(PageStructure.class, pageStructure.getId()));
         }
     }
 }
