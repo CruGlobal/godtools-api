@@ -11,6 +11,7 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
+import javax.persistence.*;
 import java.util.*;
 import java.util.List;
 
@@ -20,280 +21,81 @@ import java.util.List;
 @JPAStandard
 public class JPALanguageService implements LanguageService
 {
-    private static final SessionFactory sessionFactory = buildSessionFactory();
-
-    Logger log = Logger.getLogger(JPAImageService.class);
-
-    private boolean autoCommit = true;
-
-    private static final SessionFactory buildSessionFactory() {
-        try {
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
-            standardServiceRegistryBuilder.applySettings(configuration.getProperties());
-            return configuration.buildSessionFactory(standardServiceRegistryBuilder.build());
-        } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed");
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
+    @PersistenceContext(name = "gtDatasource")
+    EntityManager entityManager;
 
     public Language getOrCreateLanguage(LanguageCode languageCode)
     {
-        log.info("Selecting or Inserting Language " + languageCode.getLanguageCode());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+        Language language = selectByLanguageCode(languageCode);
 
-        try
+        if(language==null)
         {
-            Language language = selectByLanguageCode(languageCode);
-            if(language==null)
-            {
-                txn.begin();
-                language = new Language();
-                language.setId(UUID.randomUUID());
-                language.setFromLanguageCode(languageCode);
-                session.save(language);
-                txn.commit();
-            }
-
-            return language;
+            language = new Language();
+            language.setId(UUID.randomUUID());
+            language.setFromLanguageCode(languageCode);
+            entityManager.persist(language);
         }
-        catch(Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
 
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
+        return language;
     }
 
-    public List<Language> selectAllLanguages()
-    {
-        log.info("Getting All Languages");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+    public List<Language> selectAllLanguages() { return entityManager.createQuery("FROM Language").getResultList(); }
 
-        try {
-            txn.begin();
-            List languages = session.createQuery("FROM Language").list();
-            txn.commit();
-
-            return languages;
-        } catch (Exception e) {
-            if (txn != null) {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
-
-    public Language selectLanguageById(UUID id)
-    {
-        log.info("Getting Language with Id " + id);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try {
-            txn.begin();
-            Language language = (Language) session.get(Language.class,id);
-            txn.commit();
-
-            return language;
-        } catch (Exception e) {
-            if (txn != null) {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
+    public Language selectLanguageById(UUID id) { return entityManager.find(Language.class, id); }
 
     public Language selectByLanguageCode(LanguageCode languageCode)
     {
-        log.info("Getting Language with code " + languageCode.getLanguageCode());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+        List<Language> languages = entityManager.createQuery("FROM Language WHERE code = :code")
+                .setParameter("code", languageCode.getLanguageCode())
+                .getResultList();
 
-        try {
-            txn.begin();
-            List<Language> languages = session.createQuery("FROM Language WHERE code = :code")
-                    .setString("code",languageCode.getLanguageCode())
-                    .list();
-            txn.commit();
-
-            for(Language language : languages)
-            {
-                boolean matched = true;
-
-                if(!Strings.nullToEmpty(languageCode.getLocaleCode()).equals(Strings.nullToEmpty(language.getLocale()))) matched = false;
-                if(!Strings.nullToEmpty(languageCode.getSubculture()).equals(Strings.nullToEmpty(language.getSubculture()))) matched = false;
-
-                if(matched) return language;
-            }
-            return null;
-        }
-        catch (Exception e)
+        for(Language language : languages)
         {
-            if (txn != null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
-
-            return null;
+            if(Strings.nullToEmpty(languageCode.getLocaleCode()).equals(Strings.nullToEmpty(language.getLocale()))
+                    &&(Strings.nullToEmpty(languageCode.getSubculture()).equals(Strings.nullToEmpty(language.getSubculture()))))
+                return language;
         }
-        finally
-        {
-            if (session != null)
-            {
-                session.close();
-            }
-        }
+
+        return null;
     }
 
     public boolean languageExists(Language language)
     {
-        log.info("Exists? " + language.getId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+        Language foundLanguage = entityManager.find(Language.class, language.getId());
 
-        try {
-            txn.begin();
-            Language language1 = (Language) session.get(Language.class, language.getId());
-            txn.commit();
-            if(language1!=null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        catch(Exception e)
-        {
-            if(txn!=null)
-            {
-                txn.rollback();
-            }
-
-            e.printStackTrace();
+        if(foundLanguage!=null)
+            return true;
+        else
             return false;
-        }
-        finally
+    }
+
+    public void insert(Language language) { entityManager.persist(language); }
+
+    public void setAutoCommit(boolean autoCommit) { /* Do Nothing */ }
+
+    public void rollback() { clear(); }
+
+    private void clear()
+    {
+        List<Language> languages = selectAllLanguages();
+
+        for(Language language : languages)
         {
-            if(session!=null)
-            {
-                session.close();
-            }
-        }
-    }
+            List<Package> packages = entityManager.createQuery("FROM Package WHERE defaultLanguage.id = :languageId")
+                    .setParameter("languageId", language.getId())
+                    .getResultList();
 
-    public void insert(Language language)
-    {
-        log.info("Inserting Language with Id " + language.getId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
+            for(Package gtPackage : packages) {
+                (entityManager.find(Package.class,gtPackage.getId())).setDefaultLanguage(null);}
 
-        try {
-            txn.begin();
-            session.save(language);
-            txn.commit();
-        } catch (Exception e) {
-            if (txn != null) {
-                txn.rollback();
-            }
+            List<Translation> translations = entityManager.createQuery("FROM Translation WHERE language.id = :languageId")
+                    .setParameter("languageId", language.getId())
+                    .getResultList();
 
-            e.printStackTrace();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-    }
+            for(Translation translation : translations) {
+                (entityManager.find(Translation.class,translation.getId())).setLanguage(null);}
 
-    public void setAutoCommit(boolean autoCommit)
-    {
-        this.autoCommit = autoCommit;
-    }
-
-    public void rollback()
-    {
-        log.info("Deleting all Languages for JPA Testing");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        if(!autoCommit) {
-            try {
-                txn.begin();
-
-                Language persistentLanguage;
-                List<Language> languages = selectAllLanguages();
-
-                for(Language language : languages)
-                {
-                    List<Package> packages = session.createQuery("FROM Package WHERE defaultLanguage.id = :languageId")
-                            .setParameter("languageId", language.getId())
-                            .list();
-
-                    for(Package gtPackage : packages)
-                    {
-                        gtPackage.setDefaultLanguage(null);
-                        session.update(gtPackage);
-                    }
-
-                    List<Translation> translations = session.createQuery("FROM Translation WHERE language.id = :languageId")
-                            .setParameter("languageId", language.getId())
-                            .list();
-
-                    for(Translation translation : translations)
-                    {
-                        translation.setLanguage(null);
-                        session.update(translation);
-                    }
-
-                    persistentLanguage = (Language) session.load(Language.class, language.getId());
-                    session.delete(persistentLanguage);
-                }
-
-                txn.commit();
-            } catch (Exception e) {
-                if (txn != null) {
-                    txn.rollback();
-                }
-
-                e.printStackTrace();
-            } finally {
-                if (session != null) {
-                    session.close();
-                }
-            }
+            entityManager.remove(entityManager.find(Language.class, language.getId()));
         }
     }
 }
