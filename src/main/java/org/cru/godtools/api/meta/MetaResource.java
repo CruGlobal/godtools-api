@@ -48,9 +48,7 @@ public class MetaResource
 	{
 		log.info("Getting all meta info");
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
 		if(retrieveDrafts)
 		{
@@ -85,9 +83,7 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
 		if(retrieveDrafts)
 		{
@@ -122,9 +118,7 @@ public class MetaResource
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
 		if(retrieveDrafts)
 		{

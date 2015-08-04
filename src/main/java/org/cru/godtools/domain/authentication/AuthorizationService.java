@@ -19,6 +19,13 @@ public class AuthorizationService
 
 	Logger log = Logger.getLogger(AuthorizationService.class);
 
+	public boolean hasDraftAccess(String authCodeParam, String authCodeHeader)
+	{
+		Optional<AuthorizationRecord> authorizationRecord = getAuthorizationRecord(authCodeParam, authCodeHeader);
+		return authorizationRecord.isPresent() &&
+				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
+	}
+
     public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
     {
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
