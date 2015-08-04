@@ -56,6 +56,9 @@ public class DraftTranslation extends AbstractTranslation
 				currentTranslation.isReleased()) throw new IllegalStateException("No draft to be published");
 
 		downloadLatestTranslations(gtPackage,language,currentTranslation);
+
+		currentTranslation.setReleased(true);
+		translationService.update(currentTranslation);
 	}
 
 	private void downloadLatestTranslations(Package gtPackage, Language language, Translation currentTranslation)
@@ -73,8 +76,6 @@ public class DraftTranslation extends AbstractTranslation
 						downloadedTranslations.get(translatedElementId));
 			}
 		}
-		currentTranslation.setReleased(true);
-		translationService.update(currentTranslation);
 	}
 
 	/**
