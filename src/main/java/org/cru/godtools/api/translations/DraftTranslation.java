@@ -2,11 +2,11 @@ package org.cru.godtools.api.translations;
 
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.model.PageStructure;
 import org.cru.godtools.domain.services.PageStructureService;
-import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.model.TranslationElement;
 import org.cru.godtools.domain.services.TranslationElementService;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Translation;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationStatus;

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Multimap;
 import org.cru.godtools.domain.Simply;
-import org.cru.godtools.domain.packages.PageStructure;
-import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.model.PageStructure;
+import org.cru.godtools.domain.model.TranslationElement;
 import org.cru.godtools.domain.properties.GodToolsProperties;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Translation;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
 

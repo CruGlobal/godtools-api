@@ -8,10 +8,8 @@ import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationRetrieval;
 
 import org.cru.godtools.domain.GodToolsVersion;
-import org.cru.godtools.domain.packages.PixelDensity;
+import org.cru.godtools.domain.PixelDensity;
 import org.jboss.logging.Logger;
-
-import javax.inject.Inject;
 
 import java.util.Set;
 import java.util.zip.ZipOutputStream;

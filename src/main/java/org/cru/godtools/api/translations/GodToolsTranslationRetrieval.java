@@ -4,14 +4,15 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.cru.godtools.api.*;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
-import org.cru.godtools.domain.packages.PageStructure;
-import org.cru.godtools.domain.packages.PixelDensity;
+import org.cru.godtools.domain.model.PageStructure;
+import org.cru.godtools.domain.PixelDensity;
 
 import org.jboss.logging.Logger;
 import org.quartz.SchedulerException;

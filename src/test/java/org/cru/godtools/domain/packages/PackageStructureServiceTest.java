@@ -1,8 +1,8 @@
 package org.cru.godtools.domain.packages;
 
 import org.cru.godtools.domain.*;
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
-import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.*;
 import org.jboss.arquillian.testng.*;
@@ -52,7 +52,7 @@ public class PackageStructureServiceTest extends Arquillian
         packageService.setAutoCommit(false);
         packageStructureService.setAutoCommit(false);
 
-        Package gtPackage = PackageStructureMockData.persistPackage(packageService);
+        org.cru.godtools.domain.model.Package gtPackage = PackageStructureMockData.persistPackage(packageService);
         PackageStructureMockData.persistPackageStructure(packageStructureService, gtPackage);
     }
 

@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.languages;
 
 import com.google.common.base.Strings;
+import org.cru.godtools.domain.model.*;
 
 /**
  * Created by ryancarlson on 3/24/14.

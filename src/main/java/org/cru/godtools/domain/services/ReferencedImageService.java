@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.services;
 
-import org.cru.godtools.domain.images.*;
+import org.cru.godtools.domain.model.*;
+
 import java.util.List;
 import java.util.UUID;
 

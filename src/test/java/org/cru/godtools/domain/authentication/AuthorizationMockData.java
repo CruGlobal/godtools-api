@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.authentication;
 
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 
 /**

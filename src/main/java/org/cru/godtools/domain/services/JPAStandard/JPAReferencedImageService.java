@@ -1,7 +1,7 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
 import com.google.common.collect.*;
-import org.cru.godtools.domain.images.*;
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.hibernate.*;

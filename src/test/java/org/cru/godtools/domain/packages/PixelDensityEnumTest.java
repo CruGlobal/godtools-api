@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.domain.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

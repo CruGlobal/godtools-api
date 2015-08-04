@@ -2,16 +2,16 @@ package org.cru.godtools.api.meta;
 
 import com.google.common.base.Strings;
 import org.cru.godtools.domain.GodToolsVersion;
-import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.services.LanguageService;
-import org.cru.godtools.domain.packages.Package;
-import org.cru.godtools.domain.packages.PackageList;
+import org.cru.godtools.domain.model.Package;
+import org.cru.godtools.domain.lists.PackageList;
 import org.cru.godtools.domain.services.PackageService;
-import org.cru.godtools.domain.packages.PackageStructureList;
+import org.cru.godtools.domain.lists.PackageStructureList;
 import org.cru.godtools.domain.services.PackageStructureService;
-import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.domain.translations.TranslationList;
+import org.cru.godtools.domain.model.Translation;
+import org.cru.godtools.domain.lists.TranslationList;
 import org.cru.godtools.domain.services.TranslationService;
 import org.sql2o.Connection;
 

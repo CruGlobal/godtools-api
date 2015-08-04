@@ -1,8 +1,8 @@
 package org.cru.godtools.domain;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.cru.godtools.domain.packages.PackageStructure;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.PackageStructure;
+import org.cru.godtools.domain.model.Translation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

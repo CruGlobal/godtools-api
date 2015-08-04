@@ -1,5 +1,6 @@
 package org.cru.godtools.api.meta;
 
+import org.cru.godtools.api.*;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
@@ -17,7 +18,6 @@ import org.testng.annotations.Test;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.math.*;
-import java.sql.SQLException;
 
 import java.util.Set;
 

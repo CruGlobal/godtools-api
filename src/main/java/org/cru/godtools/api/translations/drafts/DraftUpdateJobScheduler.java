@@ -1,7 +1,7 @@
 package org.cru.godtools.api.translations.drafts;
 
 import com.google.common.collect.Sets;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Translation;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;

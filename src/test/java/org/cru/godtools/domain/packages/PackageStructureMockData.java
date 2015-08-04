@@ -1,5 +1,7 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.domain.model.*;
+import org.cru.godtools.domain.model.Package;
 import org.cru.godtools.domain.services.*;
 import org.testng.*;
 
@@ -8,7 +10,7 @@ import org.testng.*;
  */
 public class PackageStructureMockData
 {
-    public static Package persistPackage(PackageService packageService)
+    public static org.cru.godtools.domain.model.Package persistPackage(PackageService packageService)
     {
         Package gtPackage = new Package();
         gtPackage.setId(PackageStructureServiceTest.TEST_PACKAGE_ID);

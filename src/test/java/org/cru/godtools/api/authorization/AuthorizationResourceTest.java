@@ -1,7 +1,7 @@
 package org.cru.godtools.api.authorization;
 
+import org.cru.godtools.api.*;
 import org.cru.godtools.domain.TestClockImpl;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.tests.*;
@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 
 /**
  * Created by ryancarlson on 7/31/14.

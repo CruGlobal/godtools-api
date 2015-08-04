@@ -1,22 +1,22 @@
 package org.cru.godtools.api.translations;
 
-import org.cru.godtools.domain.packages.Package;
-import org.cru.godtools.domain.images.Image;
+import org.cru.godtools.domain.model.Package;
+import org.cru.godtools.domain.model.Image;
 import org.cru.godtools.domain.services.ImageService;
-import org.cru.godtools.domain.images.ReferencedImage;
+import org.cru.godtools.domain.model.ReferencedImage;
 import org.cru.godtools.domain.services.ReferencedImageService;
-import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.services.LanguageService;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.ImageReader;
 import org.cru.godtools.domain.services.PackageService;
-import org.cru.godtools.domain.packages.PackageStructure;
+import org.cru.godtools.domain.model.PackageStructure;
 import org.cru.godtools.domain.services.PackageStructureService;
-import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.model.PageStructure;
 import org.cru.godtools.domain.services.PageStructureService;
-import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.model.TranslationElement;
 import org.cru.godtools.domain.services.TranslationElementService;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Translation;
 import org.cru.godtools.domain.services.TranslationService;
 import org.cru.godtools.utils.XmlDocumentFromFile;
 

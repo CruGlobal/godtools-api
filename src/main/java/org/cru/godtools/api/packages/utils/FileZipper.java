@@ -1,10 +1,10 @@
 package org.cru.godtools.api.packages.utils;
 
 import org.cru.godtools.domain.GuavaHashGenerator;
-import org.cru.godtools.domain.images.Image;
-import org.cru.godtools.domain.packages.PackageStructure;
-import org.cru.godtools.domain.packages.PageStructure;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Image;
+import org.cru.godtools.domain.model.PackageStructure;
+import org.cru.godtools.domain.model.PageStructure;
+import org.cru.godtools.domain.model.Translation;
 import org.w3c.dom.Document;
 
 
@@ -17,7 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;

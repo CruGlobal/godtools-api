@@ -2,10 +2,18 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-    <persistence-unit name="gtDatasource">
+    <persistence-unit name="gtDatasource" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>java:jboss/datasources/GodTools</jta-data-source>
         <properties>
+            <!--Hardcoded Connection; NOT WANTED!-->
+            <!--<property name="javax.persistence.jdbc.driver" value= "org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.url" value = "jdbc:postgresql://localhost:5433/godtools"/>
+            <property name="javax.persistence.jdbc.user" value = "godtoolsuser"/>
+            <property name="javax.persistence.jdbc.password" value = "godtoolsuser"/>-->
+            <!--SQL Dialect-->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+            <!--Other Properties-->
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
         </properties>

@@ -1,7 +1,7 @@
 package org.cru.godtools.domain.services;
 
-import org.cru.godtools.domain.packages.Package;
-import org.sql2o.Connection;
+import org.cru.godtools.domain.model.Package;
+
 import java.util.List;
 import java.util.UUID;
 

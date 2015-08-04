@@ -1,7 +1,7 @@
 package org.cru.godtools.api.translations.model;
 
 import com.google.common.collect.Maps;
-import org.cru.godtools.domain.packages.TranslationElement;
+import org.cru.godtools.domain.model.TranslationElement;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collection;

@@ -8,7 +8,7 @@ import org.cru.godtools.domain.services.PackageService;
 import org.cru.godtools.domain.services.PackageStructureService;
 import org.cru.godtools.domain.services.PageStructureService;
 import org.cru.godtools.domain.services.TranslationElementService;
-import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.model.Translation;
 import org.cru.godtools.domain.services.TranslationService;
 import org.jboss.arquillian.testng.Arquillian;
 

@@ -1,8 +1,7 @@
 package org.cru.godtools.domain.services.Sql2oStandard;
 
-import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.model.Package;
 import org.cru.godtools.domain.services.*;
-import org.sql2o.*;
 import org.sql2o.Connection;
 
 import javax.inject.*;
@@ -22,12 +21,12 @@ public class Sql2oPackageService implements PackageService
         this.sqlConnection = sqlConnection;
     }
 
-    public org.cru.godtools.domain.packages.Package selectById(UUID id)
+    public Package selectById(UUID id)
     {
         return sqlConnection.createQuery(PackageQueries.selectById)
                 .setAutoDeriveColumnNames(true)
                 .addParameter("id", id)
-                .executeAndFetchFirst(org.cru.godtools.domain.packages.Package.class);
+                .executeAndFetchFirst(Package.class);
     }
 
     public Package selectByCode(String code)

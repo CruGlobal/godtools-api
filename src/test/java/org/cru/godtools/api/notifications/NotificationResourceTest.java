@@ -1,7 +1,7 @@
 package org.cru.godtools.api.notifications;
 
 import junit.framework.Assert;
-import org.cru.godtools.api.utilities.ClockImpl;
+import org.cru.godtools.api.*;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
-import java.sql.SQLException;
 
 /**
  * Created by matthewfrederick on 1/5/15.

@@ -1,9 +1,7 @@
 package org.cru.godtools.domain.services;
 
-import org.cru.godtools.domain.images.*;
-import org.sql2o.Connection;
+import org.cru.godtools.domain.model.*;
 
-import javax.inject.Inject;
 import java.util.UUID;
 
 /**

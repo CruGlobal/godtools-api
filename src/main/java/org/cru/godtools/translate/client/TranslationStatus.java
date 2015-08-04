@@ -1,7 +1,7 @@
 package org.cru.godtools.translate.client;
 
 
-import org.cru.godtools.domain.packages.PageStructure;
+import org.cru.godtools.domain.model.PageStructure;
 
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;

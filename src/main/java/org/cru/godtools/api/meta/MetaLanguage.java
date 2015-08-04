@@ -2,13 +2,12 @@ package org.cru.godtools.api.meta;
 
 import com.google.common.collect.Sets;
 import org.cru.godtools.domain.GodToolsVersion;
-import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import java.math.BigDecimal;
 import java.util.Set;
 
 /**

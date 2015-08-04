@@ -317,7 +317,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>org.cru.godtools.domain.DatabaseMigration</mainClass>
+                            <mainClass>org.cru.godtools.domain.database.DatabaseMigration</mainClass>
                             <commandlineArgs>
                                 ${migrations.execute} ${migrations.environment}
                             </commandlineArgs>

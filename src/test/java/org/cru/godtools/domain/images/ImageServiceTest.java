@@ -1,8 +1,8 @@
 package org.cru.godtools.domain.images;
 
 import org.cru.godtools.domain.*;
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
-import org.cru.godtools.domain.services.annotations.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;

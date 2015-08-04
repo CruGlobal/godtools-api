@@ -1,7 +1,7 @@
 package org.cru.godtools.domain.packages;
 
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
-import org.cru.godtools.domain.translations.*;
 import org.cru.godtools.utils.*;
 import org.testng.*;
 

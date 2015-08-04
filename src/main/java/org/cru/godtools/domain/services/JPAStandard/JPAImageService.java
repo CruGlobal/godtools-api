@@ -1,6 +1,6 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
-import org.cru.godtools.domain.images.*;
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
 import org.hibernate.*;
@@ -8,7 +8,6 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
-import java.sql.*;
 import java.util.*;
 
 /**

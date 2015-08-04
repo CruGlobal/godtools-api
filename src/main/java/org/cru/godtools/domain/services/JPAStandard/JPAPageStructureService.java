@@ -1,9 +1,8 @@
 package org.cru.godtools.domain.services.JPAStandard;
 
-import org.cru.godtools.domain.packages.*;
+import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.annotations.*;
-import org.cru.godtools.domain.translations.*;
 import org.hibernate.*;
 import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
