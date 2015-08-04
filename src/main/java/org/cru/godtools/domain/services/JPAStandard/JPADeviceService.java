@@ -8,6 +8,7 @@ import org.hibernate.boot.registry.*;
 import org.hibernate.cfg.*;
 import org.jboss.logging.*;
 
+import javax.persistence.*;
 import java.util.*;
 
 /**
@@ -17,127 +18,23 @@ import java.util.*;
 public class JPADeviceService implements DeviceService
 {
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    @PersistenceContext(name = "gtDatasource")
+    EntityManager entityManager;
 
-    Logger log = Logger.getLogger(JPADeviceService.class);
+    public Device selectById(UUID id) { return entityManager.find(Device.class, id); }
 
-    private boolean autoCommit = true;
+    public void insert(Device device) { entityManager.persist(device); }
 
-    private static final SessionFactory buildSessionFactory()
+    public void setAutoCommit(boolean autoCommit) { /*Do Nothing*/ }
+
+    public void rollback() { clear(); }
+
+    private void clear()
     {
-        try
-        {
-            Configuration configuration = new Configuration().configure();
-            StandardServiceRegistryBuilder standardServiceRegistryBuilder = new StandardServiceRegistryBuilder();
-            standardServiceRegistryBuilder.applySettings(configuration.getProperties());
-            return configuration.buildSessionFactory( standardServiceRegistryBuilder.build());
-        }
-        catch( Throwable ex )
-        {
-            System.err.println("Initial SessionFactory creation failed");
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
+        List<Device> devices = entityManager.createQuery("FROM Device").getResultList();
 
-    public Device selectById(UUID id)
-    {
-        log.info("Getting device for: " + id);
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            Device device = (Device) session.get(Device.class, id);
-            txn.commit();
-
-            return device;
-        }
-        catch (Exception e)
-        {
-            if (txn != null)
-            {
-                txn.rollback();
-            }
-            e.printStackTrace();
-
-            return null;
-        }
-        finally
-        {
-            if (session != null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public void insert(Device device)
-    {
-        log.info("New device for " + device.getDeviceId());
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        try
-        {
-            txn.begin();
-            session.save(device);
-            txn.commit();
-        }
-        catch (Exception e)
-        {
-            if (txn != null)
-            {
-                txn.rollback();
-            }
-            e.printStackTrace();
-        }
-        finally
-        {
-            if (session != null)
-            {
-                session.close();
-            }
-        }
-    }
-
-    public void setAutoCommit(boolean autoCommit)
-    {
-        this.autoCommit = autoCommit;
-    }
-
-    public void rollback()
-    {
-        log.info("JPA Delete for Testing");
-        Session session = sessionFactory.openSession();
-        Transaction txn = session.getTransaction();
-
-        if(!autoCommit)
-        {
-            try {
-                txn.begin();
-
-                Device persistentDevice;
-                List<Device> devices = session.createQuery("FROM Device").list();
-
-                for(Device device : devices)
-                {
-                    persistentDevice = (Device) session.load(Device.class, device.getId());
-                    session.delete(persistentDevice);
-                }
-
-                txn.commit();
-            } catch (Exception e) {
-                if (txn != null) {
-                    txn.rollback();
-                }
-                e.printStackTrace();
-            } finally {
-                if (session != null) {
-                    session.close();
-                }
-            }
-        }
+        for(Device device : devices){
+            entityManager.remove(entityManager.find(Device.class,device.getId()));}
     }
 
 }
