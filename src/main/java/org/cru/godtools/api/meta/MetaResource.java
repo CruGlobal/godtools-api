@@ -37,7 +37,7 @@ public class MetaResource
 	@Inject
 	GodToolsS3Client godToolsS3Client;
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = Logger.getLogger(getClass());
 
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
