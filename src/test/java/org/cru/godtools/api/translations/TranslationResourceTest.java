@@ -1,8 +1,8 @@
 package org.cru.godtools.api.translations;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
-import org.cru.godtools.api.*;
 import org.cru.godtools.api.packages.utils.FileZipper;
+import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;

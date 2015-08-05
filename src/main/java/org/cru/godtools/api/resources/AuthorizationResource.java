@@ -1,4 +1,4 @@
-package org.cru.godtools.api;
+package org.cru.godtools.api.resources;
 
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.Simply;

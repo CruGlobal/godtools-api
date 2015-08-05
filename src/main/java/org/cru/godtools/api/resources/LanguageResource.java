@@ -1,4 +1,4 @@
-package org.cru.godtools.api;
+package org.cru.godtools.api.resources;
 
 import com.google.common.base.Optional;
 import org.cru.godtools.api.translations.GodToolsTranslationService;

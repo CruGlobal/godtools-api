@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
-import org.cru.godtools.api.*;
+import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.api.cache.GodToolsCache;
 import org.cru.godtools.api.translations.model.ConfigFile;
