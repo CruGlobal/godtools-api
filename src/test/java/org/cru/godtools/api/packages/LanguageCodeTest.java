@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages.utils;
+package org.cru.godtools.api.packages;
 
 import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.languages.LanguageCode;

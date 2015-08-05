@@ -1,7 +1,8 @@
-package org.cru.godtools.api.translations;
+package org.cru.godtools.api.resources;
 
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.resources.*;
+import org.cru.godtools.api.translations.*;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;

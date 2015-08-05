@@ -6,7 +6,9 @@ import org.cru.godtools.api.translations.NewTranslationCreation;
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.annotations.*;
 
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -19,15 +21,16 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 10/13/14.
  */
+@Stateless
 @Path("/languages")
-public class LanguageResource
+public class LanguageResource extends GodToolsBaseResource
 {
 
-	@Inject
+	@Inject @JPAStandard
 	AuthorizationService authorizationService;
-	@Inject
+	@Inject @JPAStandard
 	LanguageService languageService;
-	@Inject
+	@Inject @JPAStandard
 	PackageService packageService;
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;

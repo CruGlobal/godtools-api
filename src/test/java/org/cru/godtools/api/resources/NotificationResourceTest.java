@@ -1,4 +1,4 @@
-package org.cru.godtools.api.notifications;
+package org.cru.godtools.api.resources;
 
 import junit.framework.Assert;
 import org.cru.godtools.api.resources.*;

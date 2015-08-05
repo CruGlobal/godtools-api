@@ -1,4 +1,4 @@
-package org.cru.godtools.api.packages.utils;
+package org.cru.godtools.api.packages;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.testng.Assert;

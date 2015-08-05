@@ -1,6 +1,7 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api.resources;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.cru.godtools.api.packages.*;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.model.ContentsFile;

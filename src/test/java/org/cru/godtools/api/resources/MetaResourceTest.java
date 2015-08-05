@@ -1,5 +1,6 @@
-package org.cru.godtools.api.meta;
+package org.cru.godtools.api.resources;
 
+import org.cru.godtools.api.meta.*;
 import org.cru.godtools.api.resources.*;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;

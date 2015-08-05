@@ -1,4 +1,4 @@
-package org.cru.godtools.api.authorization;
+package org.cru.godtools.api.resources;
 
 import org.cru.godtools.api.resources.*;
 import org.cru.godtools.domain.TestClockImpl;
