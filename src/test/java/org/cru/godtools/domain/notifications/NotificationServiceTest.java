@@ -16,6 +16,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.UUID;
 
 /**
@@ -25,6 +26,9 @@ public class NotificationServiceTest extends Arquillian
 {
 	@Inject
 	NotificationService notificationService;
+
+	@Inject
+	org.sql2o.Connection sqlConnection;
 
 	UUID id = UUID.randomUUID();
 
@@ -49,7 +53,14 @@ public class NotificationServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		notificationService.setAutoCommit(false);
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 		notificationService.insertNotification(createNotification(id));
 
 	}
@@ -57,7 +68,14 @@ public class NotificationServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		notificationService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 	}
 
 	@Test

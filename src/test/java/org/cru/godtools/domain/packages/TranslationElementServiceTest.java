@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +41,8 @@ public class TranslationElementServiceTest extends Arquillian
 	TranslationElementService translationElementService;
 	@Inject
 	PageStructureService pageStructureService;
+	@Inject
+	org.sql2o.Connection sqlConnection;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -62,7 +65,14 @@ public class TranslationElementServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		packageService.setAutoCommit(false);
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 		Language language = TranslationMockData.persistLanguage(languageService);
 		Package gtPackage = TranslationMockData.persistPackage(packageService);
 		Translation translation = TranslationMockData.persistTranslation(translationService, language, gtPackage);
@@ -73,7 +83,14 @@ public class TranslationElementServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		packageService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 	}
 
 	@Test

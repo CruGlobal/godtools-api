@@ -16,6 +16,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.UUID;
 
 /**
@@ -30,6 +31,8 @@ public class PackageServiceTest extends Arquillian
 	PackageService packageService;
 	@Inject
 	LanguageService languageService;
+	@Inject
+	org.sql2o.Connection sqlConnection;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -52,8 +55,14 @@ public class PackageServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		packageService.setAutoCommit(false);
-		languageService.setAutoCommit(false);
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 
 		Language language = PackageMockData.persistLanguage(languageService);
 		PackageMockData.persistPackage(packageService, language);
@@ -62,8 +71,14 @@ public class PackageServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		packageService.rollback();
-		languageService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 	}
 
 	@Test

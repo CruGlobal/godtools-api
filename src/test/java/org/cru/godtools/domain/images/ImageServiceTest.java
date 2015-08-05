@@ -1,6 +1,7 @@
 package org.cru.godtools.domain.images;
 
 import org.cru.godtools.domain.*;
+import org.cru.godtools.domain.authentication.*;
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.tests.*;
@@ -9,12 +10,14 @@ import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.sql2o.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.UUID;
 
 /**
@@ -27,6 +30,9 @@ public class ImageServiceTest extends Arquillian
 
 	@Inject
 	ImageService imageService;
+
+	@Inject
+	org.sql2o.Connection sqlConnection;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -49,7 +55,14 @@ public class ImageServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		imageService.setAutoCommit(false);
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+            /*Do Nothing*/
+		}
 		ImageMockData.persistImage(imageService);
 		ImageMockData.persistRetinaImage(imageService);
 	}
@@ -57,7 +70,14 @@ public class ImageServiceTest extends Arquillian
 	@AfterMethod
 	public void cleanup()
 	{
-		imageService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 	}
 
 	@Test

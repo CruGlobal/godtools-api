@@ -13,6 +13,7 @@ import org.testng.*;
 import org.testng.annotations.*;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -27,6 +28,8 @@ public class PackageStructureServiceTest extends Arquillian
     PackageStructureService packageStructureService;
     @Inject
     PackageService packageService;
+    @Inject
+    org.sql2o.Connection sqlConnection;
 
     @Deployment
     public static JavaArchive createDeployment()
@@ -49,8 +52,14 @@ public class PackageStructureServiceTest extends Arquillian
     @BeforeMethod
     public void setup()
     {
-        packageService.setAutoCommit(false);
-        packageStructureService.setAutoCommit(false);
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(false);
+        }
+        catch(SQLException e)
+        {
+				/*Do Nothing*/
+        }
 
         org.cru.godtools.domain.model.Package gtPackage = PackageStructureMockData.persistPackage(packageService);
         PackageStructureMockData.persistPackageStructure(packageStructureService, gtPackage);
@@ -59,8 +68,14 @@ public class PackageStructureServiceTest extends Arquillian
     @AfterMethod
     public void cleanup()
     {
-        packageService.rollback();
-        packageStructureService.rollback();
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+				/*Do Nothing*/
+        }
     }
 
     //@Test

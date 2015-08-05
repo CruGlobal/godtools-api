@@ -16,6 +16,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +30,9 @@ public class LanguageServiceTest extends Arquillian
 
 	@Inject
 	LanguageService languageService;
+
+	@Inject
+	org.sql2o.Connection sqlConnection;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -51,14 +55,28 @@ public class LanguageServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		languageService.setAutoCommit(false);
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 		LanguageMockData.persistLanguages(languageService);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		languageService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+				/*Do Nothing*/
+		}
 	}
 
     @Test

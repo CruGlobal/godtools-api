@@ -10,6 +10,8 @@ import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.sql2o.*;
+import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -17,6 +19,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import java.sql.*;
 import java.util.UUID;
 
 /**
@@ -28,6 +31,9 @@ public class AuthorizationServiceTest extends Arquillian
 
 	@Inject
 	private AuthorizationService authorizationService;
+
+	@Inject
+	Connection sqlConnection;
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -50,15 +56,28 @@ public class AuthorizationServiceTest extends Arquillian
 	@BeforeMethod
 	public void setup()
 	{
-		authorizationService.setAutoCommit(false);
-
+		try
+		{
+			sqlConnection.getJdbcConnection().setAutoCommit(false);
+		}
+		catch(SQLException e)
+		{
+            /*Do Nothing*/
+		}
 		AuthorizationMockData.persistAuthorization(authorizationService);
 	}
 
 	@AfterMethod
 	public void cleanup()
 	{
-		authorizationService.rollback();
+		try
+		{
+			sqlConnection.getJdbcConnection().rollback();
+		}
+		catch(SQLException e)
+		{
+            /*Do Nothing*/
+		}
 	}
 
 	//TODO Write test cases for JPA mapping

@@ -12,6 +12,7 @@ import org.jboss.shrinkwrap.api.spec.*;
 import org.testng.annotations.*;
 
 import javax.inject.*;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -28,6 +29,8 @@ public class PageStructureServiceTest extends Arquillian
     TranslationService translationService;
     @Inject
     PageStructureService pageStructureService;
+    @Inject
+    org.sql2o.Connection sqlConnection;
 
     @Deployment
     public static JavaArchive createDeployment()
@@ -50,8 +53,14 @@ public class PageStructureServiceTest extends Arquillian
     @BeforeMethod
     public void setup()
     {
-        translationService.setAutoCommit(false);
-        pageStructureService.setAutoCommit(false);
+        try
+        {
+            sqlConnection.getJdbcConnection().setAutoCommit(false);
+        }
+        catch(SQLException e)
+        {
+				/*Do Nothing*/
+        }
         Translation translation = PageStructureMockData.persistTranslation(translationService);
         PageStructureMockData.persistPageStructures(pageStructureService, translation);
     }
@@ -59,8 +68,14 @@ public class PageStructureServiceTest extends Arquillian
     @AfterMethod
     public void cleanup()
     {
-        translationService.rollback();
-        pageStructureService.rollback();
+        try
+        {
+            sqlConnection.getJdbcConnection().rollback();
+        }
+        catch(SQLException e)
+        {
+				/*Do Nothing*/
+        }
     }
 
     @Test
