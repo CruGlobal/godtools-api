@@ -1,9 +1,7 @@
-package org.cru.godtools.domain.translations;
+package org.cru.godtools.domain.services.sql2o;
 
 import org.cru.godtools.domain.*;
-
 import org.cru.godtools.domain.model.*;
-import org.cru.godtools.domain.model.Package;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -19,26 +17,20 @@ import org.testng.annotations.Test;
 
 import javax.inject.Inject;
 import java.sql.*;
-import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by ryancarlson on 4/2/14.
+ * Created by matthewfrederick on 12/30/14.
  */
-public class TranslationServiceTest extends Arquillian
+public class DeviceServiceTest extends Arquillian
 {
-	public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
-	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
-	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
+	@Inject
+	DeviceService deviceService;
 
 	@Inject
-	TranslationService translationService;
-	@Inject
-	PackageService packageService;
-	@Inject
-	LanguageService languageService;
-	@Inject
 	org.sql2o.Connection sqlConnection;
+
+	UUID id = UUID.randomUUID();
 
 	@Deployment
 	public static JavaArchive createDeployment()
@@ -69,9 +61,7 @@ public class TranslationServiceTest extends Arquillian
 		{
 				/*Do Nothing*/
 		}
-		Language language = TranslationMockData.persistLanguage(languageService);
-		Package gtPackage = TranslationMockData.persistPackage(packageService);
-		TranslationMockData.persistTranslation(translationService, language, gtPackage);
+		deviceService.insert(createNotificationRegistration(id));
 	}
 
 	@AfterMethod
@@ -88,28 +78,20 @@ public class TranslationServiceTest extends Arquillian
 	}
 
 	@Test
-	public void testSelectByLanguageId()
+	public void testInsertNotification()
 	{
-		List<Translation> translations = translationService.selectByLanguageId(TEST_LANGUAGE_ID);
+		Device returnedDevice = deviceService.selectById(id);
+		Assert.assertNotNull(returnedDevice);
 
-		Assert.assertEquals(translations.size(), 1);
-		TranslationMockData.validateTranslation(translations.get(0));
 	}
 
-	@Test
-	public void testSelectByPackageId()
+	private Device createNotificationRegistration(UUID id)
 	{
-		List<Translation> translations = translationService.selectByPackageId(TEST_PACKAGE_ID);
+		Device device = new Device();
+		device.setId(id);
+		device.setDeviceId("Device");
+		device.setRegistrationId("Registration");
 
-		Assert.assertEquals(translations.size(), 1);
-		TranslationMockData.validateTranslation(translations.get(0));
-	}
-
-	@Test
-	public void testSelectByLanguageIdPackageId()
-	{
-		List<Translation> translation = translationService.selectByLanguageIdPackageId(TEST_LANGUAGE_ID, TEST_PACKAGE_ID);
-
-		TranslationMockData.validateTranslation(translation.get(0));
+		return device;
 	}
 }

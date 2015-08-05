@@ -1,7 +1,8 @@
-package org.cru.godtools.domain.images;
+package org.cru.godtools.domain.services.mockdata;
 
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.sql2o.*;
 import org.testng.Assert;
 
 /**

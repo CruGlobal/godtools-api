@@ -1,4 +1,4 @@
-package org.cru.godtools.domain.notifications;
+package org.cru.godtools.domain.services.sql2o;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;

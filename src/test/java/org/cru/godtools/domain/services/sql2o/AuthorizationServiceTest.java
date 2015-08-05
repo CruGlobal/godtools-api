@@ -1,16 +1,17 @@
-package org.cru.godtools.domain.authentication;
+package org.cru.godtools.domain.services.sql2o;
 
+import org.cru.godtools.domain.authentication.*;
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
+import org.cru.godtools.domain.services.mockdata.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.sql2o.*;
 import org.sql2o.Connection;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

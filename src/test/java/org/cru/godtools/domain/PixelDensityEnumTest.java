@@ -1,4 +1,4 @@
-package org.cru.godtools.domain.packages;
+package org.cru.godtools.domain;
 
 import org.cru.godtools.domain.*;
 import org.testng.Assert;

@@ -1,7 +1,8 @@
-package org.cru.godtools.domain.authentication;
+package org.cru.godtools.domain.services.mockdata;
 
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.sql2o.*;
 
 /**
  * Created by ryancarlson on 4/3/14.

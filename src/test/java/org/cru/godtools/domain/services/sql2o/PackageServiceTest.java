@@ -1,16 +1,16 @@
-package org.cru.godtools.domain.images;
+package org.cru.godtools.domain.services.sql2o;
 
 import org.cru.godtools.domain.*;
-import org.cru.godtools.domain.authentication.*;
 import org.cru.godtools.domain.model.*;
+import org.cru.godtools.domain.model.Package;
 import org.cru.godtools.domain.services.*;
+import org.cru.godtools.domain.services.mockdata.*;
 import org.cru.godtools.tests.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.testng.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.sql2o.*;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -21,16 +21,17 @@ import java.sql.*;
 import java.util.UUID;
 
 /**
- * Created by ryancarlson on 4/1/14.
+ * Created by ryancarlson on 4/2/14.
  */
-public class ImageServiceTest extends Arquillian
+public class PackageServiceTest extends Arquillian
 {
-	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
-	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
+	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
+	public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
 
 	@Inject
-	ImageService imageService;
-
+	PackageService packageService;
+	@Inject
+	LanguageService languageService;
 	@Inject
 	org.sql2o.Connection sqlConnection;
 
@@ -61,10 +62,11 @@ public class ImageServiceTest extends Arquillian
 		}
 		catch(SQLException e)
 		{
-            /*Do Nothing*/
+				/*Do Nothing*/
 		}
-		ImageMockData.persistImage(imageService);
-		ImageMockData.persistRetinaImage(imageService);
+
+		Language language = PackageMockData.persistLanguage(languageService);
+		PackageMockData.persistPackage(packageService, language);
 	}
 
 	@AfterMethod
@@ -83,16 +85,26 @@ public class ImageServiceTest extends Arquillian
 	@Test
 	public void testSelectById()
 	{
-		Image image = imageService.selectById(TEST_IMAGE_ID);
+		Package gtPackage = packageService.selectById(TEST_PACKAGE_ID);
 
-		ImageMockData.validateImage(image);
+		PackageMockData.validatePackage(gtPackage);
 	}
 
 	@Test
-	public void testUpdate() throws Exception
+	public void testSelectByCode()
 	{
-		ImageMockData.modifyImage(imageService);
-		ImageMockData.validateModifiedImage(imageService.selectById(TEST_IMAGE_ID));
+		Package gtPackage = packageService.selectByCode("tp");
+
+		PackageMockData.validatePackage(gtPackage);
 	}
 
+	//@Test
+	public void testOrphanedByLanguage()
+	{
+		languageService.rollback();
+
+		Package gtPackage = packageService.selectById(TEST_PACKAGE_ID);
+
+		PackageMockData.validateOrphanLanguagePackage(gtPackage);
+	}
 }
