@@ -1,4 +1,4 @@
-package org.cru.godtools.domain;
+package org.cru.godtools.utils;
 
 
 import org.cru.godtools.domain.properties.GodToolsProperties;

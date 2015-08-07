@@ -6,7 +6,8 @@ import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.domain.services.mockdata.AbstractFullPackageMockData;
+import org.cru.godtools.utils.*;
 import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -27,7 +28,7 @@ import java.math.BigDecimal;
  * Created by ryancarlson on 7/31/14.
  */
 @RunWith(Arquillian.class)
-public class DraftResourceTest extends AbstractFullPackageServiceTest
+public class DraftResourceTest extends AbstractFullPackageMockData
 {
 	@Deployment
 	public static WebArchive createDeployment()

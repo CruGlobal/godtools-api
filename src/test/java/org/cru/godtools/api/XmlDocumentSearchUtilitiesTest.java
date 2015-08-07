@@ -1,6 +1,8 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.jboss.arquillian.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -18,6 +20,7 @@ import java.util.List;
  *
  * Created by ryancarlson on 4/2/14.
  */
+@RunWith(Arquillian.class)
 public class XmlDocumentSearchUtilitiesTest
 {
 

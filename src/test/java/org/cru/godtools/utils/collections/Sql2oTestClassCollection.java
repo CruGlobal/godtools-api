@@ -1,7 +1,7 @@
 package org.cru.godtools.utils.collections;
 
 import com.google.common.collect.ImmutableSet;
-import org.cru.godtools.domain.TestSqlConnectionProducer;
+import org.cru.godtools.utils.TestSqlConnectionProducer;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.sql2o.Connection;

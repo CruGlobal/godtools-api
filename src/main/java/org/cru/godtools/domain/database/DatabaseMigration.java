@@ -1,8 +1,8 @@
 package org.cru.godtools.domain.database;
 
-import com.googlecode.flyway.core.Flyway;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+import org.flywaydb.core.*;
 
 /**
  * Created by ryancarlson on 7/18/14.

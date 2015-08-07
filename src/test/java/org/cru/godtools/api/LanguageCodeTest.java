@@ -1,13 +1,16 @@
-package org.cru.godtools.api.packages;
+package org.cru.godtools.api;
 
 import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.languages.LanguageCode;
+import org.jboss.arquillian.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Created by ryancarlson on 4/2/14.
  */
+@RunWith(Arquillian.class)
 public class LanguageCodeTest
 {
 

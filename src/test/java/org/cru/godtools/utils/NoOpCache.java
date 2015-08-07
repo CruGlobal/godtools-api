@@ -1,6 +1,7 @@
-package org.cru.godtools.api.cache;
+package org.cru.godtools.utils;
 
 import com.google.common.base.Optional;
+import org.cru.godtools.api.cache.*;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 
 import java.util.UUID;

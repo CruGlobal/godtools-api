@@ -1,7 +1,7 @@
 package org.cru.godtools.utils.collections;
 
 import com.google.common.collect.ImmutableSet;
-import org.cru.godtools.api.cache.NoOpCache;
+import org.cru.godtools.utils.NoOpCache;
 import org.cru.godtools.api.meta.*;
 import org.cru.godtools.api.translations.DraftTranslation;
 import org.cru.godtools.api.translations.GodToolsTranslationService;
@@ -9,7 +9,7 @@ import org.cru.godtools.api.translations.NewTranslationCreation;
 import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.JPAStandard.*;
 import org.cru.godtools.domain.services.Sql2oStandard.*;
-import org.cru.godtools.translate.client.NoOpTranslationUpload;
+import org.cru.godtools.utils.NoOpTranslationUpload;
 import org.cru.godtools.translate.client.onesky.FileClient;
 import org.cru.godtools.translate.client.onesky.OneSkyDataService;
 import org.cru.godtools.translate.client.onesky.OneSkyTranslationDownload;

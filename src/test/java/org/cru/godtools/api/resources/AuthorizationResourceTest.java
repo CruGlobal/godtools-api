@@ -1,6 +1,6 @@
 package org.cru.godtools.api.resources;
 
-import org.cru.godtools.domain.TestClockImpl;
+import org.cru.godtools.utils.TestClockImpl;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.cru.godtools.utils.collections.*;

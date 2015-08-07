@@ -7,10 +7,10 @@ import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.domain.services.mockdata.AbstractFullPackageMockData;
+import org.cru.godtools.utils.*;
 import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
-import org.cru.godtools.utils.NonClosingZipInputStream;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -42,7 +42,7 @@ import java.util.zip.ZipInputStream;
  * Created by ryancarlson on 7/31/14.
  */
 @RunWith(Arquillian.class)
-public class TranslationResourceTest extends AbstractFullPackageServiceTest
+public class TranslationResourceTest extends AbstractFullPackageMockData
 {
 
 	@Deployment

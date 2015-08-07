@@ -1,4 +1,4 @@
-package org.cru.godtools.domain;
+package org.cru.godtools.utils;
 
 import org.ccci.util.time.Clock;
 import org.joda.time.DateTime;

@@ -7,7 +7,6 @@ import org.cru.godtools.domain.model.ReferencedImage;
 import org.cru.godtools.domain.services.ReferencedImageService;
 import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.services.LanguageService;
-import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.ImageReader;
 import org.cru.godtools.domain.services.PackageService;
 import org.cru.godtools.domain.model.PackageStructure;
@@ -55,7 +54,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static Language persistLanguage(LanguageService languageService)
 	{
 		Language language = new Language();
-		language.setId(AbstractFullPackageServiceTest.LANGUAGE_ID);
+		language.setId(AbstractFullPackageMockData.LANGUAGE_ID);
 		language.setCode("en");
 		language.setName("English");
 
@@ -67,7 +66,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static Package persistPackage(PackageService packageService)
 	{
 		Package gtPackage = new Package();
-		gtPackage.setId(AbstractFullPackageServiceTest.PACKAGE_ID);
+		gtPackage.setId(AbstractFullPackageMockData.PACKAGE_ID);
 		gtPackage.setCode(PACKAGE_CODE);
 		gtPackage.setName("Knowing God Personally");
 
@@ -79,7 +78,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static Translation persistTranslation(TranslationService translationService, Language language, Package gtPackage)
 	{
 		Translation translation = new Translation();
-		translation.setId(AbstractFullPackageServiceTest.TRANSLATION_ID);
+		translation.setId(AbstractFullPackageMockData.TRANSLATION_ID);
 		translation.setPackage(gtPackage);
 		translation.setLanguage(language);
 		translation.setVersionNumber(1);
@@ -93,7 +92,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static Image persistImage(ImageService imageService)
 	{
 		Image image = new Image();
-		image.setId(AbstractFullPackageServiceTest.IMAGE_ID);
+		image.setId(AbstractFullPackageMockData.IMAGE_ID);
 		image.setResolution("High");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setFilename("test_image_1.png");
@@ -105,7 +104,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static Image persistIcon(ImageService imageService)
 	{
 		Image image = new Image();
-		image.setId(AbstractFullPackageServiceTest.ICON_ID);
+		image.setId(AbstractFullPackageMockData.ICON_ID);
 		image.setResolution("High");
 		image.setImageContent(ImageReader.read("/test_image_1.png"));
 		image.setFilename(Image.buildFilename(PACKAGE_CODE, "icon@2x.png"));
@@ -133,7 +132,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static PackageStructure persistPackageStructure(PackageStructureService packageStructureService, Package gtPackage)
 	{
 		PackageStructure packageStructure = new PackageStructure();
-		packageStructure.setId(AbstractFullPackageServiceTest.PACKAGE_STRUCTURE_ID);
+		packageStructure.setId(AbstractFullPackageMockData.PACKAGE_STRUCTURE_ID);
 		packageStructure.setPackage(gtPackage);
 		packageStructure.setVersionNumber(1);
 		packageStructure.setXmlContent(XmlDocumentFromFile.get("/package.xml"));
@@ -145,7 +144,7 @@ public class GodToolsTranslationServiceTestMockData
 	private static PageStructure persistPageStructure(PageStructureService pageStructureService, Translation translation)
 	{
 		PageStructure pageStructure = new PageStructure();
-		pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
+		pageStructure.setId(AbstractFullPackageMockData.PAGE_STRUCTURE_ID);
 		pageStructure.setTranslation(translation);
 		pageStructure.setFilename("page_1.xml");
 		pageStructure.setXmlContent(XmlDocumentFromFile.get("/page_1.xml"));

@@ -1,6 +1,6 @@
-package org.cru.godtools.domain.services;
+package org.cru.godtools.domain.services.mockdata;
 
-import org.cru.godtools.domain.services.mockdata.GodToolsTranslationServiceTestMockData;
+import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.model.Translation;
 import org.jboss.arquillian.junit.*;
 import org.junit.runner.*;
@@ -12,7 +12,7 @@ import java.util.UUID;
  * Created by ryancarlson on 4/2/14.
  */
 @RunWith(Arquillian.class)
-public class AbstractFullPackageServiceTest
+public class AbstractFullPackageMockData
 {
 	public static final UUID TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID LANGUAGE_ID = UUID.randomUUID();

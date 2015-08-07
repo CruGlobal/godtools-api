@@ -1,12 +1,14 @@
 package org.cru.godtools.domain;
 
-import org.cru.godtools.domain.*;
+import org.jboss.arquillian.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Created by ryancarlson on 4/2/14.
  */
+@RunWith(Arquillian.class)
 public class PixelDensityEnumTest
 {
 

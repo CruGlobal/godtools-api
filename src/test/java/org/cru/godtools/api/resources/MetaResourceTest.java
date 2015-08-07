@@ -2,7 +2,8 @@ package org.cru.godtools.api.resources;
 
 import org.cru.godtools.api.meta.*;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.domain.services.mockdata.AbstractFullPackageMockData;
+import org.cru.godtools.utils.*;
 import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
 import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -25,7 +26,7 @@ import java.util.Set;
  * Created by ryancarlson on 7/31/14.
  */
 @RunWith(Arquillian.class)
-public class MetaResourceTest extends AbstractFullPackageServiceTest
+public class MetaResourceTest extends AbstractFullPackageMockData
 {
 	@Deployment
 	public static WebArchive createDeployment()

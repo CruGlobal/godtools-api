@@ -1,4 +1,6 @@
-package org.cru.godtools.translate.client;
+package org.cru.godtools.utils;
+
+import org.cru.godtools.translate.client.*;
 
 /**
  * Created by ryancarlson on 7/31/14.

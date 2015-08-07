@@ -2,6 +2,7 @@ package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;
+import org.cru.godtools.utils.*;
 import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.*;
