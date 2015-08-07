@@ -1,4 +1,4 @@
-package org.cru.godtools.tests;
+package org.cru.godtools.utils.collections;
 
 import com.google.common.collect.ImmutableSet;
 import org.cru.godtools.api.cache.NoOpCache;

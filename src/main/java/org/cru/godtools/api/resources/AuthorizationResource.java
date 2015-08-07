@@ -7,9 +7,11 @@ import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.model.AuthorizationRecord;
 import org.cru.godtools.domain.services.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
+import org.cru.godtools.domain.services.annotations.*;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -25,15 +27,14 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 5/12/14.
  */
+@Stateless
 @Path("/auth")
 public class AuthorizationResource
 {
-
 	@Inject
 	Clock clock;
 
-    @Inject
-	//@JPAStandard
+    @Inject @JPAStandard
 	private AuthorizationService authorizationService;
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);

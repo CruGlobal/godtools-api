@@ -2,31 +2,30 @@ package org.cru.godtools.api.resources;
 
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.*;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.tests.AbstractFullPackageServiceTest;
-import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
+import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
 import org.cru.godtools.utils.NonClosingZipInputStream;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
+import javax.transaction.*;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,10 +41,9 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by ryancarlson on 7/31/14.
  */
+@RunWith(Arquillian.class)
 public class TranslationResourceTest extends AbstractFullPackageServiceTest
 {
-
-	private DocumentBuilder documentBuilder;
 
 	@Deployment
 	public static WebArchive createDeployment()
@@ -57,12 +55,14 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
+	private DocumentBuilder documentBuilder;
+
 	@Inject
 	TranslationResource translationResource;
-
-	// used to validate results of createTranslation test
 	@Inject
 	DraftResource draftResource;
+	@Inject
+	UserTransaction userTransaction;
 
 	@BeforeClass
 	public void initializeDatabase()
@@ -76,19 +76,17 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		translationResource.setAutoCommit(false);
-		draftResource.setAutoCommit(false);
+		userTransaction.begin();
 		saveTestPackage();
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		translationResource.rollback();
-		draftResource.rollback();
+		userTransaction.rollback();
 	}
 
 	@Test
@@ -217,7 +215,7 @@ public class TranslationResourceTest extends AbstractFullPackageServiceTest
 		validateDraftXml((ContentsFile)getDraftResponse.getEntity(), "en");
 	}
 
-	@Test(expectedExceptions = UnauthorizedException.class)
+	@Test(expected = UnauthorizedException.class)
 	public void testCreateTranslationUnauthorized() throws URISyntaxException, IOException, SAXException
 	{
 		translationResource.createTranslation("en",

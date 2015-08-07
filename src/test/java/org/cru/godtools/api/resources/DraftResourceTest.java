@@ -1,32 +1,32 @@
 package org.cru.godtools.api.resources;
 
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.*;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.tests.AbstractFullPackageServiceTest;
-import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
+import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.transaction.*;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 
 /**
  * Created by ryancarlson on 7/31/14.
  */
+@RunWith(Arquillian.class)
 public class DraftResourceTest extends AbstractFullPackageServiceTest
 {
 	@Deployment
@@ -42,25 +42,29 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 	@Inject
 	DraftResource draftResource;
 
+	@Inject
+	UserTransaction userTransaction;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		draftResource.setAutoCommit(false);
+		userTransaction.begin();
+
 		saveTestPackage();
 		setTestPackageDraftStatus();
 		DraftResource.BYPASS_ASYNC_UPDATE = true;
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		draftResource.rollback();
+		userTransaction.rollback();
 	}
 
 	@Test
@@ -81,7 +85,7 @@ public class DraftResourceTest extends AbstractFullPackageServiceTest
 		validateContentsXml((ContentsFile)response.getEntity());
 	}
 
-	@Test(expectedExceptions = UnauthorizedException.class)
+	@Test(expected = UnauthorizedException.class)
 	public void testGetDraftUnauthorized() throws Exception
 	{
 		// auth token does not have access to drafts

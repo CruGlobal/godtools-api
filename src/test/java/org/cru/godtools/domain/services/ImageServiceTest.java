@@ -1,38 +1,27 @@
-package org.cru.godtools.domain.services.sql2o;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;
-import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.mockdata.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.*;
+import org.junit.runner.*;
 
 import javax.inject.Inject;
-import java.sql.*;
+import javax.transaction.*;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 4/1/14.
  */
-public class ImageServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class ImageServiceTest
 {
-	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
-	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
-
-	@Inject
-	ImageService imageService;
-
-	@Inject
-	org.sql2o.Connection sqlConnection;
-
 	@Deployment
 	public static JavaArchive createDeployment()
 	{
@@ -45,38 +34,34 @@ public class ImageServiceTest extends Arquillian
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
+	public static final UUID TEST_IMAGE_ID = UUID.randomUUID();
+	public static final UUID TEST_RETINA_IMAGE_ID = UUID.randomUUID();
+
+	@Inject
+	ImageService imageService;
+
+	@Inject
+	UserTransaction userTransaction;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-            /*Do Nothing*/
-		}
+		userTransaction.begin();
+
 		ImageMockData.persistImage(imageService);
 		ImageMockData.persistRetinaImage(imageService);
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-				/*Do Nothing*/
-		}
+		userTransaction.rollback();
 	}
 
 	@Test

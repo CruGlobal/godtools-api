@@ -1,15 +1,15 @@
-package org.cru.godtools.domain.services.sql2o;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;
-import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.mockdata.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.*;
-import org.jboss.arquillian.testng.*;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.*;
 import org.jboss.shrinkwrap.api.asset.*;
 import org.jboss.shrinkwrap.api.spec.*;
+import org.junit.runner.*;
 import org.testng.*;
 import org.testng.annotations.*;
 
@@ -20,7 +20,8 @@ import java.util.*;
 /**
  * Created by justinsturm on 7/31/15.
  */
-public class PackageStructureServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class PackageStructureServiceTest
 {
     public static final UUID TEST_PACKAGE_ID = UUID.randomUUID();
     public static final UUID TEST_PACKAGE_STRUCTURE_ID = UUID.randomUUID();

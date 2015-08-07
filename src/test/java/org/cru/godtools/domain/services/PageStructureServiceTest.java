@@ -1,38 +1,27 @@
-package org.cru.godtools.domain.services.sql2o;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;
-import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.mockdata.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.*;
-import org.jboss.arquillian.testng.*;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.*;
 import org.jboss.shrinkwrap.api.asset.*;
 import org.jboss.shrinkwrap.api.spec.*;
-import org.testng.annotations.*;
+import org.junit.*;
+import org.junit.runner.*;
 
 import javax.inject.*;
-import java.sql.*;
+import javax.transaction.*;
 import java.util.*;
 
 /**
  * Created by justinsturm on 7/31/15.
  */
-public class PageStructureServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class PageStructureServiceTest
 {
-    public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
-    public static final UUID TEST_PAGE_STRUCTURE_ID_1 = UUID.randomUUID();
-    public static final UUID TEST_PAGE_STRUCTURE_ID_2 = UUID.randomUUID();
-    public static final UUID TEST_PAGE_STRUCTURE_ID_3 = UUID.randomUUID();
-
-    @Inject
-    TranslationService translationService;
-    @Inject
-    PageStructureService pageStructureService;
-    @Inject
-    org.sql2o.Connection sqlConnection;
-
     @Deployment
     public static JavaArchive createDeployment()
     {
@@ -45,38 +34,37 @@ public class PageStructureServiceTest extends Arquillian
                 .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
+    public static final UUID TEST_TRANSLATION_ID = UUID.randomUUID();
+    public static final UUID TEST_PAGE_STRUCTURE_ID_1 = UUID.randomUUID();
+    public static final UUID TEST_PAGE_STRUCTURE_ID_2 = UUID.randomUUID();
+    public static final UUID TEST_PAGE_STRUCTURE_ID_3 = UUID.randomUUID();
+
+    @Inject
+    TranslationService translationService;
+    @Inject
+    PageStructureService pageStructureService;
+    @Inject
+    UserTransaction userTransaction;
+
     @BeforeClass
     public void initializeDatabase()
     {
         UnittestDatabaseBuilder.build();
     }
 
-    @BeforeMethod
-    public void setup()
+    @Before
+    public void setup() throws SystemException, NotSupportedException
     {
-        try
-        {
-            sqlConnection.getJdbcConnection().setAutoCommit(false);
-        }
-        catch(SQLException e)
-        {
-				/*Do Nothing*/
-        }
+        userTransaction.begin();
+
         Translation translation = PageStructureMockData.persistTranslation(translationService);
         PageStructureMockData.persistPageStructures(pageStructureService, translation);
     }
 
-    @AfterMethod
-    public void cleanup()
+    @After
+    public void cleanup() throws SystemException
     {
-        try
-        {
-            sqlConnection.getJdbcConnection().rollback();
-        }
-        catch(SQLException e)
-        {
-				/*Do Nothing*/
-        }
+        userTransaction.rollback();
     }
 
     @Test
@@ -103,7 +91,7 @@ public class PageStructureServiceTest extends Arquillian
         PageStructureMockData.validatePageStructureByTranslationAndFile(pageStructure);
     }
 
-    //@Test
+    @Test
     public void testUpdate()
     {
         PageStructure pageStructure = pageStructureService.selectById(TEST_PAGE_STRUCTURE_ID_3);

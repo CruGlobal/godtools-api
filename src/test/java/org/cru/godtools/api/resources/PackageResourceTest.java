@@ -3,28 +3,27 @@ package org.cru.godtools.api.resources;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.api.packages.*;
 import org.cru.godtools.api.packages.utils.FileZipper;
-import org.cru.godtools.api.resources.*;
 import org.cru.godtools.api.translations.model.ContentsFile;
 import org.cru.godtools.api.translations.model.ResourceElement;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.tests.AbstractFullPackageServiceTest;
-import org.cru.godtools.tests.GodToolsPackageServiceTestClassCollection;
-import org.cru.godtools.tests.Sql2oTestClassCollection;
+import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
+import org.cru.godtools.utils.collections.GodToolsPackageServiceTestClassCollection;
+import org.cru.godtools.utils.collections.Sql2oTestClassCollection;
 import org.cru.godtools.utils.NonClosingZipInputStream;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import javax.inject.Inject;
+import javax.transaction.*;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +38,7 @@ import java.util.zip.ZipInputStream;
  *
  * Created by ryancarlson on 7/30/14.
  */
+@RunWith(Arquillian.class)
 public class PackageResourceTest extends AbstractFullPackageServiceTest
 {
 
@@ -55,23 +55,27 @@ public class PackageResourceTest extends AbstractFullPackageServiceTest
 	@Inject
 	PackageResource packageResource;
 
+	@Inject
+	UserTransaction userTransaction;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		packageResource.setAutoCommit(false);
+		userTransaction.begin();
+
 		saveTestPackage();
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		packageResource.rollback();
+		userTransaction.rollback();
 	}
 
 	/**

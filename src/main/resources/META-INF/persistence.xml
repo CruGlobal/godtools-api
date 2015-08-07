@@ -12,7 +12,7 @@
             <property name="javax.persistence.jdbc.user" value = "godtoolsuser"/>
             <property name="javax.persistence.jdbc.password" value = "godtoolsuser"/>-->
             <!--SQL Dialect-->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>-->
             <!--Other Properties-->
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.enable_lazy_load_no_trans" value="true"/>

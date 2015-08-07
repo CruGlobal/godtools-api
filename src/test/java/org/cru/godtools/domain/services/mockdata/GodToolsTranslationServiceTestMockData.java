@@ -1,4 +1,4 @@
-package org.cru.godtools.api.translations;
+package org.cru.godtools.domain.services.mockdata;
 
 import org.cru.godtools.domain.model.Package;
 import org.cru.godtools.domain.model.Image;
@@ -7,7 +7,7 @@ import org.cru.godtools.domain.model.ReferencedImage;
 import org.cru.godtools.domain.services.ReferencedImageService;
 import org.cru.godtools.domain.model.Language;
 import org.cru.godtools.domain.services.LanguageService;
-import org.cru.godtools.tests.AbstractFullPackageServiceTest;
+import org.cru.godtools.domain.services.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.ImageReader;
 import org.cru.godtools.domain.services.PackageService;
 import org.cru.godtools.domain.model.PackageStructure;

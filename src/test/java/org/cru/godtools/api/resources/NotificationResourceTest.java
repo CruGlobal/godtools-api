@@ -1,26 +1,25 @@
 package org.cru.godtools.api.resources;
 
 import junit.framework.Assert;
-import org.cru.godtools.api.resources.*;
 import org.cru.godtools.domain.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.*;
+import org.junit.runner.*;
 
 import javax.inject.Inject;
+import javax.transaction.*;
 import javax.ws.rs.core.Response;
 
 /**
  * Created by matthewfrederick on 1/5/15.
  */
-public class NotificationResourceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class NotificationResourceTest
 {
 	@Deployment
 	public static WebArchive createDeployment()
@@ -35,6 +34,9 @@ public class NotificationResourceTest extends Arquillian
 	@Inject
 	NotificationResource notificationResource;
 
+	@Inject
+	UserTransaction userTransaction;
+
 
 	@BeforeClass
 	public void initializeDatabase()
@@ -42,16 +44,16 @@ public class NotificationResourceTest extends Arquillian
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		notificationResource.setAutoCommit(false);
+		userTransaction.begin();
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		notificationResource.rollback();
+		userTransaction.rollback();
 	}
 
 	@Test

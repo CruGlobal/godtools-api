@@ -1,41 +1,30 @@
-package org.cru.godtools.domain.services.sql2o;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.languages.*;
 import org.cru.godtools.domain.model.*;
-import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.mockdata.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.*;
+import javax.transaction.*;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 3/20/14.
  */
-public class LanguageServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class LanguageServiceTest
 {
-	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
-	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
-
-	@Inject
-	LanguageService languageService;
-
-	@Inject
-	org.sql2o.Connection sqlConnection;
-
 	@Deployment
 	public static JavaArchive createDeployment()
 	{
@@ -48,37 +37,33 @@ public class LanguageServiceTest extends Arquillian
 				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 	}
 
+	public static final UUID TEST_LANGUAGE_ID = UUID.randomUUID();
+	public static final UUID TEST_LANGUAGE2_ID = UUID.randomUUID();
+
+	@Inject
+	LanguageService languageService;
+
+	@Inject
+	UserTransaction userTransaction;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-				/*Do Nothing*/
-		}
+		userTransaction.begin();
+
 		LanguageMockData.persistLanguages(languageService);
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-				/*Do Nothing*/
-		}
+		userTransaction.rollback();
 	}
 
     @Test
@@ -120,7 +105,7 @@ public class LanguageServiceTest extends Arquillian
 		LanguageMockData.validateLanguage2(language2);
 	}
 
-	@Test()
+	@Test
 	public void testSelectLanguageByCodeNotFound()
 	{
 		LanguageCode languageCode = new LanguageCode("fr");

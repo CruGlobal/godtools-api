@@ -1,32 +1,43 @@
-package org.cru.godtools.domain.services.sql2o;
+package org.cru.godtools.domain.services;
 
 import org.cru.godtools.domain.*;
 import org.cru.godtools.domain.model.*;
 import org.cru.godtools.domain.model.Package;
-import org.cru.godtools.domain.services.*;
 import org.cru.godtools.domain.services.mockdata.*;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.inject.Inject;
-import java.sql.*;
+import javax.transaction.*;
+import javax.transaction.NotSupportedException;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by ryancarlson on 7/31/14.
  */
-public class TranslationElementServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class TranslationElementServiceTest
 {
+	@Deployment
+	public static JavaArchive createDeployment()
+	{
+		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
+
+		return ShrinkWrap.create(JavaArchive.class)
+				.addClasses(sql2oTestClassCollection.getClasses())
+				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
+				.addClass(TestClockImpl.class)
+				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+	}
+
 	public static final UUID TEST_PAGE_STRUCTURE_ID = UUID.randomUUID();
 	public static final UUID TEST_TRANSLATION_ELEMENT_ONE_ID = UUID.randomUUID();
 	public static final UUID TEST_TRANSLATION_ELEMENT_TWO_ID = UUID.randomUUID();
@@ -42,19 +53,7 @@ public class TranslationElementServiceTest extends Arquillian
 	@Inject
 	PageStructureService pageStructureService;
 	@Inject
-	org.sql2o.Connection sqlConnection;
-
-	@Deployment
-	public static JavaArchive createDeployment()
-	{
-		Sql2oTestClassCollection sql2oTestClassCollection = new Sql2oTestClassCollection();
-
-		return ShrinkWrap.create(JavaArchive.class)
-				.addClasses(sql2oTestClassCollection.getClasses())
-				.addClasses(GodToolsPackageServiceTestClassCollection.getClasses())
-				.addClass(TestClockImpl.class)
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-	}
+	UserTransaction userTransaction;
 
 	@BeforeClass
 	public void initializeDatabase()
@@ -62,17 +61,11 @@ public class TranslationElementServiceTest extends Arquillian
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().setAutoCommit(false);
-		}
-		catch(SQLException e)
-		{
-				/*Do Nothing*/
-		}
+		userTransaction.begin();
+
 		Language language = TranslationMockData.persistLanguage(languageService);
 		Package gtPackage = TranslationMockData.persistPackage(packageService);
 		Translation translation = TranslationMockData.persistTranslation(translationService, language, gtPackage);
@@ -80,17 +73,10 @@ public class TranslationElementServiceTest extends Arquillian
 		TranslationElementMockData.persistTranslationElements(translationElementService, pageStructure, translation);
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		try
-		{
-			sqlConnection.getJdbcConnection().rollback();
-		}
-		catch(SQLException e)
-		{
-				/*Do Nothing*/
-		}
+		userTransaction.rollback();
 	}
 
 	@Test

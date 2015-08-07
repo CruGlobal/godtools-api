@@ -1,16 +1,9 @@
-package org.cru.godtools.tests;
+package org.cru.godtools.domain.services;
 
-import org.cru.godtools.api.translations.GodToolsTranslationServiceTestMockData;
-import org.cru.godtools.domain.services.ImageService;
-import org.cru.godtools.domain.services.ReferencedImageService;
-import org.cru.godtools.domain.services.LanguageService;
-import org.cru.godtools.domain.services.PackageService;
-import org.cru.godtools.domain.services.PackageStructureService;
-import org.cru.godtools.domain.services.PageStructureService;
-import org.cru.godtools.domain.services.TranslationElementService;
+import org.cru.godtools.domain.services.mockdata.GodToolsTranslationServiceTestMockData;
 import org.cru.godtools.domain.model.Translation;
-import org.cru.godtools.domain.services.TranslationService;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
+import org.junit.runner.*;
 
 import javax.inject.Inject;
 import java.util.UUID;
@@ -18,7 +11,8 @@ import java.util.UUID;
 /**
  * Created by ryancarlson on 4/2/14.
  */
-public class AbstractFullPackageServiceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class AbstractFullPackageServiceTest
 {
 	public static final UUID TRANSLATION_ID = UUID.randomUUID();
 	public static final UUID LANGUAGE_ID = UUID.randomUUID();

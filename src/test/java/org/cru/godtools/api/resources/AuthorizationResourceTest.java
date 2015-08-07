@@ -1,28 +1,27 @@
 package org.cru.godtools.api.resources;
 
-import org.cru.godtools.api.resources.*;
 import org.cru.godtools.domain.TestClockImpl;
 import org.cru.godtools.domain.UnittestDatabaseBuilder;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
-import org.cru.godtools.tests.*;
+import org.cru.godtools.utils.collections.*;
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
+import org.jboss.arquillian.junit.*;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.*;
+import org.junit.runner.*;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 import javax.inject.Inject;
+import javax.transaction.*;
 import javax.ws.rs.core.Response;
 
 /**
  * Created by ryancarlson on 7/31/14.
  */
-public class AuthorizationResourceTest extends Arquillian
+@RunWith(Arquillian.class)
+public class AuthorizationResourceTest
 {
 	@Deployment
 	public static WebArchive createDeployment()
@@ -37,22 +36,25 @@ public class AuthorizationResourceTest extends Arquillian
 	@Inject
 	AuthorizationResource authorizationResource;
 
+	@Inject
+	UserTransaction userTransaction;
+
 	@BeforeClass
 	public void initializeDatabase()
 	{
 		UnittestDatabaseBuilder.build();
 	}
 
-	@BeforeMethod
-	public void setup()
+	@Before
+	public void setup() throws SystemException, NotSupportedException
 	{
-		authorizationResource.setAutoCommit(false);
+		userTransaction.begin();
 	}
 
-	@AfterMethod
-	public void cleanup()
+	@After
+	public void cleanup() throws SystemException
 	{
-		authorizationResource.rollback();
+		userTransaction.rollback();
 	}
 
 	/**
@@ -87,7 +89,7 @@ public class AuthorizationResourceTest extends Arquillian
 	 * Tests passing an invalid access code to draft access endpoint.  Should result in a 401
 	 * Unauthorized exception
 	 */
-	@Test(expectedExceptions = UnauthorizedException.class)
+	@Test(expected = UnauthorizedException.class)
 	public void testGetDraftAuthorizationTokenInvalidAccessCode() throws Exception
 	{
 		Response response = authorizationResource.getAuthorizationToken("777777", "abcdefg", null);
