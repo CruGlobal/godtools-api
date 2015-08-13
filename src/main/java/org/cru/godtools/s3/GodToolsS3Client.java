@@ -21,6 +21,8 @@ public class GodToolsS3Client
 
 	private Logger log = Logger.getLogger(this.getClass());
 
+	private static final String GODTOOLS_BUCKET = "cru-godtools";
+
 	public S3Object getMetaFile()
 	{
 		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2();
@@ -59,7 +61,7 @@ public class GodToolsS3Client
 
 		ObjectMetadata metadata = new ObjectMetadata();
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest("cru-godtools", packagesKey, compressedTranslation, metadata)
+		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, packagesKey, compressedTranslation, metadata)
 				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools packages are meant to be downloaded w/o authz
 
 		s3Client.putObject(putObjectRequest);
@@ -73,8 +75,22 @@ public class GodToolsS3Client
 
 		ObjectMetadata metadata = new ObjectMetadata();
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest("cru-godtools", metaKey, metaFile, metadata)
+		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, metaKey, metaFile, metadata)
 				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools meta is meant to be downloaded w/o authz
+
+		s3Client.putObject(putObjectRequest);
+	}
+
+	public void pushLanguageZippedFile(String languageCode, String packageCode, InputStream languageFile)
+	{
+		String translationKey = AmazonS3GodToolsConfig.getLanguageAndPackageKeyV2(languageCode, packageCode);
+
+		log.info(String.format("pushing %s (text only) file for language %s", packageCode, languageCode));
+
+		ObjectMetadata metadata = new ObjectMetadata();
+
+		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, translationKey, languageFile, metadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead);
 
 		s3Client.putObject(putObjectRequest);
 	}
