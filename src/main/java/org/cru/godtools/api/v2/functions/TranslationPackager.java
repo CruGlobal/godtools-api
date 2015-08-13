@@ -24,6 +24,8 @@ public class TranslationPackager
 
 	Set<String> imagesAlreadyZipped = Sets.newHashSet();
 
+	boolean textOnly = false;
+
 	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
 	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
 
@@ -71,6 +73,17 @@ public class TranslationPackager
 		}
 	}
 
+	public InputStream compressTextOnly(GodToolsTranslation godToolsTranslation)
+	{
+		// when creating a text only version, no picture resources will be included
+		textOnly = true;
+		InputStream stream = compress(godToolsTranslation);
+
+		// change back to false so that in case the class is reused.
+		textOnly = false;
+		return stream;
+	}
+
 	private void addTranslationToZipStream(GodToolsTranslation godToolsTranslation) throws Exception
 	{
 		fileZipper.zipPackageFile(godToolsTranslation.getPackageStructure(),
@@ -79,7 +92,10 @@ public class TranslationPackager
 
 		fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
 
-		fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
+		if (!textOnly)
+		{
+			fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
+		}
 	}
 
 	private Document createContentsFile(List<GodToolsTranslation> godToolsTranslationList) throws ParserConfigurationException
@@ -99,15 +115,18 @@ public class TranslationPackager
 			resourceElement.setAttribute("name", godToolsTranslation.getPackageStructure().getPackageName());
 			resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
 
-			if(godToolsTranslation.getIcon() != null)
+			if (!textOnly)
 			{
-				resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
+				if (godToolsTranslation.getIcon() != null)
+				{
+					resourceElement.setAttribute("icon",
+							GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
+				} else
+				{
+					resourceElement.setAttribute("icon", "missing");
+				}
+				rootElement.appendChild(resourceElement);
 			}
-			else
-			{
-				resourceElement.setAttribute("icon", "missing");
-			}
-			rootElement.appendChild(resourceElement);
 		}
 		return contents;
 	}
