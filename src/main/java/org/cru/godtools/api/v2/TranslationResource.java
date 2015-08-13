@@ -100,7 +100,7 @@ public class TranslationResource
 		if(Boolean.parseBoolean(publish))
 		{
 			draftTranslation.publish(languageCode, packageCode);
-			publishedTranslation.pushToS3(languageCode);
+			publishedTranslation.pushToS3(languageCode, packageCode);
 		}
 
 		return Response.accepted().build();
