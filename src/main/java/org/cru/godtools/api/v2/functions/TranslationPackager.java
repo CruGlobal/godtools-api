@@ -24,7 +24,7 @@ public class TranslationPackager
 
 	Set<String> imagesAlreadyZipped = Sets.newHashSet();
 
-	boolean textOnly = false;
+	boolean includeImages = true;
 
 	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
 	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
@@ -76,11 +76,11 @@ public class TranslationPackager
 	public InputStream compressTextOnly(GodToolsTranslation godToolsTranslation)
 	{
 		// when creating a text only version, no picture resources will be included
-		textOnly = true;
+		includeImages = false;
 		InputStream stream = compress(godToolsTranslation);
 
 		// change back to false so that in case the class is reused.
-		textOnly = false;
+		includeImages = true;
 		return stream;
 	}
 
@@ -92,7 +92,7 @@ public class TranslationPackager
 
 		fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
 
-		if (!textOnly)
+		if (includeImages)
 		{
 			fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
 		}
@@ -115,7 +115,7 @@ public class TranslationPackager
 			resourceElement.setAttribute("name", godToolsTranslation.getPackageStructure().getPackageName());
 			resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
 
-			if (!textOnly)
+			if (includeImages)
 			{
 				if (godToolsTranslation.getIcon() != null)
 				{
