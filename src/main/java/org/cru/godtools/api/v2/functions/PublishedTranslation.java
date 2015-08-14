@@ -36,7 +36,7 @@ public class PublishedTranslation extends AbstractTranslation
 			if (!translation.getPackageCode().equalsIgnoreCase(packageCode)) continue;
 
 			InputStream textOnlyStream = translationPackager.compressTextOnly(translation);
-			godToolsS3Client.pushLanguageZippedFile(languageCode, packageCode, textOnlyStream);
+			godToolsS3Client.pushTranslationsZippedFile(languageCode, packageCode, textOnlyStream);
 		}
 	}
 }

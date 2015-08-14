@@ -81,7 +81,7 @@ public class GodToolsS3Client
 		s3Client.putObject(putObjectRequest);
 	}
 
-	public void pushLanguageZippedFile(String languageCode, String packageCode, InputStream languageFile)
+	public void pushTranslationsZippedFile(String languageCode, String packageCode, InputStream languageFile)
 	{
 		String translationKey = AmazonS3GodToolsConfig.getLanguageAndPackageKeyV2(languageCode, packageCode);
 
