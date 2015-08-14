@@ -24,11 +24,15 @@ public class TranslationPackager
 
 	Set<String> imagesAlreadyZipped = Sets.newHashSet();
 
+	boolean includeImages = true;
+
 	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
 	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
 
-	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList)
+	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList, boolean includeImages)
 	{
+		this.includeImages = includeImages;
+
 		try
 		{
 			if (!godToolsTranslationList.isEmpty())
@@ -52,8 +56,10 @@ public class TranslationPackager
 		}
 	}
 
-	public InputStream compress(GodToolsTranslation godToolsTranslation)
+	public InputStream compress(GodToolsTranslation godToolsTranslation, boolean includeImages)
 	{
+		this.includeImages = includeImages;
+
 		try
 		{
 			fileZipper.zipContentsFile(createContentsFile(Lists.newArrayList(godToolsTranslation)), zipOutputStream);
@@ -79,7 +85,10 @@ public class TranslationPackager
 
 		fileZipper.zipPageFiles(godToolsTranslation.getPageStructureList(), zipOutputStream);
 
-		fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
+		if (includeImages)
+		{
+			fileZipper.zipImageFiles(godToolsTranslation.getImages(), zipOutputStream, imagesAlreadyZipped);
+		}
 	}
 
 	private Document createContentsFile(List<GodToolsTranslation> godToolsTranslationList) throws ParserConfigurationException
@@ -99,15 +108,18 @@ public class TranslationPackager
 			resourceElement.setAttribute("name", godToolsTranslation.getPackageStructure().getPackageName());
 			resourceElement.setAttribute("version", godToolsTranslation.getVersionNumber().toPlainString());
 
-			if(godToolsTranslation.getIcon() != null)
+			if (includeImages)
 			{
-				resourceElement.setAttribute("icon", GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
+				if (godToolsTranslation.getIcon() != null)
+				{
+					resourceElement.setAttribute("icon",
+							GuavaHashGenerator.calculateHash(godToolsTranslation.getIcon().getImageContent()) + ".png");
+				} else
+				{
+					resourceElement.setAttribute("icon", "missing");
+				}
+				rootElement.appendChild(resourceElement);
 			}
-			else
-			{
-				resourceElement.setAttribute("icon", "missing");
-			}
-			rootElement.appendChild(resourceElement);
 		}
 		return contents;
 	}

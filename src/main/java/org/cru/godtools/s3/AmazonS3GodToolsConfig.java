@@ -16,7 +16,7 @@ public class AmazonS3GodToolsConfig
 
 	private static final String META = "meta/";
 	private static final String PACKAGES = "packages/";
-	private static final String LANGUAGES = "languages/";
+	private static final String TRANSLATIONS = "translations/";
 	private static final String META_FILE = "meta";
 	private static final String ALL_FILE = "all";
 	private static final String ALL = "all/";
@@ -59,16 +59,16 @@ public class AmazonS3GodToolsConfig
 	}
 
 	/**
-	 * e.g. languages/current/en/all/en.zip  OR
+	 * e.g. translations/current/en/all/en.zip  OR
 	 */
 	@Deprecated
 	public static String getLanguagesKey(String languageCode, String packagesCode)
 	{
-		return LANGUAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
+		return TRANSLATIONS + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
 	}
 
 	/**
-	 * e.g. packages/current/en/all/en.zip  OR
+	 * e.g. packages/en/all.zip  OR
 	 */
 	public static String getPackagesKeyV2(String languageCode)
 	{
@@ -76,11 +76,19 @@ public class AmazonS3GodToolsConfig
 	}
 
 	/**
-	 * e.g. languages/current/en/all/en.zip  OR
+	 * e.g. translations/en/all.zip  OR
 	 */
-	public static String getLanguagesKeyV2(String languageCode)
+	public static String getTranslationsKeyV2(String languageCode)
 	{
-		return LANGUAGES + languageCode + "/" + ALL_FILE + ZIP;
+		return TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP;
+	}
+
+	/**
+	 * e.g. translations/en/kgp.zip
+	 */
+	public static String getTranslationsAndPackageKeyV2(String languageCode, String packageCode)
+	{
+		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
 	}
 
 	public static URL getPackagesRedirectUrl(String languageCode) throws MalformedURLException
@@ -105,20 +113,20 @@ public class AmazonS3GodToolsConfig
 		return new URL(BASE_URL + META + ALL_FILE + XML);
 	}
 
-	public static URL getLanguagesRedirectUrl(String languageCode) throws MalformedURLException
+	public static URL getTranslationsRedirectUrl(String languageCode) throws MalformedURLException
 	{
-		return getPackagesRedirectUrl(languageCode, null);
+		return getTranslationsRedirectUrl(languageCode, null);
 	}
 
-	public static URL getLanguagesRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
+	public static URL getTranslationsRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{
-			return new URL(BASE_URL + LANGUAGES + languageCode + "/" + ALL_FILE + ZIP);
+			return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP);
 		}
 		else
 		{
-			return new URL(BASE_URL + LANGUAGES + languageCode + "/" + packageCode + ZIP);
+			return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + packageCode + ZIP);
 		}
 	}
 }
