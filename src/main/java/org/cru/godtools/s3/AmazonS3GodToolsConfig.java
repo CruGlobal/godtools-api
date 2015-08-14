@@ -115,7 +115,7 @@ public class AmazonS3GodToolsConfig
 
 	public static URL getLanguagesRedirectUrl(String languageCode) throws MalformedURLException
 	{
-		return getPackagesRedirectUrl(languageCode, null);
+		return getLanguagesRedirectUrl(languageCode, null);
 	}
 
 	public static URL getLanguagesRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
