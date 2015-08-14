@@ -54,8 +54,10 @@ public class TranslationPackager
 		}
 	}
 
-	public InputStream compress(GodToolsTranslation godToolsTranslation)
+	public InputStream compress(GodToolsTranslation godToolsTranslation, boolean includeImages)
 	{
+		this.includeImages = includeImages;
+
 		try
 		{
 			fileZipper.zipContentsFile(createContentsFile(Lists.newArrayList(godToolsTranslation)), zipOutputStream);
@@ -73,15 +75,9 @@ public class TranslationPackager
 		}
 	}
 
-	public InputStream compressTextOnly(GodToolsTranslation godToolsTranslation)
+	public InputStream compress(GodToolsTranslation godToolsTranslation)
 	{
-		// when creating a text only version, no picture resources will be included
-		includeImages = false;
-		InputStream stream = compress(godToolsTranslation);
-
-		// change back to false so that in case the class is reused.
-		includeImages = true;
-		return stream;
+		return compress(godToolsTranslation, true);
 	}
 
 	private void addTranslationToZipStream(GodToolsTranslation godToolsTranslation) throws Exception
