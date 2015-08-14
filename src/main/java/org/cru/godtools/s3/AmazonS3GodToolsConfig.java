@@ -68,7 +68,7 @@ public class AmazonS3GodToolsConfig
 	}
 
 	/**
-	 * e.g. packages/current/en/all/en.zip  OR
+	 * e.g. packages/en/all.zip  OR
 	 */
 	public static String getPackagesKeyV2(String languageCode)
 	{
@@ -76,7 +76,7 @@ public class AmazonS3GodToolsConfig
 	}
 
 	/**
-	 * e.g. translations/current/en/all/en.zip  OR
+	 * e.g. translations/en/all.zip  OR
 	 */
 	public static String getLanguagesKeyV2(String languageCode)
 	{
@@ -84,11 +84,11 @@ public class AmazonS3GodToolsConfig
 	}
 
 	/**
-	 * e.g. translations/current/en/kgp.zip
+	 * e.g. translations/en/kgp.zip
 	 */
 	public static String getLanguageAndPackageKeyV2(String languageCode, String packageCode)
 	{
-		return TRANSLATIONS + CURRENT + languageCode + "/" + packageCode + ZIP;
+		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
 	}
 
 	public static URL getPackagesRedirectUrl(String languageCode) throws MalformedURLException

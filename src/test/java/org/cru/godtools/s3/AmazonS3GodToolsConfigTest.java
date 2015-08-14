@@ -31,21 +31,21 @@ public class AmazonS3GodToolsConfigTest extends Arquillian
 	public void testGetPackagesKeyV2()
 	{
 		String key = AmazonS3GodToolsConfig.getPackagesKeyV2(lang);
-		Assert.assertEquals(key, "packages/current/en/all/en.zip");
+		Assert.assertEquals(key, "packages/en/all.zip");
 	}
 
 	@Test
 	public void testGetLanguagesKeyV2()
 	{
 		String key = AmazonS3GodToolsConfig.getLanguagesKeyV2(lang);
-		Assert.assertEquals(key, "translations/current/en/all/en.zip");
+		Assert.assertEquals(key, "translations/en/all.zip");
 	}
 
 	@Test
 	public void testGetLanguageAndPackageKeyV2()
 	{
 		String key = AmazonS3GodToolsConfig.getLanguageAndPackageKeyV2(lang, pack);
-		Assert.assertEquals(key, "translations/current/en/kgp.zip");
+		Assert.assertEquals(key, "translations/en/kgp.zip");
 	}
 
 	@Test
