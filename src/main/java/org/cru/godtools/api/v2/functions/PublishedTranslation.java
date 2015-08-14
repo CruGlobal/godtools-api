@@ -24,7 +24,7 @@ public class PublishedTranslation extends AbstractTranslation
 
 		TranslationPackager translationPackager = new TranslationPackager();
 
-		InputStream compressedTranslation = translationPackager.compress(godToolsTranslations);
+		InputStream compressedTranslation = translationPackager.compress(godToolsTranslations, true);
 
 		godToolsS3Client.pushPackagesZippedFolder(languageCode, compressedTranslation);
 

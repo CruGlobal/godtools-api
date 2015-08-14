@@ -29,8 +29,10 @@ public class TranslationPackager
 	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
 	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
 
-	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList)
+	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList, boolean includeImages)
 	{
+		this.includeImages = includeImages;
+
 		try
 		{
 			if (!godToolsTranslationList.isEmpty())
@@ -73,11 +75,6 @@ public class TranslationPackager
 		{
 			throw Throwables.propagate(e);
 		}
-	}
-
-	public InputStream compress(GodToolsTranslation godToolsTranslation)
-	{
-		return compress(godToolsTranslation, true);
 	}
 
 	private void addTranslationToZipStream(GodToolsTranslation godToolsTranslation) throws Exception

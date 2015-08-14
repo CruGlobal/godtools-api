@@ -48,7 +48,7 @@ public class DraftResource
 		TranslationPackager packager = new TranslationPackager();
 
 		return Response
-				.ok(packager.compress(draftTranslation.retrieve(languageCode)))
+				.ok(packager.compress(draftTranslation.retrieve(languageCode), true))
 				.build();
 	}
 
@@ -71,7 +71,7 @@ public class DraftResource
 		if(godToolsTranslationOptional.isPresent())
 		{
 			return Response
-					.ok(packager.compress(godToolsTranslationOptional.get()))
+					.ok(packager.compress(godToolsTranslationOptional.get(), true))
 					.build();
 		}
 		else
