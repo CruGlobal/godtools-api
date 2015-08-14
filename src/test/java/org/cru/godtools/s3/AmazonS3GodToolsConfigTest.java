@@ -37,14 +37,14 @@ public class AmazonS3GodToolsConfigTest extends Arquillian
 	@Test
 	public void testGetLanguagesKeyV2()
 	{
-		String key = AmazonS3GodToolsConfig.getLanguagesKeyV2(lang);
+		String key = AmazonS3GodToolsConfig.getTranslationsKeyV2(lang);
 		Assert.assertEquals(key, "translations/en/all.zip");
 	}
 
 	@Test
 	public void testGetLanguageAndPackageKeyV2()
 	{
-		String key = AmazonS3GodToolsConfig.getLanguageAndPackageKeyV2(lang, pack);
+		String key = AmazonS3GodToolsConfig.getTranslationsAndPackageKeyV2(lang, pack);
 		Assert.assertEquals(key, "translations/en/kgp.zip");
 	}
 
@@ -87,11 +87,11 @@ public class AmazonS3GodToolsConfigTest extends Arquillian
 	{
 		try
 		{
-			URL key = AmazonS3GodToolsConfig.getLanguagesRedirectUrl(lang);
+			URL key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang);
 			URL expected = new URL(BASE_URL + "translations/en/all.zip");
 			Assert.assertEquals(key, expected);
 
-			key = AmazonS3GodToolsConfig.getLanguagesRedirectUrl(lang, pack);
+			key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang, pack);
 			expected = new URL(BASE_URL + "translations/en/kgp.zip");
 			Assert.assertEquals(key, expected);
 		}

@@ -78,7 +78,7 @@ public class AmazonS3GodToolsConfig
 	/**
 	 * e.g. translations/en/all.zip  OR
 	 */
-	public static String getLanguagesKeyV2(String languageCode)
+	public static String getTranslationsKeyV2(String languageCode)
 	{
 		return TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP;
 	}
@@ -86,7 +86,7 @@ public class AmazonS3GodToolsConfig
 	/**
 	 * e.g. translations/en/kgp.zip
 	 */
-	public static String getLanguageAndPackageKeyV2(String languageCode, String packageCode)
+	public static String getTranslationsAndPackageKeyV2(String languageCode, String packageCode)
 	{
 		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
 	}
@@ -113,12 +113,12 @@ public class AmazonS3GodToolsConfig
 		return new URL(BASE_URL + META + ALL_FILE + XML);
 	}
 
-	public static URL getLanguagesRedirectUrl(String languageCode) throws MalformedURLException
+	public static URL getTranslationsRedirectUrl(String languageCode) throws MalformedURLException
 	{
-		return getLanguagesRedirectUrl(languageCode, null);
+		return getTranslationsRedirectUrl(languageCode, null);
 	}
 
-	public static URL getLanguagesRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
+	public static URL getTranslationsRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
 	{
 		if(Strings.isNullOrEmpty(packageCode))
 		{

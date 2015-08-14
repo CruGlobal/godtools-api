@@ -35,7 +35,7 @@ public class GodToolsS3Client
 
 	public S3Object getLanguagesZippedFolder(String languageCode)
 	{
-		String languagesKey = AmazonS3GodToolsConfig.getLanguagesKeyV2(languageCode);
+		String languagesKey = AmazonS3GodToolsConfig.getTranslationsKeyV2(languageCode);
 
 		log.info(String.format("Getting languages file w/ key %s", languagesKey));
 
@@ -83,7 +83,7 @@ public class GodToolsS3Client
 
 	public void pushTranslationsZippedFile(String languageCode, String packageCode, InputStream languageFile)
 	{
-		String translationKey = AmazonS3GodToolsConfig.getLanguageAndPackageKeyV2(languageCode, packageCode);
+		String translationKey = AmazonS3GodToolsConfig.getTranslationsAndPackageKeyV2(languageCode, packageCode);
 
 		log.info(String.format("pushing %s (text only) file for language %s", packageCode, languageCode));
 

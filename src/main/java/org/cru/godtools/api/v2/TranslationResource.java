@@ -50,7 +50,7 @@ public class TranslationResource
 
 		return Response
 				.status(Response.Status.MOVED_PERMANENTLY)
-				.header("location", AmazonS3GodToolsConfig.getLanguagesRedirectUrl(languageCode))
+				.header("location", AmazonS3GodToolsConfig.getTranslationsRedirectUrl(languageCode))
 				.build();
 	}
 
@@ -63,7 +63,7 @@ public class TranslationResource
 
 		return Response
 				.status(Response.Status.MOVED_PERMANENTLY)
-				.header("location", AmazonS3GodToolsConfig.getLanguagesRedirectUrl(languageCode, packageCode))
+				.header("location", AmazonS3GodToolsConfig.getTranslationsRedirectUrl(languageCode, packageCode))
 				.build();
 	}
 
