@@ -34,13 +34,12 @@ public class MetaResource
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMetaInfo(@QueryParam("Authorization") String authCodeParam,
 								   @HeaderParam("Authorization") String authCodeHeader,
-								   @HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+								   @HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
 		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(hasAdminAccess || hasDraftAccess)
 		{
@@ -49,14 +48,14 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(requestedContentType))
 					.build();
 		}
 	}
@@ -69,13 +68,12 @@ public class MetaResource
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
 										@HeaderParam("Authorization") String authCodeHeader,
-										@HeaderParam("Accept") String requestedContentType) throws MalformedURLException
+										@HeaderParam("Accept") MediaType requestedContentType) throws MalformedURLException
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
 		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(hasDraftAccess || hasAdminAccess)
 		{
@@ -85,14 +83,14 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(requestedContentType))
 					.build();
 		}
 	}
@@ -106,13 +104,12 @@ public class MetaResource
 												  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 												  @QueryParam("Authorization") String authCodeParam,
 												  @HeaderParam("Authorization") String authCodeHeader,
-												  @HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+												  @HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
 		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(hasDraftAccess || hasAdminAccess)
 		{
@@ -123,30 +120,15 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(requestedContentType))
 					.build();
-		}
-	}
-
-	private MediaType resolveMediaType(String requestedContentType)
-	{
-		try
-		{
-			return MediaType.valueOf(requestedContentType);
-		}
-		catch(RuntimeException e)
-		{
-			throw new BadRequestException(
-					String.format("Unrecognized Media Type %s. " +
-									"(hint: check \"Accepts\" passes a valid type like \"application/json\" or \"application/xml\")",
-							requestedContentType));
 		}
 	}
 }

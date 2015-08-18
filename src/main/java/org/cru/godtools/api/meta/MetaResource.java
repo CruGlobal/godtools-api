@@ -1,16 +1,20 @@
 package org.cru.godtools.api.meta;
 
 import com.amazonaws.services.s3.model.S3Object;
-import com.google.common.base.Optional;
+
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,12 +44,11 @@ public class MetaResource
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
 										@HeaderParam("Authorization") String authCodeHeader,
-								   		@HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+								   		@HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
 		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(retrieveDrafts)
 		{
@@ -54,17 +57,17 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			// published meta file is retrieved from S3
-			S3Object metaFile = godToolsS3Client.getMetaFile(mediaType);
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
 
 			return Response
 					.ok(metaFile.getObjectContent())
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 	}
@@ -77,12 +80,11 @@ public class MetaResource
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
 								@HeaderParam("Authorization") String authCodeHeader,
-								@HeaderParam("Accept") String requestedContentType)
+								@HeaderParam("Accept") MediaType requestedContentType)
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
 		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(retrieveDrafts)
 		{
@@ -90,17 +92,17 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			// published meta file is retrieved from S3
-			S3Object metaFile = godToolsS3Client.getMetaFile(mediaType);
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
 
 			return Response
 					.ok(metaFile.getObjectContent())
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 	}
@@ -114,12 +116,11 @@ public class MetaResource
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
 								@HeaderParam("Authorization") String authCodeHeader,
-								@HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+								@HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
 		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
-		MediaType mediaType = resolveMediaType(requestedContentType);
 
 		if(retrieveDrafts)
 		{
@@ -127,33 +128,18 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
 		}
 		else
 		{
 			// published meta file is retrieved from S3
-			S3Object metaFile = godToolsS3Client.getMetaFile(mediaType);
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
 
 			return Response
 					.ok(metaFile.getObjectContent())
-					.type(mediaType)
+					.type(requestedContentType)
 					.build();
-		}
-	}
-
-	private MediaType resolveMediaType(String requestedContentType)
-	{
-		try
-		{
-			return MediaType.valueOf(requestedContentType);
-		}
-		catch(RuntimeException e)
-		{
-			throw new BadRequestException(
-					String.format("Unrecognized Media Type %s. " +
-									"(hint: check \"Accepts\" passes a valid type like \"application/json\" or \"application/xml\")",
-							requestedContentType));
 		}
 	}
 }
