@@ -36,6 +36,11 @@ public class AuthorizationRecord
         return hasDraftAccess() && isCurrentlyActive(currentTime);
     }
 
+    public boolean hasAdminAccess(DateTime currentTime)
+    {
+        return isAdmin() && isCurrentlyActive(currentTime);
+    }
+
     public static void checkAdminAccess(Optional<AuthorizationRecord> authorizationRecordOptional, DateTime currentTime)
     {
         checkAuthorization(authorizationRecordOptional, currentTime);

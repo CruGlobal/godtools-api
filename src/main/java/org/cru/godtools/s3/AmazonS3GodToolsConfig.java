@@ -1,6 +1,8 @@
 package org.cru.godtools.s3;
 
 
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.MediaType;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -18,6 +20,7 @@ public class AmazonS3GodToolsConfig
 	private static final String TRANSLATIONS = "translations/";
 	private static final String ALL_FILE = "all";
 	private static final String XML = ".xml";
+	private static final String JSON = ".json";
 	private static final String ZIP = ".zip";
 
 	public static String getMetaKeyV2()
@@ -59,9 +62,9 @@ public class AmazonS3GodToolsConfig
 		return new URL(BASE_URL + PACKAGES + languageCode + "/" +  packageCode + ZIP);
 	}
 
-	public static URL getMetaRedirectUrl() throws MalformedURLException
+	public static URL getMetaRedirectUrl(@NotNull MediaType mediaType) throws MalformedURLException
 	{
-		return new URL(BASE_URL + META + ALL_FILE + XML);
+		return new URL(BASE_URL + META + ALL_FILE + resolveSuffix(mediaType));
 	}
 
 	public static URL getTranslationsRedirectUrl(String languageCode) throws MalformedURLException
@@ -72,5 +75,18 @@ public class AmazonS3GodToolsConfig
 	public static URL getTranslationsRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
 	{
 		return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + packageCode + ZIP);
+	}
+
+	static String resolveSuffix(MediaType mediaType)
+	{
+		if(MediaType.APPLICATION_JSON.equals(mediaType) || MediaType.APPLICATION_JSON_TYPE.equals(mediaType))
+		{
+			return JSON;
+		}
+		else if(MediaType.APPLICATION_XML.equals(mediaType) || MediaType.APPLICATION_XML_TYPE.equals(mediaType))
+		{
+			return XML;
+		}
+		else throw new IllegalStateException(String.format("Unrecognized mediaType %s", mediaType.toString()));
 	}
 }

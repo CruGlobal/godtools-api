@@ -3,6 +3,7 @@ package org.cru.godtools.s3;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import javax.ws.rs.core.MediaType;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -49,7 +50,7 @@ public class AmazonS3GodToolsConfigTest
 	@Test
 	public void tetGetMetaRedirectUrl() throws MalformedURLException
 	{
-		URL key = AmazonS3GodToolsConfig.getMetaRedirectUrl();
+		URL key = AmazonS3GodToolsConfig.getMetaRedirectUrl(MediaType.APPLICATION_XML_TYPE);
 		URL expected = new URL(BASE_URL + "meta/all.xml");
 		Assert.assertEquals(key, expected);
 	}

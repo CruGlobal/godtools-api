@@ -1,22 +1,15 @@
 package org.cru.godtools.api.v2;
 
-import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.meta.MetaResults;
 import org.cru.godtools.api.meta.MetaService;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,30 +33,30 @@ public class MetaResource
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMetaInfo(@QueryParam("Authorization") String authCodeParam,
-								   @HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+								   @HeaderParam("Authorization") String authCodeHeader,
+								   @HeaderParam("Accepts") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
+		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
+		MediaType mediaType = resolveMediaType(requestedContentType);
 
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
-
-		if(retrieveDrafts)
+		if(hasAdminAccess || hasDraftAccess)
 		{
 			// draft meta file is built from the database
-			MetaResults metaResults = metaService.getAllMetaResults(retrieveDrafts, false);
+			MetaResults metaResults = metaService.getAllMetaResults(hasDraftAccess, hasAdminAccess);
 
 			return Response
 					.ok(metaResults)
-					.type("application/xml")
+					.type(mediaType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl())
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
 					.build();
 		}
 	}
@@ -75,31 +68,31 @@ public class MetaResource
 										@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
-										@HeaderParam("Authorization") String authCodeHeader) throws MalformedURLException
+										@HeaderParam("Authorization") String authCodeHeader,
+										@HeaderParam("Accepts") String requestedContentType) throws MalformedURLException
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
+		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
+		MediaType mediaType = resolveMediaType(requestedContentType);
 
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
-
-		if(retrieveDrafts)
+		if(hasDraftAccess || hasAdminAccess)
 		{
 			MetaResults metaResults = metaService.getLanguageMetaResults(languageCode,
-					retrieveDrafts,
-					false);
+					hasDraftAccess,
+					hasAdminAccess);
 
 			return Response
 					.ok(metaResults)
-					.type("application/xml")
+					.type(mediaType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl())
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
 					.build();
 		}
 	}
@@ -112,33 +105,48 @@ public class MetaResource
 												  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 												  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 												  @QueryParam("Authorization") String authCodeParam,
-												  @HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+												  @HeaderParam("Authorization") String authCodeHeader,
+												  @HeaderParam("Accepts") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authCodeParam, authCodeHeader);
+		boolean hasDraftAccess = authService.hasDraftAccess(authCodeParam, authCodeHeader);
+		boolean hasAdminAccess = authService.hasAdminAccess(authCodeParam, authCodeHeader);
+		MediaType mediaType = resolveMediaType(requestedContentType);
 
-		boolean retrieveDrafts = authorizationRecord.isPresent() &&
-				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
-
-		if(retrieveDrafts)
+		if(hasDraftAccess || hasAdminAccess)
 		{
 			MetaResults metaResults = metaService.getPackageMetaResults(languageCode,
 					packageCode,
-					retrieveDrafts,
-					false);
+					hasDraftAccess,
+					hasAdminAccess);
 
 			return Response
 					.ok(metaResults)
-					.type("application/xml")
+					.type(mediaType)
 					.build();
 		}
 		else
 		{
 			return Response
 					.status(Response.Status.MOVED_PERMANENTLY)
-					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl())
+					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(mediaType))
 					.build();
+		}
+	}
+
+	private MediaType resolveMediaType(@HeaderParam("Accepts") String requestedContentType)
+	{
+		try
+		{
+			return MediaType.valueOf(requestedContentType);
+		}
+		catch(RuntimeException e)
+		{
+			throw new BadRequestException(
+					String.format("Unrecognized Media Type %s. " +
+									"(hint: check \"Accepts\" passes a valid type like \"application/json\" or \"application/xml\")",
+							requestedContentType));
 		}
 	}
 }

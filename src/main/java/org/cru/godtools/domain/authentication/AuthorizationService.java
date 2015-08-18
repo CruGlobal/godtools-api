@@ -26,6 +26,13 @@ public class AuthorizationService
 				authorizationRecord.get().hasDraftAccess(clock.currentDateTime());
 	}
 
+	public boolean hasAdminAccess(String authCodeParam, String authCodeHeader)
+	{
+		Optional<AuthorizationRecord> authorizationRecord = getAuthorizationRecord(authCodeParam, authCodeHeader);
+		return authorizationRecord.isPresent() &&
+				authorizationRecord.get().hasAdminAccess(clock.currentDateTime());
+	}
+
     public Optional<AuthorizationRecord> getAuthorizationRecord(String authTokenParam, String authTokenHeader)
     {
 		String authToken = authTokenHeader == null ? authTokenParam : authTokenHeader;
