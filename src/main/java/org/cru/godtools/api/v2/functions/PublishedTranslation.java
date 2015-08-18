@@ -28,7 +28,7 @@ public class PublishedTranslation extends AbstractTranslation
 
 		godToolsS3Client.pushPackagesZippedFolder(languageCode, compressedTranslation);
 
-		godToolsS3Client.pushMetaFile(metaService.getAllMetaResults(false, false).asStream());
+		godToolsS3Client.pushMetaFile(metaService.getAllMetaResults(false, false));
 
 		for (GodToolsTranslation translation : godToolsTranslations)
 		{

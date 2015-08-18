@@ -23,9 +23,9 @@ public class AmazonS3GodToolsConfig
 	private static final String JSON = ".json";
 	private static final String ZIP = ".zip";
 
-	public static String getMetaKeyV2()
+	public static String getMetaKeyV2(MediaType mediaType)
 	{
-		return META + ALL_FILE + XML;
+		return META + ALL_FILE + resolveSuffix(mediaType);
 	}
 
 	/**

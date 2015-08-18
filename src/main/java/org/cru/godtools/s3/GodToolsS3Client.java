@@ -6,9 +6,11 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import org.cru.godtools.api.meta.MetaResults;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
 
 /**
@@ -23,9 +25,9 @@ public class GodToolsS3Client
 
 	private static final String GODTOOLS_BUCKET = "cru-godtools";
 
-	public S3Object getMetaFile()
+	public S3Object getMetaFile(MediaType mediaType)
 	{
-		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2();
+		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2(mediaType);
 
 		log.info(String.format("Getting meta info file w/ key %s", metaKey));
 
@@ -67,18 +69,25 @@ public class GodToolsS3Client
 		s3Client.putObject(putObjectRequest);
 	}
 
-	public void pushMetaFile(InputStream metaFile)
+	/**
+	 * Pushes an XML and a JSON serialized version of the meta file
+	 */
+	public void pushMetaFile(MetaResults metaResults)
 	{
-		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2();
+		log.info("Pushing meta files");
 
-		log.info(String.format("Pushing meta file w/ key %s", metaKey));
+		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_XML_TYPE, metaResults.asXmlStream()));
 
-		ObjectMetadata metadata = new ObjectMetadata();
+		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_JSON_TYPE, metaResults.asJsonStream()));
+	}
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, metaKey, metaFile, metadata)
-				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools meta is meant to be downloaded w/o authz
-
-		s3Client.putObject(putObjectRequest);
+	private PutObjectRequest buildMetaPutRequest(MediaType mediaType, InputStream metaResultsStream)
+	{
+		return new PutObjectRequest(GODTOOLS_BUCKET,
+				AmazonS3GodToolsConfig.getMetaKeyV2(mediaType),
+				metaResultsStream,
+				new ObjectMetadata())
+				.withCannedAcl(CannedAccessControlList.PublicRead);
 	}
 
 	public void pushTranslationsZippedFile(String languageCode, String packageCode, InputStream languageFile)
