@@ -129,8 +129,6 @@ public class TranslationResource
 	{
 		log.info("Requesting config.xml for package: " + packageCode + " and language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
 		return Response
 				.ok(godToolsTranslationService.getConfig(packageCode, new LanguageCode(languageCode), GodToolsVersion.LATEST_PUBLISHED_VERSION))
 				.build();
@@ -148,8 +146,6 @@ public class TranslationResource
 							   @QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
 	{
 		log.info("Requesting draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		Optional<Response> optionalBadRequestResponse = verifyRequestedPageBelongsToPageAndLanguage(packageCode, languageCode, pageId);
 
