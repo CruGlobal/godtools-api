@@ -34,7 +34,7 @@ public class MetaResource
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMetaInfo(@QueryParam("Authorization") String authCodeParam,
 								   @HeaderParam("Authorization") String authCodeHeader,
-								   @HeaderParam("Accepts") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+								   @HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
@@ -69,7 +69,7 @@ public class MetaResource
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
 										@HeaderParam("Authorization") String authCodeHeader,
-										@HeaderParam("Accepts") String requestedContentType) throws MalformedURLException
+										@HeaderParam("Accept") String requestedContentType) throws MalformedURLException
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
@@ -106,7 +106,7 @@ public class MetaResource
 												  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 												  @QueryParam("Authorization") String authCodeParam,
 												  @HeaderParam("Authorization") String authCodeHeader,
-												  @HeaderParam("Accepts") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
+												  @HeaderParam("Accept") String requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
@@ -135,7 +135,7 @@ public class MetaResource
 		}
 	}
 
-	private MediaType resolveMediaType(@HeaderParam("Accepts") String requestedContentType)
+	private MediaType resolveMediaType(String requestedContentType)
 	{
 		try
 		{
