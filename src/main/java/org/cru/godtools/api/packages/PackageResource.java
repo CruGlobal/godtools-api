@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * Created by ryancarlson on 3/14/14.
  */
-
+@Deprecated
 @Path("/packages")
 public class PackageResource
 {
