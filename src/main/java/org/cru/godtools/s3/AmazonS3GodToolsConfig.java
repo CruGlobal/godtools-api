@@ -17,54 +17,13 @@ public class AmazonS3GodToolsConfig
 	private static final String META = "meta/";
 	private static final String PACKAGES = "packages/";
 	private static final String TRANSLATIONS = "translations/";
-	private static final String META_FILE = "meta";
 	private static final String ALL_FILE = "all";
-	private static final String ALL = "all/";
-	private static final String CURRENT = "current/";
 	private static final String XML = ".xml";
 	private static final String ZIP = ".zip";
-
-	/**
-	 * e.g. meta/current/en/kgp/meta.xml  OR
-	 *      meta/current/en/meta.xml      OR
-	 *      meta/current/meta.xml
-	 */
-	@Deprecated
-	public static String getMetaKey(String languageCode, String packageCode)
-	{
-		if(!Strings.isNullOrEmpty(languageCode) && !Strings.isNullOrEmpty(packageCode))
-		{
-			return META + CURRENT + languageCode + "/" + packageCode + "/" + META_FILE + XML;
-		}
-		if(!Strings.isNullOrEmpty(languageCode))
-		{
-			return META + CURRENT + languageCode + "/" + META_FILE + XML;
-		}
-
-		return META + CURRENT + META_FILE + XML;
-	}
 
 	public static String getMetaKeyV2()
 	{
 		return META + ALL_FILE + XML;
-	}
-
-	/**
-	 * e.g. packages/current/en/all/en.zip  OR
-	 */
-	@Deprecated
-	public static String getPackagesKey(String languageCode, String packageCode)
-	{
-		return PACKAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
-	}
-
-	/**
-	 * e.g. translations/current/en/all/en.zip  OR
-	 */
-	@Deprecated
-	public static String getLanguagesKey(String languageCode, String packagesCode)
-	{
-		return TRANSLATIONS + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
 	}
 
 	/**
