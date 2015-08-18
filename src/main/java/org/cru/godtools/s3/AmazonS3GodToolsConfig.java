@@ -2,6 +2,7 @@ package org.cru.godtools.s3;
 
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -87,6 +88,10 @@ public class AmazonS3GodToolsConfig
 		{
 			return XML;
 		}
-		else throw new IllegalStateException(String.format("Unrecognized mediaType %s", mediaType.toString()));
+		else
+		{
+			// for now just return XML as the "default" case
+			return XML;
+		}
 	}
 }
