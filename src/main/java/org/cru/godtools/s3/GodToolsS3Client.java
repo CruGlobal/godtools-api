@@ -1,15 +1,12 @@
 package org.cru.godtools.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import org.cru.godtools.api.meta.MetaResults;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
 
@@ -31,8 +28,19 @@ public class GodToolsS3Client
 
 		log.info(String.format("Getting meta info file w/ key %s", metaKey));
 
-		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				metaKey));
+		try
+		{
+			return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, metaKey));
+		}
+		catch(AmazonS3Exception amazonException)
+		{
+			if(amazonException.getStatusCode() == 404)
+			{
+				throw new NotFoundException();
+			}
+
+			else throw amazonException;
+		}
 	}
 
 	public S3Object getLanguagesZippedFolder(String languageCode)
@@ -41,8 +49,7 @@ public class GodToolsS3Client
 
 		log.info(String.format("Getting languages file w/ key %s", languagesKey));
 
-		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				languagesKey));
+		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, languagesKey));
 	}
 
 	public S3Object getPackagesZippedFolder(String languageCode)
@@ -51,8 +58,7 @@ public class GodToolsS3Client
 
 		log.info(String.format("Getting packages file w/ key %s", packagesKey));
 
-		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME,
-				packagesKey));
+		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, packagesKey));
 	}
 
 	public void pushPackagesZippedFolder(String languageCode, InputStream compressedTranslation)
