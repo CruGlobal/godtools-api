@@ -1,31 +1,17 @@
 package org.cru.godtools.s3;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.testng.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by matthewfrederick on 8/14/15.
- */
-public class AmazonS3GodToolsConfigTest extends Arquillian
+
+public class AmazonS3GodToolsConfigTest
 {
 	public static final String lang = "en";
 	public static final String pack = "kgp";
 	private static final String BASE_URL = "https://s3.amazonaws.com/cru-godtools/";
-
-
-	@Deployment
-	public static WebArchive createDeployment()
-	{
-		return ShrinkWrap.create(WebArchive.class)
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
-	}
 
 	@Test
 	public void testGetPackagesKeyV2()
@@ -49,55 +35,34 @@ public class AmazonS3GodToolsConfigTest extends Arquillian
 	}
 
 	@Test
-	public void testGetPackagesRedirectUrl()
+	public void testGetPackagesRedirectUrl() throws MalformedURLException
 	{
-		try
-		{
-			URL key = AmazonS3GodToolsConfig.getPackagesRedirectUrl(lang);
-			URL expected = new URL(BASE_URL + "packages/en/all.zip");
-			Assert.assertEquals(key, expected);
+		URL key = AmazonS3GodToolsConfig.getPackagesRedirectUrl(lang);
+		URL expected = new URL(BASE_URL + "packages/en/all.zip");
+		Assert.assertEquals(key, expected);
 
-			key = AmazonS3GodToolsConfig.getPackagesRedirectUrl(lang, pack);
-			expected = new URL(BASE_URL + "packages/en/kgp.zip");
-			Assert.assertEquals(key, expected);
-		}
-		catch (Exception e)
-		{
-			Assert.fail(e.getMessage(), e);
-		}
+		key = AmazonS3GodToolsConfig.getPackagesRedirectUrl(lang, pack);
+		expected = new URL(BASE_URL + "packages/en/kgp.zip");
+		Assert.assertEquals(key, expected);
 	}
 
 	@Test
-	public void tetGetMetaRedirectUrl()
+	public void tetGetMetaRedirectUrl() throws MalformedURLException
 	{
-		try
-		{
-			URL key = AmazonS3GodToolsConfig.getMetaRedirectUrl();
-			URL expected = new URL(BASE_URL + "meta/all.xml");
-			Assert.assertEquals(key, expected);
-		}
-		catch (Exception e)
-		{
-			Assert.fail(e.getMessage(), e);
-		}
+		URL key = AmazonS3GodToolsConfig.getMetaRedirectUrl();
+		URL expected = new URL(BASE_URL + "meta/all.xml");
+		Assert.assertEquals(key, expected);
 	}
 
 	@Test
-	public void testGetLanguagesRedirectUrl()
+	public void testGetLanguagesRedirectUrl() throws MalformedURLException
 	{
-		try
-		{
-			URL key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang);
-			URL expected = new URL(BASE_URL + "translations/en/all.zip");
-			Assert.assertEquals(key, expected);
+		URL key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang);
+		URL expected = new URL(BASE_URL + "translations/en/all.zip");
+		Assert.assertEquals(key, expected);
 
-			key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang, pack);
-			expected = new URL(BASE_URL + "translations/en/kgp.zip");
-			Assert.assertEquals(key, expected);
-		}
-		catch (Exception e)
-		{
-			Assert.fail(e.getMessage(), e);
-		}
+		key = AmazonS3GodToolsConfig.getTranslationsRedirectUrl(lang, pack);
+		expected = new URL(BASE_URL + "translations/en/kgp.zip");
+		Assert.assertEquals(key, expected);
 	}
 }
