@@ -1,6 +1,5 @@
 package org.cru.godtools.s3;
 
-import com.google.common.base.Strings;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,19 +51,12 @@ public class AmazonS3GodToolsConfig
 
 	public static URL getPackagesRedirectUrl(String languageCode) throws MalformedURLException
 	{
-		return getPackagesRedirectUrl(languageCode, null);
+		return new URL(BASE_URL + PACKAGES + languageCode + "/" + ALL_FILE + ZIP);
 	}
 
 	public static URL getPackagesRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
 	{
-		if(Strings.isNullOrEmpty(packageCode))
-		{
-			return new URL(BASE_URL + PACKAGES + languageCode + "/" + ALL_FILE + ZIP);
-		}
-		else
-		{
-			return new URL(BASE_URL + PACKAGES + languageCode + "/" +  packageCode + ZIP);
-		}
+		return new URL(BASE_URL + PACKAGES + languageCode + "/" +  packageCode + ZIP);
 	}
 
 	public static URL getMetaRedirectUrl() throws MalformedURLException
@@ -74,18 +66,11 @@ public class AmazonS3GodToolsConfig
 
 	public static URL getTranslationsRedirectUrl(String languageCode) throws MalformedURLException
 	{
-		return getTranslationsRedirectUrl(languageCode, null);
+		return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP);
 	}
 
 	public static URL getTranslationsRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
 	{
-		if(Strings.isNullOrEmpty(packageCode))
-		{
-			return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP);
-		}
-		else
-		{
-			return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + packageCode + ZIP);
-		}
+		return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + packageCode + ZIP);
 	}
 }
