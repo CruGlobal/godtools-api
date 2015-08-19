@@ -49,8 +49,7 @@ public class TranslationResource
 		log.info("Requesting all packages for language: " + languageCode);
 
 		return Response
-				.status(Response.Status.MOVED_PERMANENTLY)
-				.header("location", AmazonS3GodToolsConfig.getTranslationsRedirectUrl(languageCode))
+				.status(Response.Status.NOT_FOUND)
 				.build();
 	}
 
