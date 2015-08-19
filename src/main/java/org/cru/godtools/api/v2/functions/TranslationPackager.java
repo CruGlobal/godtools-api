@@ -124,8 +124,9 @@ public class TranslationPackager
 				{
 					resourceElement.setAttribute("icon", "missing");
 				}
-				rootElement.appendChild(resourceElement);
 			}
+
+			rootElement.appendChild(resourceElement);
 		}
 		return contents;
 	}
