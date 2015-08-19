@@ -44,10 +44,14 @@ public class PackageResource
 
 	/**
 	 * GET - get all packages for the language specified by @param languageCode.
+	 *
+	 * NOTE: "application/xml" has to be included as an accepted header b/c the android app currently passes that along.  the old version of this endpoint
+	 * could have returned just the XML "contents" or the whole zipped folder if compressed=true were passed.  Now it only returns the zipped content, but
+	 * Android clients who don't update their app will break b/c they currently & incorrectly pass an Accept: application/xml header
 	 */
     @GET
 	@Path("/{language}")
-    @Produces("application/zip")
+    @Produces({"application/zip", "application/xml"})
     public Response getAllPackagesForLanguage(@PathParam("language") String languageCode,
 											  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 											  @QueryParam("compressed") String compressed,
