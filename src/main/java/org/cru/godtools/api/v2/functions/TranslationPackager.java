@@ -20,18 +20,21 @@ import java.util.zip.ZipOutputStream;
 
 public class TranslationPackager
 {
-	FileZipper fileZipper = new FileZipper();
+	FileZipper fileZipper;
 
 	Set<String> imagesAlreadyZipped = Sets.newHashSet();
 
 	boolean includeImages = true;
 
-	ByteArrayOutputStream bundledOutputStream = new ByteArrayOutputStream();
-	ZipOutputStream zipOutputStream = new ZipOutputStream(bundledOutputStream);
+	ByteArrayOutputStream bundledOutputStream;
+	ZipOutputStream zipOutputStream;
 
 	public InputStream compress(List<GodToolsTranslation> godToolsTranslationList, boolean includeImages)
 	{
 		this.includeImages = includeImages;
+		this.bundledOutputStream = new ByteArrayOutputStream();
+		this.zipOutputStream = new ZipOutputStream(bundledOutputStream);
+		this.fileZipper = new FileZipper();
 
 		try
 		{
@@ -59,6 +62,9 @@ public class TranslationPackager
 	public InputStream compress(GodToolsTranslation godToolsTranslation, boolean includeImages)
 	{
 		this.includeImages = includeImages;
+		this.bundledOutputStream = new ByteArrayOutputStream();
+		this.zipOutputStream = new ZipOutputStream(bundledOutputStream);
+		this.fileZipper = new FileZipper();
 
 		try
 		{
