@@ -34,8 +34,7 @@ public class PackageResource
 		log.info("Requesting package " + packageCode + " for language: " + languageCode);
 
 		return Response
-				.status(Response.Status.MOVED_PERMANENTLY)
-				.header("location", AmazonS3GodToolsConfig.getPackagesRedirectUrl(languageCode, packageCode))
+				.status(Response.Status.NOT_FOUND)
 				.build();
 	}
 }

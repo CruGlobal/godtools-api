@@ -2,7 +2,6 @@ package org.cru.godtools.api.translations;
 
 import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
@@ -45,7 +44,7 @@ public class TranslationDownloadResource
 	{
 		log.info("Requesting all translations for language: " + languageCode);
 
-		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
+		S3Object languagesZippedFolder = godToolsS3Client.getTranslationZippedFolder(languageCode);
 
 		return Response
 				.ok(languagesZippedFolder.getObjectContent())
@@ -63,8 +62,11 @@ public class TranslationDownloadResource
 								   @HeaderParam("Authorization") String authTokenHeader,
 								   @QueryParam("Authorization") String authTokenParam) throws IOException
 	{
+		S3Object translationZippedFolder = godToolsS3Client.getTranslationZippedFolder(languageCode, packageCode);
+
 		return Response
-				.status(Response.Status.NOT_FOUND)
+				.ok(translationZippedFolder.getObjectContent())
+				.type("application/zip")
 				.build();
 	}
 }

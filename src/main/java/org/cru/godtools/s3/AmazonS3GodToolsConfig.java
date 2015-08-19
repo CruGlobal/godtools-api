@@ -45,6 +45,11 @@ public class AmazonS3GodToolsConfig
 		return TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP;
 	}
 
+	public static String getTranslationsKeyV2(String languageCode, String packageCode)
+	{
+		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
+	}
+
 	/**
 	 * e.g. translations/en/kgp.zip
 	 */

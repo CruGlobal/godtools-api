@@ -43,13 +43,22 @@ public class GodToolsS3Client
 		}
 	}
 
-	public S3Object getLanguagesZippedFolder(String languageCode)
+	public S3Object getTranslationZippedFolder(String languageCode)
 	{
-		String languagesKey = AmazonS3GodToolsConfig.getTranslationsKeyV2(languageCode);
+		String key = AmazonS3GodToolsConfig.getTranslationsKeyV2(languageCode);
 
-		log.info(String.format("Getting languages file w/ key %s", languagesKey));
+		log.info(String.format("Getting translation file w/ key %s", key));
 
-		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, languagesKey));
+		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, key));
+	}
+
+	public S3Object getTranslationZippedFolder(String languageCode, String packageCode)
+	{
+		String key = AmazonS3GodToolsConfig.getTranslationsKeyV2(languageCode, packageCode);
+
+		log.info(String.format("Getting translation file w/ key %s", key));
+
+		return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, key));
 	}
 
 	public S3Object getPackagesZippedFolder(String languageCode)
