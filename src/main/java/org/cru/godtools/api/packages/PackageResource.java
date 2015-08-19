@@ -47,7 +47,7 @@ public class PackageResource
 	 */
     @GET
 	@Path("/{language}")
-    @Produces({"application/zip", "application/xml"})
+    @Produces("application/zip")
     public Response getAllPackagesForLanguage(@PathParam("language") String languageCode,
 											  @HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 											  @QueryParam("compressed") String compressed,
@@ -55,8 +55,6 @@ public class PackageResource
 											  @QueryParam("Authorization") String authTokenParam) throws ParserConfigurationException, SAXException, IOException
     {
 		log.info("Requesting all packages for language: " + languageCode);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode);
 
@@ -78,10 +76,8 @@ public class PackageResource
 							   @HeaderParam("Authorization") String authTokenHeader,
 							   @QueryParam("Authorization") String authTokenParam) throws Exception
 	{
-		log.info("Requesting package " + packageCode + " for language: " + languageCode);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		return Response.status(Response.Status.NOT_FOUND).build();
+		return Response
+				.status(Response.Status.NOT_FOUND)
+				.build();
 	}
 }

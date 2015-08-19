@@ -45,8 +45,6 @@ public class TranslationDownloadResource
 	{
 		log.info("Requesting all translations for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
 		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
 
 		return Response
@@ -65,14 +63,8 @@ public class TranslationDownloadResource
 								   @HeaderParam("Authorization") String authTokenHeader,
 								   @QueryParam("Authorization") String authTokenParam) throws IOException
 	{
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
-
 		return Response
-				.ok(languagesZippedFolder.getObjectContent())
-				.type("application/zip")
+				.status(Response.Status.NOT_FOUND)
 				.build();
-
 	}
 }
