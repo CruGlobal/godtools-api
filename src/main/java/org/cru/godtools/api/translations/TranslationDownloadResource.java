@@ -53,7 +53,7 @@ public class TranslationDownloadResource
 	}
 
 	@GET
-	@Path("/translations/{language}/{package}")
+	@Path("/{language}/{package}")
 	@Produces({"application/zip"})
 	public Response getTranslation(@PathParam("language") String languageCode,
 								   @PathParam("package") String packageCode,
