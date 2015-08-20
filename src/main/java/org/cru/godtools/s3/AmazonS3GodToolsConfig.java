@@ -15,7 +15,7 @@ public class AmazonS3GodToolsConfig
 {
 
 	public static final String BUCKET_NAME = new GodToolsPropertiesFactory().get().getProperty("s3BucketName");
-	private static final String BASE_URL = "https://s3.amazonaws.com/" + new GodToolsPropertiesFactory().get().getProperty("s3BucketName");
+	private static final String BASE_URL = "https://s3.amazonaws.com/" + new GodToolsPropertiesFactory().get().getProperty("s3BucketName") + "/";
 
 	private static final String META = "meta/";
 	private static final String PACKAGES = "packages/";
