@@ -1,8 +1,9 @@
 package org.cru.godtools.s3;
 
 
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MediaType;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,9 +13,9 @@ import java.net.URL;
  */
 public class AmazonS3GodToolsConfig
 {
-	public static final String BUCKET_NAME = "cru-godtools";
 
-	private static final String BASE_URL = "https://s3.amazonaws.com/cru-godtools/";
+	public static final String BUCKET_NAME = new GodToolsPropertiesFactory().get().getProperty("s3BucketName");
+	private static final String BASE_URL = "https://s3.amazonaws.com/" + new GodToolsPropertiesFactory().get().getProperty("s3BucketName");
 
 	private static final String META = "meta/";
 	private static final String PACKAGES = "packages/";
