@@ -1,7 +1,6 @@
 package org.cru.godtools.api.authorization;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -63,8 +62,7 @@ public class AuthorizationResource
 	    authorizationRecord.setDeviceId(device);
 		authorizationRecord.setDraftAccess(false);
 
-		log.info("Saving basic authorization record:");
-		Simply.logObject(authorizationRecord, AuthorizationResource.class);
+		log.info(String.format("Saving basic authorization record w/ ID %s", authorizationRecord.getId()));
 
 		authorizationService.recordNewAuthorization(authorizationRecord);
 
@@ -99,8 +97,8 @@ public class AuthorizationResource
 
 		authorizationRecord.setDraftAccess(true);
 
-		log.info("Saving authorization record with translator access:");
-		Simply.logObject(authorizationRecord, AuthorizationResource.class);
+		log.info(String.format("Saving authorization record with translator access w/ ID %s",
+				authorizationRecord.getId()));
 
         authorizationService.recordNewAuthorization(authorizationRecord);
 
@@ -136,8 +134,8 @@ public class AuthorizationResource
 		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
 		authorizationRecord.setDraftAccess(true);
 
-		log.info("Saving authorization record with admin access:");
-		Simply.logObject(authorizationRecord, AuthorizationResource.class);
+		log.info(String.format("Saving authorization record with admin access w/ ID %s",
+				authorizationRecord.getId()));
 
 		authorizationService.recordNewAuthorization(authorizationRecord);
 

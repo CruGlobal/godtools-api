@@ -3,7 +3,6 @@ package org.cru.godtools.api.translations;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.model.PageFile;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -85,8 +84,6 @@ public class TranslationResource
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
 		Translation translation = godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
-
-		Simply.logObject(translation, TranslationResource.class);
 
 		// FIXME: this isn't quite right yet... major version number should not be hard coded, but for now the API doesn't support updating it
 		return Response

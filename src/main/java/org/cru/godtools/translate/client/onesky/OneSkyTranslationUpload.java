@@ -3,7 +3,6 @@ package org.cru.godtools.translate.client.onesky;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Multimap;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.properties.GodToolsProperties;
@@ -76,7 +75,6 @@ public class OneSkyTranslationUpload implements TranslationUpload
 		Translation translation = oneSkyDataService.getTranslation(oneSkyProjectId, locale);
 
 		log.info("Found translation:");
-		Simply.logObject(translation, OneSkyTranslationUpload.class);
 
 		for(PageStructure pageStructure : oneSkyDataService.getPageStructures(translation.getId()))
 		{
@@ -95,10 +93,6 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	{
 		log.info("Checking translation status for OneSky project ID: " + projectId + " and locale: " + locale);
 		Translation translation = oneSkyDataService.getTranslation(projectId, locale);
-
-		log.info("Found translation:");
-		Simply.logObject(translation, OneSkyTranslationUpload.class);
-
 		return oneSkyDataService.hasTranslationBeenUploadedToTranslationTool(translation.getId());
 	}
 
