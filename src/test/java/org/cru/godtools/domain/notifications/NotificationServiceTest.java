@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -86,6 +87,20 @@ public class NotificationServiceTest extends Arquillian
 		notificationService.updateNotification(returnedNotification);
 		notification = notificationService.selectNotificationByRegistrationIdAndType(notification);
 		Assert.assertEquals(notification.isNotificationSent(), true);
+	}
+
+	@Test
+	public void testCountRegIds()
+	{
+		Integer count = notificationService.countRegistrationIds();
+		Assert.assertEquals(count, new Integer(1));
+	}
+
+	@Test
+	public void testGetAllRegIds()
+	{
+		List<String> regIds = notificationService.getAllRegistrationIds(0);
+		Assert.assertEquals(regIds.size(), 1);
 	}
 
 	private Notification createNotification(UUID id)

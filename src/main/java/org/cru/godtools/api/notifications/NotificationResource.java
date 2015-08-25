@@ -1,6 +1,7 @@
 package org.cru.godtools.api.notifications;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import org.cru.godtools.api.authorization.AuthorizationResource;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -12,14 +13,18 @@ import org.cru.godtools.domain.notifications.NotificationService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -34,6 +39,8 @@ public class NotificationResource
 	AuthorizationService authorizationService;
 	@Inject
 	NotificationService notificationService;
+
+	private final GodToolsProperties properties = new GodToolsPropertiesFactory().get();
 
 	Logger log = Logger.getLogger(AuthorizationResource.class);
 
@@ -106,6 +113,58 @@ public class NotificationResource
 				notification.setPresentations(originalNotification.getPresentations() + 1);
 				notificationService.updateNotification(notification);
 			}
+		}
+
+		return Response.noContent().build();
+	}
+
+	@POST
+	@Path("/multicast")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response sendMassNotification(String message, @HeaderParam(value="Authorization") String authcode) throws IOException
+	{
+		log.info("Send mass notification, authcode: " + authcode);
+
+		// get authorization record for authcode
+		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(null, authcode);
+
+		// user must be admin to send multicast
+		if (!authorizationRecord.isPresent() || !authorizationRecord.get().isAdmin()) throw new UnauthorizedException();
+
+		// make sure the message is not empty
+		if (Strings.isNullOrEmpty(message)) throw new BadRequestException("Message is empty");
+
+		// get the number of registered devices
+		Integer regIdCount = notificationService.countRegistrationIds();
+
+		// create a counter. This will be used for the offset. It will always increment by 1000
+		int counter = 0;
+
+		// find how many registered ids are remaining.
+		int remaining = regIdCount;
+
+		while (remaining > 0)
+		{
+
+			// get all of the registration ids with offset
+			List<String> regIds = notificationService.getAllRegistrationIds(counter);
+
+			// create the message to be sent
+			Message messageToSend = new Message.Builder().addData("msg", message).build();
+
+			String apiKey = properties.getNonNullProperty("googleApiKey");
+
+			Sender sender = new Sender(apiKey);
+
+			MulticastResult result = sender.send(messageToSend, regIds, 2);
+			log.info(result.getMulticastId());
+
+			// increment the counter for next run
+			counter = counter + 1000;
+
+			// remove however many regIds were just notified.
+			remaining = remaining - regIds.size();
 		}
 
 		return Response.noContent().build();
