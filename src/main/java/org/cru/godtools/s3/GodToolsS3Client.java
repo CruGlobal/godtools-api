@@ -3,6 +3,7 @@ package org.cru.godtools.s3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import org.cru.godtools.api.meta.MetaResults;
+import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,19 +19,21 @@ public class GodToolsS3Client
 	@Inject
 	AmazonS3Client s3Client;
 
-	private Logger log = Logger.getLogger(this.getClass());
+	@Inject
+	GodToolsProperties properties;
 
-	private static final String GODTOOLS_BUCKET = "cru-godtools";
+	private Logger log = Logger.getLogger(this.getClass());
 
 	public S3Object getMetaFile(MediaType mediaType)
 	{
 		String metaKey = AmazonS3GodToolsConfig.getMetaKeyV2(mediaType);
+		String s3BucketName = properties.getProperty("s3BucketName");
 
 		log.info(String.format("Getting meta info file w/ key %s", metaKey));
 
 		try
 		{
-			return s3Client.getObject(new GetObjectRequest(AmazonS3GodToolsConfig.BUCKET_NAME, metaKey));
+			return s3Client.getObject(new GetObjectRequest(s3BucketName, metaKey));
 		}
 		catch(AmazonS3Exception amazonException)
 		{
@@ -73,12 +76,13 @@ public class GodToolsS3Client
 	public void pushPackagesZippedFolder(String languageCode, InputStream compressedTranslation)
 	{
 		String packagesKey = AmazonS3GodToolsConfig.getPackagesKeyV2(languageCode);
+		String s3BucketName = properties.getProperty("s3BucketName");
 
 		log.info(String.format("Pushing packages file w/ key %s", packagesKey));
 
 		ObjectMetadata metadata = new ObjectMetadata();
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, packagesKey, compressedTranslation, metadata)
+		PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, packagesKey, compressedTranslation, metadata)
 				.withCannedAcl(CannedAccessControlList.PublicRead); // God Tools packages are meant to be downloaded w/o authz
 
 		s3Client.putObject(putObjectRequest);
@@ -89,16 +93,24 @@ public class GodToolsS3Client
 	 */
 	public void pushMetaFile(MetaResults metaResults)
 	{
+		String s3BucketName = properties.getProperty("s3BucketName");
+
 		log.info("Pushing meta files");
 
-		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_XML_TYPE, metaResults.asXmlStream()));
+		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_XML_TYPE,
+				metaResults.asXmlStream(),
+				s3BucketName));
 
-		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_JSON_TYPE, metaResults.asJsonStream()));
+		s3Client.putObject(buildMetaPutRequest(MediaType.APPLICATION_JSON_TYPE,
+				metaResults.asJsonStream(),
+				s3BucketName));
 	}
 
-	private PutObjectRequest buildMetaPutRequest(MediaType mediaType, InputStream metaResultsStream)
+	private PutObjectRequest buildMetaPutRequest(MediaType mediaType,
+												 InputStream metaResultsStream,
+												 String s3BucketName)
 	{
-		return new PutObjectRequest(GODTOOLS_BUCKET,
+		return new PutObjectRequest(s3BucketName,
 				AmazonS3GodToolsConfig.getMetaKeyV2(mediaType),
 				metaResultsStream,
 				new ObjectMetadata())
@@ -108,12 +120,13 @@ public class GodToolsS3Client
 	public void pushTranslationsZippedFile(String languageCode, String packageCode, InputStream languageFile)
 	{
 		String translationKey = AmazonS3GodToolsConfig.getTranslationsAndPackageKeyV2(languageCode, packageCode);
+		String s3BucketName = properties.getProperty("s3BucketName");
 
 		log.info(String.format("pushing %s (text only) file for language %s", packageCode, languageCode));
 
 		ObjectMetadata metadata = new ObjectMetadata();
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest(GODTOOLS_BUCKET, translationKey, languageFile, metadata)
+		PutObjectRequest putObjectRequest = new PutObjectRequest(s3BucketName, translationKey, languageFile, metadata)
 				.withCannedAcl(CannedAccessControlList.PublicRead);
 
 		s3Client.putObject(putObjectRequest);
