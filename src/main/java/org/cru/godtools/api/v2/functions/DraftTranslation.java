@@ -12,6 +12,7 @@ import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 
 public class DraftTranslation extends AbstractTranslation
@@ -25,6 +26,7 @@ public class DraftTranslation extends AbstractTranslation
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
 		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+		Translation baseTranslation = null;
 
 		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
@@ -36,8 +38,17 @@ public class DraftTranslation extends AbstractTranslation
 
 		Translation newTranslation = saveNewTranslation(gtPackage, language, currentTranslation);
 
-		copyPageAndTranslationData(currentTranslation, newTranslation, false);
-		copyPackageTranslationData(currentTranslation, newTranslation);
+		if(currentTranslation == null)
+		{
+			baseTranslation = loadBaseTranslation(gtPackage.getId());
+		}
+
+		copyPageAndTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
+				newTranslation,
+				false);
+
+		copyPackageTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
+				newTranslation);
 
 		uploadToTranslationTool(gtPackage, language);
 	}
@@ -106,9 +117,13 @@ public class DraftTranslation extends AbstractTranslation
 	 * Just after a new PageStructure is saved, a copied set of current PageStructure's TranslationElements are saved associated
 	 * to the new PageStructure.
 	 */
-	private void copyPageAndTranslationData(Translation currentTranslation, Translation newTranslation, boolean translationIsNew)
+	private void copyPageAndTranslationData(Translation baseTranslation,
+											Translation newTranslation,
+											boolean translationIsNew)
 	{
-		for(PageStructure currentPageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(baseTranslation.getId());
+
+		for(PageStructure currentPageStructure : pageStructures)
 		{
 			PageStructure copy = PageStructure.copyOf(currentPageStructure);
 			copy.setId(UUID.randomUUID());
@@ -127,7 +142,7 @@ public class DraftTranslation extends AbstractTranslation
 
 			// it's easier to do this in the context of the new page, so that we don't have to remember
 			// the link b/w the old page and new page for a separate method call
-			copyTranslationElements(currentTranslation, newTranslation, currentPageStructure, copy);
+			copyTranslationElements(baseTranslation, newTranslation, currentPageStructure, copy);
 		}
 	}
 
@@ -171,4 +186,12 @@ public class DraftTranslation extends AbstractTranslation
 			translationUpload.recordInitialUpload(gtPackage.getTranslationProjectId(), language.getPath());
 		}
 	}
+
+	private Translation loadBaseTranslation(UUID packageId)
+	{
+		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
+				packageId,
+				GodToolsVersion.LATEST_PUBLISHED_VERSION);
+	}
+
 }
