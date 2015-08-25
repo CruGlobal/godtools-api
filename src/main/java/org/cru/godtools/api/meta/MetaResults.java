@@ -1,9 +1,17 @@
 package org.cru.godtools.api.meta;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 /**
@@ -31,5 +39,39 @@ public class MetaResults implements java.io.Serializable
     public Set<MetaLanguage> getLanguages()
     {
         return languages;
+    }
+
+    public InputStream asXmlStream()
+    {
+        try
+        {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(getClass());
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.marshal(this, byteArrayOutputStream);
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+        catch (Exception e)
+        {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    public InputStream asJsonStream()
+    {
+        try
+        {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            new ObjectMapper().writeValue(byteArrayOutputStream, this);
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+        catch (IOException e)
+        {
+            throw Throwables.propagate(e);
+        }
     }
 }

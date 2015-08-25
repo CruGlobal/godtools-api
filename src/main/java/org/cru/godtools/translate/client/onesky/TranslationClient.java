@@ -1,7 +1,6 @@
 package org.cru.godtools.translate.client.onesky;
 
 import com.google.common.base.Throwables;
-import org.cru.godtools.domain.Simply;
 import org.cru.godtools.domain.properties.GodToolsProperties;
 import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
 import org.cru.godtools.translate.client.TranslationResults;
@@ -48,13 +47,7 @@ public class TranslationClient
 
 		log.info("Download response status code: " + response.getStatus());
 
-		TranslationResults translationResults = new OneSkyTranslationResults().createFromResponse(response);
-
-		Simply.logObject(translationResults, TranslationClient.class);
-
-		return translationResults;
-
-
+		return new OneSkyTranslationResults().createFromResponse(response);
 	}
 
 	/**
@@ -79,11 +72,7 @@ public class TranslationClient
 
 		log.info("Status response code: " + response.getStatus());
 
-		OneSkyTranslationStatus translationStatus = new OneSkyTranslationStatus().createFromResponse(response);
-
-		Simply.logObject(translationStatus, TranslationClient.class);
-
-		return translationStatus;
+		return new OneSkyTranslationStatus().createFromResponse(response);
 	}
 
 	/**

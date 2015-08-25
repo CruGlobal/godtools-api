@@ -89,6 +89,15 @@ public class TranslationElementService
 				.executeUpdate();
 	}
 
+	public void update(UUID id, UUID translationId, String translatedText)
+	{
+		sqlConnection.createQuery(TranslationElementQueries.updateLite)
+				.addParameter("id", id)
+				.addParameter("translationId", translationId)
+				.addParameter("translatedText", translatedText)
+				.executeUpdate();
+	}
+
 	public static class TranslationElementQueries
 	{
 		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
@@ -98,5 +107,6 @@ public class TranslationElementService
 			"VALUES(:id, :translationId, :pageStructureId, :baseText, :translatedText, :elementType, :pageName, :displayOrder)";
 		public static final String update = "UPDATE translation_elements SET base_text = :baseText, translated_text = :translatedText, " +
 				"element_type = :elementType, page_name = :pageName, display_order = :displayOrder, page_structure_id = :pageStructureId WHERE id = :id AND translation_id = :translationId";
+		public static final String updateLite = "UPDATE translation_elements SET translated_text = :translatedText WHERE id = :id AND translation_id = :translationId";
 	}
 }

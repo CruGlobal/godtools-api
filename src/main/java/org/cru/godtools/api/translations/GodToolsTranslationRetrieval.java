@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.cru.godtools.api.packages.utils.FileZipper;
 import org.cru.godtools.api.translations.model.ContentsFile;
-import org.cru.godtools.api.translations.drafts.DraftUpdateJobScheduler;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.languages.LanguageCode;
@@ -38,6 +37,7 @@ import java.util.zip.ZipOutputStream;
  * Created by ryancarlson on 3/17/14.
  */
 @Default
+@Deprecated
 public class GodToolsTranslationRetrieval
 {
 	@Inject
@@ -128,32 +128,6 @@ public class GodToolsTranslationRetrieval
 		}
 
 		log.info("Loaded " + godToolsTranslations.size() + " draft(s)");
-		return this;
-	}
-
-	public GodToolsTranslationRetrieval scheduleAsynchronousDraftUpdates()
-	{
-		if(DraftResource.BYPASS_ASYNC_UPDATE) return this;
-
-		for(GodToolsTranslation godToolsTranslation : godToolsTranslations)
-		{
-			if(godToolsTranslation.isDraft())
-			{
-				log.info("Scheduling draft update for: " + godToolsTranslation.getTranslation().getId());
-				try
-				{
-					DraftUpdateJobScheduler.scheduleRecurringUpdate(godToolsTranslation.getPackage().getTranslationProjectId(),
-							godToolsTranslation.getLanguage().getPath(),
-							godToolsTranslation.getFilenameSet(),
-							godToolsTranslation.getTranslation());
-				}
-				catch (SchedulerException e)
-				{
-					log.error("Error scheduling draft update", e);
-				}
-			}
-		}
-
 		return this;
 	}
 

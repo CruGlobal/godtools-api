@@ -1,8 +1,8 @@
 package org.cru.godtools.api.meta;
 
 import com.amazonaws.services.s3.model.S3Object;
+
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
@@ -20,10 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
-/**
- * Created by ryancarlson on 3/14/14.
- */
-
+@Deprecated
 @Path("/meta")
 public class MetaResource
 {
@@ -31,30 +28,48 @@ public class MetaResource
 	AuthorizationService authService;
 
 	@Inject
+	MetaService metaService;
+
+	@Inject
 	Clock clock;
 
 	@Inject
 	GodToolsS3Client godToolsS3Client;
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = Logger.getLogger(getClass());
 
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response getAllMetaInfo(@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 										@QueryParam("Authorization") String authCodeParam,
-										@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+										@HeaderParam("Authorization") String authCodeHeader,
+								   		@HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info");
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
-		S3Object metaFile = godToolsS3Client.getMetaFile();
+		if(retrieveDrafts)
+		{
+			// draft meta file is built from the database
+			MetaResults metaResults = metaService.getAllMetaResults(retrieveDrafts, false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type(requestedContentType)
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type(requestedContentType)
+					.build();
+		}
 	}
 
 	@GET
@@ -64,18 +79,32 @@ public class MetaResource
 								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
-								@HeaderParam("Authorization") String authCodeHeader)
+								@HeaderParam("Authorization") String authCodeHeader,
+								@HeaderParam("Accept") MediaType requestedContentType)
 	{
 		log.info("Getting all meta info for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
-		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode);
+		if(retrieveDrafts)
+		{
+			MetaResults metaResults = metaService.getLanguageMetaResults(languageCode, retrieveDrafts, false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type(requestedContentType)
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type(requestedContentType)
+					.build();
+		}
 	}
 
 	@GET
@@ -86,17 +115,31 @@ public class MetaResource
 								@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 								@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 								@QueryParam("Authorization") String authCodeParam,
-								@HeaderParam("Authorization") String authCodeHeader) throws ParserConfigurationException, SAXException, IOException
+								@HeaderParam("Authorization") String authCodeHeader,
+								@HeaderParam("Accept") MediaType requestedContentType) throws ParserConfigurationException, SAXException, IOException
 	{
 		log.info("Getting all meta info for package: " + packageCode + " language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authCodeParam, authCodeHeader), clock.currentDateTime());
+		boolean retrieveDrafts = authService.hasDraftAccess(authCodeParam, authCodeHeader);
 
-		S3Object metaFile = godToolsS3Client.getMetaFile(languageCode, packageCode);
+		if(retrieveDrafts)
+		{
+			MetaResults metaResults = metaService.getPackageMetaResults(languageCode, packageCode, retrieveDrafts, false);
 
-		return Response
-				.ok(metaFile.getObjectContent())
-				.type("application/xml")
-				.build();
+			return Response
+					.ok(metaResults)
+					.type(requestedContentType)
+					.build();
+		}
+		else
+		{
+			// published meta file is retrieved from S3
+			S3Object metaFile = godToolsS3Client.getMetaFile(requestedContentType);
+
+			return Response
+					.ok(metaFile.getObjectContent())
+					.type(requestedContentType)
+					.build();
+		}
 	}
 }

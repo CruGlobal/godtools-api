@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  * Created by ryancarlson on 3/14/14.
  */
-
+@Deprecated
 @Path("/packages")
 public class PackageResource
 {
@@ -44,6 +44,10 @@ public class PackageResource
 
 	/**
 	 * GET - get all packages for the language specified by @param languageCode.
+	 *
+	 * NOTE: "application/xml" has to be included as an accepted header b/c the android app currently passes that along.  the old version of this endpoint
+	 * could have returned just the XML "contents" or the whole zipped folder if compressed=true were passed.  Now it only returns the zipped content, but
+	 * Android clients who don't update their app will break b/c they currently & incorrectly pass an Accept: application/xml header
 	 */
     @GET
 	@Path("/{language}")
@@ -56,9 +60,7 @@ public class PackageResource
     {
 		log.info("Requesting all packages for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode, null);
+		S3Object packagesZippedFolder = godToolsS3Client.getPackagesZippedFolder(languageCode);
 
 		return Response
 				.ok(packagesZippedFolder.getObjectContent())
@@ -78,10 +80,8 @@ public class PackageResource
 							   @HeaderParam("Authorization") String authTokenHeader,
 							   @QueryParam("Authorization") String authTokenParam) throws Exception
 	{
-		log.info("Requesting package " + packageCode + " for language: " + languageCode);
-
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		return Response.status(Response.Status.NOT_FOUND).build();
+		return Response
+				.status(Response.Status.NOT_FOUND)
+				.build();
 	}
 }

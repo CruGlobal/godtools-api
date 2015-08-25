@@ -2,7 +2,6 @@ package org.cru.godtools.api.translations;
 
 import com.amazonaws.services.s3.model.S3Object;
 import org.ccci.util.time.Clock;
-import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
@@ -17,9 +16,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-/**
- * Created by ryancarlson on 7/11/15.
- */
+@Deprecated
+@Path("/translations")
 public class TranslationDownloadResource
 {
 
@@ -35,7 +33,7 @@ public class TranslationDownloadResource
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@GET
-	@Path("/translations/{language}")
+	@Path("/{language}")
 	@Produces({"application/zip"})
 	public Response getTranslations(@PathParam("language") String languageCode,
 									@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
@@ -46,9 +44,7 @@ public class TranslationDownloadResource
 	{
 		log.info("Requesting all translations for language: " + languageCode);
 
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode);
+		S3Object languagesZippedFolder = godToolsS3Client.getTranslationZippedFolder(languageCode);
 
 		return Response
 				.ok(languagesZippedFolder.getObjectContent())
@@ -57,7 +53,7 @@ public class TranslationDownloadResource
 	}
 
 	@GET
-	@Path("/translations/{language}/{package}")
+	@Path("/{language}/{package}")
 	@Produces({"application/zip"})
 	public Response getTranslation(@PathParam("language") String languageCode,
 								   @PathParam("package") String packageCode,
@@ -66,14 +62,11 @@ public class TranslationDownloadResource
 								   @HeaderParam("Authorization") String authTokenHeader,
 								   @QueryParam("Authorization") String authTokenParam) throws IOException
 	{
-		AuthorizationRecord.checkAuthorization(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
-
-		S3Object languagesZippedFolder = godToolsS3Client.getLanguagesZippedFolder(languageCode, packageCode);
+		S3Object translationZippedFolder = godToolsS3Client.getTranslationZippedFolder(languageCode, packageCode);
 
 		return Response
-				.ok(languagesZippedFolder.getObjectContent())
+				.ok(translationZippedFolder.getObjectContent())
 				.type("application/zip")
 				.build();
-
 	}
 }

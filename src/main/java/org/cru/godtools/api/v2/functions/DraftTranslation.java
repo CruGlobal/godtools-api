@@ -1,26 +1,94 @@
-package org.cru.godtools.api.translations;
+package org.cru.godtools.api.v2.functions;
 
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PageStructure;
-import org.cru.godtools.domain.packages.PageStructureService;
 import org.cru.godtools.domain.packages.TranslationElement;
-import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.translate.client.TranslationDownload;
+import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.UUID;
 
-@Deprecated
-public class NewTranslationCreation
+public class DraftTranslation extends AbstractTranslation
 {
+	@Inject
+	TranslationUpload translationUpload;
+	@Inject
+	TranslationDownload translationDownload;
 
-	@Inject TranslationService translationService;
-	@Inject PageStructureService pageStructureService;
-	@Inject TranslationElementService translationElementService;
-	@Inject TranslationUpload translationUpload;
+	public void create(String languageCode, String packageCode)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+		Translation baseTranslation = null;
+
+		// try to load out the latest version of translation for this package/language combo
+		Translation currentTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+				gtPackage.getId(),
+				GodToolsVersion.LATEST_VERSION);
+
+		// only allow one draft per translation
+		if(currentTranslation != null && currentTranslation.isDraft()) return;
+
+		Translation newTranslation = saveNewTranslation(gtPackage, language, currentTranslation);
+
+		if(currentTranslation == null)
+		{
+			baseTranslation = loadBaseTranslation(gtPackage.getId());
+		}
+
+		copyPageAndTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
+				newTranslation,
+				false);
+
+		copyPackageTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
+				newTranslation);
+
+		uploadToTranslationTool(gtPackage, language);
+	}
+
+	public void publish(String languageCode, String packageCode)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+
+		// try to load out the latest version of translation for this package/language combo
+		Translation currentTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+				gtPackage.getId(),
+				GodToolsVersion.LATEST_VERSION);
+
+		if(currentTranslation == null ||
+				currentTranslation.isReleased()) throw new IllegalStateException("No draft to be published");
+
+		downloadLatestTranslations(gtPackage,language,currentTranslation);
+
+		currentTranslation.setReleased(true);
+		translationService.update(currentTranslation);
+	}
+
+	private void downloadLatestTranslations(Package gtPackage, Language language, Translation currentTranslation)
+	{
+		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
+		{
+			TranslationResults downloadedTranslations = translationDownload.doDownload(gtPackage.getTranslationProjectId(),
+					language.getPath(),
+					pageStructure.getFilename());
+
+			for(UUID translatedElementId : downloadedTranslations.keySet())
+			{
+				translationElementService.update(translatedElementId,
+						currentTranslation.getId(),
+						downloadedTranslations.get(translatedElementId));
+			}
+		}
+	}
+
 	/**
 	 * Inserts a new Translation record for the package and language that are passed in.  If currentTranslation is
 	 * present, then the new translation takes the next version number.  If not, then the new translation takes
@@ -28,7 +96,7 @@ public class NewTranslationCreation
 	 *
 	 * A copy of the new translation is returned.
 	 */
-	public Translation saveNewTranslation(Package gtPackage, Language language, Translation currentTranslation)
+	private Translation saveNewTranslation(Package gtPackage, Language language, Translation currentTranslation)
 	{
 		int nextVersionNumber = (currentTranslation == null) ? 1 : currentTranslation.getVersionNumber() + 1;
 
@@ -49,9 +117,13 @@ public class NewTranslationCreation
 	 * Just after a new PageStructure is saved, a copied set of current PageStructure's TranslationElements are saved associated
 	 * to the new PageStructure.
 	 */
-	public void copyPageAndTranslationData(Translation currentTranslation, Translation newTranslation, boolean translationIsNew)
+	private void copyPageAndTranslationData(Translation baseTranslation,
+											Translation newTranslation,
+											boolean translationIsNew)
 	{
-		for(PageStructure currentPageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
+		List<PageStructure> pageStructures = pageStructureService.selectByTranslationId(baseTranslation.getId());
+
+		for(PageStructure currentPageStructure : pageStructures)
 		{
 			PageStructure copy = PageStructure.copyOf(currentPageStructure);
 			copy.setId(UUID.randomUUID());
@@ -70,11 +142,11 @@ public class NewTranslationCreation
 
 			// it's easier to do this in the context of the new page, so that we don't have to remember
 			// the link b/w the old page and new page for a separate method call
-			copyTranslationElements(currentTranslation, newTranslation, currentPageStructure, copy);
+			copyTranslationElements(baseTranslation, newTranslation, currentPageStructure, copy);
 		}
 	}
 
-	public void copyPackageTranslationData(Translation currentTranslation, Translation newTranslation)
+	private void copyPackageTranslationData(Translation currentTranslation, Translation newTranslation)
 	{
 		for(TranslationElement currentTranslationElement : translationElementService.selectByTranslationId(currentTranslation.getId()))
 		{
@@ -104,7 +176,7 @@ public class NewTranslationCreation
 		}
 	}
 
-	public void uploadToTranslationTool(Package gtPackage, Language language)
+	private void uploadToTranslationTool(Package gtPackage, Language language)
 	{
 		// if not, copy page structures and translation elements from the base translation (loaded here) which is likely English
 		// and copy them to the new translation.  also upload the translation elements to translation tool.
@@ -114,4 +186,12 @@ public class NewTranslationCreation
 			translationUpload.recordInitialUpload(gtPackage.getTranslationProjectId(), language.getPath());
 		}
 	}
+
+	private Translation loadBaseTranslation(UUID packageId)
+	{
+		return translationService.selectByLanguageIdPackageIdVersionNumber(languageService.selectByLanguageCode(new LanguageCode("en")).getId(),
+				packageId,
+				GodToolsVersion.LATEST_PUBLISHED_VERSION);
+	}
+
 }

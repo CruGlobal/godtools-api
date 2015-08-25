@@ -41,6 +41,16 @@ public class MetaService
 		this.packageStructureService = packageStructureService;
 	}
 
+	public MetaResults getAllMetaResults(boolean draftsOnly, boolean allResults)
+	{
+		return getPackageMetaResults(null, null, draftsOnly, allResults);
+	}
+
+	public MetaResults getLanguageMetaResults(String languageCode, boolean draftsOnly, boolean allResults)
+	{
+		return getPackageMetaResults(languageCode, null, draftsOnly, allResults);
+	}
+
 	/**
 	 * Returns a JAX-B annotated object of type MetaResults.  This object returns the information on what resources are available given the
 	 * passed in languageCode, packageCode and interpreterVersion.
@@ -52,11 +62,11 @@ public class MetaService
 	 * 	-Set<MetaLanguage>
 	 *    -Set<MetaPackage>
 	 */
-	public MetaResults getMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
+	public MetaResults getPackageMetaResults(String languageCode, String packageCode, boolean draftsOnly, boolean allResults)
 	{
 		if(Strings.isNullOrEmpty(languageCode))
 		{
-			return getAllMetaResults(packageCode,
+			return lookupResults(packageCode,
 					new PackageList(packageService.selectAllPackages()),
 					new PackageStructureList(packageStructureService.selectAll()),
 					allResults ? createTranslationsMap() : createReleasedTranslationsMap(!draftsOnly),
@@ -88,7 +98,7 @@ public class MetaService
 	 * @param packageCode
 	 * @return
 	 */
-	private MetaResults getAllMetaResults(String packageCode, PackageList packages, PackageStructureList packageStructures, Multimap<UUID, Translation> translationsMap, boolean draftsOnly, boolean allResults)
+	private MetaResults lookupResults(String packageCode, PackageList packages, PackageStructureList packageStructures, Multimap<UUID, Translation> translationsMap, boolean draftsOnly, boolean allResults)
 	{
 		MetaResults results = new MetaResults();
 

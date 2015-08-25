@@ -1,44 +1,103 @@
 package org.cru.godtools.s3;
 
-import com.google.common.base.Strings;
+
+import org.cru.godtools.domain.properties.GodToolsPropertiesFactory;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.MediaType;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by ryancarlson on 7/11/15.
  */
 public class AmazonS3GodToolsConfig
 {
-	public static final String BUCKET_NAME = "cru-godtools";
+
+	public static final String BUCKET_NAME = new GodToolsPropertiesFactory().get().getProperty("s3BucketName");
+	private static final String BASE_URL = "https://s3.amazonaws.com/" + new GodToolsPropertiesFactory().get().getProperty("s3BucketName") + "/";
 
 	private static final String META = "meta/";
 	private static final String PACKAGES = "packages/";
-	private static final String LANGUAGES = "languages/";
-	private static final String META_FILE = "meta";
-	private static final String ALL = "all/";
-	private static final String CURRENT = "current/";
+	private static final String TRANSLATIONS = "translations/";
+	private static final String ALL_FILE = "all";
 	private static final String XML = ".xml";
+	private static final String JSON = ".json";
 	private static final String ZIP = ".zip";
 
-	public static String getMetaKey(String languageCode, String packageCode)
+	public static String getMetaKeyV2(MediaType mediaType)
 	{
-		if(!Strings.isNullOrEmpty(languageCode) && !Strings.isNullOrEmpty(packageCode))
-		{
-			return META + CURRENT + languageCode + "/" + packageCode + "/" + META_FILE + XML;
-		}
-		if(!Strings.isNullOrEmpty(languageCode))
-		{
-			return META + CURRENT + languageCode + "/" + META_FILE + XML;
-		}
-
-		return META + CURRENT + META_FILE + XML;
+		return META + ALL_FILE + resolveSuffix(mediaType);
 	}
 
-	public static String getPackagesKey(String languageCode, String packageCode)
+	/**
+	 * e.g. packages/en/all.zip  OR
+	 */
+	public static String getPackagesKeyV2(String languageCode)
 	{
-		return PACKAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
+		return PACKAGES + languageCode + "/" + ALL_FILE + ZIP;
 	}
 
-	public static String getLanguagesKey(String languageCode, String packagesCode)
+	/**
+	 * e.g. translations/en/all.zip  OR
+	 */
+	public static String getTranslationsKeyV2(String languageCode)
 	{
-		return LANGUAGES + CURRENT + languageCode + "/" + ALL + languageCode + ZIP;
+		return TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP;
+	}
+
+	public static String getTranslationsKeyV2(String languageCode, String packageCode)
+	{
+		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
+	}
+
+	/**
+	 * e.g. translations/en/kgp.zip
+	 */
+	public static String getTranslationsAndPackageKeyV2(String languageCode, String packageCode)
+	{
+		return TRANSLATIONS + languageCode + "/" + packageCode + ZIP;
+	}
+
+	public static URL getPackagesRedirectUrl(String languageCode) throws MalformedURLException
+	{
+		return new URL(BASE_URL + PACKAGES + languageCode + "/" + ALL_FILE + ZIP);
+	}
+
+	public static URL getPackagesRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
+	{
+		return new URL(BASE_URL + PACKAGES + languageCode + "/" +  packageCode + ZIP);
+	}
+
+	public static URL getMetaRedirectUrl(@NotNull MediaType mediaType) throws MalformedURLException
+	{
+		return new URL(BASE_URL + META + ALL_FILE + resolveSuffix(mediaType));
+	}
+
+	public static URL getTranslationsRedirectUrl(String languageCode) throws MalformedURLException
+	{
+		return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + ALL_FILE + ZIP);
+	}
+
+	public static URL getTranslationsRedirectUrl(String languageCode, String packageCode) throws MalformedURLException
+	{
+		return new URL(BASE_URL + TRANSLATIONS + languageCode + "/" + packageCode + ZIP);
+	}
+
+	static String resolveSuffix(MediaType mediaType)
+	{
+		if(MediaType.APPLICATION_JSON.equals(mediaType) || MediaType.APPLICATION_JSON_TYPE.equals(mediaType))
+		{
+			return JSON;
+		}
+		else if(MediaType.APPLICATION_XML.equals(mediaType) || MediaType.APPLICATION_XML_TYPE.equals(mediaType))
+		{
+			return XML;
+		}
+		else
+		{
+			// for now just return XML as the "default" case
+			return XML;
+		}
 	}
 }
