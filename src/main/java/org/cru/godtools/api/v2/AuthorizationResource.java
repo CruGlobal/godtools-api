@@ -31,7 +31,9 @@ public class AuthorizationResource
 
 		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(adminPassphrase);
 
-		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
+		if(accessCodeRecord == null ||
+				!accessCodeRecord.isCurrentlyActive(clock.currentDateTime()) ||
+				!accessCodeRecord.isAdmin())
 		{
 			log.info("Authorization with admin passphrase was invalid.");
 			log.info("Provided passphrase: " + adminPassphrase);
@@ -41,7 +43,7 @@ public class AuthorizationResource
 		}
 
 		AuthorizationRecord authorizationRecord = createNewAuthorization();
-		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
+		authorizationRecord.setAdmin(true);
 		authorizationRecord.setDraftAccess(true);
 		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(12));
 
