@@ -21,9 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 5/12/14.
- */
 @Path("/auth")
 public class AuthorizationResource
 {
@@ -105,43 +102,6 @@ public class AuthorizationResource
         return Response.noContent()
                 .header("Authorization", authorizationRecord.getAuthToken())
                 .build();
-	}
-
-	@POST
-	@Path("/admin")
-	public Response getAdministratorToken(String adminPassphrase,
-										  @HeaderParam("deviceId") String deviceIdHeader,
-										  @QueryParam("deviceId") String deviceIdParam) throws ParserConfigurationException, SAXException,IOException
-	{
-		log.info("Requesting authorization token with translator access");
-
-		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(adminPassphrase);
-
-		String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
-
-		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
-		{
-			log.info("Authorization with admin passphrase was invalid.");
-			log.info("Provided passphrase: " + adminPassphrase);
-			log.info("Device ID: " + device);
-
-			// If the incorrect translator code is given, a 401 is returned
-			throw new UnauthorizedException();
-		}
-
-		AuthorizationRecord authorizationRecord = createNewAuthorization();
-		authorizationRecord.setDeviceId(device);
-		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
-		authorizationRecord.setDraftAccess(true);
-
-		log.info(String.format("Saving authorization record with admin access w/ ID %s",
-				authorizationRecord.getId()));
-
-		authorizationService.recordNewAuthorization(authorizationRecord);
-
-		return Response.noContent()
-				.header("Authorization", authorizationRecord.getAuthToken())
-				.build();
 	}
 
 	public AuthorizationRecord createNewAuthorization()

@@ -1,5 +1,6 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -140,9 +141,12 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
 
-		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
+
+		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
 
 		return Response
 				.noContent()
@@ -162,9 +166,12 @@ public class DraftResource
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and page name: " + pageName);
 
-		AuthorizationRecord.checkAdminAccess(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
 
 		godToolsTranslationService.updatePageLayout(pageName, packageCode, updatedPageLayout);
+
+		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
 
 		return Response
 				.noContent()
