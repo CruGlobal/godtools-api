@@ -2,6 +2,7 @@ package org.cru.godtools.api.v2;
 
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
+import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.util.UUID;
 
 @Path("/v2/auth")
 public class AuthorizationResource
@@ -43,9 +45,6 @@ public class AuthorizationResource
 		}
 
 		AuthorizationRecord authorizationRecord = createNewAuthorization();
-		authorizationRecord.setAdmin(true);
-		authorizationRecord.setDraftAccess(true);
-		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(12));
 
 		log.info(String.format("Saving authorization record with admin access w/ ID %s",
 				authorizationRecord.getId()));
@@ -59,7 +58,14 @@ public class AuthorizationResource
 
 	private AuthorizationRecord createNewAuthorization()
 	{
+		AuthorizationRecord authorizationRecord = new AuthorizationRecord();
+		authorizationRecord.setId(UUID.randomUUID());
+		authorizationRecord.setAuthToken(AuthTokenGenerator.generate());
+		authorizationRecord.setAdmin(true);
+		authorizationRecord.setDraftAccess(true);
+		authorizationRecord.setGrantedTimestamp(clock.currentDateTime());
+		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(12));
 
-		return null;
+		return authorizationRecord;
 	}
 }
