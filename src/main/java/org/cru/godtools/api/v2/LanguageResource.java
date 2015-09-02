@@ -1,16 +1,14 @@
-package org.cru.godtools.api.languages;
+package org.cru.godtools.api.v2;
 
 import com.google.common.base.Optional;
-import org.cru.godtools.api.translations.GodToolsTranslationService;
-import org.cru.godtools.api.translations.NewTranslationCreation;
-import org.cru.godtools.domain.authentication.AccessCodeRecord;
+import org.ccci.util.time.Clock;
+import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.Language;
-import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
-import org.cru.godtools.domain.packages.*;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,9 +19,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 10/13/14.
- */
 @Path("/languages")
 public class LanguageResource
 {
@@ -34,10 +29,12 @@ public class LanguageResource
 	LanguageService languageService;
 	@Inject
 	PackageService packageService;
+
 	@Inject
-	GodToolsTranslationService godToolsTranslationService;
+	DraftTranslation draftTranslation;
+
 	@Inject
-	NewTranslationCreation translationCreation;
+	Clock clock;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -45,19 +42,28 @@ public class LanguageResource
 	{
 		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(authorization, null);
 
-		if(!authorizationRecord.isPresent() || !authorizationRecord.get().isAdmin()) return Response.status(401).build();
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
 
-		if(languageService.languageExists(language)) return Response.status(400).build();
+		if(languageService.languageExists(language))
+		{
+			return Response
+					.status(400)
+					.build();
+		}
 
 		language.setId(UUID.randomUUID());
 
 		languageService.insert(language);
 
-		for(org.cru.godtools.domain.packages.Package gtPackage : packageService.selectAllPackages())
+		for(Package gtPackage : packageService.selectAllPackages())
 		{
-			godToolsTranslationService.setupNewTranslation(LanguageCode.fromLanguage(language),
-					gtPackage.getCode());
+			draftTranslation.create(language.getCode(), gtPackage.getCode());
 		}
-		return Response.status(201).build();
+
+		authorizationService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
+
+		return Response
+				.status(201)
+				.build();
 	}
 }
