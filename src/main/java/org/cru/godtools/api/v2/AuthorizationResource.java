@@ -64,7 +64,7 @@ public class AuthorizationResource
 		authorizationRecord.setAdmin(true);
 		authorizationRecord.setDraftAccess(true);
 		authorizationRecord.setGrantedTimestamp(clock.currentDateTime());
-		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(12));
+		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(4));
 
 		return authorizationRecord;
 	}

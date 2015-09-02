@@ -69,10 +69,28 @@ public class AuthorizationService
                 .executeAndFetchFirst(AccessCodeRecord.class);
     }
 
-    private class AuthenticationQueries
+	public void updateAdminRecordExpiration(AuthorizationRecord authorizationRecord, int hoursToAdd)
+	{
+		if(authorizationRecord.isAdmin())
+		{
+			sqlConnection.createQuery(AuthenticationQueries.updateExpiration)
+					.addParameter("id", authorizationRecord.getId())
+					.addParameter("revokedTimestamp", clock.currentDateTime().plusHours(hoursToAdd))
+					.executeUpdate();
+
+			log.info(String.format("%s hours added to authorization record", String.valueOf(hoursToAdd)));
+		}
+		else
+		{
+			log.info("No time added to authorization record");
+		}
+	}
+
+	private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
 		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id, draft_access, admin, revoked_timestamp) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId, :draftAccess, :admin, :revokedTimestamp)";
         static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
-    }
+		static final String updateExpiration = "UPDATE auth_tokens SET revoked_timestamp = :revokedTimestamp WHERE id = :id";
+	}
 }
