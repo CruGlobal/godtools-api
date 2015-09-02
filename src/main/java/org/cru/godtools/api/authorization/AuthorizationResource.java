@@ -109,28 +109,22 @@ public class AuthorizationResource
 
 	@POST
 	@Path("/admin")
-	public Response getAdministratorToken(String adminPassphrase,
-										  @HeaderParam("deviceId") String deviceIdHeader,
-										  @QueryParam("deviceId") String deviceIdParam) throws ParserConfigurationException, SAXException,IOException
+	public Response getAdministratorToken(String adminPassphrase)
 	{
 		log.info("Requesting authorization token with translator access");
 
 		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(adminPassphrase);
 
-		String device = deviceIdHeader == null ? deviceIdParam : deviceIdHeader;
-
 		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
 		{
 			log.info("Authorization with admin passphrase was invalid.");
 			log.info("Provided passphrase: " + adminPassphrase);
-			log.info("Device ID: " + device);
 
 			// If the incorrect translator code is given, a 401 is returned
 			throw new UnauthorizedException();
 		}
 
 		AuthorizationRecord authorizationRecord = createNewAuthorization();
-		authorizationRecord.setDeviceId(device);
 		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
 		authorizationRecord.setDraftAccess(true);
 
