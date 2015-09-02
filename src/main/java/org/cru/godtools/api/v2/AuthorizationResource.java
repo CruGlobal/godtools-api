@@ -43,6 +43,7 @@ public class AuthorizationResource
 		AuthorizationRecord authorizationRecord = createNewAuthorization();
 		authorizationRecord.setAdmin(accessCodeRecord.isAdmin());
 		authorizationRecord.setDraftAccess(true);
+		authorizationRecord.setRevokedTimestamp(clock.currentDateTime().plusHours(12));
 
 		log.info(String.format("Saving authorization record with admin access w/ ID %s",
 				authorizationRecord.getId()));

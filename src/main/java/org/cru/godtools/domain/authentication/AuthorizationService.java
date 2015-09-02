@@ -57,6 +57,7 @@ public class AuthorizationService
                 .addParameter("deviceId", authenticationRecord.getDeviceId())
                 .addParameter("draftAccess", authenticationRecord.hasDraftAccess())
 				.addParameter("admin", authenticationRecord.isAdmin())
+				.addParameter("revokedTimestamp", authenticationRecord.getRevokedTimestamp())
 				.executeUpdate();
 	}
 
@@ -71,7 +72,7 @@ public class AuthorizationService
     private class AuthenticationQueries
     {
         static final String selectByAuthToken = "SELECT * FROM auth_tokens WHERE auth_token = :authToken";
-		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id, draft_access, admin) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId, :draftAccess, :admin)";
+		static final String insert = "INSERT INTO auth_tokens(id, username, granted_timestamp, auth_token, device_id, draft_access, admin, revoked_timestamp) VALUES(:id, :username, :grantedTimestamp, :authToken, :deviceId, :draftAccess, :admin, :revokedTiemstamp)";
         static final String findAccessCode = "SELECT * FROM access_codes WHERE access_code  = :accessCode";
     }
 }
