@@ -3,6 +3,9 @@ package org.cru.godtools.api.translations;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.model.PageFile;
+
+import org.cru.godtools.api.v2.functions.DraftTranslation;
+import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -31,7 +34,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
@@ -67,6 +69,13 @@ public class TranslationResource
 	@Inject
 	Clock clock;
 
+	// included from v2 API so updates from older devices still make it to S3
+	@Inject
+	DraftTranslation draftTranslation;
+	// included from v2 API so updates from older devices still make it to S3
+	@Inject
+	PublishedTranslation publishedTranslation;
+
 	private Logger log = Logger.getLogger(this.getClass());
 
 	@POST
@@ -83,11 +92,11 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		Translation translation = godToolsTranslationService.setupNewTranslation(new LanguageCode(languageCode), packageCode);
+		draftTranslation.create(languageCode,packageCode);
 
 		// FIXME: this isn't quite right yet... major version number should not be hard coded, but for now the API doesn't support updating it
 		return Response
-				.created(new URI("/" + languageCode + "/" + packageCode + "?version=1." + translation.getVersionNumber()))
+				.status(Response.Status.CREATED)
 				.build();
 	}
 
@@ -107,7 +116,8 @@ public class TranslationResource
 		if(Boolean.parseBoolean(publish))
 		{
 			log.info("Publishing translation");
-			godToolsTranslationService.publishDraftTranslation(new LanguageCode(languageCode), packageCode);
+			draftTranslation.publish(languageCode,packageCode);
+			publishedTranslation.pushToS3(languageCode, packageCode);
 			log.info("Done publishing!");
 		}
 		return Response.noContent().build();
