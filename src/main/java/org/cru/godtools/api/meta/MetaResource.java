@@ -57,7 +57,7 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType == null ?
+					.type(requestedContentType == null || requestedContentType.isWildcardType() ?
 							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
@@ -93,7 +93,7 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType == null ?
+					.type(requestedContentType == null || requestedContentType.isWildcardType() ?
 							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
@@ -130,7 +130,7 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType == null ?
+					.type(requestedContentType == null || requestedContentType.isWildcardType() ?
 							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
