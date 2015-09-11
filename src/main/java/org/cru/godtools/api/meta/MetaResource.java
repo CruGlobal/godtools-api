@@ -57,7 +57,8 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType)
+					.type(requestedContentType == null ?
+							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
 		else
@@ -92,7 +93,8 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType)
+					.type(requestedContentType == null ?
+							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
 		else
@@ -128,7 +130,8 @@ public class MetaResource
 
 			return Response
 					.ok(metaResults)
-					.type(requestedContentType)
+					.type(requestedContentType == null ?
+							MediaType.APPLICATION_XML_TYPE : requestedContentType)
 					.build();
 		}
 		else
