@@ -3,8 +3,9 @@ package org.cru.godtools.api.translations;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.model.PageFile;
-import org.cru.godtools.api.v2.functions.*;
+
 import org.cru.godtools.api.v2.functions.DraftTranslation;
+import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -33,7 +34,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
