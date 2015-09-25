@@ -7,11 +7,18 @@ import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.authentication.UnauthorizedException;
 import org.jboss.logging.Logger;
+import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.UUID;
 
 @Path("/v2/auth")
@@ -23,7 +30,36 @@ public class AuthorizationResource
 	@Inject
 	AuthorizationService authorizationService;
 
-	Logger log = Logger.getLogger(AuthorizationResource.class);
+	@Inject
+	org.cru.godtools.api.authorization.AuthorizationResource authorizationResourceV1;
+
+	Logger log = Logger.getLogger(getClass());
+
+	@GET
+	@Path("/status")
+	public Response requestAuthStatus(@HeaderParam("Authorization") String authTokenParam,
+									  @QueryParam("Authorization") String authTokenHeader)
+	{
+		log.info("v2: Requesting auth status");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.requestAuthStatus(authTokenParam,authTokenHeader);
+	}
+	@POST
+	public Response getAuthorizationToken() throws ParserConfigurationException, SAXException, IOException
+	{
+		log.info("v2: Requesting generic authorization token");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.getAuthorizationToken(null,null);
+	}
+
+	@POST
+	@Path("/{translatorCode}")
+	public Response getDraftAccessToken(@PathParam("translatorCode") String translatorCode) throws ParserConfigurationException, SAXException,IOException
+	{
+		log.info("v2: Requesting authorization token with translator access");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.getAuthorizationToken(translatorCode,null, null);
+	}
 
 	@POST
 	@Path("/admin")
