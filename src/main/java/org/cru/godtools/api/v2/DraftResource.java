@@ -18,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.List;
 
 @Path("/v2/drafts")
 public class DraftResource
@@ -47,9 +48,20 @@ public class DraftResource
 
 		TranslationPackager packager = new TranslationPackager();
 
-		return Response
-				.ok(packager.compress(draftTranslation.retrieve(languageCode), true))
-				.build();
+		List<GodToolsTranslation> godToolsTranslationList = draftTranslation.retrieve(languageCode);
+
+		if(godToolsTranslationList.isEmpty())
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
+		else
+		{
+			return Response
+					.ok(packager.compress(godToolsTranslationList, true))
+					.build();
+		}
 	}
 
 	@GET
