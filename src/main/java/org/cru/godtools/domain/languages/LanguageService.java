@@ -22,7 +22,7 @@ public class LanguageService
         this.sqlConnection = sqlConnection;
     }
 
-
+    @Deprecated
 	public Language getOrCreateLanguage(LanguageCode languageCode)
 	{
 

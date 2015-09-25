@@ -61,7 +61,9 @@ public abstract class AbstractTranslation
 	public Optional<GodToolsTranslation> retrieve(String languageCode, String packageCode)
 	{
 		org.cru.godtools.domain.packages.Package gtPackage = packageService.selectByCode(packageCode);
-		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+
+		if(language == null) return Optional.absent();
 
 		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
