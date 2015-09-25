@@ -1,7 +1,6 @@
 package org.cru.godtools.api.authorization;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.V1;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -22,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.UUID;
 
-@V1
 @Path("/auth")
 public class AuthorizationResource
 {

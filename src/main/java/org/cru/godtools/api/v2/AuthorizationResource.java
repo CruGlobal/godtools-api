@@ -1,7 +1,6 @@
 package org.cru.godtools.api.v2;
 
 import org.ccci.util.time.Clock;
-import org.cru.godtools.api.V1;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -31,7 +30,7 @@ public class AuthorizationResource
 	@Inject
 	AuthorizationService authorizationService;
 
-	@Inject @V1
+	@Inject
 	org.cru.godtools.api.authorization.AuthorizationResource authorizationResourceV1;
 
 	Logger log = Logger.getLogger(getClass());
