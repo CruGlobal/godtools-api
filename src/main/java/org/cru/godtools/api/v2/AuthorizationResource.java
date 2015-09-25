@@ -1,6 +1,7 @@
 package org.cru.godtools.api.v2;
 
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.V1;
 import org.cru.godtools.domain.authentication.AccessCodeRecord;
 import org.cru.godtools.domain.authentication.AuthTokenGenerator;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -10,9 +11,12 @@ import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -27,38 +31,35 @@ public class AuthorizationResource
 	@Inject
 	AuthorizationService authorizationService;
 
+	@Inject @V1
+	org.cru.godtools.api.authorization.AuthorizationResource authorizationResourceV1;
+
 	Logger log = Logger.getLogger(getClass());
+
+	@GET
+	@Path("/status")
+	public Response requestAuthStatus(@HeaderParam("Authorization") String authTokenParam,
+									  @QueryParam("Authorization") String authTokenHeader)
+	{
+		log.info("v2: Requesting auth status");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.requestAuthStatus(authTokenParam,authTokenHeader);
+	}
+	@POST
+	public Response getAuthorizationToken() throws ParserConfigurationException, SAXException, IOException
+	{
+		log.info("v2: Requesting generic authorization token");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.getAuthorizationToken(null,null);
+	}
 
 	@POST
 	@Path("/{translatorCode}")
 	public Response getDraftAccessToken(@PathParam("translatorCode") String translatorCode) throws ParserConfigurationException, SAXException,IOException
 	{
-		log.info("Requesting authorization token with translator access");
-
-		AccessCodeRecord accessCodeRecord = authorizationService.getAccessCode(translatorCode);
-
-		AuthorizationRecord authorizationRecord = createNewAuthorization();
-
-		if(accessCodeRecord == null || !accessCodeRecord.isCurrentlyActive(clock.currentDateTime()))
-		{
-			log.info("Authorization with translator access code was invalid.");
-			log.info("Provided code: " + translatorCode);
-
-			// If the incorrect translator code is given, a 401 is returned
-			throw new UnauthorizedException();
-		}
-
-		authorizationRecord.setDraftAccess(true);
-		authorizationRecord.setAdmin(false);
-
-		log.info(String.format("Saving authorization record with translator access w/ ID %s",
-				authorizationRecord.getId()));
-
-		authorizationService.recordNewAuthorization(authorizationRecord);
-
-		return Response.noContent()
-				.header("Authorization", authorizationRecord.getAuthToken())
-				.build();
+		log.info("v2: Requesting authorization token with translator access");
+		log.info("falling back to v1 API");
+		return authorizationResourceV1.getAuthorizationToken(translatorCode,null, null);
 	}
 
 	@POST
