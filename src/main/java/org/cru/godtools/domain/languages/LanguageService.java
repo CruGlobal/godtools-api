@@ -62,8 +62,8 @@ public class LanguageService
 		{
 			boolean matched = true;
 
-			if(!Strings.nullToEmpty(languangeCode.getLocaleCode()).equals(Strings.nullToEmpty(possibleMatch.getLocale()))) matched = false;
-			if(!Strings.nullToEmpty(languangeCode.getSubculture()).equals(Strings.nullToEmpty(possibleMatch.getSubculture()))) matched = false;
+			if(!Strings.nullToEmpty(languangeCode.getLocaleCode()).equalsIgnoreCase(Strings.nullToEmpty(possibleMatch.getLocale()))) matched = false;
+			if(!Strings.nullToEmpty(languangeCode.getSubculture()).equalsIgnoreCase(Strings.nullToEmpty(possibleMatch.getSubculture()))) matched = false;
 
 			if(matched) return possibleMatch;
 		}
@@ -74,7 +74,7 @@ public class LanguageService
 	{
 		return sqlConnection.createQuery(LanguageQueries.selectByCode)
 				.setAutoDeriveColumnNames(true)
-				.addParameter("code", code)
+				.addParameter("code", code.toLowerCase())
 				.executeAndFetch(Language.class);
 	}
 
@@ -117,6 +117,7 @@ public class LanguageService
 	{
 		public final static String selectAll = "SELECT * FROM languages";
 		public final static String selectById = "SELECT * FROM languages WHERE id = :id";
-		public final static String selectByCode = "SELECT * FROM languages WHERE code = :code";        public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
+		public final static String selectByCode = "SELECT * FROM languages WHERE lower(code) = :code";
+		public final static String insert = "INSERT INTO languages(id, name, code, locale, subculture) VALUES(:id, :name, :code, :locale, :subculture)";
 	}
 }
