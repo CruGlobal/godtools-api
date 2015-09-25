@@ -7,8 +7,6 @@ import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.translations.Translation;
-import org.cru.godtools.translate.client.TranslationDownload;
-import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationUpload;
 
 import javax.inject.Inject;
@@ -19,8 +17,6 @@ public class DraftTranslation extends AbstractTranslation
 {
 	@Inject
 	TranslationUpload translationUpload;
-	@Inject
-	TranslationDownload translationDownload;
 
 	public void create(String languageCode, String packageCode)
 	{
@@ -70,23 +66,6 @@ public class DraftTranslation extends AbstractTranslation
 
 		currentTranslation.setReleased(true);
 		translationService.update(currentTranslation);
-	}
-
-	private void downloadLatestTranslations(Package gtPackage, Language language, Translation currentTranslation)
-	{
-		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
-		{
-			TranslationResults downloadedTranslations = translationDownload.doDownload(gtPackage.getTranslationProjectId(),
-					language.getPath(),
-					pageStructure.getFilename());
-
-			for(UUID translatedElementId : downloadedTranslations.keySet())
-			{
-				translationElementService.update(translatedElementId,
-						currentTranslation.getId(),
-						downloadedTranslations.get(translatedElementId));
-			}
-		}
 	}
 
 	/**
