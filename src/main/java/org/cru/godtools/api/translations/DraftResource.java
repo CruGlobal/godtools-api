@@ -164,17 +164,9 @@ public class DraftResource
 									 @QueryParam("Authorization") String authTokenParam,
 									 Document updatedPageLayout) throws IOException
 	{
-		log.info("Updating draft page update for package: " + packageCode + " and page name: " + pageName);
-
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
-		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
-
-		godToolsTranslationService.updatePageLayout(pageName, packageCode, updatedPageLayout);
-
-		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
-
+		// this is really dangerous and I don't want anyone using it right now.
 		return Response
-				.noContent()
+				.status(Response.Status.METHOD_NOT_ALLOWED)
 				.build();
 	}
 }
