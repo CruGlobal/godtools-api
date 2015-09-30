@@ -8,17 +8,23 @@ import org.cru.godtools.api.v2.functions.TranslationPackager;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.jboss.logging.Logger;
+import org.w3c.dom.Document;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
+
 
 @Path("/v2/drafts")
 public class DraftResource
@@ -32,6 +38,9 @@ public class DraftResource
 
 	@Inject
 	Clock clock;
+
+	@Inject
+	org.cru.godtools.api.translations.DraftResource draftResourceV1;
 
 	private Logger log = Logger.getLogger(getClass());
 
@@ -92,5 +101,66 @@ public class DraftResource
 					.status(Response.Status.NOT_FOUND)
 					.build();
 		}
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Produces({"application/zip", "application/xml"})
+	public Response getPage(@PathParam("language") String languageCode,
+							@PathParam("package") String packageCode,
+							@PathParam("pageId") UUID pageId,
+							@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+							@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+							@QueryParam("compressed") String compressed,
+							@HeaderParam("Authorization") String authTokenHeader,
+							@QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
+	{
+		return draftResourceV1.getPage(languageCode,
+				packageCode,
+				pageId,
+				minimumInterpreterVersionParam,
+				minimumInterpreterVersionHeader,
+				compressed,
+				authTokenHeader,
+				authTokenParam);
+	}
+
+	@PUT
+	@Path("/{language}/{package}/pages/{pageId}")
+	@Consumes("application/xml")
+	public Response updatePageLayoutForSpecificLanguage(@PathParam("language") String languageCode,
+														@PathParam("package") String packageCode,
+														@PathParam("pageId") UUID pageId,
+														@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+														@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+														@HeaderParam("Authorization") String authTokenHeader,
+														@QueryParam("Authorization") String authTokenParam,
+														Document updatedPageLayout) throws IOException
+	{
+		return draftResourceV1.updatePageLayoutForSpecificLanguage(languageCode,
+				packageCode,
+				pageId,
+				minimumInterpreterVersionParam,
+				minimumInterpreterVersionHeader,
+				authTokenHeader,
+				authTokenParam,
+				updatedPageLayout);
+	}
+
+	@PUT
+	@Path("/{package}/pages/{pageName}")
+	@Consumes("application/xml")
+	public Response updatePageLayoutForAllLanguages(@PathParam("package") String packageCode,
+													@PathParam("pageName") String pageName,
+													@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
+													@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
+													@HeaderParam("Authorization") String authTokenHeader,
+													@QueryParam("Authorization") String authTokenParam,
+													Document updatedPageLayout) throws IOException
+	{
+		// this is really dangerous and I don't want anyone using it right now.
+		return Response
+				.status(Response.Status.METHOD_NOT_ALLOWED)
+				.build();
 	}
 }
