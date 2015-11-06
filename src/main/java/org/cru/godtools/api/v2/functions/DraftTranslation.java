@@ -18,10 +18,10 @@ public class DraftTranslation extends AbstractTranslation
 	@Inject
 	TranslationUpload translationUpload;
 
-	public void create(String languageCode, String packageCode)
+	public void create(LanguageCode languageCode, String packageCode)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
-		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+		Language language = languageService.selectByLanguageCode(languageCode);
 		Translation baseTranslation = null;
 
 		// try to load out the latest version of translation for this package/language combo

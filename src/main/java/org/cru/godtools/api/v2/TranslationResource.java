@@ -5,6 +5,7 @@ import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.cru.godtools.s3.GodToolsS3Client;
 import org.jboss.logging.Logger;
@@ -77,7 +78,7 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		draftTranslation.create(languageCode, packageCode);
+		draftTranslation.create(new LanguageCode(languageCode), packageCode);
 
 		return Response
 				.created(new URI("/drafts" + languageCode + "/" + packageCode))
