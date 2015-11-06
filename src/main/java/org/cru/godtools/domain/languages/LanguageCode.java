@@ -68,15 +68,10 @@ public class LanguageCode
         String[] languageCodeParts = providedLanguageCode.split("-");
 
         //if the languageCode isn't split, then there was no underscore. there is no locale (e.g. en.xml)
-        if(languageCodeParts.length == 1) return null;
+        if(languageCodeParts.length <= 1) return null;
 
         //if the length is greater than two, the locale is always the 2nd item, so return it.
-        if(languageCodeParts.length > 2) return languageCodeParts[1];
-
-        //we haven't returned yet, so there are two elements.  if the 2nd element is 2 or less characters it's a locale, if not, return null.. it's a subculture
-        if(languageCodeParts[1].length() <= 2) return languageCodeParts[1];
-
-        return null;
+        return languageCodeParts[1];
     }
 
     public String getSubculture()
@@ -84,14 +79,8 @@ public class LanguageCode
         String[] languageCodeParts = providedLanguageCode.split("-");
 
         //if the languageCode isn't split, then there was no underscore. there is no locale (e.g. en.xml)
-        if(languageCodeParts.length == 1) return null;
+        if(languageCodeParts.length <= 2) return null;
 
-        //if the length is greater than two, the locale is always the 3rd item, so return it.
-        if(languageCodeParts.length > 2) return languageCodeParts[2];
-
-        //we haven't returned yet, so there are two elements.  if the 2nd element is more than 2 characters it's a locale, if not, return null.. it's a subculture
-        if(languageCodeParts[1].length() > 2) return languageCodeParts[1];
-
-        return null;
+        return languageCodeParts[2];
     }
 }
