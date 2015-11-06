@@ -66,7 +66,7 @@ public class DraftTranslation extends AbstractTranslation
 	public void publish(String languageCode, String packageCode)
 	{
 		Package gtPackage = packageService.selectByCode(packageCode);
-		Language language = languageService.getOrCreateLanguage(new LanguageCode(languageCode));
+		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
 
 		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
