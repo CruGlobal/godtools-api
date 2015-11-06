@@ -40,6 +40,14 @@ public class LanguageResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addLanguage(Language language, @HeaderParam("Authorization") String authorization)
 	{
+		if(language == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity("Language was missing")
+					.build();
+		}
+
 		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(authorization, null);
 
 		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
