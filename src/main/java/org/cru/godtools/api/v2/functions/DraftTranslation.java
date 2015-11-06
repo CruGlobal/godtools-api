@@ -8,6 +8,7 @@ import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationUpload;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -15,11 +16,14 @@ import java.util.UUID;
 
 public class DraftTranslation extends AbstractTranslation
 {
+	Logger logger = Logger.getLogger(getClass());
+
 	@Inject
 	TranslationUpload translationUpload;
 
 	public void create(LanguageCode languageCode, String packageCode)
 	{
+		logger.info(String.format("Creating draft with languageCode %s and packageCode %s", languageCode.toString(), packageCode));
 		Package gtPackage = packageService.selectByCode(packageCode);
 		Language language = languageService.selectByLanguageCode(languageCode);
 		Translation baseTranslation = null;
@@ -29,20 +33,30 @@ public class DraftTranslation extends AbstractTranslation
 				gtPackage.getId(),
 				GodToolsVersion.LATEST_VERSION);
 
+		logger.info(String.format("Found translation? %s", currentTranslation != null));
+
 		// only allow one draft per translation
 		if(currentTranslation != null && currentTranslation.isDraft()) return;
 
+		logger.info("Continuing to create draft");
+
 		Translation newTranslation = saveNewTranslation(gtPackage, language, currentTranslation);
+
+		logger.info("Created new translation");
 
 		if(currentTranslation == null)
 		{
+			logger.info("Setting base translation");
 			baseTranslation = loadBaseTranslation(gtPackage.getId());
+
 		}
 
+		logger.info("Copying page translation data");
 		copyPageAndTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
 				newTranslation,
 				false);
 
+		logger.info("Copying package translation data");
 		copyPackageTranslationData(currentTranslation == null ? baseTranslation : currentTranslation,
 				newTranslation);
 
