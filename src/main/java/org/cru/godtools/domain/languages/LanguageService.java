@@ -54,16 +54,16 @@ public class LanguageService
 				.executeAndFetchFirst(Language.class);
 	}
 
-	public Language selectByLanguageCode(LanguageCode languangeCode)
+	public Language selectByLanguageCode(LanguageCode languageCode)
 	{
-		List<Language> possibleMatches = selectLanguageByStringCode(languangeCode.getLanguageCode());
+		List<Language> possibleMatches = selectLanguageByStringCode(languageCode.getLanguageCode());
 
 		for(Language possibleMatch : possibleMatches)
 		{
-			boolean matched = true;
+			String passedLocaleCode = languageCode.getLocaleCode();
+			String retrievedLocalCode = possibleMatch.getLocale();
 
-			if(!Strings.nullToEmpty(languangeCode.getLocaleCode()).equalsIgnoreCase(Strings.nullToEmpty(possibleMatch.getLocale()))) matched = false;
-			if(!Strings.nullToEmpty(languangeCode.getSubculture()).equalsIgnoreCase(Strings.nullToEmpty(possibleMatch.getSubculture()))) matched = false;
+			boolean matched = Strings.nullToEmpty(passedLocaleCode).equalsIgnoreCase(Strings.nullToEmpty(retrievedLocalCode));
 
 			if(matched) return possibleMatch;
 		}

@@ -92,9 +92,8 @@ public class TranslationResource
 
 		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(authTokenParam, authTokenHeader), clock.currentDateTime());
 
-		draftTranslation.create(languageCode,packageCode);
+		draftTranslation.create(new LanguageCode(languageCode),packageCode);
 
-		// FIXME: this isn't quite right yet... major version number should not be hard coded, but for now the API doesn't support updating it
 		return Response
 				.status(Response.Status.CREATED)
 				.build();

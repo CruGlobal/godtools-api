@@ -6,6 +6,7 @@ import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
 import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageService;
@@ -40,6 +41,14 @@ public class LanguageResource
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response addLanguage(Language language, @HeaderParam("Authorization") String authorization)
 	{
+		if(language == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity("Language was missing")
+					.build();
+		}
+
 		Optional<AuthorizationRecord> authorizationRecord = authorizationService.getAuthorizationRecord(authorization, null);
 
 		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
@@ -57,7 +66,7 @@ public class LanguageResource
 
 		for(Package gtPackage : packageService.selectAllPackages())
 		{
-			draftTranslation.create(language.getCode(), gtPackage.getCode());
+			draftTranslation.create(LanguageCode.fromLanguage(language), gtPackage.getCode());
 		}
 
 		authorizationService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
