@@ -25,6 +25,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -34,6 +35,8 @@ import java.util.UUID;
 public abstract class AbstractTranslation
 {
 	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied");
+
+	final Logger logger = Logger.getLogger(getClass());
 
 	@Inject
 	TranslationService translationService;
@@ -117,6 +120,8 @@ public abstract class AbstractTranslation
 	{
 		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
 		{
+			logger.info(String.format("Downloading page with ID %s from OneSky for %s in language %s", pageStructure.getId(), gtPackage.getCode(), language.getName()));
+
 			TranslationResults downloadedTranslations = translationDownload.doDownload(gtPackage.getTranslationProjectId(),
 					language.getPath(),
 					pageStructure.getFilename());
