@@ -120,7 +120,7 @@ public abstract class AbstractTranslation
 	{
 		for(PageStructure pageStructure : pageStructureService.selectByTranslationId(currentTranslation.getId()))
 		{
-			logger.info(String.format("Downloading page with ID %s from OneSky for %s in language %s", pageStructure.getId(), gtPackage.getCode(), language.getName()));
+			logger.info(String.format("Downloading page with ID %s from OneSky for %s in %s", pageStructure.getId(), gtPackage.getCode(), language.getName()));
 
 			TranslationResults downloadedTranslations = translationDownload.doDownload(gtPackage.getTranslationProjectId(),
 					language.getPath(),
@@ -132,6 +132,23 @@ public abstract class AbstractTranslation
 						currentTranslation.getId(),
 						downloadedTranslations.get(translatedElementId));
 			}
+		}
+
+		logger.info(String.format("Downloading \"package page\" with filename %s%s from Onesky for %s in %s",
+				gtPackage.getCode(),
+				".xml",
+				gtPackage.getName(),
+				language.getName()));
+
+		TranslationResults downloadedTranslations = translationDownload.doDownload(gtPackage.getTranslationProjectId(),
+				language.getPath(),
+				gtPackage.getCode().concat(".xml"));
+
+		for(UUID translatedElementId : downloadedTranslations.keySet())
+		{
+			translationElementService.update(translatedElementId,
+					currentTranslation.getId(),
+					downloadedTranslations.get(translatedElementId));
 		}
 	}
 

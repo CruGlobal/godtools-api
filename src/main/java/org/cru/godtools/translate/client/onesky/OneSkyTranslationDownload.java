@@ -23,7 +23,7 @@ public class OneSkyTranslationDownload implements TranslationDownload
 		this.properties = properties;
 	}
 
-	private Logger log = Logger.getLogger(OneSkyTranslationUpload.class);
+	private Logger log = Logger.getLogger(getClass());
 
 	@Override
 	public TranslationResults doDownload(Integer oneSkyProjectId, String locale, String pageName)

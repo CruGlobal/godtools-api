@@ -76,37 +76,6 @@ public class GodToolsTranslation implements Serializable
 	}
 
 	/**
-	 * Returns a list of file names.  These file names correspond to files of translated text in the translation tool.
-	 *
-	 * This set includes the list of each individual page within the package, as well as the name of the file which has
-	 * the packages 'meta' data (package name, page names).
-	 */
-	public Set<String> getFilenameSet()
-	{
-		Set<String> filenameSet = Sets.newHashSet();
-
-		for(PageStructure pageStructure : pageStructureList)
-		{
-			filenameSet.add(pageStructure.getFilename());
-		}
-
-		filenameSet.add(packageStructure.getFilename());
-
-		return filenameSet;
-	}
-
-	public void replacePageXml(PageStructure updatedPageStructure)
-	{
-		for(PageStructure pageStructure : pageStructureList)
-		{
-			if(pageStructure.getId().equals(updatedPageStructure.getId()))
-			{
-				pageStructure.setXmlContent(updatedPageStructure.getXmlContent());
-			}
-		}
-	}
-
-	/**
 	 * You can't have one without the other
 	 * @return
 	 */
