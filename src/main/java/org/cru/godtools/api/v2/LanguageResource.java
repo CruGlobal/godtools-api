@@ -2,6 +2,7 @@ package org.cru.godtools.api.v2;
 
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.meta.MetaService;
 import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -10,6 +11,7 @@ import org.cru.godtools.domain.languages.LanguageCode;
 import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageService;
+import org.cru.godtools.s3.GodToolsS3Client;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -33,6 +35,12 @@ public class LanguageResource
 
 	@Inject
 	DraftTranslation draftTranslation;
+
+	@Inject
+	GodToolsS3Client godToolsS3Client;
+
+	@Inject
+	MetaService metaService;
 
 	@Inject
 	Clock clock;
@@ -68,6 +76,11 @@ public class LanguageResource
 		{
 			draftTranslation.create(LanguageCode.fromLanguage(language), gtPackage.getCode());
 		}
+
+		// this pushes a new meta file that shows the language with no packages.
+		// this allows the mobile phones to detect that the language has been added in preview mode since
+		// the iOS always calls the endpoint w/o an auth header and does this type of detection.
+		godToolsS3Client.pushMetaFile(metaService.getAllMetaResults(false, false));
 
 		authorizationService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
 
