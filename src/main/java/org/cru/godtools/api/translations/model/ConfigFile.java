@@ -66,7 +66,7 @@ public class ConfigFile
 		}
 		for(Element element : XmlDocumentSearchUtilities.findElements(xmlPackageStructure, "about"))
 		{
-			configFile.about.setFilename(element.getAttribute("about"));
+			configFile.about.setFilename(element.getAttribute("filename").replace(".xml",""));
 			configFile.about.setTitle(element.getTextContent());
 		}
 
