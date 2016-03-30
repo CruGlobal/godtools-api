@@ -1,8 +1,11 @@
 package org.cru.godtools.api.v2;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
+import org.cru.godtools.api.translations.GodToolsTranslationService;
+import org.cru.godtools.api.v2.functions.ChangeType;
 import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.TranslationPackager;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -11,17 +14,11 @@ import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +38,9 @@ public class DraftResource
 
 	@Inject
 	org.cru.godtools.api.translations.DraftResource draftResourceV1;
+
+	@Inject
+	GodToolsTranslationService godToolsTranslationService;
 
 	private Logger log = Logger.getLogger(getClass());
 
@@ -134,16 +134,50 @@ public class DraftResource
 														@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 														@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 														@HeaderParam("Authorization") String authTokenHeader,
-														@QueryParam("Authorization") String authTokenParam,
+														@DefaultValue("ADD_ELEMENTS") @QueryParam("Authorization") String changeType,
 														Document updatedPageLayout) throws IOException
 	{
+
+		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
+
+		String authTokenParam = "";
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
+
+
+		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
+
+		List<ChangeType> changeTypeList = Lists.newArrayList(Arrays.asList(ChangeType.values()));
+
+		if(changeTypeList.contains(changeType))
+		{
+
+			switch (ChangeType.valueOf(changeType))
+			{
+				case ADD_ELEMENTS:
+					godToolsTranslationService.addToPageLayout(pageId,updatedPageLayout);
+					break;
+				case REMOVE_ELEMENTS:
+					break;
+				case ADD_REMOVE_ELEMENTS:
+					break;
+				case UPDATE_ELEMENTS:
+					godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
+					break;
+				case OVERWRITE:
+					break;
+
+			}
+
+		}
+
 		return draftResourceV1.updatePageLayoutForSpecificLanguage(languageCode,
 				packageCode,
 				pageId,
 				minimumInterpreterVersionParam,
 				minimumInterpreterVersionHeader,
 				authTokenHeader,
-				authTokenParam,
+				changeType,
 				updatedPageLayout);
 	}
 

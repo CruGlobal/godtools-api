@@ -7,9 +7,7 @@ import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,6 +143,36 @@ public class PageStructure implements Serializable
 		}
 
 		xmlContent = updatedPageLayout;
+	}
+
+	public void addXmlContent(Document addElementsDocumentContent)
+	{
+		NodeList nodeListWithAdditions = addElementsDocumentContent.getElementsByTagName("*");
+		NodeList currentNodeList = xmlContent.getElementsByTagName("*");
+
+		for(int i = 0; i < nodeListWithAdditions.getLength(); i++)
+		{
+			Node nodeAddition = nodeListWithAdditions.item(i);
+			Node nodeCurrent = currentNodeList.item(i);
+
+			//The current node will be null once the matching nodes have been verified.
+			if(nodeCurrent == null || nodeCurrent.getNodeName() != nodeAddition.getNodeName())
+			{
+				Element newElementToBeAdded = xmlContent.createElement(nodeAddition.getNodeName());
+				newElementToBeAdded.setTextContent(nodeAddition.getTextContent());
+
+				if(nodeAddition.hasAttributes())
+				{
+					NamedNodeMap attributes = nodeAddition.getAttributes();
+					for (int t = 0; t < attributes.getLength(); t++)
+					{
+						Attr node = (Attr) attributes.item(t);
+						newElementToBeAdded.setAttributeNode(node);
+					}
+				}
+				currentNodeList.item(i - 1).getParentNode().appendChild(newElementToBeAdded);
+			}
+		}
 	}
 
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException

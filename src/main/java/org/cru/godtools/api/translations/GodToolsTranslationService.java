@@ -101,6 +101,16 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
+	public void addToPageLayout(UUID pageId, Document updatedPageLayout)
+	{
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		Translation translation = translationService.selectById(pageStructure.getTranslationId());
+		pageStructure.mergeXmlContent(updatedPageLayout);
+
+		pageStructureService.update(pageStructure);
+	}
+
+
 	/**
 	 * Updates page layout across all translations.
 	 *   - If necessary a new draft will be created for any language that doesn't have one.
