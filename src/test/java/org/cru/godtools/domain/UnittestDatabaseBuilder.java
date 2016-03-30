@@ -23,6 +23,10 @@ public class UnittestDatabaseBuilder
 				properties.getProperty("unittestDatabaseUsername"),
 				properties.getProperty("unittestDatabasePassword"));
 		flyway.setInitVersion("0");
+		flyway.setInitOnMigrate(true);
+
+		flyway.setLocations("db.migration", "db.seed", "org.cru.godtools.domain.migration.versions");
+
 		flyway.clean();
 		flyway.init();
 		flyway.migrate();
