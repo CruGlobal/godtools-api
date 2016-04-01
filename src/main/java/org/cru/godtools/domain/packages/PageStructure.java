@@ -7,7 +7,10 @@ import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -147,30 +150,20 @@ public class PageStructure implements Serializable
 
 	public void addXmlContent(Document addElementsDocumentContent)
 	{
-		NodeList nodeListWithAdditions = addElementsDocumentContent.getElementsByTagName("*");
-		NodeList currentNodeList = xmlContent.getElementsByTagName("*");
+		NodeList elementsToBeAddedNodeList = addElementsDocumentContent.getElementsByTagName("*");
+		NodeList xmlContentNodeList = xmlContent.getElementsByTagName("*");
 
-		for(int i = 0; i < nodeListWithAdditions.getLength(); i++)
+		for(int i = 0; i < elementsToBeAddedNodeList.getLength(); i++)
 		{
-			Node nodeAddition = nodeListWithAdditions.item(i);
-			Node nodeCurrent = currentNodeList.item(i);
+			Node nodeToAdd = elementsToBeAddedNodeList.item(i);
+			Node xmlContentNode = xmlContentNodeList.item(i);
 
-			//The current node will be null once the matching nodes have been verified.
-			if(nodeCurrent == null || nodeCurrent.getNodeName() != nodeAddition.getNodeName())
+			//The nodeCurrent will be node when it doesn't have an element
+			// that's in the source nodeList.
+			if(xmlContentNode == null )
 			{
-				Element newElementToBeAdded = xmlContent.createElement(nodeAddition.getNodeName());
-				newElementToBeAdded.setTextContent(nodeAddition.getTextContent());
-
-				if(nodeAddition.hasAttributes())
-				{
-					NamedNodeMap attributes = nodeAddition.getAttributes();
-					for (int t = 0; t < attributes.getLength(); t++)
-					{
-						Attr node = (Attr) attributes.item(t);
-						newElementToBeAdded.setAttributeNode(node);
-					}
-				}
-				currentNodeList.item(i - 1).getParentNode().appendChild(newElementToBeAdded);
+				Node targetNode = xmlContent.importNode(nodeToAdd, true);
+				xmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
 	}
