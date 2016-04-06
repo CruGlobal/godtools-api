@@ -95,8 +95,23 @@ public class GodToolsTranslationService
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-		Translation translation = translationService.selectById(pageStructure.getTranslationId());
 		pageStructure.mergeXmlContent(updatedPageLayout);
+
+		pageStructureService.update(pageStructure);
+	}
+
+	public void addToPageLayout(UUID pageId, Document updatedPageLayout)
+	{
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		pageStructure.addXmlContent(updatedPageLayout);
+
+		pageStructureService.update(pageStructure);
+	}
+
+	public void removeFromPageLayout(UUID pageId, Document updatedPageLayout)
+	{
+		PageStructure pageStructure = pageStructureService.selectByid(pageId);
+		pageStructure.addXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);
 	}

@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,6 +146,46 @@ public class PageStructure implements Serializable
 		}
 
 		xmlContent = updatedPageLayout;
+	}
+
+	public void addXmlContent(Document addElementsDocumentContent)
+	{
+		String ALL = "*";
+		NodeList elementsToBeAddedNodeList = addElementsDocumentContent.getElementsByTagName(ALL);
+		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL);
+
+		for(int i = 0; i < elementsToBeAddedNodeList.getLength(); i++)
+		{
+			Node nodeToAdd = elementsToBeAddedNodeList.item(i);
+			Node xmlContentNode = xmlContentNodeList.item(i);
+
+			//The nodeCurrent will be node when it doesn't have an element
+			// that's in the source nodeList.
+			if(xmlContentNode == null )
+			{
+				Node targetNode = xmlContent.importNode(nodeToAdd, true);
+				xmlContentNodeList.item(1).appendChild(targetNode);
+			}
+		}
+	}
+
+	public void removeXmlContent(Document removeXmlContentDocument)
+	{
+		String ALL = "*";
+		NodeList elementsToBeRemovedList = removeXmlContentDocument.getElementsByTagName(ALL);
+		NodeList originalElementsList = xmlContent.getElementsByTagName(ALL);
+
+		for(int i=0; i<elementsToBeRemovedList.getLength(); i++)
+		{
+			Node nodeToRemove = elementsToBeRemovedList.item(i);
+			Node originalXmlContentNode = originalElementsList.item(i);
+
+			if(nodeToRemove.getNodeName().equals(originalXmlContentNode.getNodeName()) &&
+					nodeToRemove.getTextContent().equals(originalXmlContentNode.getTextContent()) )
+			{
+				originalXmlContentNode.getParentNode().removeChild(originalXmlContentNode);
+			}
+		}
 	}
 
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
