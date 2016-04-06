@@ -1,5 +1,8 @@
 package org.cru.godtools.domain;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.XmlDocumentFromFile;
@@ -10,7 +13,6 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -24,6 +26,16 @@ import java.util.UUID;
  */
 public class PageStructureTest
 {
+
+    /**
+     * This test validations that the PageStructure.addXmlContent() can
+     * add a node to the end of a document successfully.  The original XML document
+     * and one with additions should be the same. No changes are made to the existing
+     *
+     * Expected outcome: AssertEquals true
+     *
+     * @throws Exception
+     */
     @Test
     public void testAddXmlToEnd() throws Exception
     {
@@ -31,13 +43,14 @@ public class PageStructureTest
         pageStructure.setId(UUID.randomUUID());
 
         String xmlAdditions = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
             "<languages>\n" +
                 "<language code=\"en\">\n"+
                     "<package code=\"kgp\" >\n" +
                         "<name>Knowing God Personally</name>\n" +
                     "</package>\n" +
                     "<package code=\"satisfied\">\n " +
-                        "<name>Satisfied</name>\n"+
+                        "<name>Satisfied?</name>\n"+
                     "</package>\n"+
                     "<package code=\"fsl\" >\n" +
                         "<name>4 Spiritual Laws</name>\n" +
@@ -58,30 +71,34 @@ public class PageStructureTest
         pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
         pageStructure.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
         pageStructure.setDescription("test_file_1.xml");
+
+        //Set the xmlContent and add additional xml
         pageStructure.setXmlContent(XmlDocumentFromFile.get("/test_file_1.xml"));
         pageStructure.addXmlContent(additionsXmlDocument);
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        //convert the docs to strings to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling or child text
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+        String additionsXML = domDocumentToString(additionsXmlDocument);
 
-        StreamResult result = new StreamResult(new StringWriter());
-        DOMSource source = new DOMSource(pageStructure.getXmlContent());
-        transformer.transform(source, result);
+        System.out.println(originalXML);
+        System.out.println(additionsXML);
 
-        String xmlOutput = result.getWriter().toString();
-        System.out.println(xmlOutput);
-
-        pageStructure.getXmlContent().normalizeDocument();
-        additionsXmlDocument.normalizeDocument();
-
-        boolean theDocumentsAreEqual = false;
-
-        if(pageStructure.getXmlContent().equals(additionsXmlDocument))
-            theDocumentsAreEqual = true;
+        boolean theDocumentsAreEqual = originalXML.equals(additionsXML);
 
         Assert.assertTrue(theDocumentsAreEqual);
     }
 
+    /**
+     * This test validations that the PageStructure.addXmlContent() can
+     * insert a node to a document successfully.  The PageStructure.xmlContent document
+     * will now have the new nodes from the additionsXmlDocument. No updates are made to the existing
+     * XML Document. Only Additions.
+     *
+     * Expected outcome: AssertEquals true
+     *
+     * @throws Exception
+     */
     @Test
     public void testAddXmlInsert() throws Exception
     {
@@ -93,7 +110,7 @@ public class PageStructureTest
                 "<languages>\n" +
                 "    <language code=\"en\">\n" +
                 "        <package code=\"kgp\" >\n" +
-                "            <name>Knowing God Personally</name>\n" +
+                "            <name>Knowing God</name>\n" +  //This node is different than the additionsXML. but it won't change or be replaced.
                 "        </package>\n" +
                 "        <package code=\"satisfied\">\n" +
                 "            <name>Satisfied?</name>\n" +
@@ -106,7 +123,7 @@ public class PageStructureTest
                 "<languages>\n" +
                 "    <language code=\"en\">\n" +
                 "        <package code=\"kgp\" >\n" +
-                "            <name>Knowing God Personally</name>\n" +
+                "            <name>Knowing God Personally</name>\n" +  //Different
                 "        </package>\n" +
                 "        <package code=\"satisfied\">\n" +
                 "            <name>Satisfied?</name>\n" +
@@ -135,28 +152,36 @@ public class PageStructureTest
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.addXmlContent(additionsXmlDocument);
 
+        //convert the docs to strings to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibiling or child text
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+        String additionsXML = domDocumentToString(additionsXmlDocument);
+
+        boolean theNewNodesArePresent = originalXML.contains("<package code=\"fourlaws\"><name>Four Laws</name></package>");
+
+        Assert.assertTrue(theNewNodesArePresent);
+    }
+
+    public String domDocumentToString(Document document) throws IOException,TransformerException
+    {
+
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        StreamResult streamResult = new StreamResult(new StringWriter());
+        DOMSource source = new DOMSource(document);
 
-        StreamResult result = new StreamResult(new StringWriter());
-        StreamResult result1 = new StreamResult(new StringWriter());
+        transformer.transform(source, streamResult);
 
-        pageStructure.getXmlContent().normalizeDocument();
-        DOMSource source = new DOMSource(pageStructure.getXmlContent());
-        DOMSource source1 = new DOMSource(additionsXmlDocument);
+        BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
+        StringBuffer stringBuffer = new StringBuffer();
 
-        transformer.transform(source, result);
-        transformer.transform(source1, result1);
+        String line;
 
-        String xmlOutput = result.getWriter().toString();
-        String xmlOutput2 = result1.getWriter().toString();
-        System.out.println(xmlOutput.replace("\\s", "") );
-        System.out.println(xmlOutput2.replace("\\s", ""));
+        while((line = bufferedReader.readLine())  != null)
+        {
+            stringBuffer.append(line.trim());
+        }
 
-        boolean theDocumentsAreEqual = false;
+        return stringBuffer.toString();
 
-        if(xmlOutput.replace("\\s", "").equals(xmlOutput2.replace("\\s", "")))
-            theDocumentsAreEqual = true;
-
-        Assert.assertEquals(xmlOutput.replace("\\s", ""),xmlOutput2.replace("\\s", ""));
     }
 }
