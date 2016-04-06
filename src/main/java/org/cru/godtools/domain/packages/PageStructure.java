@@ -150,8 +150,9 @@ public class PageStructure implements Serializable
 
 	public void addXmlContent(Document addElementsDocumentContent)
 	{
-		NodeList elementsToBeAddedNodeList = addElementsDocumentContent.getElementsByTagName("*");
-		NodeList xmlContentNodeList = xmlContent.getElementsByTagName("*");
+		String ALL = "*";
+		NodeList elementsToBeAddedNodeList = addElementsDocumentContent.getElementsByTagName(ALL);
+		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL);
 
 		for(int i = 0; i < elementsToBeAddedNodeList.getLength(); i++)
 		{
@@ -164,6 +165,25 @@ public class PageStructure implements Serializable
 			{
 				Node targetNode = xmlContent.importNode(nodeToAdd, true);
 				xmlContentNodeList.item(1).appendChild(targetNode);
+			}
+		}
+	}
+
+	public void removeXmlContent(Document removeXmlContentDocument)
+	{
+		String ALL = "*";
+		NodeList elementsToBeRemovedList = removeXmlContentDocument.getElementsByTagName(ALL);
+		NodeList originalElementsList = xmlContent.getElementsByTagName(ALL);
+
+		for(int i=0; i<elementsToBeRemovedList.getLength(); i++)
+		{
+			Node nodeToRemove = elementsToBeRemovedList.item(i);
+			Node originalXmlContentNode = originalElementsList.item(i);
+
+			if(nodeToRemove.getNodeName().equals(originalXmlContentNode.getNodeName()) &&
+					nodeToRemove.getTextContent().equals(originalXmlContentNode.getTextContent()) )
+			{
+				originalXmlContentNode.getParentNode().removeChild(originalXmlContentNode);
 			}
 		}
 	}

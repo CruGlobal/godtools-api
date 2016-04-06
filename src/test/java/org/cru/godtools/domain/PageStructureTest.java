@@ -2,6 +2,7 @@ package org.cru.godtools.domain;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
@@ -20,6 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.UUID;
+import org.xml.sax.SAXException;
 
 /**
  * Created by laelwatkins on 3/29/16.
@@ -97,7 +99,6 @@ public class PageStructureTest
      *
      * Expected outcome: AssertEquals true
      *
-     * @throws Exception
      */
     @Test
     public void testAddXmlInsert() throws Exception
@@ -152,15 +153,76 @@ public class PageStructureTest
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.addXmlContent(additionsXmlDocument);
 
-        //convert the docs to strings to make the comparison easier in case
-        //an xml element/tag is on the same line as it's sibiling or child text
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
-        String additionsXML = domDocumentToString(additionsXmlDocument);
 
         boolean theNewNodesArePresent = originalXML.contains("<package code=\"fourlaws\"><name>Four Laws</name></package>");
 
         Assert.assertTrue(theNewNodesArePresent);
     }
+
+    /**
+     * This test validations that the PageStructure.removeXmlContent() can
+     * remove a node from a document successfully.
+     *
+     * Expected outcome: document contains node AssertFalse
+     *
+     */
+    @Test
+    public void testRemoveElement() throws ParserConfigurationException, IOException, SAXException,TransformerException
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n" +
+                "        <package code=\"satisfied\">\n" +
+                "            <name>Satisfied?</name>\n" +
+                "        </package>\n" +
+                "    </language>\n" +
+                "</languages>";
+
+        String xmlAdditions2 = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n"+
+                "    </language>\n" +
+                "</languages>";
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
+
+        DocumentBuilder builder;
+        DocumentBuilder builder2;
+
+        builder = factory.newDocumentBuilder();
+        builder2 = factory2.newDocumentBuilder();
+
+        Document originalXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
+        Document additionsXmlDocument = builder2.parse(new InputSource(new StringReader(xmlAdditions2)));
+
+        originalXmlDocument.normalize();
+        additionsXmlDocument.normalize();
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.removeXmlContent(additionsXmlDocument);
+
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+
+        Assert.assertFalse(originalXML.contains("<package code=\"kgp\"><name>Knowing God</name></package>"));
+    }
+
 
     public String domDocumentToString(Document document) throws IOException,TransformerException
     {
