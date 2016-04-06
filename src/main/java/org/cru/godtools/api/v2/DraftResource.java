@@ -144,29 +144,27 @@ public class DraftResource
 		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
 		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
 
-
 		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
 
 		List<ChangeType> changeTypeList = Lists.newArrayList(Arrays.asList(ChangeType.values()));
 
 		if(changeTypeList.contains(changeType))
 		{
-
 			switch (ChangeType.valueOf(changeType))
 			{
 				case ADD_ELEMENTS:
-					godToolsTranslationService.addToPageLayout(pageId,updatedPageLayout);
+					godToolsTranslationService.addToPageLayout(pageId, updatedPageLayout);
 					break;
 				case REMOVE_ELEMENTS:
+					godToolsTranslationService.removeFromPageLayout(pageId,updatedPageLayout);
 					break;
 				case ADD_REMOVE_ELEMENTS:
 					break;
 				case UPDATE_ELEMENTS:
-					godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 					break;
 				case OVERWRITE:
+					godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 					break;
-
 			}
 
 		}
