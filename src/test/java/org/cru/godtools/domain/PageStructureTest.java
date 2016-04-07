@@ -83,9 +83,6 @@ public class PageStructureTest
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
         String additionsXML = domDocumentToString(additionsXmlDocument);
 
-        System.out.println(originalXML);
-        System.out.println(additionsXML);
-
         boolean theDocumentsAreEqual = originalXML.equals(additionsXML);
 
         Assert.assertTrue(theDocumentsAreEqual);
@@ -157,9 +154,9 @@ public class PageStructureTest
         //an xml element/tag is on the same line as it's sibling,child text, etc.
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
 
-        boolean theNewNodesArePresent = originalXML.contains("<package code=\"fourlaws\"><name>Four Laws</name></package>");
+        boolean theNewNodeIsPresent = originalXML.contains("<package code=\"fourlaws\"><name>Four Laws</name></package>");
 
-        Assert.assertTrue(theNewNodesArePresent);
+        Assert.assertTrue(theNewNodeIsPresent);
     }
 
     /**

@@ -111,7 +111,7 @@ public class GodToolsTranslationService
 	public void removeFromPageLayout(UUID pageId, Document updatedPageLayout)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
-		pageStructure.addXmlContent(updatedPageLayout);
+		pageStructure.removeXmlContent(updatedPageLayout);
 
 		pageStructureService.update(pageStructure);
 	}

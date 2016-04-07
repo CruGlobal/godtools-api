@@ -42,6 +42,7 @@ public class DraftResource
 	@Inject
 	GodToolsTranslationService godToolsTranslationService;
 
+	private static final List<ChangeType> changeTypeList = Lists.newArrayList(Arrays.asList(ChangeType.values()));
 	private Logger log = Logger.getLogger(getClass());
 
 	@GET
@@ -115,7 +116,8 @@ public class DraftResource
 							@HeaderParam("Authorization") String authTokenHeader,
 							@QueryParam("Authorization") String authTokenParam) throws IOException, ParserConfigurationException
 	{
-		return draftResourceV1.getPage(languageCode,
+		return draftResourceV1.getPage(
+				languageCode,
 				packageCode,
 				pageId,
 				minimumInterpreterVersionParam,
@@ -134,7 +136,7 @@ public class DraftResource
 														@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 														@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 														@HeaderParam("Authorization") String authTokenHeader,
-														@DefaultValue("ADD_ELEMENTS") @QueryParam("Authorization") String changeType,
+														@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeType,
 														Document updatedPageLayout) throws IOException
 	{
 
@@ -145,8 +147,6 @@ public class DraftResource
 		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
 
 		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
-
-		List<ChangeType> changeTypeList = Lists.newArrayList(Arrays.asList(ChangeType.values()));
 
 		if(changeTypeList.contains(changeType))
 		{
@@ -166,17 +166,11 @@ public class DraftResource
 					godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
 					break;
 			}
-
 		}
 
-		return draftResourceV1.updatePageLayoutForSpecificLanguage(languageCode,
-				packageCode,
-				pageId,
-				minimumInterpreterVersionParam,
-				minimumInterpreterVersionHeader,
-				authTokenHeader,
-				changeType,
-				updatedPageLayout);
+		return Response
+			.noContent()
+			.build();
 	}
 
 	@PUT

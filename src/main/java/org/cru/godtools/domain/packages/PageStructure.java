@@ -27,6 +27,7 @@ import java.util.UUID;
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
+	private static final String ALL_ELEMENTS = "*";
 
 	private UUID id;
 	private UUID translationId;
@@ -148,11 +149,10 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
-	public void addXmlContent(Document addElementsDocumentContent)
+	public void addXmlContent(Document addXmlContentDocument)
 	{
-		String ALL = "*";
-		NodeList elementsToBeAddedNodeList = addElementsDocumentContent.getElementsByTagName(ALL);
-		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL);
+		NodeList elementsToBeAddedNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
+		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
 
 		for(int i = 0; i < elementsToBeAddedNodeList.getLength(); i++)
 		{
@@ -164,16 +164,18 @@ public class PageStructure implements Serializable
 			if(xmlContentNode == null )
 			{
 				Node targetNode = xmlContent.importNode(nodeToAdd, true);
-				xmlContentNodeList.item(1).appendChild(targetNode);
+				if (xmlContentNodeList.item(i) == null)
+				{
+					xmlContentNodeList.item(1).appendChild(targetNode);
+				}
 			}
 		}
 	}
 
 	public void removeXmlContent(Document removeXmlContentDocument)
 	{
-		String ALL = "*";
-		NodeList elementsToBeRemovedList = removeXmlContentDocument.getElementsByTagName(ALL);
-		NodeList originalElementsList = xmlContent.getElementsByTagName(ALL);
+		NodeList elementsToBeRemovedList = removeXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
+		NodeList originalElementsList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
 
 		for(int i=0; i<elementsToBeRemovedList.getLength(); i++)
 		{
