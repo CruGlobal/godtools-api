@@ -183,24 +183,25 @@ public class DraftResource
 					.build();
 		}
 
-		if(changeTypeList.contains(changeType))
+		ChangeType changeType1 = ChangeType.fromStringSafely(changeType);
+
+		if(changeType1 == null) changeType1 = ChangeType.ADD_ELEMENTS;
+
+		switch (changeType1)
 		{
-			switch (ChangeType.valueOf(changeType))
-			{
-				case ADD_ELEMENTS:
-					godToolsTranslationService.addToPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
-					break;
-				case REMOVE_ELEMENTS:
-					godToolsTranslationService.removeFromPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
-					break;
-				case ADD_REMOVE_ELEMENTS:
-					break;
-				case UPDATE_ELEMENTS:
-					break;
-				case OVERWRITE:
-					godToolsTranslationService.updatePageLayout(gtPackage.getId(), pageName, updatedPageLayout);
-					break;
-			}
+			case ADD_ELEMENTS:
+				godToolsTranslationService.addToPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+				break;
+			case REMOVE_ELEMENTS:
+				godToolsTranslationService.removeFromPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+				break;
+			case ADD_REMOVE_ELEMENTS:
+				break;
+			case UPDATE_ELEMENTS:
+				break;
+			case OVERWRITE:
+				godToolsTranslationService.updatePageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+				break;
 		}
 
 		return Response

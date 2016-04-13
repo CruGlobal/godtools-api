@@ -150,10 +150,9 @@ public class GodToolsTranslationService
 	{
 		List<PageStructure> pageStructureList = Lists.newArrayList();
 
-		List<Translation> translations = Lists.newArrayList();
-
 		for(Language language : languageService.selectAllLanguages())
 		{
+			logger.info(String.format("Loading latest translation for %s", language.getName()));
 			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), packageId, GodToolsVersion.LATEST_VERSION);
 
 			// we won't create any brand new translations at this point.
@@ -161,10 +160,20 @@ public class GodToolsTranslationService
 
 			if(translation.isReleased())
 			{
+				logger.info(String.format("Creating new draft translation for %s", language.getName()));
 				translation = setupNewTranslation(language.getId(), packageId);
 			}
 
-			pageStructureList.add(pageStructureService.selectByTranslationIdAndFilename(translation.getId(), filename));
+			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), filename);
+			if(pageStructure != null)
+			{
+				logger.info(String.format("Loaded page structure w/ ID %S for Language %s", pageStructure.getId(), language.getName()));
+				pageStructureList.add(pageStructure);
+			}
+			else
+			{
+				logger.info(String.format("No page structure for Language %s", language.getName()));
+			}
 		}
 
 		return pageStructureList;
