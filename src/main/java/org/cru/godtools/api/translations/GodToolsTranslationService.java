@@ -92,6 +92,36 @@ public class GodToolsTranslationService
 		return pageStructure;
 	}
 
+	public void updatePageLayout(UUID packageId, String filename, Document updatedPageLayout)
+	{
+		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
+		{
+			pageStructure.mergeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+		}
+	}
+
+	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout)
+	{
+		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
+		{
+			pageStructure.addXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+		}
+	}
+
+	public void removeFromPageLayout(UUID packageId, String filename, Document updatedPageLayout)
+	{
+		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
+		{
+			pageStructure.removeXmlContent(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+		}
+	}
+
 	public void updatePageLayout(UUID pageId, Document updatedPageLayout)
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
@@ -116,52 +146,28 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
-	/**
-	 * Updates page layout across all translations.
-	 *   - If necessary a new draft will be created for any language that doesn't have one.
-	 *   -
-	 */
-	public void updatePageLayout(String pageName, String packageCode, Document updatedPageLayout)
+	private List<PageStructure> loadPageStructures(UUID packageId, String filename)
 	{
-		Package gtPackage = packageService.selectByCode(packageCode);
-		Translation englishTranslation = loadBaseTranslation(gtPackage);
-		PageStructure baseEnglishPage = pageStructureService.selectByid(UUID.fromString(pageName));
-		List<Translation> publishedTranslations = Lists.newArrayList();
-		List<Translation> draftTranslations = Lists.newArrayList();
+		List<PageStructure> pageStructureList = Lists.newArrayList();
+
+		List<Translation> translations = Lists.newArrayList();
 
 		for(Language language : languageService.selectAllLanguages())
 		{
-			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), gtPackage.getId(), GodToolsVersion.LATEST_VERSION);
+			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), packageId, GodToolsVersion.LATEST_VERSION);
 
 			// we won't create any brand new translations at this point.
 			if(translation == null) continue;
 
-			if(!translation.isDraft())
+			if(translation.isReleased())
 			{
-				publishedTranslations.add(setupNewTranslation(LanguageCode.fromLanguage(language), gtPackage.getCode()));
+				translation = setupNewTranslation(language.getId(), packageId);
 			}
-			else
-			{
-				draftTranslations.add(translation);  //possibly new translation
-			}
+
+			pageStructureList.add(pageStructureService.selectByTranslationIdAndFilename(translation.getId(), filename));
 		}
 
-		for(Translation translation : draftTranslations)
-		{
-			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
-			pageStructure.mergeXmlContent(updatedPageLayout);
-
-			pageStructureService.update(pageStructure);
-		}
-
-		for(Translation translation : publishedTranslations)
-		{
-			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), baseEnglishPage.getFilename());
-			pageStructure.mergeXmlContent(updatedPageLayout);
-
-			pageStructureService.update(pageStructure);
-			publishDraftTranslation(translation);
-		}
+		return pageStructureList;
 	}
 
 	public ConfigFile getConfig(String packageCode, LanguageCode languageCode, GodToolsVersion version)
@@ -249,10 +255,10 @@ public class GodToolsTranslationService
 	 * The newly created translation is version 1 for a brand new translation, or if it's a new version of an existing
 	 * translation, then it takes the next highest version number.
 	 */
-	public Translation setupNewTranslation(LanguageCode languageCode, String packageCode)
+	public Translation setupNewTranslation(UUID languageId, UUID packageId)
 	{
-		Package gtPackage = packageService.selectByCode(packageCode);
-		Language language = languageService.getOrCreateLanguage(languageCode);
+		Package gtPackage = packageService.selectById(packageId);
+		Language language = languageService.selectLanguageById(languageId);
 
 		// try to load out the latest version of translation for this package/language combo
 		Translation currentTranslation = getTranslationFromDatabase(LanguageCode.fromLanguage(language), gtPackage.getCode(), GodToolsVersion.LATEST_VERSION);

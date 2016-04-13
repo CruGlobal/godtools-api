@@ -10,6 +10,8 @@ import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.TranslationPackager;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 
@@ -32,6 +34,9 @@ public class DraftResource
 
 	@Inject
 	DraftTranslation draftTranslation;
+
+	@Inject
+	PackageService packageService;
 
 	@Inject
 	Clock clock;
@@ -140,37 +145,15 @@ public class DraftResource
 														Document updatedPageLayout) throws IOException
 	{
 
-		log.info("Updating draft page update for package: " + packageCode + " and language: " + languageCode + " and page ID: " + pageId);
-
-		String authTokenParam = "";
-		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(authTokenParam, authTokenHeader);
-		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
-
-		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
-
-		if(changeTypeList.contains(changeType))
-		{
-			switch (ChangeType.valueOf(changeType))
-			{
-				case ADD_ELEMENTS:
-					godToolsTranslationService.addToPageLayout(pageId, updatedPageLayout);
-					break;
-				case REMOVE_ELEMENTS:
-					godToolsTranslationService.removeFromPageLayout(pageId,updatedPageLayout);
-					break;
-				case ADD_REMOVE_ELEMENTS:
-					break;
-				case UPDATE_ELEMENTS:
-					break;
-				case OVERWRITE:
-					godToolsTranslationService.updatePageLayout(pageId, updatedPageLayout);
-					break;
-			}
-		}
-
-		return Response
-			.noContent()
-			.build();
+		//TODO double check this
+		return draftResourceV1.updatePageLayoutForSpecificLanguage(languageCode,
+				packageCode,
+				pageId,
+				minimumInterpreterVersionParam,
+				minimumInterpreterVersionHeader,
+				authTokenHeader,
+				"",
+				updatedPageLayout);
 	}
 
 	@PUT
@@ -181,12 +164,47 @@ public class DraftResource
 													@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 													@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 													@HeaderParam("Authorization") String authTokenHeader,
-													@QueryParam("Authorization") String authTokenParam,
+													@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeType,
 													Document updatedPageLayout) throws IOException
 	{
-		// this is really dangerous and I don't want anyone using it right now.
+		log.info("Updating draft page update for package: " + packageCode + " and page ID: " + pageName);
+
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord("", authTokenHeader);
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
+
+		authService.updateAdminRecordExpiration(authorizationRecord.get(), 4);
+
+		Package gtPackage = packageService.selectByCode(packageCode);
+
+		if(gtPackage == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.build();
+		}
+
+		if(changeTypeList.contains(changeType))
+		{
+			switch (ChangeType.valueOf(changeType))
+			{
+				case ADD_ELEMENTS:
+					godToolsTranslationService.addToPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+					break;
+				case REMOVE_ELEMENTS:
+					godToolsTranslationService.removeFromPageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+					break;
+				case ADD_REMOVE_ELEMENTS:
+					break;
+				case UPDATE_ELEMENTS:
+					break;
+				case OVERWRITE:
+					godToolsTranslationService.updatePageLayout(gtPackage.getId(), pageName, updatedPageLayout);
+					break;
+			}
+		}
+
 		return Response
-				.status(Response.Status.METHOD_NOT_ALLOWED)
+				.noContent()
 				.build();
 	}
 }
