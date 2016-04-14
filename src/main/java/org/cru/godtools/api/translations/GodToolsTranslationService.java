@@ -1,9 +1,10 @@
 package org.cru.godtools.api.translations;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import java.io.IOException;
+import javax.xml.transform.TransformerException;
 import org.cru.godtools.api.translations.model.ConfigFile;
 import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.images.Image;
@@ -24,7 +25,6 @@ import org.cru.godtools.domain.packages.TranslationElementService;
 import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.domain.translations.TranslationService;
 import org.jboss.logging.Logger;
-import org.quartz.SchedulerException;
 import org.w3c.dom.Document;
 
 import javax.inject.Inject;
@@ -102,8 +102,10 @@ public class GodToolsTranslationService
 		}
 	}
 
-	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout)
+	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout) throws IOException, TransformerException
 	{
+		int si =  loadPageStructures(packageId, filename).size();
+
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
 			pageStructure.addXmlContent(updatedPageLayout);
@@ -130,7 +132,7 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
-	public void addToPageLayout(UUID pageId, Document updatedPageLayout)
+	public void addToPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, TransformerException
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 		pageStructure.addXmlContent(updatedPageLayout);

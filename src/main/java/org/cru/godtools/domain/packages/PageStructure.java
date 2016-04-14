@@ -2,6 +2,16 @@ package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
@@ -9,8 +19,10 @@ import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Attr;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,11 +157,10 @@ public class PageStructure implements Serializable
 				}
 			}
 		}
-
 		xmlContent = updatedPageLayout;
 	}
 
-	public void addXmlContent(Document addXmlContentDocument)
+	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
 	{
 		NodeList elementsToBeAddedNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
 		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
@@ -159,15 +170,49 @@ public class PageStructure implements Serializable
 			Node nodeToAdd = elementsToBeAddedNodeList.item(i);
 			Node xmlContentNode = xmlContentNodeList.item(i);
 
-			//The nodeCurrent will be node when it doesn't have an element
-			// that's in the source nodeList.
-			if(xmlContentNode == null )
+			if (xmlContentNode != null)
+			{
+				Element oElement = (Element) xmlContentNode;
+				Element aElement = (Element) nodeToAdd;
+				//The nodeCurrent will be node when it doesn't have an element
+				// that's in the source nodeList.
+				NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
+				NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
+
+				boolean attrMatch = true;
+
+				for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+				{
+					Attr a1 = (Attr) additionNamedNodeMap.item(n);
+					Attr o1 = (Attr) originalNamedNodeMap.item(n);
+
+					if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+					{
+						attrMatch = false;
+						break;
+					}
+				}
+
+				if (!attrMatch && oElement.getNodeName().matches(aElement.getNodeName()))
+				{
+					if (xmlContentNode != null)
+					{
+						String nodeToBeAddedString = xmlNodeTostring(new DOMSource(aElement));
+						String xmlContentDocumentString = xmlDocumentToString(new DOMSource(xmlContent));
+
+						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
+						{
+							Node targetNode = nodeToAdd.cloneNode(true);
+							xmlContent.adoptNode(targetNode);
+							xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
+						}
+					}
+				}
+			}
+			else
 			{
 				Node targetNode = xmlContent.importNode(nodeToAdd, true);
-				if (xmlContentNodeList.item(i) == null)
-				{
-					xmlContentNodeList.item(1).appendChild(targetNode);
-				}
+				xmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
 	}
@@ -212,6 +257,39 @@ public class PageStructure implements Serializable
 		}
 		return xmlDocumentCopy;
 	}
+
+	private String xmlDocumentToString(DOMSource source) throws IOException,TransformerException
+	{
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		StreamResult streamResult = new StreamResult(new StringWriter());
+
+		transformer.transform(source, streamResult);
+
+		BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
+		StringBuilder stringBuffer = new StringBuilder();
+
+		String line;
+
+		while((line = bufferedReader.readLine())  != null)
+		{
+			stringBuffer.append(line.trim());
+		}
+
+		return stringBuffer.toString();
+	}
+
+	private String xmlNodeTostring(DOMSource domSource) throws IOException,TransformerException
+	{
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+		StringWriter stringWriter = new StringWriter();
+		StreamResult result = new StreamResult(stringWriter);
+
+		transformer.transform(domSource, result);
+		return stringWriter.toString();
+	}
+
 
 	public UUID getId()
 	{
