@@ -104,8 +104,6 @@ public class GodToolsTranslationService
 
 	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout) throws IOException, TransformerException
 	{
-		int si =  loadPageStructures(packageId, filename).size();
-
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
 			pageStructure.addXmlContent(updatedPageLayout);
