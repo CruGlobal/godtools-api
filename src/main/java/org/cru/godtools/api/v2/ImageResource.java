@@ -1,7 +1,5 @@
 package org.cru.godtools.api.v2;
 
-import com.google.common.base.Throwables;
-import org.apache.commons.io.IOUtils;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
@@ -15,8 +13,6 @@ import org.cru.godtools.domain.packages.PackageStructure;
 import org.cru.godtools.domain.packages.PackageStructureService;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -32,11 +28,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Path("v2/packages/{package}/images")

@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class  Image implements Serializable
 {
-    private UUID id;
+	private UUID id;
 	private String filename;
-    private byte[] imageContent;
-    private String resolution;
+	private byte[] imageContent;
+	private String resolution;
 	private String hash;
 
 	public static Map<String, Image> createMapOfImages(List<Image> imageList)
@@ -39,15 +39,15 @@ public class  Image implements Serializable
 		return packageCode + "__" + filename;
 	}
 
-    public UUID getId()
-    {
-        return id;
-    }
+	public UUID getId()
+	{
+		return id;
+	}
 
-    public void setId(UUID id)
-    {
-        this.id = id;
-    }
+	public void setId(UUID id)
+	{
+		this.id = id;
+	}
 
 	public String getFilename()
 	{
@@ -61,26 +61,26 @@ public class  Image implements Serializable
 
 	@JsonIgnore
 	public byte[] getImageContent()
-    {
-        return imageContent;
-    }
+	{
+		return imageContent;
+	}
 
 	@FormParam("uploadedImage")
 	@PartType("application/octet-stream")
-    public void setImageContent(byte[] imageContent)
-    {
-        this.imageContent = imageContent;
-    }
+	public void setImageContent(byte[] imageContent)
+	{
+		this.imageContent = imageContent;
+	}
 
-    public String getResolution()
-    {
-        return resolution;
-    }
+	public String getResolution()
+	{
+		return resolution;
+	}
 
-    public void setResolution(String resolution)
-    {
-        this.resolution = resolution;
-    }
+	public void setResolution(String resolution)
+	{
+		this.resolution = resolution;
+	}
 
 	public String getHash()
 	{
