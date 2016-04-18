@@ -1,22 +1,24 @@
 package org.cru.godtools.domain.images;
 
-import com.google.common.collect.Maps;
-import org.cru.godtools.domain.GuavaHashGenerator;
 
+import com.google.common.collect.Maps;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.cru.godtools.domain.GuavaHashGenerator;
+import org.jboss.resteasy.annotations.providers.multipart.PartType;
+
+import javax.ws.rs.FormParam;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 3/21/14.
- */
-public class Image implements Serializable
+public class  Image implements Serializable
 {
     private UUID id;
 	private String filename;
     private byte[] imageContent;
     private String resolution;
+	private String hash;
 
 	public static Map<String, Image> createMapOfImages(List<Image> imageList)
 	{
@@ -57,11 +59,14 @@ public class Image implements Serializable
 		this.filename = filename;
 	}
 
+	@JsonIgnore
 	public byte[] getImageContent()
     {
         return imageContent;
     }
 
+	@FormParam("uploadedImage")
+	@PartType("application/octet-stream")
     public void setImageContent(byte[] imageContent)
     {
         this.imageContent = imageContent;
@@ -76,4 +81,14 @@ public class Image implements Serializable
     {
         this.resolution = resolution;
     }
+
+	public String getHash()
+	{
+		return hash;
+	}
+
+	public void setHash(String hash)
+	{
+		this.hash = hash;
+	}
 }

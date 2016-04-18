@@ -1,13 +1,11 @@
 package org.cru.godtools.domain.images;
 
+import org.cru.godtools.domain.GuavaHashGenerator;
 import org.sql2o.Connection;
 
 import javax.inject.Inject;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 3/21/14.
- */
 public class ImageService
 {
     Connection sqlConnection;
@@ -20,18 +18,31 @@ public class ImageService
 
     public Image selectById(UUID id)
     {
-        return sqlConnection.createQuery(ImageQueries.selectById)
-                .setAutoDeriveColumnNames(true)
-                .addParameter("id", id)
-                .executeAndFetchFirst(Image.class);
+		Image image = sqlConnection.createQuery(ImageQueries.selectById)
+				.setAutoDeriveColumnNames(true)
+				.addParameter("id", id)
+				.executeAndFetchFirst(Image.class);
+
+		if(image != null && image.getImageContent() != null)
+		{
+			image.setHash(GuavaHashGenerator.calculateHash(image.getImageContent()));
+		}
+
+		return image;
     }
 
 	public Image selectByFilename(String filename)
 	{
-		return sqlConnection.createQuery(ImageQueries.selectByFilename)
+		Image image = sqlConnection.createQuery(ImageQueries.selectByFilename)
 				.setAutoDeriveColumnNames(true)
 				.addParameter("filename", filename)
 				.executeAndFetchFirst(Image.class);
+
+		if(image != null && image.getImageContent() != null)
+		{
+			image.setHash(GuavaHashGenerator.calculateHash(image.getImageContent()));
+		}
+		return image;
 	}
 
     public void update(Image image)
