@@ -266,16 +266,16 @@ public class PageStructure implements Serializable
 		transformer.transform(source, streamResult);
 
 		BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
-		StringBuilder stringBuffer = new StringBuilder();
+		StringBuilder stringBuilder = new StringBuilder();
 
 		String line;
 
 		while((line = bufferedReader.readLine())  != null)
 		{
-			stringBuffer.append(line.trim());
+			stringBuilder.append(line.trim());
 		}
 
-		return stringBuffer.toString();
+		return stringBuilder.toString();
 	}
 
 	private String xmlNodeTostring(DOMSource domSource) throws IOException,TransformerException
