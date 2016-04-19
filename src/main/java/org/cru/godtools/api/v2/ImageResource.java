@@ -103,14 +103,9 @@ public class ImageResource
 	@Path("/{imageId}")
 	@Produces("application/json")
 	public Response getImage(@PathParam("imageId") UUID imageId,
-							 @HeaderParam("Authorization") String authorization,
 							 @QueryParam("metadata") String metadataOnly)
 	{
-		logger.info(String.format("Getting image %s w/ authorization %s", imageId, authorization));
-
-		AuthorizationRecord.checkAdminAccess(authorizationService.getAuthorizationRecord(null, authorization), clock.currentDateTime());
-
-		logger.info(String.format("Getting image, admin validated.  Listing image for %s", imageId));
+		logger.info(String.format("Getting image for ID: %s", imageId));
 
 		Image image = imageService.selectById(imageId);
 
