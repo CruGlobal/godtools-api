@@ -54,6 +54,7 @@ public class  Image implements Serializable
 		return filename;
 	}
 
+	@FormParam("filename")
 	public void setFilename(String filename)
 	{
 		this.filename = filename;
@@ -65,7 +66,7 @@ public class  Image implements Serializable
 		return imageContent;
 	}
 
-	@FormParam("uploadedImage")
+	@FormParam("imageContent")
 	@PartType("application/octet-stream")
 	public void setImageContent(byte[] imageContent)
 	{

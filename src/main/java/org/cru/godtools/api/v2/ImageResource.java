@@ -185,26 +185,6 @@ public class ImageResource
 				.build();
 	}
 
-	/**
-	 * Thanks to tutorial by MK Yong: http://www.mkyong.com/webservices/jax-rs/file-upload-example-in-resteasy/
-	 */
-	private String getFileName(MultivaluedMap<String, String> header)
-	{
-		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-		for (String filename : contentDisposition)
-		{
-			if ((filename.trim().startsWith("filename"))) {
-
-				String[] name = filename.split("=");
-
-				String finalFileName = name[1].trim().replaceAll("\"", "");
-				return finalFileName;
-			}
-		}
-		return "unknown";
-	}
-
 	private void insertReferencedImage(PackageStructure packageStructure, Image image)
 	{
 		ReferencedImage referencedImage = new ReferencedImage();
