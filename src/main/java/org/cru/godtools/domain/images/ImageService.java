@@ -23,7 +23,7 @@ public class ImageService
 				.addParameter("id", id)
 				.executeAndFetchFirst(Image.class);
 
-		if(image != null && image.getImageContent() != null)
+		if(imageIsHashable(image))
 		{
 			image.setHash(GuavaHashGenerator.calculateHash(image.getImageContent()));
 		}
@@ -38,7 +38,7 @@ public class ImageService
 				.addParameter("filename", filename)
 				.executeAndFetchFirst(Image.class);
 
-		if(image != null && image.getImageContent() != null)
+		if(imageIsHashable(image))
 		{
 			image.setHash(GuavaHashGenerator.calculateHash(image.getImageContent()));
 		}
@@ -65,6 +65,10 @@ public class ImageService
                 .executeUpdate();
     }
 
+	private boolean imageIsHashable(Image image)
+	{
+		return image != null && image.getImageContent() != null;
+	}
     public static class ImageQueries
     {
         public static final String selectById = "SELECT * FROM images where id = :id";
