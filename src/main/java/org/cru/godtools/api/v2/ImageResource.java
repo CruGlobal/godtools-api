@@ -74,7 +74,7 @@ public class ImageResource
 
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"", packageCode))
+					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"}", packageCode))
 					.build();
 		}
 
@@ -145,6 +145,22 @@ public class ImageResource
 
 		logger.info(String.format("Uploading image, admin validated."));
 
+		if(image.getImageContent() == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("{ \"message\' : \'Image content was null\"}", packageCode))
+					.build();
+		}
+
+		if(image.getFilename() == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("{ \"message\' : \'Image filename was null\"}", packageCode))
+					.build();
+		}
+
 		Package gtPackage = packageService.selectByCode(packageCode);
 
 		if(gtPackage == null)
@@ -153,7 +169,7 @@ public class ImageResource
 
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"", packageCode))
+					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"}", packageCode))
 					.build();
 		}
 
