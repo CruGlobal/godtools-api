@@ -176,6 +176,8 @@ public class ImageResource
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
 		image.setId(UUID.randomUUID());
+		//prepend package code and underscores
+		image.setFilename(Image.buildFilename(packageCode, image.getFilename()));
 
 		imageService.insert(image);
 		insertReferencedImage(packageStructure, image);
