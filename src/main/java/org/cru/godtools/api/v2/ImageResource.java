@@ -74,7 +74,7 @@ public class ImageResource
 
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"", packageCode))
+					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"}", packageCode))
 					.build();
 		}
 
@@ -145,6 +145,22 @@ public class ImageResource
 
 		logger.info(String.format("Uploading image, admin validated."));
 
+		if(image.getImageContent() == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("{ \"message\' : \'Image content was null\"}", packageCode))
+					.build();
+		}
+
+		if(image.getFilename() == null)
+		{
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity(String.format("{ \"message\' : \'Image filename was null\"}", packageCode))
+					.build();
+		}
+
 		Package gtPackage = packageService.selectByCode(packageCode);
 
 		if(gtPackage == null)
@@ -153,13 +169,15 @@ public class ImageResource
 
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"", packageCode))
+					.entity(String.format("{ \"message\' : \'Package with code %s was not found.  Cannot list images.\"}", packageCode))
 					.build();
 		}
 
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 
 		image.setId(UUID.randomUUID());
+		//prepend package code and underscores
+		image.setFilename(Image.buildFilename(packageCode, image.getFilename()));
 
 		imageService.insert(image);
 		insertReferencedImage(packageStructure, image);
@@ -167,26 +185,6 @@ public class ImageResource
 		return Response
 				.created(URI.create(String.format("/packages/%s/images/%s", packageCode, image.getId())))
 				.build();
-	}
-
-	/**
-	 * Thanks to tutorial by MK Yong: http://www.mkyong.com/webservices/jax-rs/file-upload-example-in-resteasy/
-	 */
-	private String getFileName(MultivaluedMap<String, String> header)
-	{
-		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-		for (String filename : contentDisposition)
-		{
-			if ((filename.trim().startsWith("filename"))) {
-
-				String[] name = filename.split("=");
-
-				String finalFileName = name[1].trim().replaceAll("\"", "");
-				return finalFileName;
-			}
-		}
-		return "unknown";
 	}
 
 	private void insertReferencedImage(PackageStructure packageStructure, Image image)

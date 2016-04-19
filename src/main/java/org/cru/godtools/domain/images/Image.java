@@ -26,7 +26,8 @@ public class  Image implements Serializable
 
 		for(Image image : imageList)
 		{
-			if(image.filename.contains("__")) image.filename = image.filename.substring(image.filename.indexOf("__") +2);
+			if(image.filename == null) continue;
+			if(image.filename.contains("__")) image.filename = image.filename.substring(image.filename.indexOf("__") + 2);
 			imageMap.put(image.getFilename(), image);
 			imageMap.put(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png", image);
 		}
@@ -36,6 +37,10 @@ public class  Image implements Serializable
 
 	public static String buildFilename(String packageCode, String filename)
 	{
+		if(filename == null || (filename.contains("__") && !filename.startsWith("__")))
+		{
+			return filename;
+		}
 		return packageCode + "__" + filename;
 	}
 
@@ -54,6 +59,7 @@ public class  Image implements Serializable
 		return filename;
 	}
 
+	@FormParam("filename")
 	public void setFilename(String filename)
 	{
 		this.filename = filename;
@@ -65,7 +71,7 @@ public class  Image implements Serializable
 		return imageContent;
 	}
 
-	@FormParam("uploadedImage")
+	@FormParam("imageContent")
 	@PartType("application/octet-stream")
 	public void setImageContent(byte[] imageContent)
 	{
