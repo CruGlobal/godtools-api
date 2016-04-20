@@ -3,16 +3,21 @@ package org.cru.godtools.api.v2;
 import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
+import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.packages.Package;
+import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
-import org.cru.godtools.domain.translations.TranslationService;
+import org.cru.godtools.translate.client.TranslationDownload;
+import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -23,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.UUID;
 
 @Path("/v2/packages/{package}/pages/{pageName}/phrases")
 public class PhraseResource
@@ -37,10 +43,16 @@ public class PhraseResource
 	PublishedTranslation publishedTranslation;
 
 	@Inject
+	DraftTranslation draftTranslation;
+
+	@Inject
+	PackageService packageService;
+
+	@Inject
 	TranslationElementService translationElementService;
 
 	@Inject
-	TranslationService translationService;
+	TranslationUpload translationUpload;
 
 	/**
 	 * English is the base language for God Tools.  Phrases should always be manipulated relative to English
@@ -61,13 +73,18 @@ public class PhraseResource
 
 		logger.info(String.format("Listing phrases, admin validated.  Listing phrases for %s-%s", packageCode, pageName));
 
-		Optional<GodToolsTranslation> translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
+		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
 
 		if(!translationOptional.isPresent())
 		{
-			logger.warn("Something weird... no published English translation for: " + packageCode);
+			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
 
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			if(!translationOptional.isPresent())
+			{
+				logger.warn("Something weird... no published English translation for: " + packageCode);
+
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
 		}
 
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
@@ -88,15 +105,96 @@ public class PhraseResource
 	}
 
 	@POST
-	public Response addPhraseToPackage()
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addPhraseToPackage(@HeaderParam("Authorization") String authorization,
+									   @PathParam("package") String packageCode,
+									   @PathParam("pageName") String pageName,
+									   TranslationElement translationElement)
 	{
-		return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+		logger.info(String.format("Adding phrase w/ authorization %s", authorization));
+
+		AuthorizationRecord.checkAdminAccess(authorizationService.getAuthorizationRecord(null, authorization), clock.currentDateTime());
+
+		logger.info(String.format("Adding phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
+
+		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
+
+		if(!translationOptional.isPresent())
+		{
+			logger.warn("No draft English translation for: " + packageCode);
+
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity("{\"message\": \"A draft must be created for this resource in English before a phrase can be added.\"}")
+					.build();
+		}
+
+		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
+
+		if(!pageOptional.isPresent())
+		{
+			logger.warn(String.format("Listing phrases, Page %s not found English translation for %s", pageName, packageCode));
+
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		Package gtPackage = packageService.selectByCode(packageCode);  // can't be null by this point
+
+		translationElement.setFieldsForNewPhrase(pageOptional.get(), translationOptional.get());
+
+		// TODO: display reordering
+		// TODO: need to add to latest translation in every languages
+		translationElementService.insert(translationElement);
+
+		translationUpload.doUpload(gtPackage.getTranslationProjectId(),
+				BASE_LANGUAGE_CODE,
+				pageName);
+
+		return Response.ok().build();
 	}
 
 	@DELETE
 	@Path("/{id}")
-	public Response removePhraseFromPackage()
+	public Response removePhraseFromPackage(@HeaderParam("Authorization") String authorization,
+											@PathParam("package") String packageCode,
+											@PathParam("pageName") String pageName,
+											@PathParam("id") UUID phraseId)
 	{
-		return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+		logger.info(String.format("Adding phrase w/ authorization %s", authorization));
+
+		AuthorizationRecord.checkAdminAccess(authorizationService.getAuthorizationRecord(null, authorization), clock.currentDateTime());
+
+		logger.info(String.format("Adding phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
+
+		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
+
+		if(!translationOptional.isPresent())
+		{
+			logger.warn("No draft English translation for: " + packageCode);
+
+			return Response
+					.status(Response.Status.BAD_REQUEST)
+					.entity("{\"message\": \"A draft must be created for this resource in English before a phrase can be added.\"}")
+					.build();
+		}
+
+		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
+
+		if(!pageOptional.isPresent())
+		{
+			logger.warn(String.format("Listing phrases, Page %s not found English translation for %s", pageName, packageCode));
+
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+
+		Package gtPackage = packageService.selectByCode(packageCode);  // can't be null by this point
+
+		translationElementService.delete(phraseId);
+
+		translationUpload.doUpload(gtPackage.getTranslationProjectId(),
+				BASE_LANGUAGE_CODE,
+				pageName);
+
+		return Response.ok().build();
 	}
 }
