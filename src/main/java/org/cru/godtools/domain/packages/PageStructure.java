@@ -99,19 +99,28 @@ public class PageStructure implements Serializable
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
 			String filenameFromXml = element.getAttribute("backgroundimage");
-			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("backgroundimage", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filenameFromXml = element.getAttribute("watermark");
-			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("watermark", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filenameFromXml = element.getTextContent();
-			element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setTextContent(image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 	}
 

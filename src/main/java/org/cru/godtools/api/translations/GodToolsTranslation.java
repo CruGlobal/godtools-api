@@ -1,5 +1,7 @@
 package org.cru.godtools.api.translations;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -73,6 +75,19 @@ public class GodToolsTranslation implements Serializable
 		godToolsTranslation.translation = translation;
 
 		return godToolsTranslation;
+	}
+
+	public Optional<PageStructure> getPage(String pageName)
+	{
+		for(PageStructure pageStructure : pageStructureList)
+		{
+			if(Objects.equal(pageStructure.getFilename(), pageName))
+			{
+				return Optional.fromNullable(pageStructure);
+			}
+		}
+
+		return Optional.absent();
 	}
 
 	/**
