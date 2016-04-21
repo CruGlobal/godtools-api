@@ -177,7 +177,9 @@ public class PhraseResource
 				BASE_LANGUAGE_CODE,
 				pageName);
 
-		return Response.ok().build();
+		return Response
+				.status(Response.Status.CREATED)
+				.build();
 	}
 
 	@DELETE
@@ -222,6 +224,8 @@ public class PhraseResource
 				BASE_LANGUAGE_CODE,
 				pageName);
 
-		return Response.ok().build();
+		return Response
+				.noContent()
+				.build();
 	}
 }
