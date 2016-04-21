@@ -132,12 +132,14 @@ public class PhraseResource
 
 		if(!translationOptional.isPresent())
 		{
-			logger.warn("No draft English translation for: " + packageCode);
+			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
 
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("{\"message\": \"A draft must be created for this resource in English before a phrase can be added.\"}")
-					.build();
+			if(!translationOptional.isPresent())
+			{
+				logger.warn("Something weird... no published English translation for: " + packageCode);
+
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
 		}
 
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
@@ -199,12 +201,14 @@ public class PhraseResource
 
 		if(!translationOptional.isPresent())
 		{
-			logger.warn("No draft English translation for: " + packageCode);
+			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
 
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("{\"message\": \"A draft must be created for this resource in English before a phrase can be added.\"}")
-					.build();
+			if(!translationOptional.isPresent())
+			{
+				logger.warn("Something weird... no published English translation for: " + packageCode);
+
+				return Response.status(Response.Status.BAD_REQUEST).build();
+			}
 		}
 
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
