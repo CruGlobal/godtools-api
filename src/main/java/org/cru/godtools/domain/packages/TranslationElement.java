@@ -2,8 +2,6 @@ package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.cru.godtools.api.translations.GodToolsTranslation;
-import org.cru.godtools.domain.translations.Translation;
 
 import java.util.List;
 import java.util.Map;
@@ -20,13 +18,13 @@ public class TranslationElement
 	private String pageName;
 	private Integer displayOrder;
 
-	public void setFieldsForNewPhrase(PageStructure pageStructure, GodToolsTranslation translation)
+	@JsonIgnore
+	public void setFieldsForNewPhrase(PageStructure pageStructure)
 	{
 		setId(UUID.randomUUID());
 		setPageStructureId(pageStructure.getId());
 		setPageName(pageStructure.getFilename());  // just to be sure
 		setTranslatedText(baseText);
-		setTranslationId(translation.getTranslation().getId());
 	}
 
 	public static Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)

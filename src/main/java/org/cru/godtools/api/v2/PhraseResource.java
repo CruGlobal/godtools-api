@@ -5,13 +5,18 @@ import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.PublishedTranslation;
+import org.cru.godtools.domain.GodToolsVersion;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.languages.Language;
+import org.cru.godtools.domain.languages.LanguageService;
 import org.cru.godtools.domain.packages.Package;
 import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.domain.packages.TranslationElement;
 import org.cru.godtools.domain.packages.TranslationElementService;
+import org.cru.godtools.domain.translations.Translation;
+import org.cru.godtools.domain.translations.TranslationService;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationUpload;
 import org.jboss.logging.Logger;
@@ -47,6 +52,12 @@ public class PhraseResource
 
 	@Inject
 	PackageService packageService;
+
+	@Inject
+	LanguageService languageService;
+
+	@Inject
+	TranslationService translationService;
 
 	@Inject
 	TranslationElementService translationElementService;
@@ -140,11 +151,27 @@ public class PhraseResource
 
 		Package gtPackage = packageService.selectByCode(packageCode);  // can't be null by this point
 
-		translationElement.setFieldsForNewPhrase(pageOptional.get(), translationOptional.get());
+		translationElement.setFieldsForNewPhrase(pageOptional.get());
 
 		// TODO: display reordering - minor, perhaps
-		// TODO: need to add to latest translation in every languages - very important
-		translationElementService.insert(translationElement);
+
+		for(Language language : languageService.selectAllLanguages())
+		{
+			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+					gtPackage.getId(),
+					GodToolsVersion.LATEST_VERSION);
+
+			// no translation in this language
+			if(translation == null) continue;
+
+			// i probably don't need to copy here, but it makes me feel better to do it.  in the JPA world it would be
+			// necessary
+			TranslationElement translationElementForOtherLanguage = TranslationElement.copyOf(translationElement);
+
+			translationElementForOtherLanguage.setTranslationId(translation.getId());
+
+			translationElementService.insert(translationElementForOtherLanguage);
+		}
 
 		translationUpload.doUpload(gtPackage.getTranslationProjectId(),
 				BASE_LANGUAGE_CODE,
