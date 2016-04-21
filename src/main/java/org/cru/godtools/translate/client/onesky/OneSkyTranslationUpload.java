@@ -13,9 +13,6 @@ import org.jboss.logging.Logger;
 import javax.inject.Inject;
 import java.util.Collection;
 
-/**
- * Created by ryancarlson on 7/18/14.
- */
 public class OneSkyTranslationUpload implements TranslationUpload
 {
 	@Inject
@@ -43,7 +40,7 @@ public class OneSkyTranslationUpload implements TranslationUpload
 			log.info("Uploading page to OneSky: " + pageName);
 			try
 			{
-				fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
+				fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)), false);
 			}
 			catch (Exception e)
 			{
@@ -55,6 +52,12 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	@Override
 	public void doUpload(Integer projectId, String locale, String pageName)
 	{
+		doUpload(projectId, locale, pageName, false);
+	}
+
+	@Override
+	public void doUpload(Integer projectId, String locale, String pageName, boolean deprecateRemovedPhrases)
+	{
 		if(!Boolean.parseBoolean(properties.getProperty("oneskyIntegrationEnabled", "true")))
 		{
 			log.info("Onesky integration disabled on this server.  Check configuration settings");
@@ -65,7 +68,7 @@ public class OneSkyTranslationUpload implements TranslationUpload
 
 		try
 		{
-			fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)));
+			fileClient.uploadFile(projectId, pageName, locale, buildFile(translationElementMultimap.get(pageName)), deprecateRemovedPhrases);
 		}
 		catch(Exception e)
 		{
