@@ -55,6 +55,12 @@ public class OneSkyTranslationUpload implements TranslationUpload
 	@Override
 	public void doUpload(Integer projectId, String locale, String pageName)
 	{
+		if(!Boolean.parseBoolean(properties.getProperty("oneskyIntegrationEnabled", "true")))
+		{
+			log.info("Onesky integration disabled on this server.  Check configuration settings");
+			return;
+		}
+
 		Multimap<String, TranslationElement> translationElementMultimap = oneSkyDataService.getTranslationElements(projectId, locale);
 
 		try
