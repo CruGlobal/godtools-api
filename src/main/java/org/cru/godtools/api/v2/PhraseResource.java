@@ -222,7 +222,8 @@ public class PhraseResource
 
 		translationUpload.doUpload(gtPackage.getTranslationProjectId(),
 				BASE_LANGUAGE_CODE,
-				pageName);
+				pageName,
+				true);
 
 		return Response
 				.noContent()
