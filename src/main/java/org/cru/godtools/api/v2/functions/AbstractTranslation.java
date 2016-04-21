@@ -34,7 +34,7 @@ import java.util.UUID;
 
 public abstract class AbstractTranslation
 {
-	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied");
+	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied", "new");
 
 	final Logger logger = Logger.getLogger(getClass());
 
@@ -77,6 +77,11 @@ public abstract class AbstractTranslation
 
 	public Optional<GodToolsTranslation> retrieve(String languageCode, String packageCode)
 	{
+		return retrieve(languageCode, packageCode, true);
+	}
+
+	public Optional<GodToolsTranslation> retrieve(String languageCode, String packageCode, boolean withImages)
+	{
 		org.cru.godtools.domain.packages.Package gtPackage = packageService.selectByCode(packageCode);
 		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
 
@@ -97,11 +102,15 @@ public abstract class AbstractTranslation
 		PackageStructure packageStructure = packageStructureService.selectByPackageId(gtPackage.getId());
 		List<PageStructure> pageStructureList = pageStructureService.selectByTranslationId(currentTranslation.getId());
 		List<TranslationElement> translationElementList = translationElementService.selectByTranslationId(currentTranslation.getId());
+
 		List<Image> imageList = Lists.newArrayList();
 
-		for(ReferencedImage referencedImage : referencedImageService.selectByPackageStructureId(packageStructure.getId()))
+		if(withImages)
 		{
-			imageList.add(imageService.selectById(referencedImage.getImageId()));
+			for (ReferencedImage referencedImage : referencedImageService.selectByPackageStructureId(packageStructure.getId()))
+			{
+				imageList.add(imageService.selectById(referencedImage.getImageId()));
+			}
 		}
 
 		return Optional.fromNullable(
@@ -112,8 +121,7 @@ public abstract class AbstractTranslation
 						pageStructureList,
 						translationElementList,
 						imageList,
-						imageService.selectByFilename(
-								Image.buildFilename(packageCode, "icon@2x.png"))));
+						withImages ? imageService.selectByFilename(Image.buildFilename(packageCode, "icon@2x.png")) : null));
 	}
 
 	protected void downloadLatestTranslations(Package gtPackage, Language language, Translation currentTranslation)

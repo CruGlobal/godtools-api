@@ -1,13 +1,15 @@
 package org.cru.godtools.domain.images;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 4/25/14.
- */
+@XmlRootElement(name = "referencedImages")
 public class ReferencedImage
 {
+	@XmlElement
 	private UUID imageId;
+	@XmlElement
 	private UUID packageStructureId;
 
 	public UUID getImageId()
