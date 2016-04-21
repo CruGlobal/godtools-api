@@ -142,8 +142,8 @@ public class PhraseResource
 
 		translationElement.setFieldsForNewPhrase(pageOptional.get(), translationOptional.get());
 
-		// TODO: display reordering
-		// TODO: need to add to latest translation in every languages
+		// TODO: display reordering - minor, perhaps
+		// TODO: need to add to latest translation in every languages - very important
 		translationElementService.insert(translationElement);
 
 		translationUpload.doUpload(gtPackage.getTranslationProjectId(),

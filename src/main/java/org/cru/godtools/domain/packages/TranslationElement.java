@@ -25,7 +25,7 @@ public class TranslationElement
 		setId(UUID.randomUUID());
 		setPageStructureId(pageStructure.getId());
 		setPageName(pageStructure.getFilename());  // just to be sure
-		setTranslatedText(null);
+		setTranslatedText(baseText);
 		setTranslationId(translation.getTranslation().getId());
 	}
 
