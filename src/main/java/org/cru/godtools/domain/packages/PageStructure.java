@@ -1,11 +1,22 @@
 package org.cru.godtools.domain.packages;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import javax.ws.rs.BadRequestException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -13,6 +24,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
@@ -32,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Created by ryancarlson on 4/30/14.
@@ -77,6 +91,7 @@ public class PageStructure implements Serializable
 			try
 			{
 				UUID translationElementId = UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"));
+
 
 				if (mapOfTranslationElements.containsKey(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))))
 				{
@@ -176,28 +191,13 @@ public class PageStructure implements Serializable
 				Element aElement = (Element) nodeToAdd;
 				//The nodeCurrent will be node when it doesn't have an element
 				// that's in the source nodeList.
-				NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
-				NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
-
-				boolean attrMatch = true;
-
-				for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
-				{
-					Attr a1 = (Attr) additionNamedNodeMap.item(n);
-					Attr o1 = (Attr) originalNamedNodeMap.item(n);
-
-					if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
-					{
-						attrMatch = false;
-						break;
-					}
-				}
+				boolean attrMatch = isSameAttributes(oElement, aElement);
 
 				if (!attrMatch && oElement.getNodeName().matches(aElement.getNodeName()))
 				{
 					if (xmlContentNode != null)
 					{
-						String nodeToBeAddedString = xmlNodeTostring(new DOMSource(aElement));
+						String nodeToBeAddedString = xmlNodeToString(aElement);
 						String xmlContentDocumentString = xmlDocumentToString(new DOMSource(xmlContent));
 
 						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
@@ -217,22 +217,103 @@ public class PageStructure implements Serializable
 		}
 	}
 
-	public void removeXmlContent(Document removeXmlContentDocument)
+	private boolean isSameAttributes(Element oElement, Element aElement)
 	{
-		NodeList elementsToBeRemovedList = removeXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList originalElementsList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
+		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
 
-		for(int i=0; i<elementsToBeRemovedList.getLength(); i++)
+		boolean attrMatch = true;
+
+		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+        {
+            Attr a1 = (Attr) additionNamedNodeMap.item(n);
+            Attr o1 = (Attr) originalNamedNodeMap.item(n);
+
+            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+            {
+                attrMatch = false;
+                break;
+            }
+        }
+		return attrMatch;
+	}
+
+	public void removeXmlContent(Document removeXmlContentDocument) throws XMLStreamException, IOException,
+			ParserConfigurationException,SAXException
+	{
+		ByteArrayOutputStream originalByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
+		ByteArrayOutputStream removableNodesByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(removeXmlContentDocument);
+
+		if(originalByteArrayOStream.equals(removableNodesByteArrayOStream))
 		{
-			Node nodeToRemove = elementsToBeRemovedList.item(i);
-			Node originalXmlContentNode = originalElementsList.item(i);
+			throw new BadRequestException("The document submitted is the same as the current one.");
+		}
 
-			if(nodeToRemove.getNodeName().equals(originalXmlContentNode.getNodeName()) &&
-					nodeToRemove.getTextContent().equals(originalXmlContentNode.getTextContent()) )
+		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalByteArrayOStream);
+		XMLEventReader removeNodesXmlReader = getXmlEventReaderFromByteArray(removableNodesByteArrayOStream);
+
+		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
+		List<String> stringArrayList = Lists.newArrayList();
+
+		boolean isFound = true ;
+		String deleteTagName = "";
+		//I'm sure there's a better way, but for now I write the results
+		//to a list and in the next while loop, we check if the event
+		//exists.
+		while (removeNodesXmlReader.hasNext())
+		{
+			XMLEvent xmlEvent = removeNodesXmlReader.nextEvent();
+			stringArrayList.add(xmlEvent.toString());
+		}
+
+		while (originalXmlReader.hasNext())
+		{
+			XMLEvent event = originalXmlReader.nextEvent();
+
+			if (stringArrayList.contains(event.toString()) )
 			{
-				originalXmlContentNode.getParentNode().removeChild(originalXmlContentNode);
+				if(isFound)
+				{
+					if(event.getEventType() != XMLEvent.START_DOCUMENT)
+					{
+						//The API tries to write the string, " ENDDOCUMENT" is at the end
+						//of the stream resulting in an invalid xml doc
+						//This condition keeps it out.
+						if(!event.toString().equals("ENDDOCUMENT"))
+						{
+							byteArrayForDocument.write(event.toString().getBytes());
+						}
+					}
+				}
+				//Once the closing tag for the "removed" tag is skipped
+				//we reset the variables used to skip over tags
+				else if(event.getEventType() == XMLStreamConstants.END_ELEMENT &&
+							deleteTagName.equals(event.asEndElement().getName().toString()))
+				{
+					isFound = true;
+					deleteTagName = "";
+				}
+			}
+			else
+			{
+				//This condition is to ensure that the
+				// intended "removed" parent tag and all of it's children
+				// are ignored.
+				if(event.getEventType() == XMLStreamConstants.START_ELEMENT)
+				{
+					deleteTagName = event.asStartElement().getName().toString();
+					isFound = false;
+				}
 			}
 		}
+		InputStream inputStream = new ByteArrayInputStream(byteArrayForDocument.toByteArray());
+
+		originalByteArrayOStream.close();
+		removableNodesByteArrayOStream.close();
+		byteArrayForDocument.close();
+
+		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
+		setXmlContent(document);
 	}
 
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
@@ -265,7 +346,7 @@ public class PageStructure implements Serializable
 
 		transformer.transform(source, streamResult);
 
-		BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
+		BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));
 		StringBuilder stringBuilder = new StringBuilder();
 
 		String line;
@@ -278,18 +359,24 @@ public class PageStructure implements Serializable
 		return stringBuilder.toString();
 	}
 
-	private String xmlNodeTostring(DOMSource domSource) throws IOException,TransformerException
+	private String xmlNodeToString(Node node) throws IOException,TransformerException
 	{
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-
-		StringWriter stringWriter = new StringWriter();
-		StreamResult result = new StreamResult(stringWriter);
-
-		transformer.transform(domSource, result);
-		return stringWriter.toString();
+		transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");
+		StreamResult result = new StreamResult( new StringWriter());
+		transformer.transform(new DOMSource(node), result);
+		return result.getWriter().toString();
 	}
 
+	private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
+	{
+		InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+		XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
+
+		return xmlEventReader;
+	}
 
 	public UUID getId()
 	{

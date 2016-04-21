@@ -1,15 +1,39 @@
 package org.cru.godtools.domain;
 
+import com.beust.jcommander.internal.Lists;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.stax.StAXSource;
+import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -143,18 +167,19 @@ public class PageStructureTest
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
-        Assert.assertEquals(additionalXML,originalXML);
+        Assert.assertEquals(additionalXML, originalXML);
     }
 
     /**
      * This test validations that the PageStructure.removeXmlContent() can
      * remove a node from a document successfully.
-     *
+     * qq
      * Expected outcome: document contains node AssertFalse
      *
      */
     @Test
-    public void testRemoveElement() throws ParserConfigurationException, IOException, SAXException,TransformerException
+    public void testRemoveElement() throws SAXException,ParserConfigurationException,
+            IOException,XMLStreamException,TransformerException
     {
         PageStructure pageStructure = new PageStructure();
         pageStructure.setId(UUID.randomUUID());
@@ -204,9 +229,8 @@ public class PageStructureTest
         //an xml element/tag is on the same line as it's sibling,child text, etc.
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
 
-        Assert.assertFalse(originalXML.contains("<package code=\"kgp\"><name>Knowing God</name></package>"));
+        Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
     }
-
 
     public String domDocumentToString(Document document) throws IOException,TransformerException
     {

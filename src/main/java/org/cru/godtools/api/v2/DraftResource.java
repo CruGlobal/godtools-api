@@ -2,6 +2,7 @@ package org.cru.godtools.api.v2;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
@@ -164,7 +165,8 @@ public class DraftResource
 													@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 													@HeaderParam("Authorization") String authTokenHeader,
 													@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeTypeString,
-													Document updatedPageLayout) throws IOException, TransformerException
+													Document updatedPageLayout) throws IOException,
+			XMLStreamException,TransformerException, ParserConfigurationException,SAXException
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and page ID: " + pageName);
 
