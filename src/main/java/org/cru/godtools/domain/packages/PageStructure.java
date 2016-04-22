@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import javax.ws.rs.BadRequestException;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -44,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -307,13 +305,12 @@ public class PageStructure implements Serializable
 			}
 		}
 		InputStream inputStream = new ByteArrayInputStream(byteArrayForDocument.toByteArray());
+		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
+		setXmlContent(document);
 
 		originalByteArrayOStream.close();
 		removableNodesByteArrayOStream.close();
 		byteArrayForDocument.close();
-
-		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
-		setXmlContent(document);
 	}
 
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException

@@ -1,39 +1,17 @@
 package org.cru.godtools.domain;
 
-import com.beust.jcommander.internal.Lists;
+
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stax.StAXSource;
-import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
 import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -52,7 +30,6 @@ import org.xml.sax.SAXException;
  */
 public class PageStructureTest
 {
-
     /**
      * This test validations that the PageStructure.addXmlContent() can
      * add a node to the end of a document successfully.  The original XML document
@@ -87,12 +64,7 @@ public class PageStructureTest
                 "</language>\n"+
             "</languages>\n";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory
-                .newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder;
-        builder = factory.newDocumentBuilder();
-        Document additionsXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions);
 
         pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
         pageStructure.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
@@ -144,20 +116,8 @@ public class PageStructureTest
                 "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
                 "</page>";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder builder;
-        DocumentBuilder builder2;
-
-        builder = factory.newDocumentBuilder();
-        builder2 = factory2.newDocumentBuilder();
-
-        Document originalXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
-        Document additionsXmlDocument = builder2.parse(new InputSource(new StringReader(xmlAdditions2)));
-
-        originalXmlDocument.normalize();
-        additionsXmlDocument.normalize();
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
 
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.addXmlContent(additionsXmlDocument);
@@ -207,20 +167,8 @@ public class PageStructureTest
                 "    </language>\n" +
                 "</languages>";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder builder;
-        DocumentBuilder builder2;
-
-        builder = factory.newDocumentBuilder();
-        builder2 = factory2.newDocumentBuilder();
-
-        Document originalXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
-        Document additionsXmlDocument = builder2.parse(new InputSource(new StringReader(xmlAdditions2)));
-
-        originalXmlDocument.normalize();
-        additionsXmlDocument.normalize();
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
 
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.removeXmlContent(additionsXmlDocument);
@@ -232,7 +180,7 @@ public class PageStructureTest
         Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
     }
 
-    public String domDocumentToString(Document document) throws IOException,TransformerException
+    private String domDocumentToString(Document document) throws IOException,TransformerException
     {
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -242,7 +190,7 @@ public class PageStructureTest
         transformer.transform(source, streamResult);
 
         BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
 
         String line;
 
@@ -253,5 +201,12 @@ public class PageStructureTest
 
         return stringBuffer.toString();
 
+    }
+
+    private Document createDocumentFromString(String documentString) throws IOException, ParserConfigurationException, SAXException
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(new StringReader(documentString)));
     }
 }
