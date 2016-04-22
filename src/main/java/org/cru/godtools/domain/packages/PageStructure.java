@@ -272,7 +272,7 @@ public class PageStructure implements Serializable
 			{
 				if(isFound)
 				{
-					if(event.getEventType() != XMLEvent.START_DOCUMENT)
+					if(!event.isStartDocument())
 					{
 						//The API tries to write the string, " ENDDOCUMENT" is at the end
 						//of the stream resulting in an invalid xml doc
@@ -285,7 +285,7 @@ public class PageStructure implements Serializable
 				}
 				//Once the closing tag for the "removed" tag is skipped
 				//we reset the variables used to skip over tags
-				else if(event.getEventType() == XMLStreamConstants.END_ELEMENT &&
+				else if(event.isEndElement() &&
 							deleteTagName.equals(event.asEndElement().getName().toString()))
 				{
 					isFound = true;
@@ -297,7 +297,7 @@ public class PageStructure implements Serializable
 				//This condition is to ensure that the
 				// intended "removed" parent tag and all of it's children
 				// are ignored.
-				if(event.getEventType() == XMLStreamConstants.START_ELEMENT)
+				if(event.isStartElement())
 				{
 					deleteTagName = event.asStartElement().getName().toString();
 					isFound = false;
