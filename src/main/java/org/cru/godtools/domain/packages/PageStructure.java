@@ -12,8 +12,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import javax.ws.rs.BadRequestException;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
@@ -251,24 +252,30 @@ public class PageStructure implements Serializable
 		XMLEventReader removeNodesXmlReader = getXmlEventReaderFromByteArray(removableNodesByteArrayOStream);
 
 		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
-		List<String> stringArrayList = Lists.newArrayList();
+
+		XMLEventWriter xmlEventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(byteArrayForDocument);
+		List<String> xmlEventArrayList = Lists.newArrayList();
 
 		boolean isFound = true ;
 		String deleteTagName = "";
+
 		//I'm sure there's a better way, but for now I write the results
 		//to a list and in the next while loop, we check if the event
 		//exists.
 		while (removeNodesXmlReader.hasNext())
 		{
 			XMLEvent xmlEvent = removeNodesXmlReader.nextEvent();
-			stringArrayList.add(xmlEvent.toString());
+			xmlEventArrayList.add(xmlEvent.toString());
 		}
 
 		while (originalXmlReader.hasNext())
 		{
 			XMLEvent event = originalXmlReader.nextEvent();
 
-			if (stringArrayList.contains(event.toString()) )
+			//Loop through the array with the event to see
+			//if it exists.  If it doesn't we don't add it.
+			//to the stream. Thus removing it.
+			if (xmlEventArrayList.contains(event.toString()) )
 			{
 				if(isFound)
 				{
@@ -277,10 +284,7 @@ public class PageStructure implements Serializable
 						//The API tries to write the string, " ENDDOCUMENT" is at the end
 						//of the stream resulting in an invalid xml doc
 						//This condition keeps it out.
-						if(!event.toString().equals("ENDDOCUMENT"))
-						{
-							byteArrayForDocument.write(event.toString().getBytes());
-						}
+							xmlEventWriter.add(event);
 					}
 				}
 				//Once the closing tag for the "removed" tag is skipped
@@ -304,7 +308,11 @@ public class PageStructure implements Serializable
 				}
 			}
 		}
-		InputStream inputStream = new ByteArrayInputStream(byteArrayForDocument.toByteArray());
+
+		xmlEventWriter.flush();
+		xmlEventWriter.close();
+
+		InputStream inputStream = new ByteArrayInputStream( byteArrayForDocument.toByteArray());
 		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
 		setXmlContent(document);
 
