@@ -2,6 +2,7 @@ package org.cru.godtools.api.v2;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.ccci.util.time.Clock;
 import org.cru.godtools.api.translations.GodToolsTranslation;
@@ -142,18 +143,16 @@ public class DraftResource
 														@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 														@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 														@HeaderParam("Authorization") String authTokenHeader,
-														@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeType,
+														@QueryParam("Authorization") String authTokenParam,
 														Document updatedPageLayout) throws IOException
 	{
-
-		//TODO double check this
 		return draftResourceV1.updatePageLayoutForSpecificLanguage(languageCode,
 				packageCode,
 				pageId,
 				minimumInterpreterVersionParam,
 				minimumInterpreterVersionHeader,
 				authTokenHeader,
-				"",
+				authTokenParam,
 				updatedPageLayout);
 	}
 
@@ -165,8 +164,9 @@ public class DraftResource
 													@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 													@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
 													@HeaderParam("Authorization") String authTokenHeader,
-													@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeType,
-													Document updatedPageLayout) throws IOException, TransformerException
+													@DefaultValue("ADD_ELEMENTS") @QueryParam("changeType") String changeTypeString,
+													Document updatedPageLayout) throws IOException,
+			XMLStreamException,TransformerException, ParserConfigurationException,SAXException
 	{
 		log.info("Updating draft page update for package: " + packageCode + " and page ID: " + pageName);
 
@@ -184,11 +184,11 @@ public class DraftResource
 					.build();
 		}
 
-		ChangeType changeType1 = ChangeType.fromStringSafely(changeType);
+		ChangeType changeType = ChangeType.fromStringSafely(changeTypeString);
 
-		if(changeType1 == null) changeType1 = ChangeType.ADD_ELEMENTS;
+		if(changeType == null) changeType = ChangeType.ADD_ELEMENTS;
 
-		switch (changeType1)
+		switch (changeType)
 		{
 			case ADD_ELEMENTS:
 				godToolsTranslationService.addToPageLayout(gtPackage.getId(), pageName, updatedPageLayout);

@@ -1,8 +1,10 @@
 package org.cru.godtools.domain;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
@@ -28,7 +30,6 @@ import org.xml.sax.SAXException;
  */
 public class PageStructureTest
 {
-
     /**
      * This test validations that the PageStructure.addXmlContent() can
      * add a node to the end of a document successfully.  The original XML document
@@ -63,12 +64,7 @@ public class PageStructureTest
                 "</language>\n"+
             "</languages>\n";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory
-                .newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder;
-        builder = factory.newDocumentBuilder();
-        Document additionsXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions);
 
         pageStructure.setId(AbstractFullPackageServiceTest.PAGE_STRUCTURE_ID);
         pageStructure.setTranslationId(AbstractFullPackageServiceTest.TRANSLATION_ID);
@@ -120,20 +116,8 @@ public class PageStructureTest
                 "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
                 "</page>";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder builder;
-        DocumentBuilder builder2;
-
-        builder = factory.newDocumentBuilder();
-        builder2 = factory2.newDocumentBuilder();
-
-        Document originalXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
-        Document additionsXmlDocument = builder2.parse(new InputSource(new StringReader(xmlAdditions2)));
-
-        originalXmlDocument.normalize();
-        additionsXmlDocument.normalize();
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
 
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.addXmlContent(additionsXmlDocument);
@@ -143,18 +127,19 @@ public class PageStructureTest
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
-        Assert.assertEquals(additionalXML,originalXML);
+        Assert.assertEquals(additionalXML, originalXML);
     }
 
     /**
      * This test validations that the PageStructure.removeXmlContent() can
      * remove a node from a document successfully.
-     *
+     * qq
      * Expected outcome: document contains node AssertFalse
      *
      */
     @Test
-    public void testRemoveElement() throws ParserConfigurationException, IOException, SAXException,TransformerException
+    public void testRemoveElement() throws SAXException,ParserConfigurationException,
+            IOException,XMLStreamException,TransformerException
     {
         PageStructure pageStructure = new PageStructure();
         pageStructure.setId(UUID.randomUUID());
@@ -182,20 +167,8 @@ public class PageStructureTest
                 "    </language>\n" +
                 "</languages>";
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilderFactory factory2 = DocumentBuilderFactory.newInstance();
-
-        DocumentBuilder builder;
-        DocumentBuilder builder2;
-
-        builder = factory.newDocumentBuilder();
-        builder2 = factory2.newDocumentBuilder();
-
-        Document originalXmlDocument = builder.parse(new InputSource(new StringReader(xmlAdditions)));
-        Document additionsXmlDocument = builder2.parse(new InputSource(new StringReader(xmlAdditions2)));
-
-        originalXmlDocument.normalize();
-        additionsXmlDocument.normalize();
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
 
         pageStructure.setXmlContent(originalXmlDocument);
         pageStructure.removeXmlContent(additionsXmlDocument);
@@ -204,11 +177,10 @@ public class PageStructureTest
         //an xml element/tag is on the same line as it's sibling,child text, etc.
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
 
-        Assert.assertFalse(originalXML.contains("<package code=\"kgp\"><name>Knowing God</name></package>"));
+        Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
     }
 
-
-    public String domDocumentToString(Document document) throws IOException,TransformerException
+    private String domDocumentToString(Document document) throws IOException,TransformerException
     {
 
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -218,7 +190,7 @@ public class PageStructureTest
         transformer.transform(source, streamResult);
 
         BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));;
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
 
         String line;
 
@@ -229,5 +201,12 @@ public class PageStructureTest
 
         return stringBuffer.toString();
 
+    }
+
+    private Document createDocumentFromString(String documentString) throws IOException, ParserConfigurationException, SAXException
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(new StringReader(documentString)));
     }
 }

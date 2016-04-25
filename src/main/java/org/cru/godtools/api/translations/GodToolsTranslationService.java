@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.api.translations.model.ConfigFile;
 import org.cru.godtools.domain.GodToolsVersion;
@@ -32,6 +34,7 @@ import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.xml.sax.SAXException;
 
 /**
  * Service which uses lower-level domain services to assemble XML structure files for a translation of a GodTools translation
@@ -104,8 +107,6 @@ public class GodToolsTranslationService
 
 	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout) throws IOException, TransformerException
 	{
-		int si =  loadPageStructures(packageId, filename).size();
-
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
 			pageStructure.addXmlContent(updatedPageLayout);
@@ -114,7 +115,8 @@ public class GodToolsTranslationService
 		}
 	}
 
-	public void removeFromPageLayout(UUID packageId, String filename, Document updatedPageLayout)
+	public void removeFromPageLayout(UUID packageId, String filename, Document updatedPageLayout)  throws IOException,
+			XMLStreamException,ParserConfigurationException,SAXException
 	{
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
@@ -140,7 +142,8 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
-	public void removeFromPageLayout(UUID pageId, Document updatedPageLayout)
+	public void removeFromPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, XMLStreamException,
+			ParserConfigurationException,SAXException
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 		pageStructure.removeXmlContent(updatedPageLayout);
