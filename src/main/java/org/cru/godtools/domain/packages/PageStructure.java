@@ -237,19 +237,19 @@ public class PageStructure implements Serializable
 		return attrMatch;
 	}
 
-	public void removeXmlContent(Document removeXmlContentDocument) throws XMLStreamException, IOException,
+	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException
 	{
-		ByteArrayOutputStream originalByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableNodesByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(removeXmlContentDocument);
+		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
+		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
 
-		if(originalByteArrayOStream.equals(removableNodesByteArrayOStream))
+		if(originalXmlByteArrayOStream.equals(removableElementsByteArrayOStream))
 		{
 			throw new BadRequestException("The document submitted is the same as the current one.");
 		}
 
-		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalByteArrayOStream);
-		XMLEventReader removeNodesXmlReader = getXmlEventReaderFromByteArray(removableNodesByteArrayOStream);
+		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
+		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);
 
 		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
 
@@ -260,11 +260,11 @@ public class PageStructure implements Serializable
 		String deleteTagName = "";
 
 		//I'm sure there's a better way, but for now I write the results
-		//to a list and in the next while loop, we check if the event
+		//to a list and in the next while loop, we check if the event (xml element)
 		//exists.
-		while (removeNodesXmlReader.hasNext())
+		while (removableElementsXmlReader.hasNext())
 		{
-			XMLEvent xmlEvent = removeNodesXmlReader.nextEvent();
+			XMLEvent xmlEvent = removableElementsXmlReader.nextEvent();
 			xmlEventArrayList.add(xmlEvent.toString());
 		}
 
@@ -316,8 +316,8 @@ public class PageStructure implements Serializable
 		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
 		setXmlContent(document);
 
-		originalByteArrayOStream.close();
-		removableNodesByteArrayOStream.close();
+		originalXmlByteArrayOStream.close();
+		removableElementsByteArrayOStream.close();
 		byteArrayForDocument.close();
 	}
 
