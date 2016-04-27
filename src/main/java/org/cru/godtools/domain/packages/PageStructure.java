@@ -199,12 +199,14 @@ public class PageStructure implements Serializable
 					{
 						String nodeToBeAddedString = xmlNodeToString(aElement);
 						String xmlContentDocumentString = xmlDocumentToString(new DOMSource(xmlContent));
-						logger.info(xmlContentDocumentString);
+						Node nextNode = xmlContentNodeList.item(i);
+						logger.info(xmlNodeToString(nextNode));
+						logger.info(nodeToBeAddedString);
 						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
 						{
 							Node targetNode = nodeToAdd.cloneNode(true);
 							Node nodeToBeImported = xmlContent.importNode(targetNode, true);
-							xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
+							xmlContent.getDocumentElement().insertBefore(nodeToBeImported, nextNode);
 						}
 					}
 				}
