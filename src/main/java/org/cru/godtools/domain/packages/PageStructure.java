@@ -265,7 +265,7 @@ public class PageStructure implements Serializable
 		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
 
 		XMLEventWriter xmlEventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(byteArrayForDocument);
-		List<String> xmlEventArrayList = Lists.newArrayList();
+		List<XMLEvent> xmlEventArrayList = Lists.newArrayList();
 
 		boolean isFound = true ;
 		String deleteTagName = "";
@@ -276,7 +276,7 @@ public class PageStructure implements Serializable
 		while (removableElementsXmlReader.hasNext())
 		{
 			XMLEvent xmlEvent = removableElementsXmlReader.nextEvent();
-			xmlEventArrayList.add(xmlEvent.toString());
+			xmlEventArrayList.add(xmlEvent);
 		}
 
 		while (originalXmlReader.hasNext())
@@ -286,7 +286,7 @@ public class PageStructure implements Serializable
 			//Loop through the array with the event to see
 			//if it exists.  If it doesn't we don't add it.
 			//to the stream. Thus removing it.
-			if (xmlEventArrayList.contains(event.toString()) )
+			if (xmlEventArrayList.contains(event) )
 			{
 				if(isFound)
 				{
