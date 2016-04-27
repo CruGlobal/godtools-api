@@ -133,8 +133,9 @@ public class PageStructure implements Serializable
 			String filenameFromXml = element.getTextContent();
 			Image image = images.get(filenameFromXml);
 
-			element.setTextContent(image != null ?
-					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
+			element.setTextContent(
+					image != null ?
+							(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 	}
 
@@ -212,7 +213,15 @@ public class PageStructure implements Serializable
 						{
 							Node targetNode = nodeToAdd.cloneNode(true);
 							xmlContent.adoptNode(targetNode);
-							xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
+
+							if(xmlContentNode.getPreviousSibling() != null)
+							{
+								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
+							}
+							else
+							{
+								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getNextSibling());
+							}
 						}
 					}
 				}

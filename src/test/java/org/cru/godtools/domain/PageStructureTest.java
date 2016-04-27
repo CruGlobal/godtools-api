@@ -1,9 +1,13 @@
 package org.cru.godtools.domain;
 
-
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
@@ -12,6 +16,9 @@ import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -86,7 +93,7 @@ public class PageStructureTest
 
     /**
      * This test validations that the PageStructure.addXmlContent() can
-     * insert a node to a document successfully.  The PageStructure.xmlContent document
+     * insert a node to a document successfully when a first sibling node is present.  The PageStructure.xmlContent document
      * will now have the new nodes from the additionsXmlDocument. No updates are made to the existing
      * XML Document. Only Additions.
      *
@@ -94,7 +101,7 @@ public class PageStructureTest
      *
      */
     @Test
-    public void testAddXmlInsert() throws Exception
+    public void testAddXmlInsertAfterFirstSibling() throws Exception
     {
         PageStructure pageStructure = new PageStructure();
         pageStructure.setId(UUID.randomUUID());
@@ -127,57 +134,54 @@ public class PageStructureTest
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
-        Assert.assertEquals(additionalXML, originalXML);
+        Assert.assertEquals(originalXML, additionalXML);
     }
 
+
     /**
-     * This test validations that the PageStructure.removeXmlContent() can
-     * remove a node from a document successfully.
-     * qq
-     * Expected outcome: document contains node AssertFalse
+     * This test validations that the PageStructure.addXmlContent() can
+     * insert a node to a document successfully when the new node is the first child.  The PageStructure.xmlContent document
+     * will now have the new nodes from the additionsXmlDocument. No updates are made to the existing
+     * XML Document. Only Additions.
+     *
+     * Expected outcome: AssertEquals true
      *
      */
     @Test
-    public void testRemoveElement() throws SAXException,ParserConfigurationException,
-            IOException,XMLStreamException,TransformerException
+    public void testAddXmlInsertAsFirstChild() throws Exception
     {
         PageStructure pageStructure = new PageStructure();
         pageStructure.setId(UUID.randomUUID());
 
-        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
-                "<languages>\n" +
-                "    <language code=\"en\">\n" +
-                "        <package code=\"kgp\" >\n" +
-                "            <name>Knowing God</name>\n" +
-                "        </package>\n" +
-                "        <package code=\"satisfied\">\n" +
-                "            <name>Satisfied?</name>\n" +
-                "        </package>\n" +
-                "    </language>\n" +
-                "</languages>";
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+                "</page>";
 
-        String xmlAdditions2 = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
-                "<languages>\n" +
-                "    <language code=\"en\">\n" +
-                "        <package code=\"kgp\" >\n" +
-                "            <name>Knowing God</name>\n" +
-                "        </package>\n"+
-                "    </language>\n" +
-                "</languages>";
+        String xmlAdditions2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"ua10000f-187d-4083-8677-593a1t7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"300\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+                "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlAdditions);
         Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
 
         pageStructure.setXmlContent(originalXmlDocument);
-        pageStructure.removeXmlContent(additionsXmlDocument);
+        pageStructure.addXmlContent(additionsXmlDocument);
 
         //convert the doc to a string to make the comparison easier in case
         //an xml element/tag is on the same line as it's sibling,child text, etc.
         String originalXML = domDocumentToString(pageStructure.getXmlContent());
+        String additionalXML = domDocumentToString(additionsXmlDocument);
 
-        Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
+        Assert.assertEquals(originalXML, additionalXML);
     }
 
     private String domDocumentToString(Document document) throws IOException,TransformerException
@@ -208,5 +212,14 @@ public class PageStructureTest
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(new InputSource(new StringReader(documentString)));
+    }
+
+    private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
+    {
+        InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
+
+        return xmlEventReader;
     }
 }
