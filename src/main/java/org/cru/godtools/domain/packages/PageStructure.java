@@ -198,6 +198,7 @@ public class PageStructure implements Serializable
 			{
 				Element oElement = (Element) xmlContentNode;
 				Element aElement = (Element) nodeToAdd;
+
 				//The nodeCurrent will be node when it doesn't have an element
 				// that's in the source nodeList.
 				boolean attrMatch = isSameAttributes(oElement, aElement);
@@ -212,16 +213,8 @@ public class PageStructure implements Serializable
 						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
 						{
 							Node targetNode = nodeToAdd.cloneNode(true);
-							xmlContent.adoptNode(targetNode);
-
-							if(xmlContentNode.getPreviousSibling() != null)
-							{
-								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
-							}
-							else
-							{
-								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getNextSibling());
-							}
+							Node nodeToBeImported = xmlContent.importNode(targetNode, true);
+							xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
 						}
 					}
 				}
