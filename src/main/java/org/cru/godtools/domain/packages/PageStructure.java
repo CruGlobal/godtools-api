@@ -193,13 +193,13 @@ public class PageStructure implements Serializable
 				// that's in the source nodeList.
 				boolean attrMatch = isSameAttributes(oElement, aElement);
 
-				if (!attrMatch && oElement.getNodeName().matches(aElement.getNodeName()))
+				if (!attrMatch && oElement.getNodeName().equals(aElement.getNodeName()))
 				{
 					if (xmlContentNode != null)
 					{
 						String nodeToBeAddedString = xmlNodeToString(aElement);
 						String xmlContentDocumentString = xmlDocumentToString(new DOMSource(xmlContent));
-
+						logger.info(xmlContentDocumentString);
 						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
 						{
 							Node targetNode = nodeToAdd.cloneNode(true);
