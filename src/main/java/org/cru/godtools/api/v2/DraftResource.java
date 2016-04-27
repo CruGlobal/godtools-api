@@ -1,6 +1,5 @@
 package org.cru.godtools.api.v2;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
@@ -22,7 +21,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.xml.sax.SAXException;
