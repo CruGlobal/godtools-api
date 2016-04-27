@@ -203,7 +203,15 @@ public class PageStructure implements Serializable
 						{
 							Node targetNode = nodeToAdd.cloneNode(true);
 							xmlContent.adoptNode(targetNode);
-							xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
+
+							if(xmlContentNode.getPreviousSibling() != null)
+							{
+								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getPreviousSibling());
+							}
+							else
+							{
+								xmlContent.getDocumentElement().insertBefore(targetNode, xmlContentNode.getNextSibling());
+							}
 						}
 					}
 				}
