@@ -7,20 +7,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import javax.ws.rs.BadRequestException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.utilities.XmlUtilities;
@@ -175,16 +169,14 @@ public class PageStructure implements Serializable
 
 	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
 	{
-		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(addXmlContentDocument);
-
-		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
+		XmlUtilities.verifyDifferentXml(xmlContent, addXmlContentDocument);
 
 		NodeList addXmlNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
 		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
 
 		List<String> currentXmlStringListOfElements = Lists.newArrayList();
 
+		//create a string list of xml elements of the current document
 		for(int i=0; i < currentXmlContentNodeList.getLength(); i++)
 		{
 			String nodeString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(currentXmlContentNodeList.item(i)));
@@ -201,9 +193,10 @@ public class PageStructure implements Serializable
 				Element originalElement = (Element) xmlContentNode;
 				Element addElement = (Element) nodeToAdd;
 
-				//verify that elements are the same otherwise it's probably a new element
 				boolean attrMatch = XmlUtilities.hasSameAttributes(originalElement, addElement);
 
+				//if the xml attributes are not the same but the node
+				//name is the same it's probably a new node
 				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
 				{
 					String nodeToBeAddedString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(nodeToAdd));
@@ -225,12 +218,12 @@ public class PageStructure implements Serializable
 	}
 
 	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
-			ParserConfigurationException,SAXException
+			ParserConfigurationException,SAXException,TransformerException
 	{
+		XmlUtilities.verifyDifferentXml(xmlContent, documentWithRemovableElements);
+
 		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
 		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
-
-		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
 
 		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
 		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);

@@ -116,7 +116,7 @@ public class GodToolsTranslationService
 	}
 
 	public void removeFromPageLayout(UUID packageId, String filename, Document updatedPageLayout)  throws IOException,
-			XMLStreamException,ParserConfigurationException,SAXException
+			XMLStreamException,ParserConfigurationException,SAXException,TransformerException
 	{
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
@@ -155,7 +155,7 @@ public class GodToolsTranslationService
 	}
 
 	public void removeFromPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, XMLStreamException,
-			ParserConfigurationException,SAXException
+			ParserConfigurationException,SAXException,TransformerException
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 		pageStructure.removeXmlContent(updatedPageLayout);
