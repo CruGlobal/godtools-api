@@ -1,6 +1,5 @@
 package org.cru.godtools.api.utilities;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import javax.ws.rs.BadRequestException;
@@ -11,7 +10,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import org.apache.log4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -32,7 +30,7 @@ public class XmlUtilities
     }
 
     public static void verifyDifferentXml(Document firstXmlDocument,
-                                    Document secondXmlDocument) throws IOException,TransformerException
+                                          Document secondXmlDocument) throws IOException,TransformerException
     {
         String firstArrayToString = xmlDocumentOrNodeToString(new DOMSource(firstXmlDocument));
         String secondArrayToString = xmlDocumentOrNodeToString(new DOMSource(secondXmlDocument));

@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.ws.rs.BadRequestException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
@@ -298,12 +299,9 @@ public class PageStructure implements Serializable
 		byteArrayForDocument.close();
 	}
 
-	public void updateXmlContentAttributes(Document updateXmlDocument)
+	public void updateXmlContentAttributes(Document updateXmlDocument) throws TransformerException, IOException
 	{
-		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(updateXmlDocument);
-
-		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
+		XmlUtilities.verifyDifferentXml(xmlContent, updateXmlDocument);
 
 		List<Element> currentXmlElementsList = XmlDocumentSearchUtilities.findElements(xmlContent,ALL_ELEMENTS);
 		List<Element> updateXmlElementsList = XmlDocumentSearchUtilities.findElements(updateXmlDocument,ALL_ELEMENTS);
@@ -311,7 +309,7 @@ public class PageStructure implements Serializable
 		if(currentXmlElementsList.size() != updateXmlElementsList.size())
 		{
 			throw new BadRequestException("The document submitted doesn't have the same number of elements as the " +
-												  "current one.");
+												  "current one. Only the element attribute values should differ.");
 		}
 
 		NodeList addXmlNodeList = updateXmlDocument.getElementsByTagName(ALL_ELEMENTS);
@@ -322,6 +320,7 @@ public class PageStructure implements Serializable
 			Node xmlContentNode = currentXmlContentNodeList.item(i);
 			Node nodeWithNewAttributeValues =  addXmlNodeList.item(i);
 
+			//The attributes are looped through by the node map
 			NamedNodeMap originalNamedNodeMap = xmlContentNode.getAttributes();
 			NamedNodeMap additionNamedNodeMap = nodeWithNewAttributeValues.getAttributes();
 
@@ -330,8 +329,10 @@ public class PageStructure implements Serializable
 				Attr currentAttributes = (Attr) additionNamedNodeMap.item(n);
 				Attr newAttributes = (Attr) originalNamedNodeMap.item(n);
 
+				//if the attribute names are the same and the values
+				//are different, the value is updated.
 				if (newAttributes.getName().equals(currentAttributes.getName())
-						|| !newAttributes.getValue().equals(currentAttributes.getValue()))
+						&& !newAttributes.getValue().equals(currentAttributes.getValue()))
 				{
 					Node nodeToBeSet = xmlContentNode
 							.getAttributes()

@@ -135,7 +135,7 @@ public class GodToolsTranslationService
 	}
 
 	public void updateElementAttributes(UUID packageId, String filename, Document updatedPageLayout)
-			throws IOException, XMLStreamException,ParserConfigurationException,SAXException
+			throws IOException, XMLStreamException,ParserConfigurationException,SAXException,TransformerException
 	{
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
