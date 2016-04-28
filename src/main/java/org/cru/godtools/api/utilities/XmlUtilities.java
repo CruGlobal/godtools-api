@@ -1,6 +1,5 @@
 package org.cru.godtools.api.utilities;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import javax.ws.rs.BadRequestException;
@@ -10,7 +9,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 /**
  * Created by laelwatkins on 4/28/16.
@@ -27,12 +26,13 @@ public class XmlUtilities
         return result.getWriter().toString();
     }
 
-    public static void verifyDifferentXml(ByteArrayOutputStream firstByteArrayOutputStream,
-                                    ByteArrayOutputStream secondByteArrayOutputStream)
+    public static void verifyDifferentXml(Document firstXmlDocument,
+                                    Document secondXmlDocument) throws IOException,TransformerException
     {
-        String firstArrayToString = new String (firstByteArrayOutputStream.toByteArray());
-        String secondArrayToString = new String (secondByteArrayOutputStream.toByteArray());
+        String firstArrayToString = xmlDocumentOrNodeToString(new DOMSource(firstXmlDocument));
+        String secondArrayToString = xmlDocumentOrNodeToString(new DOMSource(secondXmlDocument));
 
+        //remove spaces and carriage returns
         firstArrayToString = firstArrayToString.replaceAll("(\\r|\\n|\\s)", "");
         secondArrayToString = secondArrayToString.replaceAll("(\\r|\\n|\\s)", "");
 
