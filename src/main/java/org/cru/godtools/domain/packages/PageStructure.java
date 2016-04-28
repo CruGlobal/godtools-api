@@ -3,12 +3,10 @@ package org.cru.godtools.domain.packages;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
 import javax.ws.rs.BadRequestException;
 import javax.xml.stream.XMLEventReader;
@@ -25,6 +23,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.ccci.util.xml.XmlDocumentStreamConverter;
+import org.cru.godtools.api.utilities.XmlUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
@@ -176,50 +175,57 @@ public class PageStructure implements Serializable
 
 	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
 	{
-		NodeList elementsToBeAddedNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList xmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
+		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(addXmlContentDocument);
 
-		for(int i = 0; i < elementsToBeAddedNodeList.getLength(); i++)
+		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
+
+		NodeList addXmlNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
+		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+
+		List<String> currentXmlStringListOfElements = Lists.newArrayList();
+
+		for(int i=0; i < currentXmlContentNodeList.getLength(); i++)
 		{
-			Node nodeToAdd = elementsToBeAddedNodeList.item(i);
-			Node xmlContentNode = xmlContentNodeList.item(i);
+			String nodeString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(currentXmlContentNodeList.item(i)));
+			currentXmlStringListOfElements.add(nodeString);
+		}
+
+		for(int i = 0; i < addXmlNodeList.getLength(); i++)
+		{
+			Node nodeToAdd = addXmlNodeList.item(i);
+			Node xmlContentNode = currentXmlContentNodeList.item(i);
 
 			if (xmlContentNode != null)
 			{
-				Element oElement = (Element) xmlContentNode;
-				Element aElement = (Element) nodeToAdd;
+				Element originalElement = (Element) xmlContentNode;
+				Element addElement = (Element) nodeToAdd;
 
 				//The nodeCurrent will be node when it doesn't have an element
 				// that's in the source nodeList.
-				boolean attrMatch = isSameAttributes(oElement, aElement);
+				boolean attrMatch = hasSameAttributes(originalElement, addElement);
 
-				if (!attrMatch && oElement.getNodeName().equals(aElement.getNodeName()))
+				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
 				{
-					if (xmlContentNode != null)
+					String nodeToBeAddedString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(nodeToAdd));
+
+					if (!currentXmlStringListOfElements.contains(nodeToBeAddedString))
 					{
-						String nodeToBeAddedString = xmlNodeToString(aElement);
-						String xmlContentDocumentString = xmlDocumentToString(new DOMSource(xmlContent));
-						Node nextNode = xmlContentNodeList.item(i);
-						logger.info(xmlNodeToString(nextNode));
-						logger.info(nodeToBeAddedString);
-						if (!xmlContentDocumentString.contains(nodeToBeAddedString))
-						{
-							Node targetNode = nodeToAdd.cloneNode(true);
-							Node nodeToBeImported = xmlContent.importNode(targetNode, true);
-							xmlContent.getDocumentElement().insertBefore(nodeToBeImported, nextNode);
-						}
+						Node targetNode = nodeToAdd.cloneNode(true);
+						Node nodeToBeImported = xmlContent.importNode(targetNode, true);
+						xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
 					}
 				}
 			}
 			else
 			{
 				Node targetNode = xmlContent.importNode(nodeToAdd, true);
-				xmlContentNodeList.item(1).appendChild(targetNode);
+				currentXmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
 	}
 
-	private boolean isSameAttributes(Element oElement, Element aElement)
+	private boolean hasSameAttributes(Element oElement, Element aElement)
 	{
 		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
 		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
@@ -246,10 +252,7 @@ public class PageStructure implements Serializable
 		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
 		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
 
-		if(originalXmlByteArrayOStream.equals(removableElementsByteArrayOStream))
-		{
-			throw new BadRequestException("The document submitted is the same as the current one.");
-		}
+		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
 
 		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
 		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);
@@ -347,43 +350,11 @@ public class PageStructure implements Serializable
 		return xmlDocumentCopy;
 	}
 
-	private String xmlDocumentToString(DOMSource source) throws IOException,TransformerException
-	{
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		StreamResult streamResult = new StreamResult(new StringWriter());
-
-		transformer.transform(source, streamResult);
-
-		BufferedReader bufferedReader  = new BufferedReader(new StringReader(streamResult.getWriter().toString()));
-		StringBuilder stringBuilder = new StringBuilder();
-
-		String line;
-
-		while((line = bufferedReader.readLine())  != null)
-		{
-			stringBuilder.append(line.trim());
-		}
-
-		return stringBuilder.toString();
-	}
-
-	private String xmlNodeToString(Node node) throws IOException,TransformerException
-	{
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");
-		StreamResult result = new StreamResult( new StringWriter());
-		transformer.transform(new DOMSource(node), result);
-		return result.getWriter().toString();
-	}
-
 	private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
 	{
 		InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-		XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
-
-		return xmlEventReader;
+		return xmlInputFactory.createXMLEventReader(inputStream);
 	}
 
 	public UUID getId()
