@@ -2,6 +2,7 @@ package org.cru.godtools.domain;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import javax.ws.rs.BadRequestException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
@@ -169,6 +170,78 @@ public class PageStructureTest
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
         Assert.assertEquals(originalXML, additionalXML);
+    }
+
+    /**
+     * This test validates that the PageStructure.updateXmlContentAttributes() can
+     * update/change element attributes
+     *
+     * Expected outcome: AssertEquals true
+     *
+     */
+    @Test
+    public void testUpdateAttributes() throws Exception
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        String xmlWithChangedAttributes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"regular\" size=\"100\" textalign=\"middle\" translate=\"true\" w=\"10000\" y=\"300\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"bold\" size=\"240\" textalign=\"side\" translate=\"true\" w=\"10\" y=\"45\"> </text>\n" +
+                "</page>";
+
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlWithChangedAttributes);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.updateXmlContentAttributes(additionsXmlDocument);
+
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+        String additionalXML = domDocumentToString(additionsXmlDocument);
+
+        Assert.assertEquals(originalXML, additionalXML);
+    }
+
+    /**
+     * This test validates that the PageStructure.updateXmlContentAttributes() or
+     * method that calls the XmlUtilities.verifyDifferentXml() method with duplicate
+     * xml docs will result in a BadRequestException
+     *
+     * Expected outcome: BadRequestException
+     *
+     */
+    @Test(expectedExceptions = BadRequestException.class)
+    public void testUpdateAttributesException() throws Exception
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String currentXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        String duplicateXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        Document originalXmlDocument = createDocumentFromString(currentXml);
+        Document duplicateXmlDocument = createDocumentFromString(duplicateXml);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.updateXmlContentAttributes(duplicateXmlDocument);
     }
 
     private String domDocumentToString(Document document) throws IOException,TransformerException
