@@ -134,6 +134,18 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
+	public void updateElementAttributes(UUID packageId, String filename, Document updatedPageLayout)
+			throws IOException, XMLStreamException,ParserConfigurationException,SAXException
+	{
+		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
+		{
+			pageStructure.updateXmlContentAttributes(updatedPageLayout);
+
+			pageStructureService.update(pageStructure);
+		}
+
+	}
+
 	public void addToPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, TransformerException
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);

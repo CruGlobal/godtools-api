@@ -201,9 +201,8 @@ public class PageStructure implements Serializable
 				Element originalElement = (Element) xmlContentNode;
 				Element addElement = (Element) nodeToAdd;
 
-				//The nodeCurrent will be node when it doesn't have an element
-				// that's in the source nodeList.
-				boolean attrMatch = hasSameAttributes(originalElement, addElement);
+				//verify that elements are the same otherwise it's probably a new element
+				boolean attrMatch = XmlUtilities.hasSameAttributes(originalElement, addElement);
 
 				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
 				{
@@ -223,27 +222,6 @@ public class PageStructure implements Serializable
 				currentXmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
-	}
-
-	private boolean hasSameAttributes(Element oElement, Element aElement)
-	{
-		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
-		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
-
-		boolean attrMatch = true;
-
-		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
-        {
-            Attr a1 = (Attr) additionNamedNodeMap.item(n);
-            Attr o1 = (Attr) originalNamedNodeMap.item(n);
-
-            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
-            {
-                attrMatch = false;
-                break;
-            }
-        }
-		return attrMatch;
 	}
 
 	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
@@ -325,6 +303,51 @@ public class PageStructure implements Serializable
 		originalXmlByteArrayOStream.close();
 		removableElementsByteArrayOStream.close();
 		byteArrayForDocument.close();
+	}
+
+	public void updateXmlContentAttributes(Document updateXmlDocument)
+	{
+		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
+		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(updateXmlDocument);
+
+		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
+
+		List<Element> currentXmlElementsList = XmlDocumentSearchUtilities.findElements(xmlContent,ALL_ELEMENTS);
+		List<Element> updateXmlElementsList = XmlDocumentSearchUtilities.findElements(updateXmlDocument,ALL_ELEMENTS);
+
+		if(currentXmlElementsList.size() != updateXmlElementsList.size())
+		{
+			throw new BadRequestException("The document submitted doesn't have the same number of elements as the " +
+												  "current one.");
+		}
+
+		NodeList addXmlNodeList = updateXmlDocument.getElementsByTagName(ALL_ELEMENTS);
+		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+
+		for(int i = 0; i < addXmlNodeList.getLength(); i++)
+		{
+			Node xmlContentNode = currentXmlContentNodeList.item(i);
+			Node nodeWithNewAttributeValues =  addXmlNodeList.item(i);
+
+			NamedNodeMap originalNamedNodeMap = xmlContentNode.getAttributes();
+			NamedNodeMap additionNamedNodeMap = nodeWithNewAttributeValues.getAttributes();
+
+			for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+			{
+				Attr currentAttributes = (Attr) additionNamedNodeMap.item(n);
+				Attr newAttributes = (Attr) originalNamedNodeMap.item(n);
+
+				if (newAttributes.getName().equals(currentAttributes.getName())
+						|| !newAttributes.getValue().equals(currentAttributes.getValue()))
+				{
+					Node nodeToBeSet = xmlContentNode
+							.getAttributes()
+							.getNamedItem(newAttributes.getName());
+
+					nodeToBeSet.setNodeValue(currentAttributes.getValue());
+				}
+			}
+		}
 	}
 
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException

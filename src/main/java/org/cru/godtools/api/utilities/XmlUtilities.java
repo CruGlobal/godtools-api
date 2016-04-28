@@ -11,6 +11,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * Created by laelwatkins on 4/28/16.
@@ -40,5 +43,26 @@ public class XmlUtilities
         {
             throw new BadRequestException("The document submitted is the same as the current one.");
         }
+    }
+
+    public static boolean hasSameAttributes(Element oElement, Element aElement)
+    {
+        NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
+        NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
+
+        boolean attrMatch = true;
+
+        for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+        {
+            Attr a1 = (Attr) additionNamedNodeMap.item(n);
+            Attr o1 = (Attr) originalNamedNodeMap.item(n);
+
+            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+            {
+                attrMatch = false;
+                break;
+            }
+        }
+        return attrMatch;
     }
 }
