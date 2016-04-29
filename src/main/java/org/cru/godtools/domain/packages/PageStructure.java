@@ -7,23 +7,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import javax.ws.rs.BadRequestException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+
 import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.utilities.XmlUtilities;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
@@ -45,9 +42,6 @@ import java.util.Set;
 import java.util.UUID;
 import org.xml.sax.SAXException;
 
-/**
- * Created by ryancarlson on 4/30/14.
- */
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
@@ -337,6 +331,7 @@ public class PageStructure implements Serializable
 		byteArrayForDocument.close();
 	}
 
+	@JsonIgnore
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
 	{
 		Document xmlDocumentCopy = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -387,6 +382,7 @@ public class PageStructure implements Serializable
 		this.translationId = translationId;
 	}
 
+	@JsonIgnore
 	public Document getXmlContent()
 	{
 		return xmlContent;
