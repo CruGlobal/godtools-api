@@ -105,7 +105,7 @@ public class GodToolsTranslationService
 		}
 	}
 
-	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout) throws IOException, TransformerException
+	public void addToPageLayout(UUID packageId, String filename, Document updatedPageLayout) throws IOException, TransformerException, ParserConfigurationException
 	{
 		for(PageStructure pageStructure : loadPageStructures(packageId, filename))
 		{
@@ -134,7 +134,7 @@ public class GodToolsTranslationService
 		pageStructureService.update(pageStructure);
 	}
 
-	public void addToPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, TransformerException
+	public void addToPageLayout(UUID pageId, Document updatedPageLayout) throws IOException, TransformerException, ParserConfigurationException
 	{
 		PageStructure pageStructure = pageStructureService.selectByid(pageId);
 		pageStructure.addXmlContent(updatedPageLayout);

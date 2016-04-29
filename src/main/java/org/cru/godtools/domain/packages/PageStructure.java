@@ -167,12 +167,15 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
-	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
+	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException, ParserConfigurationException
 	{
-		XmlUtilities.verifyDifferentXml(xmlContent, addXmlContentDocument);
+		Document strippedDownCopyOfXmlContent = getStrippedDownCopyOfXmlContent();
+		strippedDownCopyOfXmlContent.setStrictErrorChecking(false);
+
+		XmlUtilities.verifyDifferentXml(strippedDownCopyOfXmlContent, addXmlContentDocument);
 
 		NodeList addXmlNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		NodeList currentXmlContentNodeList = strippedDownCopyOfXmlContent.getElementsByTagName(ALL_ELEMENTS);
 
 		List<String> currentXmlStringListOfElements = Lists.newArrayList();
 
@@ -196,25 +199,40 @@ public class PageStructure implements Serializable
 				boolean attrMatch = hasSameAttributes(originalElement, addElement);
 
 				//if the xml attributes are not the same but the node
+
 				//name is the same it's probably a new node
-				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
+				String originalElementNodeName = originalElement.getNodeName();
+				String addElementNodeName = addElement.getNodeName();
+				if (!originalElementNodeName.equals(addElementNodeName) || !attrMatch)
 				{
 					String nodeToBeAddedString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(nodeToAdd));
 
 					if (!currentXmlStringListOfElements.contains(nodeToBeAddedString))
 					{
 						Node targetNode = nodeToAdd.cloneNode(true);
-						Node nodeToBeImported = xmlContent.importNode(targetNode, true);
-						xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
+						Node nodeToBeImported = strippedDownCopyOfXmlContent.importNode(targetNode, true);
+						Node previousSibling = XmlUtilities.getPreviousSiblingElement(xmlContentNode);
+						if(previousSibling == null)
+						{
+							Node parentNode = xmlContentNode.getParentNode();
+							Node firstChild = XmlUtilities.getFirstChild(parentNode);
+							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, firstChild);
+						}
+						else
+						{
+							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, previousSibling);
+						}
 					}
 				}
 			}
 			else
 			{
-				Node targetNode = xmlContent.importNode(nodeToAdd, true);
+				Node targetNode = strippedDownCopyOfXmlContent.importNode(nodeToAdd, true);
 				currentXmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
+
+		xmlContent = strippedDownCopyOfXmlContent;
 	}
 
 	private boolean hasSameAttributes(Element oElement, Element aElement)
@@ -225,16 +243,18 @@ public class PageStructure implements Serializable
 		boolean attrMatch = true;
 
 		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
-        {
-            Attr a1 = (Attr) additionNamedNodeMap.item(n);
-            Attr o1 = (Attr) originalNamedNodeMap.item(n);
+		{
+			Attr a1 = (Attr) additionNamedNodeMap.item(n);
+			Attr o1 = (Attr) originalNamedNodeMap.item(n);
 
-            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
-            {
-                attrMatch = false;
-                break;
-            }
-        }
+			if(a1 == null ^ o1 ==null) return false;
+
+			if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+			{
+				attrMatch = false;
+				break;
+			}
+		}
 		return attrMatch;
 	}
 
