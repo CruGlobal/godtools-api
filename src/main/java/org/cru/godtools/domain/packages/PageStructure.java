@@ -212,11 +212,10 @@ public class PageStructure implements Serializable
 						Node targetNode = nodeToAdd.cloneNode(true);
 						Node nodeToBeImported = strippedDownCopyOfXmlContent.importNode(targetNode, true);
 						Node previousSibling = XmlUtilities.getPreviousSiblingElement(xmlContentNode);
+
 						if(previousSibling == null)
 						{
-							Node parentNode = xmlContentNode.getParentNode();
-							Node firstChild = XmlUtilities.getFirstChild(parentNode);
-							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, firstChild);
+							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode);
 						}
 						else
 						{
