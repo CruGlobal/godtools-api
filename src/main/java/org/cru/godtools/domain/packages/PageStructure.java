@@ -222,8 +222,6 @@ public class PageStructure implements Serializable
 		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
 		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
 
-		boolean attrMatch = true;
-
 		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
         {
             Attr a1 = (Attr) additionNamedNodeMap.item(n);
@@ -231,11 +229,11 @@ public class PageStructure implements Serializable
 
             if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
             {
-                attrMatch = false;
-                break;
+                return false;
             }
         }
-		return attrMatch;
+
+		return true;
 	}
 
 	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
