@@ -68,7 +68,6 @@ public class MetaResource
 
 	@GET
 	@Path("/{language}")
-	@Produces(MediaType.APPLICATION_XML)
 	public Response getLanguageMetaInfo(@PathParam("language") String languageCode,
 										@QueryParam("interpreter") Integer minimumInterpreterVersionParam,
 										@HeaderParam("interpreter") Integer minimumInterpreterVersionHeader,
@@ -103,7 +102,6 @@ public class MetaResource
 
 	@GET
 	@Path("/{language}/{package}")
-	@Produces(MediaType.APPLICATION_XML)
 	public Response getLanguageAndPackageMetaInfo(@PathParam("language") String languageCode,
 												  @PathParam("package") String packageCode,
 												  @QueryParam("interpreter") Integer minimumInterpreterVersionParam,
