@@ -177,18 +177,19 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
-	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
+	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException, ParserConfigurationException
 	{
-		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(addXmlContentDocument);
+		Document strippedDownCopyOfXmlContent = getStrippedDownCopyOfXmlContent();
+		strippedDownCopyOfXmlContent.setStrictErrorChecking(false);
 
-		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
+		XmlUtilities.verifyDifferentXml(strippedDownCopyOfXmlContent, addXmlContentDocument);
 
 		NodeList addXmlNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		NodeList currentXmlContentNodeList = strippedDownCopyOfXmlContent.getElementsByTagName(ALL_ELEMENTS);
 
 		List<String> currentXmlStringListOfElements = Lists.newArrayList();
 
+		//create a string list of xml elements of the current document
 		for(int i=0; i < currentXmlContentNodeList.getLength(); i++)
 		{
 			String nodeString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(currentXmlContentNodeList.item(i)));
@@ -205,28 +206,42 @@ public class PageStructure implements Serializable
 				Element originalElement = (Element) xmlContentNode;
 				Element addElement = (Element) nodeToAdd;
 
-				//The nodeCurrent will be node when it doesn't have an element
-				// that's in the source nodeList.
 				boolean attrMatch = hasSameAttributes(originalElement, addElement);
 
-				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
+				//if the xml attributes are not the same but the node
+
+				//name is the same it's probably a new node
+				String originalElementNodeName = originalElement.getNodeName();
+				String addElementNodeName = addElement.getNodeName();
+				if (!originalElementNodeName.equals(addElementNodeName) || !attrMatch)
 				{
 					String nodeToBeAddedString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(nodeToAdd));
 
 					if (!currentXmlStringListOfElements.contains(nodeToBeAddedString))
 					{
 						Node targetNode = nodeToAdd.cloneNode(true);
-						Node nodeToBeImported = xmlContent.importNode(targetNode, true);
-						xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
+						Node nodeToBeImported = strippedDownCopyOfXmlContent.importNode(targetNode, true);
+						Node previousSibling = XmlUtilities.getPreviousSiblingElement(xmlContentNode);
+
+						if(previousSibling == null)
+						{
+							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode);
+						}
+						else
+						{
+							strippedDownCopyOfXmlContent.getDocumentElement().insertBefore(nodeToBeImported, previousSibling);
+						}
 					}
 				}
 			}
 			else
 			{
-				Node targetNode = xmlContent.importNode(nodeToAdd, true);
+				Node targetNode = strippedDownCopyOfXmlContent.importNode(nodeToAdd, true);
 				currentXmlContentNodeList.item(1).appendChild(targetNode);
 			}
 		}
+
+		xmlContent = strippedDownCopyOfXmlContent;
 	}
 
 	private boolean hasSameAttributes(Element oElement, Element aElement)
@@ -234,29 +249,29 @@ public class PageStructure implements Serializable
 		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
 		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
 
-		boolean attrMatch = true;
-
 		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
-        {
-            Attr a1 = (Attr) additionNamedNodeMap.item(n);
-            Attr o1 = (Attr) originalNamedNodeMap.item(n);
+		{
+			Attr a1 = (Attr) additionNamedNodeMap.item(n);
+			Attr o1 = (Attr) originalNamedNodeMap.item(n);
 
-            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
-            {
-                attrMatch = false;
-                break;
-            }
-        }
-		return attrMatch;
+			if(a1 == null ^ o1 ==null) return false;
+
+			if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
-			ParserConfigurationException,SAXException
+			ParserConfigurationException,SAXException,TransformerException
 	{
+		XmlUtilities.verifyDifferentXml(xmlContent, documentWithRemovableElements);
+
 		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
 		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
-
-		XmlUtilities.verifyDifferentXml(originalXmlByteArrayOStream, removableElementsByteArrayOStream);
 
 		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
 		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);
