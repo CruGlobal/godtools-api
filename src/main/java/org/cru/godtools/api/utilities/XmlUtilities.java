@@ -58,6 +58,20 @@ public class XmlUtilities
 		return node;
 	}
 
+	public static Node getNextSiblingElement(Node node)
+	{
+		while(node != null)
+		{
+			node = node.getNextSibling();
+			if(node instanceof Element)
+			{
+				return node;
+			}
+		}
+
+		return node;
+	}
+
 	public static Node getFirstChild(Node node)
 	{
 		Node child = node.getFirstChild();
@@ -68,5 +82,18 @@ public class XmlUtilities
 		}
 
 		return child;
+	}
+
+	public static boolean hasChildNodes(Node node)
+	{
+		for(int i = 0; i < node.getChildNodes().getLength(); i++)
+		{
+			if(node.getChildNodes().item(i) instanceof Element)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
