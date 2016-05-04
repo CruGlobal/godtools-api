@@ -34,7 +34,7 @@ import java.util.UUID;
 
 public abstract class AbstractTranslation
 {
-	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied", "new");
+	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied");
 
 	final Logger logger = Logger.getLogger(getClass());
 
