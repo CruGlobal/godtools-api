@@ -146,8 +146,10 @@ public class MetaService
 			{
 				// if drafts only is true, then pare the list down to only include drafts.  if it's false, then pare
 				// the list down to the latest whatever it is, released/draft
-				translations = draftsOnly ? translations.pareResults(false) : translations.pareResults();
+				translations = translations.pareResults(!draftsOnly);
 			}
+
+			translations = translations.pareResults();
 
 			Translation translation = !translations.isEmpty() ? translations.get(0) : null;
 
