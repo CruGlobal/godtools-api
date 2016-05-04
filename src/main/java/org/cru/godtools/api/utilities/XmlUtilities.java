@@ -2,6 +2,7 @@ package org.cru.godtools.api.utilities;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 import javax.ws.rs.BadRequestException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -9,6 +10,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -95,5 +98,17 @@ public class XmlUtilities
 		}
 
 		return false;
+	}
+
+	public static List<Node> getChildNodes(Node node)
+	{
+		List<Node> nodeList = Lists.newArrayList();
+
+		for(int i = 0; i < node.getChildNodes().getLength(); i++)
+		{
+			nodeList.add(node.getChildNodes().item(i));
+		}
+
+		return nodeList;
 	}
 }

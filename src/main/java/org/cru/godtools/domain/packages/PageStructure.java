@@ -260,91 +260,64 @@ public class PageStructure implements Serializable
 		return true;
 	}
 
-	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
+	public void removeXmlContent(Document updatedContent) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException,TransformerException
 	{
-		Document xmlContent = getStrippedDownCopyOfXmlContent();
-		XmlUtilities.verifyDifferentXml(xmlContent, documentWithRemovableElements);
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
 
-		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
+		removeXmlContent(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
 
-		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
-		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);
+		xmlContent = baseContent;
+	}
 
-		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
+	private void removeXmlContent(Node baseContentElement, Node updatedContentElement)
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
 
-		XMLEventWriter xmlEventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(byteArrayForDocument);
+		logger.info(String.format("Checking: %s for removed elements", baseContentElement.getNodeName()));
 
-		List<XMLEvent> updatedXMLEvents = Lists.newArrayList();
-		List<XMLEvent> originalXMLEvents = Lists.newArrayList();
-
-		//I'm sure there's a better way, but for now I write the results
-		//to a list and in the next while loop, we check if the event (xml element)
-		//exists.
-		while (removableElementsXmlReader.hasNext())
+		while(baseNextSibling != null)
 		{
-			XMLEvent xmlEvent = removableElementsXmlReader.nextEvent();
-			updatedXMLEvents.add(xmlEvent);
-		}
-
-		while (originalXmlReader.hasNext())
-		{
-			XMLEvent event = originalXmlReader.nextEvent();
-			originalXMLEvents.add(event);
-		}
-
-		Iterator<XMLEvent> originalIterator = originalXMLEvents.iterator();
-		Iterator<XMLEvent> updatedIterator = updatedXMLEvents.iterator();
-
-		XMLEvent updatedEvent = nextEventSkippingWhitespace(updatedIterator, null);
-		XMLEvent originalEvent = nextEventSkippingWhitespace(originalIterator, xmlEventWriter);
-
-		while(updatedEvent != null)
-		{
-			// same element name and same attributes.. move along
-			if(updatedEvent.getEventType() == originalEvent.getEventType() &&
-				getName(updatedEvent).equals(getName(originalEvent))/* && hasSameAttributes(null, null)*/)
+			if(updatedNextSibling == null || !nodesMatch(baseNextSibling, updatedNextSibling))
 			{
-				xmlEventWriter.add(originalEvent);
+				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
 
-				updatedEvent = nextEventSkippingWhitespace(updatedIterator, null);
-				originalEvent = nextEventSkippingWhitespace(originalIterator, xmlEventWriter);
+				Node nextSiblingOfNodeToBeRemoved = XmlUtilities.getNextSiblingElement(baseNextSibling);
+				baseNextSibling.getParentNode().removeChild(baseNextSibling);
 
+				baseNextSibling = nextSiblingOfNodeToBeRemoved;
 				continue;
 			}
-
-			// hold a reference to the start tag that's missing
-			XMLEvent removedEvent = originalEvent;
-
-			// something is amiss, so an element has been removed.
-			while(!originalEvent.isEndElement() ||
-					!(getName(originalEvent).equals(getName(removedEvent))))
+			else
 			{
-				originalEvent = originalIterator.next();
+				if (XmlUtilities.hasChildNodes(baseNextSibling))
+				{
+					if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+					{
+						Iterator<Node> childNodeListIterator = XmlUtilities.getChildNodes(baseNextSibling).iterator();
+
+						while(childNodeListIterator.hasNext())
+						{
+							Node childNode = childNodeListIterator.next();
+							logger.info(String.format("Removing %s from %s", childNode.getNodeName(), baseNextSibling.getNodeName()));
+							baseNextSibling.removeChild(childNode);
+						}
+					}
+					else
+					{
+						logger.info(String.format("Checking children of: %s for removed elements", baseNextSibling.getNodeName()));
+						removeXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+					}
+				}
 			}
 
-			// one more forward so we get off the end tag of removed element and on to
-			// start tag of the next element
-			originalEvent = nextEventSkippingWhitespace(originalIterator, xmlEventWriter);
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
 		}
 
-		while(originalEvent != null)
-		{
-			xmlEventWriter.add(originalEvent);
-			originalEvent = nextEventSkippingWhitespace(originalIterator, xmlEventWriter);
-		}
-
-		xmlEventWriter.flush();
-		xmlEventWriter.close();
-
-		InputStream inputStream = new ByteArrayInputStream( byteArrayForDocument.toByteArray());
-		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
-		setXmlContent(document);
-
-		originalXmlByteArrayOStream.close();
-		removableElementsByteArrayOStream.close();
-		byteArrayForDocument.close();
+		return;
 	}
 
 	private QName getName(XMLEvent event)
