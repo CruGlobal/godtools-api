@@ -12,8 +12,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import com.google.common.collect.Lists;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
@@ -110,5 +112,31 @@ public class XmlUtilities
 		}
 
 		return nodeList;
+	}
+
+	public static boolean nodesMatch(Node baseNode, Node updatedNode)
+	{
+		if(!(baseNode instanceof Element) || !(updatedNode instanceof Element)) return true;
+		if(!baseNode.getNodeName().equals(updatedNode.getNodeName())) return false;
+
+		NamedNodeMap originalNamedNodeMap = baseNode.getAttributes();
+		NamedNodeMap additionNamedNodeMap = updatedNode.getAttributes();
+
+		if(originalNamedNodeMap.getLength() != additionNamedNodeMap.getLength()) return false;
+
+		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+		{
+			Attr a1 = (Attr) additionNamedNodeMap.item(n);
+			Attr o1 = (Attr) originalNamedNodeMap.item(n);
+
+			if(a1 == null ^ o1 ==null) return false;
+
+			if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
