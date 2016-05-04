@@ -2,6 +2,7 @@ package org.cru.godtools.api.utilities;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 import javax.ws.rs.BadRequestException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -9,6 +10,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import com.google.common.collect.Lists;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,6 +61,20 @@ public class XmlUtilities
 		return node;
 	}
 
+	public static Node getNextSiblingElement(Node node)
+	{
+		while(node != null)
+		{
+			node = node.getNextSibling();
+			if(node instanceof Element)
+			{
+				return node;
+			}
+		}
+
+		return node;
+	}
+
 	public static Node getFirstChild(Node node)
 	{
 		Node child = node.getFirstChild();
@@ -68,5 +85,30 @@ public class XmlUtilities
 		}
 
 		return child;
+	}
+
+	public static boolean hasChildNodes(Node node)
+	{
+		for(int i = 0; i < node.getChildNodes().getLength(); i++)
+		{
+			if(node.getChildNodes().item(i) instanceof Element)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static List<Node> getChildNodes(Node node)
+	{
+		List<Node> nodeList = Lists.newArrayList();
+
+		for(int i = 0; i < node.getChildNodes().getLength(); i++)
+		{
+			nodeList.add(node.getChildNodes().item(i));
+		}
+
+		return nodeList;
 	}
 }
