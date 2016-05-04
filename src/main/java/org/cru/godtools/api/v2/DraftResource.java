@@ -114,7 +114,7 @@ public class DraftResource
 	{
 		log.info("Requesting draft pages for package: " + packageCode + " for language: " + languageCode);
 
-		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord("", authTokenHeader), clock.currentDateTime());
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(null, authTokenHeader), clock.currentDateTime());
 
 		Optional<GodToolsTranslation> godToolsTranslationOptional = draftTranslation.retrieve(languageCode, packageCode, false);
 
