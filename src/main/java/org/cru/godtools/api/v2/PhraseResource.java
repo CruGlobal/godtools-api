@@ -26,6 +26,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -84,19 +85,7 @@ public class PhraseResource
 
 		logger.info(String.format("Listing phrases, admin validated.  Listing phrases for %s-%s", packageCode, pageName));
 
-		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-		if(!translationOptional.isPresent())
-		{
-			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-			if(!translationOptional.isPresent())
-			{
-				logger.warn("Something weird... no published English translation for: " + packageCode);
-
-				return Response.status(Response.Status.BAD_REQUEST).build();
-			}
-		}
+		Optional<GodToolsTranslation> translationOptional = getGodToolsTranslationOptional(packageCode);
 
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
 
@@ -128,25 +117,13 @@ public class PhraseResource
 
 		logger.info(String.format("Adding phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
 
-		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-		if(!translationOptional.isPresent())
-		{
-			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-			if(!translationOptional.isPresent())
-			{
-				logger.warn("Something weird... no published English translation for: " + packageCode);
-
-				return Response.status(Response.Status.BAD_REQUEST).build();
-			}
-		}
+		Optional<GodToolsTranslation> translationOptional = getGodToolsTranslationOptional(packageCode);
 
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
 
 		if(!pageOptional.isPresent())
 		{
-			logger.warn(String.format("Listing phrases, Page %s not found English translation for %s", pageName, packageCode));
+			logger.warn(String.format("Adding phrases, Page %s not found English translation for %s", pageName, packageCode));
 
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
@@ -191,11 +168,11 @@ public class PhraseResource
 											@PathParam("pageName") String pageName,
 											@PathParam("id") UUID phraseId)
 	{
-		logger.info(String.format("Adding phrase w/ authorization %s", authorization));
+		logger.info(String.format("Removing phrase w/ authorization %s", authorization));
 
 		AuthorizationRecord.checkAdminAccess(authorizationService.getAuthorizationRecord(null, authorization), clock.currentDateTime());
 
-		logger.info(String.format("Adding phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
+		logger.info(String.format("Removing phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
 
 		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
 
@@ -215,7 +192,7 @@ public class PhraseResource
 
 		if(!pageOptional.isPresent())
 		{
-			logger.warn(String.format("Listing phrases, Page %s not found English translation for %s", pageName, packageCode));
+			logger.warn(String.format("Removing phrases, Page %s not found English translation for %s", pageName, packageCode));
 
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
@@ -232,5 +209,23 @@ public class PhraseResource
 		return Response
 				.noContent()
 				.build();
+	}
+
+	private Optional<GodToolsTranslation> getGodToolsTranslationOptional(String packageCode)
+	{
+		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
+
+		if(!translationOptional.isPresent())
+		{
+			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
+
+			if(!translationOptional.isPresent())
+			{
+				logger.warn("Something weird... no published English translation for: " + packageCode);
+
+				throw new NotFoundException();
+			}
+		}
+		return translationOptional;
 	}
 }

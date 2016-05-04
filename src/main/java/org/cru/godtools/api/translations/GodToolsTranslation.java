@@ -83,7 +83,7 @@ public class GodToolsTranslation implements Serializable
 		{
 			if(Objects.equal(pageStructure.getFilename(), pageName))
 			{
-				return Optional.fromNullable(pageStructure);
+				return Optional.of(pageStructure);
 			}
 		}
 
