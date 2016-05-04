@@ -174,20 +174,7 @@ public class PhraseResource
 
 		logger.info(String.format("Removing phrase, admin validated.  Adding phrase for %s-%s", packageCode, pageName));
 
-		Optional<GodToolsTranslation> translationOptional = draftTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-		if(!translationOptional.isPresent())
-		{
-			translationOptional = publishedTranslation.retrieve(BASE_LANGUAGE_CODE, packageCode, false);
-
-			if(!translationOptional.isPresent())
-			{
-				logger.warn("Something weird... no published English translation for: " + packageCode);
-
-				return Response.status(Response.Status.BAD_REQUEST).build();
-			}
-		}
-
+		Optional<GodToolsTranslation> translationOptional = getGodToolsTranslationOptional(packageCode);
 		Optional<PageStructure> pageOptional = translationOptional.get().getPage(pageName);
 
 		if(!pageOptional.isPresent())
