@@ -18,6 +18,12 @@ public class NoOpTranslationUpload implements TranslationUpload
 	}
 
 	@Override
+	public void doUpload(Integer projectId, String locale, String pageName, boolean deprecateRemovedPhrases)
+	{
+
+	}
+
+	@Override
 	public void recordInitialUpload(Integer projectId, String locale)
 	{
 

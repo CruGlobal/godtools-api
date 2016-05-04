@@ -3,6 +3,7 @@ package org.cru.godtools.domain.packages;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
@@ -20,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 4/30/14.
- */
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
@@ -85,19 +83,28 @@ public class PageStructure implements Serializable
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
 			String filenameFromXml = element.getAttribute("backgroundimage");
-			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("backgroundimage", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filenameFromXml = element.getAttribute("watermark");
-			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("watermark", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filenameFromXml = element.getTextContent();
-			element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setTextContent(image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 	}
 
@@ -147,6 +154,7 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
+	@JsonIgnore
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
 	{
 		Document xmlDocumentCopy = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -190,6 +198,7 @@ public class PageStructure implements Serializable
 		this.translationId = translationId;
 	}
 
+	@JsonIgnore
 	public Document getXmlContent()
 	{
 		return xmlContent;

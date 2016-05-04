@@ -19,9 +19,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -101,6 +103,31 @@ public class DraftResource
 					.status(Response.Status.NOT_FOUND)
 					.build();
 		}
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPages(@PathParam("language") String languageCode,
+							 @PathParam("package") String packageCode,
+							 @HeaderParam("Authorization") String authTokenHeader) throws MalformedURLException
+	{
+		log.info("Requesting draft pages for package: " + packageCode + " for language: " + languageCode);
+
+		AuthorizationRecord.checkAccessToDrafts(authService.getAuthorizationRecord(null, authTokenHeader), clock.currentDateTime());
+
+		Optional<GodToolsTranslation> godToolsTranslationOptional = draftTranslation.retrieve(languageCode, packageCode, false);
+
+		if(!godToolsTranslationOptional.isPresent())
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
+
+		return Response
+				.ok(godToolsTranslationOptional.get().getPageStructureList())
+				.build();
 	}
 
 	@GET
