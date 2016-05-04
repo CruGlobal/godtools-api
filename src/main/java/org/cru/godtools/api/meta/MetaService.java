@@ -139,9 +139,16 @@ public class MetaService
 		{
 			Package gtPackage = packages.getPackageByCode(packageCode).get();
 			TranslationList translations = new TranslationList((List<Translation>) translationsMap.get(language.getId()))
-					.pareResults(!draftsOnly)
 					.pareResults(gtPackage.getId());
-			translations = draftsOnly ? translations : translations.pareResults();
+
+			// if allResults is true, then do no paring down.  simply move ahead with all the results
+			if(!allResults)
+			{
+				// if drafts only is true, then pare the list down to only include drafts.  if it's false, then pare
+				// the list down to the latest whatever it is, released/draft
+				translations = draftsOnly ? translations.pareResults(false) : translations.pareResults();
+			}
+
 			Translation translation = !translations.isEmpty() ? translations.get(0) : null;
 
 			if(translation != null)
