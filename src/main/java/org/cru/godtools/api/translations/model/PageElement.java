@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public class PageElement
 {
+	String originalFilename;
 	String filename;
 	String title;
 
@@ -29,6 +30,16 @@ public class PageElement
 	public void setFilename(String filename)
 	{
 		this.filename = filename;
+	}
+
+	public String getOriginalFilename()
+	{
+		return originalFilename;
+	}
+
+	public void setOriginalFilename(String originalFilename)
+	{
+		this.originalFilename = originalFilename;
 	}
 
 	public String getTitle()
