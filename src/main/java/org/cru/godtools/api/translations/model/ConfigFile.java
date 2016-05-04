@@ -61,6 +61,7 @@ public class ConfigFile
 		{
 			PageElement pageElement = new PageElement();
 			pageElement.setFilename(element.getAttribute("filename").replace(".xml",""));
+			pageElement.setOriginalFilename(packageStructure.getOriginalFilenameForUUIDFilename(element.getAttribute("filename")));
 			pageElement.setTitle(element.getTextContent());
 			configFile.pageElements.add(pageElement);
 		}
