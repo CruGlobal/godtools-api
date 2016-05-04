@@ -1,29 +1,13 @@
 package org.cru.godtools.domain.packages;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import javax.ws.rs.BadRequestException;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
 
-import org.apache.xerces.dom.DeferredTextImpl;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
-
-import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.utilities.XmlUtilities;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -33,10 +17,7 @@ import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Attr;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,7 +33,6 @@ import org.xml.sax.SAXException;
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
-	private static final String ALL_ELEMENTS = "*";
 
 	private UUID id;
 	private UUID translationId;
@@ -213,7 +193,7 @@ public class PageStructure implements Serializable
 				this.xmlContent.importNode(clonedNode, true);
 				baseContentElement.getParentNode().appendChild(clonedNode);
 			}
-			else if(!nodesMatch(baseNextSibling, updatedNextSibling))
+			else if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
 			{
 				logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
 
@@ -244,31 +224,7 @@ public class PageStructure implements Serializable
 		return;
 	}
 
-	private boolean nodesMatch(Node baseNode, Node updatedNode)
-	{
-		if(!(baseNode instanceof Element) || !(updatedNode instanceof Element)) return true;
-		if(!baseNode.getNodeName().equals(updatedNode.getNodeName())) return false;
 
-		NamedNodeMap originalNamedNodeMap = baseNode.getAttributes();
-		NamedNodeMap additionNamedNodeMap = updatedNode.getAttributes();
-
-		if(originalNamedNodeMap.getLength() != additionNamedNodeMap.getLength()) return false;
-
-		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
-		{
-			Attr a1 = (Attr) additionNamedNodeMap.item(n);
-			Attr o1 = (Attr) originalNamedNodeMap.item(n);
-
-			if(a1 == null ^ o1 ==null) return false;
-
-			if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
 
 	public void removeXmlContent(Document updatedContent) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException,TransformerException
@@ -290,7 +246,7 @@ public class PageStructure implements Serializable
 
 		while(baseNextSibling != null)
 		{
-			if(updatedNextSibling == null || !nodesMatch(baseNextSibling, updatedNextSibling))
+			if(updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
 			{
 				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
 
@@ -329,36 +285,7 @@ public class PageStructure implements Serializable
 
 		return;
 	}
-
-	private QName getName(XMLEvent event)
-	{
-		if(event instanceof StartElement)
-		{
-			return ((StartElement) event).getName();
-		}
-		else if(event instanceof EndElement)
-		{
-			return ((EndElement) event).getName();
-		}
-		else return QName.valueOf(event.toString());
-	}
-
-	private XMLEvent nextEventSkippingWhitespace(Iterator<XMLEvent> iterator, XMLEventWriter xmlEventWriter) throws XMLStreamException
-	{
-		while(iterator.hasNext())
-		{
-			XMLEvent nextEvent = iterator.next();
-			if(nextEvent.isStartElement() || nextEvent.isEndElement()) return nextEvent;
-
-			if(xmlEventWriter != null)
-			{
-				xmlEventWriter.add(nextEvent);
-			}
-		}
-
-		return null;
-	}
-
+	
 	@JsonIgnore
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
 	{
@@ -381,13 +308,6 @@ public class PageStructure implements Serializable
 			}
 		}
 		return xmlDocumentCopy;
-	}
-
-	private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
-	{
-		InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-		return xmlInputFactory.createXMLEventReader(inputStream);
 	}
 
 	public UUID getId()
