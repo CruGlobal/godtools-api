@@ -199,7 +199,7 @@ public class PageStructure implements Serializable
 
 				Node clonedNode = updatedNextSibling.cloneNode(true);
 				this.xmlContent.importNode(clonedNode, true);
-				baseContentElement.insertBefore(clonedNode, baseNextSibling);
+				baseNextSibling.getParentNode().insertBefore(clonedNode, baseNextSibling);
 
 				updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
 				continue;
