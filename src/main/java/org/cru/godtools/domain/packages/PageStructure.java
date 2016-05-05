@@ -236,7 +236,7 @@ public class PageStructure implements Serializable
 		return attrMatch;
 	}
 
-	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
+	public void removeXmlContent(Document updatedContent) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException,TransformerException
 	{
 		Document baseContent = getStrippedDownCopyOfXmlContent();
@@ -301,17 +301,10 @@ public class PageStructure implements Serializable
 	{
 		XmlUtilities.verifyDifferentXml(xmlContent, updateXmlDocument);
 
-		List<Element> currentXmlElementsList = XmlDocumentSearchUtilities.findElements(xmlContent,ALL_ELEMENTS);
-		List<Element> updateXmlElementsList = XmlDocumentSearchUtilities.findElements(updateXmlDocument,ALL_ELEMENTS);
+		String all_elements = "*";
 
-		if(currentXmlElementsList.size() != updateXmlElementsList.size())
-		{
-			throw new BadRequestException("The document submitted doesn't have the same number of elements as the " +
-												  "current one. Only the element attribute values should differ.");
-		}
-
-		NodeList addXmlNodeList = updateXmlDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		NodeList addXmlNodeList = updateXmlDocument.getElementsByTagName(all_elements);
+		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(all_elements);
 
 		for(int i = 0; i < addXmlNodeList.getLength(); i++)
 		{
