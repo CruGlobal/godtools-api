@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 
 public class PageStructure implements Serializable
 {
-	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
+	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("tnt-trx-ref-value", "tnt-trx-translated", "translate");
 
 	private UUID id;
 	private UUID translationId;
