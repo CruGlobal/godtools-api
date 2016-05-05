@@ -105,6 +105,13 @@ public class TranslationElementService
 				.executeUpdate();
 	}
 
+	public void deleteByTranslationId(UUID translationId)
+	{
+		sqlConnection.createQuery(TranslationElementQueries.deleteByTranslationId)
+				.addParameter("translationId", translationId)
+				.executeUpdate();
+	}
+
 	public static class TranslationElementQueries
 	{
 		public static final String selectByTranslationId = "SELECT * FROM translation_elements WHERE translation_id = :translationId";
@@ -116,5 +123,6 @@ public class TranslationElementService
 				"element_type = :elementType, page_name = :pageName, display_order = :displayOrder, page_structure_id = :pageStructureId WHERE id = :id AND translation_id = :translationId";
 		public static final String updateLite = "UPDATE translation_elements SET translated_text = :translatedText WHERE id = :id AND translation_id = :translationId";
 		public static final String delete = "DELETE FROM translation_elements WHERE id = :id";
+		public static final String deleteByTranslationId = "DELETE FROM translation_elements WHERE translation_id = :translationId";
 	}
 }

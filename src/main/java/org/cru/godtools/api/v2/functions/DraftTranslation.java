@@ -82,6 +82,25 @@ public class DraftTranslation extends AbstractTranslation
 		translationService.update(currentTranslation);
 	}
 
+	public void delete(String languageCode, String packageCode)
+	{
+		Package gtPackage = packageService.selectByCode(packageCode);
+		Language language = languageService.selectByLanguageCode(new LanguageCode(languageCode));
+
+		// try to load out the latest version of translation for this package/language combo
+		Translation currentDraftTranslation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(),
+				gtPackage.getId(),
+				GodToolsVersion.DRAFT_VERSION);
+
+		if(currentDraftTranslation == null) return;
+
+		translationElementService.deleteByTranslationId(currentDraftTranslation.getId());
+
+		pageStructureService.deleteByTranslationId(currentDraftTranslation.getId());
+
+		translationService.delete(currentDraftTranslation.getId());
+	}
+
 	/**
 	 * Inserts a new Translation record for the package and language that are passed in.  If currentTranslation is
 	 * present, then the new translation takes the next version number.  If not, then the new translation takes

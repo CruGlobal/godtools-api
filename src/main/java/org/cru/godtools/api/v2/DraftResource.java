@@ -3,6 +3,7 @@ package org.cru.godtools.api.v2;
 import com.google.common.base.Optional;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -239,6 +240,24 @@ public class DraftResource
 				godToolsTranslationService.updatePageLayout(gtPackage.getId(), pageName, updatedPageLayout);
 				break;
 		}
+
+		return Response
+				.noContent()
+				.build();
+	}
+
+	@DELETE
+	@Path("/{language}/{package}/")
+	public Response deleteDraft(@PathParam("language") String languageCode,
+								@PathParam("package") String packageCode,
+								@HeaderParam("Authorization") String authTokenHeader)
+	{
+		log.info("Deleting draft: " + packageCode + " and language: " + languageCode);
+
+		Optional<AuthorizationRecord> authorizationRecord = authService.getAuthorizationRecord(null, authTokenHeader);
+		AuthorizationRecord.checkAdminAccess(authorizationRecord, clock.currentDateTime());
+
+		draftTranslation.delete(languageCode, packageCode);
 
 		return Response
 				.noContent()
