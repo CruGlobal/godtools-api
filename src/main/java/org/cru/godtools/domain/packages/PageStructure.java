@@ -1,52 +1,39 @@
 package org.cru.godtools.domain.packages;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import javax.ws.rs.BadRequestException;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMSource;
+
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
-import org.ccci.util.xml.XmlDocumentStreamConverter;
 import org.cru.godtools.api.utilities.XmlUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Attr;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- * Created by ryancarlson on 4/30/14.
- */
 public class PageStructure implements Serializable
 {
 	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
-	private static final String ALL_ELEMENTS = "*";
 
 	private UUID id;
 	private UUID translationId;
@@ -168,135 +155,146 @@ public class PageStructure implements Serializable
 		xmlContent = updatedPageLayout;
 	}
 
-	public void addXmlContent(Document addXmlContentDocument) throws IOException, TransformerException
+	public void addXmlContent(Document updatedContent) throws IOException, TransformerException, ParserConfigurationException
 	{
-		XmlUtilities.verifyDifferentXml(xmlContent, addXmlContentDocument);
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		baseContent.setStrictErrorChecking(false);
 
-		NodeList addXmlNodeList = addXmlContentDocument.getElementsByTagName(ALL_ELEMENTS);
-		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(ALL_ELEMENTS);
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
 
-		List<String> currentXmlStringListOfElements = Lists.newArrayList();
+		addXmlContent(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
 
-		//create a string list of xml elements of the current document
-		for(int i=0; i < currentXmlContentNodeList.getLength(); i++)
+		xmlContent = baseContent;
+	}
+
+	private void addXmlContent(Node baseContentElement, Node updatedContentElement)
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
+
+		logger.info(String.format("Checking: %s for new elements", baseContentElement.getNodeName()));
+
+		while(updatedNextSibling != null)
 		{
-			String nodeString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(currentXmlContentNodeList.item(i)));
-			currentXmlStringListOfElements.add(nodeString);
-		}
-
-		for(int i = 0; i < addXmlNodeList.getLength(); i++)
-		{
-			Node nodeToAdd = addXmlNodeList.item(i);
-			Node xmlContentNode = currentXmlContentNodeList.item(i);
-
-			if (xmlContentNode != null)
+			if(baseNextSibling == null)
 			{
-				Element originalElement = (Element) xmlContentNode;
-				Element addElement = (Element) nodeToAdd;
+				logger.info(String.format("Adding %s to %s", updatedNextSibling.getNodeName(), baseContentElement.getParentNode().getNodeName()));
 
-				boolean attrMatch = XmlUtilities.hasSameAttributes(originalElement, addElement);
+				Node clonedNode = updatedNextSibling.cloneNode(true);
+				this.xmlContent.importNode(clonedNode, true);
+				baseContentElement.getParentNode().appendChild(clonedNode);
+			}
+			else if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
+			{
+				logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
 
-				//if the xml attributes are not the same but the node
-				//name is the same it's probably a new node
-				if (!attrMatch && originalElement.getNodeName().equals(addElement.getNodeName()))
-				{
-					String nodeToBeAddedString = XmlUtilities.xmlDocumentOrNodeToString(new DOMSource(nodeToAdd));
+				Node clonedNode = updatedNextSibling.cloneNode(true);
+				this.xmlContent.importNode(clonedNode, true);
+				baseNextSibling.getParentNode().insertBefore(clonedNode, baseNextSibling);
 
-					if (!currentXmlStringListOfElements.contains(nodeToBeAddedString))
-					{
-						Node targetNode = nodeToAdd.cloneNode(true);
-						Node nodeToBeImported = xmlContent.importNode(targetNode, true);
-						xmlContent.getDocumentElement().insertBefore(nodeToBeImported, xmlContentNode.getPreviousSibling());
-					}
-				}
+				updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+				continue;
 			}
 			else
 			{
-				Node targetNode = xmlContent.importNode(nodeToAdd, true);
-				currentXmlContentNodeList.item(1).appendChild(targetNode);
+				if (XmlUtilities.hasChildNodes(baseNextSibling))
+				{
+					if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+					{
+						throw new BadRequestException(String.format("Child nodes missing from updated %s that base %s has", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+					}
+					logger.info(String.format("Checking children of: %s for new elements", baseNextSibling.getNodeName()));
+					addXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+				}
 			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
 		}
+
+		return;
+	}
+
+	private boolean hasSameAttributes(Element oElement, Element aElement)
+	{
+		NamedNodeMap originalNamedNodeMap = oElement.getAttributes();
+		NamedNodeMap additionNamedNodeMap = aElement.getAttributes();
+
+		boolean attrMatch = true;
+
+		for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+        {
+            Attr a1 = (Attr) additionNamedNodeMap.item(n);
+            Attr o1 = (Attr) originalNamedNodeMap.item(n);
+
+            if (!o1.getName().equals(a1.getName()) || !o1.getValue().equals(a1.getValue()))
+            {
+                attrMatch = false;
+                break;
+            }
+        }
+		return attrMatch;
 	}
 
 	public void removeXmlContent(Document documentWithRemovableElements) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException,TransformerException
 	{
-		XmlUtilities.verifyDifferentXml(xmlContent, documentWithRemovableElements);
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
 
-		ByteArrayOutputStream originalXmlByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(xmlContent);
-		ByteArrayOutputStream removableElementsByteArrayOStream = XmlDocumentStreamConverter.writeToByteArrayStream(documentWithRemovableElements);
+		removeXmlContent(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
 
-		XMLEventReader originalXmlReader = getXmlEventReaderFromByteArray(originalXmlByteArrayOStream);
-		XMLEventReader removableElementsXmlReader = getXmlEventReaderFromByteArray(removableElementsByteArrayOStream);
+		xmlContent = baseContent;
+	}
 
-		ByteArrayOutputStream byteArrayForDocument = new ByteArrayOutputStream();
+	private void removeXmlContent(Node baseContentElement, Node updatedContentElement)
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
 
-		XMLEventWriter xmlEventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(byteArrayForDocument);
-		List<String> xmlEventArrayList = Lists.newArrayList();
+		logger.info(String.format("Checking: %s for removed elements", baseContentElement.getNodeName()));
 
-		boolean isFound = true ;
-		String deleteTagName = "";
-
-		//I'm sure there's a better way, but for now I write the results
-		//to a list and in the next while loop, we check if the event (xml element)
-		//exists.
-		while (removableElementsXmlReader.hasNext())
+		while(baseNextSibling != null)
 		{
-			XMLEvent xmlEvent = removableElementsXmlReader.nextEvent();
-			xmlEventArrayList.add(xmlEvent.toString());
-		}
-
-		while (originalXmlReader.hasNext())
-		{
-			XMLEvent event = originalXmlReader.nextEvent();
-
-			//Loop through the array with the event to see
-			//if it exists.  If it doesn't we don't add it.
-			//to the stream. Thus removing it.
-			if (xmlEventArrayList.contains(event.toString()) )
+			if(updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
 			{
-				if(isFound)
-				{
-					if(!event.isStartDocument())
-					{
-						//The API tries to write the string, " ENDDOCUMENT" is at the end
-						//of the stream resulting in an invalid xml doc
-						//This condition keeps it out.
-							xmlEventWriter.add(event);
-					}
-				}
-				//Once the closing tag for the "removed" tag is skipped
-				//we reset the variables used to skip over tags
-				else if(event.isEndElement() &&
-							deleteTagName.equals(event.asEndElement().getName().toString()))
-				{
-					isFound = true;
-					deleteTagName = "";
-				}
+				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
+
+				Node nextSiblingOfNodeToBeRemoved = XmlUtilities.getNextSiblingElement(baseNextSibling);
+				baseNextSibling.getParentNode().removeChild(baseNextSibling);
+
+				baseNextSibling = nextSiblingOfNodeToBeRemoved;
+				continue;
 			}
 			else
 			{
-				//This condition is to ensure that the
-				// intended "removed" parent tag and all of it's children
-				// are ignored.
-				if(event.isStartElement())
+				if (XmlUtilities.hasChildNodes(baseNextSibling))
 				{
-					deleteTagName = event.asStartElement().getName().toString();
-					isFound = false;
+					if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+					{
+						Iterator<Node> childNodeListIterator = XmlUtilities.getChildNodes(baseNextSibling).iterator();
+
+						while(childNodeListIterator.hasNext())
+						{
+							Node childNode = childNodeListIterator.next();
+							logger.info(String.format("Removing %s from %s", childNode.getNodeName(), baseNextSibling.getNodeName()));
+							baseNextSibling.removeChild(childNode);
+						}
+					}
+					else
+					{
+						logger.info(String.format("Checking children of: %s for removed elements", baseNextSibling.getNodeName()));
+						removeXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+					}
 				}
 			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
 		}
 
-		xmlEventWriter.flush();
-		xmlEventWriter.close();
-
-		InputStream inputStream = new ByteArrayInputStream( byteArrayForDocument.toByteArray());
-		Document document = XmlDocumentStreamConverter.readFromInputStream(inputStream);
-		setXmlContent(document);
-
-		originalXmlByteArrayOStream.close();
-		removableElementsByteArrayOStream.close();
-		byteArrayForDocument.close();
+		return;
+		
 	}
 
 	public void updateXmlContentAttributes(Document updateXmlDocument) throws TransformerException, IOException
@@ -365,13 +363,6 @@ public class PageStructure implements Serializable
 			}
 		}
 		return xmlDocumentCopy;
-	}
-
-	private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
-	{
-		InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-		return xmlInputFactory.createXMLEventReader(inputStream);
 	}
 
 	public UUID getId()

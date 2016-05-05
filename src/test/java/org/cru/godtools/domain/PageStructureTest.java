@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import javax.ws.rs.BadRequestException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
 import org.cru.godtools.tests.AbstractFullPackageServiceTest;
@@ -170,6 +171,56 @@ public class PageStructureTest
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
         Assert.assertEquals(originalXML, additionalXML);
+    }
+
+    /**
+     * This test validations that the PageStructure.removeXmlContent() can
+     * remove a node from a document successfully.
+     * qq
+     * Expected outcome: document contains node AssertFalse
+     *
+     */
+    @Test
+    public void testRemoveElement() throws SAXException,ParserConfigurationException,
+            IOException,TransformerException,XMLStreamException
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n" +
+                "        <package code=\"satisfied\">\n" +
+                "            <name>Satisfied?</name>\n" +
+                "        </package>\n" +
+                "    </language>\n" +
+                "</languages>";
+
+        String xmlAdditions2 = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n"+
+                "    </language>\n" +
+                "</languages>";
+
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.removeXmlContent(additionsXmlDocument);
+
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+
+        Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
     }
 
     /**
