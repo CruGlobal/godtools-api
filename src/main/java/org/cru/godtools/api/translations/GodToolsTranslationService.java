@@ -161,13 +161,13 @@ public class GodToolsTranslationService
 			Translation translation = translationService.selectByLanguageIdPackageIdVersionNumber(language.getId(), packageId, GodToolsVersion.LATEST_VERSION);
 
 			// we won't create any brand new translations at this point.
-			if(translation == null) continue;
+			if(translation == null || translation.isReleased()) continue;
 
-			if(translation.isReleased())
-			{
-				logger.info(String.format("Creating new draft translation for %s", language.getName()));
-				translation = setupNewTranslation(language.getId(), packageId);
-			}
+//			if(translation.isReleased())
+//			{
+//				logger.info(String.format("Creating new draft translation for %s", language.getName()));
+//				translation = setupNewTranslation(language.getId(), packageId);
+//			}
 
 			PageStructure pageStructure = pageStructureService.selectByTranslationIdAndFilename(translation.getId(), filename);
 			if(pageStructure != null)
