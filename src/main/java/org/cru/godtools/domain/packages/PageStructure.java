@@ -193,7 +193,7 @@ public class PageStructure implements Serializable
 				this.xmlContent.importNode(clonedNode, true);
 				baseContentElement.getParentNode().appendChild(clonedNode);
 			}
-			else if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
+			else if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling) && baseNextSibling.getOwnerDocument() != baseNextSibling)
 			{
 				logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
 
@@ -224,8 +224,6 @@ public class PageStructure implements Serializable
 		return;
 	}
 
-
-
 	public void removeXmlContent(Document updatedContent) throws XMLStreamException, IOException,
 			ParserConfigurationException,SAXException,TransformerException
 	{
@@ -246,7 +244,7 @@ public class PageStructure implements Serializable
 
 		while(baseNextSibling != null)
 		{
-			if(updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling))
+			if((updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling)) && baseNextSibling.getOwnerDocument() != baseNextSibling)
 			{
 				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
 
