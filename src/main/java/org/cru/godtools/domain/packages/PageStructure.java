@@ -193,27 +193,32 @@ public class PageStructure implements Serializable
 				this.xmlContent.importNode(clonedNode, true);
 				baseContentElement.getParentNode().appendChild(clonedNode);
 			}
-			else if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling) && baseNextSibling.getOwnerDocument() != baseNextSibling)
-			{
-				logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
-
-				Node clonedNode = updatedNextSibling.cloneNode(true);
-				this.xmlContent.importNode(clonedNode, true);
-				baseNextSibling.getParentNode().insertBefore(clonedNode, baseNextSibling);
-
-				updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
-				continue;
-			}
 			else
 			{
-				if (XmlUtilities.hasChildNodes(baseNextSibling))
+				final Document ownerDocument = baseNextSibling.getOwnerDocument();
+				final Node parentNode = baseNextSibling.getParentNode();
+				if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling) && ownerDocument != parentNode)
 				{
-					if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+					logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+	
+					Node clonedNode = updatedNextSibling.cloneNode(true);
+					this.xmlContent.importNode(clonedNode, true);
+					baseNextSibling.getParentNode().insertBefore(clonedNode, baseNextSibling);
+	
+					updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+					continue;
+				}
+				else
+				{
+					if (XmlUtilities.hasChildNodes(baseNextSibling))
 					{
-						throw new BadRequestException(String.format("Child nodes missing from updated %s that base %s has", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+						if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+						{
+							throw new BadRequestException(String.format("Child nodes missing from updated %s that base %s has", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+						}
+						logger.info(String.format("Checking children of: %s for new elements", baseNextSibling.getNodeName()));
+						addXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
 					}
-					logger.info(String.format("Checking children of: %s for new elements", baseNextSibling.getNodeName()));
-					addXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
 				}
 			}
 
@@ -244,7 +249,9 @@ public class PageStructure implements Serializable
 
 		while(baseNextSibling != null)
 		{
-			if((updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling)) && baseNextSibling.getOwnerDocument() != baseNextSibling)
+			final Node parentNode = baseNextSibling.getParentNode();
+			final Document ownerDocument = baseNextSibling.getOwnerDocument();
+			if((updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling)) && ownerDocument != parentNode)
 			{
 				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
 
