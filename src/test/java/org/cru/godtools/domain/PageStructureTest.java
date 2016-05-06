@@ -106,19 +106,19 @@ public class PageStructureTest
 
         String xmlOriginal = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
         "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
-        "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" yoffset=\"-50\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+        "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" w=\"300\" yoffset=\"140\" />\n"+
         "</page>";
 
         String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"ua10000f-187d-4083-8677-593a1t7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"300\" y=\"50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
-                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"ua10000f-187d-4083-8677-593a1t7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"300\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" yoffset=\"-50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" w=\"300\" yoffset=\"140\" />\n"+
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlOriginal);
@@ -153,15 +153,15 @@ public class PageStructureTest
 
         String xmlOriginal = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         String xmlAddition = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"364fb3eb-7a2d-40a3-bd19-32412af6df70\" modifier=\"italics\" size=\"340\" textalign=\"center\" translate=\"true\" w=\"500\" y=\"945\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"364fb3eb-7a2d-40a3-bd19-32412af6df70\" modifier=\"italics\" size=\"340\" textalign=\"center\" w=\"500\" y=\"945\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlOriginal);
@@ -243,14 +243,14 @@ public class PageStructureTest
 
         String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         String xmlWithChangedAttributes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"regular\" size=\"100\" textalign=\"middle\" translate=\"true\" w=\"10000\" y=\"300\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"bold\" size=\"240\" textalign=\"side\" translate=\"true\" w=\"10\" y=\"45\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"regular\" size=\"100\" textalign=\"middle\" w=\"10000\" y=\"300\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"bold\" size=\"240\" textalign=\"side\" w=\"10\" y=\"45\"> </text>\n" +
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlAdditions);
@@ -283,14 +283,14 @@ public class PageStructureTest
 
         String currentXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         String duplicateXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(currentXml);

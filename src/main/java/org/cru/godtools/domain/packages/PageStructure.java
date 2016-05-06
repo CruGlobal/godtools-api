@@ -288,42 +288,67 @@ public class PageStructure implements Serializable
 		
 	}
 
-	public void updateXmlContentAttributes(Document updateXmlDocument) throws TransformerException, IOException
+	public void updateXmlContentAttributes(Document updatedContent) throws TransformerException, IOException,ParserConfigurationException
 	{
-		XmlUtilities.verifyDifferentXml(xmlContent, updateXmlDocument);
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
+		updateXmlContentAttributes(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
 
-		String all_elements = "*";
+		xmlContent = baseContent;
+	}
 
-		NodeList addXmlNodeList = updateXmlDocument.getElementsByTagName(all_elements);
-		NodeList currentXmlContentNodeList = xmlContent.getElementsByTagName(all_elements);
+	public void updateXmlContentAttributes(Node baseContentElement, Node updatedContentElement) throws TransformerException, IOException
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
 
-		for(int i = 0; i < addXmlNodeList.getLength(); i++)
+		logger.info(String.format("Checking: %s for updated attributes", updatedNextSibling.getNodeName()));
+
+		while(updatedNextSibling != null)
 		{
-			Node xmlContentNode = currentXmlContentNodeList.item(i);
-			Node nodeWithNewAttributeValues =  addXmlNodeList.item(i);
+			logger.info(String.format("Updating %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
 
 			//The attributes are looped through by the node map
-			NamedNodeMap originalNamedNodeMap = xmlContentNode.getAttributes();
-			NamedNodeMap additionNamedNodeMap = nodeWithNewAttributeValues.getAttributes();
+			NamedNodeMap updatedNextSiblingNodeMap = updatedNextSibling.getAttributes();
 
-			for (int n = 0; n < additionNamedNodeMap.getLength(); n++)
+			for (int n = 0; n < updatedNextSiblingNodeMap.getLength(); n++)
 			{
-				Attr currentAttributes = (Attr) additionNamedNodeMap.item(n);
-				Attr newAttributes = (Attr) originalNamedNodeMap.item(n);
+				Attr newAttributes = (Attr) updatedNextSiblingNodeMap.item(n);
 
-				//if the attribute names are the same and the values
-				//are different, the value is updated.
-				if (newAttributes.getName().equals(currentAttributes.getName())
-						&& !newAttributes.getValue().equals(currentAttributes.getValue()))
+				//Use the iterator because the attributes will not always be returned in the same order after
+				//the xmlContent comes from getStrippedDownCopyOfXmlContent()
+				//this way all attributes are searched, matched and updates where necessary
+				Iterator<Attr> baseNextSiblingListIterator = XmlUtilities.getNodeAttributes(baseNextSibling).listIterator();
+
+				while(baseNextSiblingListIterator.hasNext())
 				{
-					Node nodeToBeSet = xmlContentNode
-							.getAttributes()
-							.getNamedItem(newAttributes.getName());
+					Attr currentAttributes = baseNextSiblingListIterator.next();
 
-					nodeToBeSet.setNodeValue(currentAttributes.getValue());
+					//if the attribute names are the same and the values
+					//are different, the value is updated.
+					if (newAttributes.getName().equals(currentAttributes.getName())
+							&& !newAttributes.getValue().equals(currentAttributes.getValue()))
+					{
+						Node nodeToBeSet = baseNextSibling
+								.getAttributes()
+								.getNamedItem(newAttributes.getName());
+
+						nodeToBeSet.setNodeValue(newAttributes.getValue());
+					}
 				}
 			}
+
+			//Traverse deeper if there are child nodes
+			if (XmlUtilities.hasChildNodes(baseNextSibling))
+			{
+				updateXmlContentAttributes(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
 		}
+
+		return;
 	}
 	
 	@JsonIgnore
