@@ -38,13 +38,10 @@ import java.util.UUID;
 @XmlRootElement
 public class ConfigFile
 {
-	@XmlElement(name = "page")
 	List<PageElement> pageElements = Lists.newArrayList();
 
-	@XmlElement(name = "about")
 	AboutElement about = new AboutElement();
 
-	@XmlElement(name = "packagename")
 	PackagenameElement packageName = new PackagenameElement();
 
 	public static ConfigFile createConfigFile(PackageStructure packageStructure)
@@ -61,6 +58,7 @@ public class ConfigFile
 		{
 			PageElement pageElement = new PageElement();
 			pageElement.setFilename(element.getAttribute("filename").replace(".xml",""));
+			pageElement.setOriginalFilename(packageStructure.getOriginalFilenameForUUIDFilename(element.getAttribute("filename")));
 			pageElement.setTitle(element.getTextContent());
 			configFile.pageElements.add(pageElement);
 		}
@@ -73,7 +71,7 @@ public class ConfigFile
 		return configFile;
 	}
 
-	@XmlElement(name = "page")
+	@XmlElement
 	public List<PageElement> getPageSet()
 	{
 		return pageElements;

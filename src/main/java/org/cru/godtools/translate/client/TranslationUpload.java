@@ -8,6 +8,7 @@ public interface TranslationUpload
 {
 	void doUpload(Integer projectId, String locale);
 	void doUpload(Integer projectId, String locale, String pageName);
+	void doUpload(Integer projectId, String locale, String pageName, boolean deprecateRemovedPhrases);
 
 	void recordInitialUpload(Integer projectId, String locale);
 

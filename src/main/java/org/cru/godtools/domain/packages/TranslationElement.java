@@ -1,14 +1,12 @@
 package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by ryancarlson on 4/30/14.
- */
 public class TranslationElement
 {
 	private UUID id;
@@ -19,6 +17,15 @@ public class TranslationElement
 	private String elementType;
 	private String pageName;
 	private Integer displayOrder;
+
+	@JsonIgnore
+	public void setFieldsForNewPhrase(PageStructure pageStructure)
+	{
+		setId(UUID.randomUUID());
+		setPageStructureId(pageStructure.getId());
+		setPageName(pageStructure.getFilename());  // just to be sure
+		setTranslatedText(baseText);
+	}
 
 	public static Map<UUID, TranslationElement> createMapOfTranslationElements(List<TranslationElement> translationElementList)
 	{
@@ -58,6 +65,7 @@ public class TranslationElement
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public UUID getPageStructureId()
 	{
 		return pageStructureId;
@@ -68,6 +76,7 @@ public class TranslationElement
 		this.pageStructureId = pageStructureId;
 	}
 
+	@JsonIgnore
 	public UUID getTranslationId()
 	{
 		return translationId;
@@ -88,6 +97,7 @@ public class TranslationElement
 		this.baseText = baseText;
 	}
 
+	@JsonIgnore
 	public String getTranslatedText()
 	{
 		return translatedText;

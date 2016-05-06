@@ -1,6 +1,8 @@
 package org.cru.godtools.api.v2;
 
+import com.google.common.base.Optional;
 import org.ccci.util.time.Clock;
+import org.cru.godtools.api.translations.GodToolsTranslation;
 import org.cru.godtools.api.v2.functions.DraftTranslation;
 import org.cru.godtools.api.v2.functions.PublishedTranslation;
 import org.cru.godtools.domain.authentication.AuthorizationRecord;
@@ -17,7 +19,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -64,6 +68,28 @@ public class TranslationResource
 		return Response
 				.status(Response.Status.MOVED_PERMANENTLY)
 				.header("location", AmazonS3GodToolsConfig.getTranslationsRedirectUrl(languageCode, packageCode))
+				.build();
+	}
+
+	@GET
+	@Path("/{language}/{package}/pages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPages(@PathParam("language") String languageCode,
+								@PathParam("package") String packageCode) throws MalformedURLException
+	{
+		log.info("Requesting pages for package: " + packageCode + " for language: " + languageCode);
+
+		Optional<GodToolsTranslation> godToolsTranslationOptional = publishedTranslation.retrieve(languageCode, packageCode, false);
+
+		if(!godToolsTranslationOptional.isPresent())
+		{
+			return Response
+					.status(Response.Status.NOT_FOUND)
+					.build();
+		}
+
+		return Response
+				.ok(godToolsTranslationOptional.get().getPageStructureList())
 				.build();
 	}
 

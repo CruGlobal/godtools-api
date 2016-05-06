@@ -1,9 +1,14 @@
 package org.cru.godtools.domain;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.ws.rs.BadRequestException;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import org.cru.godtools.domain.packages.PageStructure;
@@ -323,5 +328,14 @@ public class PageStructureTest
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(new InputSource(new StringReader(documentString)));
+    }
+
+    private XMLEventReader getXmlEventReaderFromByteArray(ByteArrayOutputStream byteArrayOutputStream) throws XMLStreamException
+    {
+        InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputStream);
+
+        return xmlEventReader;
     }
 }
