@@ -114,6 +114,21 @@ public class XmlUtilities
 		return nodeList;
 	}
 
+	public static List<Attr> getNodeAttributes(Node node)
+	{
+		List<Attr> attrList = Lists.newArrayList();
+
+		NamedNodeMap namedNodeMap = node.getAttributes();
+
+		for(int i = 0; i < namedNodeMap.getLength(); i++)
+		{
+			Attr attr = (Attr) namedNodeMap.item(i);
+			attrList.add(attr);
+		}
+
+		return attrList;
+	}
+
 	public static boolean nodesMatch(Node baseNode, Node updatedNode)
 	{
 		if(!(baseNode instanceof Element) || !(updatedNode instanceof Element)) return true;

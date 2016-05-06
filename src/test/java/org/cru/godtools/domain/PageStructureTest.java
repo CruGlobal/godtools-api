@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import javax.ws.rs.BadRequestException;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -16,9 +17,6 @@ import org.cru.godtools.utils.XmlDocumentFromFile;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -108,19 +106,19 @@ public class PageStructureTest
 
         String xmlOriginal = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
         "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
-        "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
-        "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" yoffset=\"-50\" />\n"+
+        "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+        "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" w=\"300\" yoffset=\"140\" />\n"+
         "</page>";
 
         String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page color=\"#00759A\" watermark=\"Home_Watermark.png\">\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"ua10000f-187d-4083-8677-593a1t7c58fd\" size=\"136\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"300\" y=\"50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"-50\" />\n"+
-                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" translate=\"true\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
-                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" translate=\"true\" w=\"300\" yoffset=\"140\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"da76705f-187d-4083-8677-593a1b7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"40\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"ua10000f-187d-4083-8677-593a1t7c58fd\" size=\"136\" textalign=\"center\" w=\"300\" xoffset=\"300\" y=\"50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"be73de97-89fe-4490-a686-220546e2592c\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" yoffset=\"-50\" />\n"+
+                "<text color=\"#FFFFFF\" gtapi-trx-id=\"404edd90-1aff-4bb9-83a2-f0d15c46a6e8\" modifier=\"bold\" size=\"156\" textalign=\"center\" w=\"300\" xoffset=\"-34\" yoffset=\"-50\" />\n"+
+                "<text alpha=\"0.8\" color=\"#ffffff\" gtapi-trx-id=\"d4b40701-5929-498b-b96e-cc6796d76771\" modifier=\"italics\" size=\"112\" textalign=\"center\" w=\"300\" yoffset=\"140\" />\n"+
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlOriginal);
@@ -155,15 +153,15 @@ public class PageStructureTest
 
         String xmlOriginal = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         String xmlAddition = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
                 "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"364fb3eb-7a2d-40a3-bd19-32412af6df70\" modifier=\"italics\" size=\"340\" textalign=\"center\" translate=\"true\" w=\"500\" y=\"945\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"200\"> </text>\n" +
-                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" translate=\"true\" w=\"300\" y=\"245\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"364fb3eb-7a2d-40a3-bd19-32412af6df70\" modifier=\"italics\" size=\"340\" textalign=\"center\" w=\"500\" y=\"945\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
                 "</page>";
 
         Document originalXmlDocument = createDocumentFromString(xmlOriginal);
@@ -178,6 +176,128 @@ public class PageStructureTest
         String additionalXML = domDocumentToString(additionsXmlDocument);
 
         Assert.assertEquals(originalXML, additionalXML);
+    }
+
+    /**
+     * This test validations that the PageStructure.removeXmlContent() can
+     * remove a node from a document successfully.
+     * qq
+     * Expected outcome: document contains node AssertFalse
+     *
+     */
+    @Test
+    public void testRemoveElement() throws SAXException,ParserConfigurationException,
+            IOException,TransformerException,XMLStreamException
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n" +
+                "        <package code=\"satisfied\">\n" +
+                "            <name>Satisfied?</name>\n" +
+                "        </package>\n" +
+                "    </language>\n" +
+                "</languages>";
+
+        String xmlAdditions2 = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<!-- NOTE: this structure does not represent a valid GodTools XML file, just here to provide test cases for various utilities -->\n" +
+                "<languages>\n" +
+                "    <language code=\"en\">\n" +
+                "        <package code=\"kgp\" >\n" +
+                "            <name>Knowing God</name>\n" +
+                "        </package>\n"+
+                "    </language>\n" +
+                "</languages>";
+
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlAdditions2);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.removeXmlContent(additionsXmlDocument);
+
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+
+        Assert.assertFalse(originalXML.contains("<package code=\"satisfied\"><name>Satisfied?</name></package>"));
+    }
+
+    /**
+     * This test validates that the PageStructure.updateXmlContentAttributes() can
+     * update/change element attributes
+     *
+     * Expected outcome: AssertEquals true
+     *
+     */
+    @Test
+    public void testUpdateAttributes() throws Exception
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String xmlAdditions = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        String xmlWithChangedAttributes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"regular\" size=\"100\" textalign=\"middle\" w=\"10000\" y=\"300\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"bold\" size=\"240\" textalign=\"side\" w=\"10\" y=\"45\"> </text>\n" +
+                "</page>";
+
+        Document originalXmlDocument = createDocumentFromString(xmlAdditions);
+        Document additionsXmlDocument = createDocumentFromString(xmlWithChangedAttributes);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.updateXmlContentAttributes(additionsXmlDocument);
+
+        //convert the doc to a string to make the comparison easier in case
+        //an xml element/tag is on the same line as it's sibling,child text, etc.
+        String originalXML = domDocumentToString(pageStructure.getXmlContent());
+        String additionalXML = domDocumentToString(additionsXmlDocument);
+
+        Assert.assertEquals(originalXML, additionalXML);
+    }
+
+    /**
+     * This test validates that the PageStructure.updateXmlContentAttributes() or
+     * method that calls the XmlUtilities.verifyDifferentXml() method with duplicate
+     * xml docs will result in a BadRequestException
+     *
+     * Expected outcome: BadRequestException
+     *
+     */
+    @Test(expectedExceptions = BadRequestException.class)
+    public void testUpdateAttributesException() throws Exception
+    {
+        PageStructure pageStructure = new PageStructure();
+        pageStructure.setId(UUID.randomUUID());
+
+        String currentXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        String duplicateXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<page backgroundimage=\"wave.png\" color=\"#DBF0FC\">\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"34cc87cd-64cd-49a9-a12b-b6b06e4acdbf\" modifier=\"bold\" size=\"100\" textalign=\"center\" w=\"300\" y=\"200\"> </text>\n" +
+                "<text color=\"#007486\" gtapi-trx-id=\"99a12a3b-0b53-4059-92eb-53496438c3de\" modifier=\"italics\" size=\"240\" textalign=\"center\" w=\"300\" y=\"245\"> </text>\n" +
+                "</page>";
+
+        Document originalXmlDocument = createDocumentFromString(currentXml);
+        Document duplicateXmlDocument = createDocumentFromString(duplicateXml);
+
+        pageStructure.setXmlContent(originalXmlDocument);
+        pageStructure.updateXmlContentAttributes(duplicateXmlDocument);
     }
 
     private String domDocumentToString(Document document) throws IOException,TransformerException

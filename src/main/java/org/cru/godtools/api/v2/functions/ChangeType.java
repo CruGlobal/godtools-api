@@ -5,7 +5,7 @@ package org.cru.godtools.api.v2.functions;
  */
 public enum ChangeType
 {
-    ADD_ELEMENTS,REMOVE_ELEMENTS,ADD_REMOVE_ELEMENTS,UPDATE_ELEMENTS,OVERWRITE;
+    ADD_ELEMENTS,REMOVE_ELEMENTS,ADD_REMOVE_ELEMENTS, UPDATE_ATTRIBUTES,OVERWRITE;
 
     public static ChangeType fromStringSafely(String possibleChangeType)
     {

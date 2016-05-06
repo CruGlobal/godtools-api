@@ -15,8 +15,10 @@ import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class PageStructure implements Serializable
@@ -282,6 +285,70 @@ public class PageStructure implements Serializable
 						removeXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
 					}
 				}
+			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
+		}
+
+		return;
+		
+	}
+
+	public void updateXmlContentAttributes(Document updatedContent) throws TransformerException, IOException,ParserConfigurationException
+	{
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
+		updateXmlContentAttributes(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
+
+		xmlContent = baseContent;
+	}
+
+	public void updateXmlContentAttributes(Node baseContentElement, Node updatedContentElement) throws TransformerException, IOException
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
+
+		logger.info(String.format("Checking: %s for updated attributes", updatedNextSibling.getNodeName()));
+
+		while(updatedNextSibling != null)
+		{
+			logger.info(String.format("Updating %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
+
+			//The attributes are looped through by the node map
+			NamedNodeMap updatedNextSiblingNodeMap = updatedNextSibling.getAttributes();
+
+			for (int n = 0; n < updatedNextSiblingNodeMap.getLength(); n++)
+			{
+				Attr newAttributes = (Attr) updatedNextSiblingNodeMap.item(n);
+
+				//Use the iterator because the attributes will not always be returned in the same order after
+				//the xmlContent comes from getStrippedDownCopyOfXmlContent()
+				//this way all attributes are searched, matched and updates where necessary
+				Iterator<Attr> baseNextSiblingListIterator = XmlUtilities.getNodeAttributes(baseNextSibling).listIterator();
+
+				while(baseNextSiblingListIterator.hasNext())
+				{
+					Attr currentAttributes = baseNextSiblingListIterator.next();
+
+					//if the attribute names are the same and the values
+					//are different, the value is updated.
+					if (newAttributes.getName().equals(currentAttributes.getName())
+							&& !newAttributes.getValue().equals(currentAttributes.getValue()))
+					{
+						Node nodeToBeSet = baseNextSibling
+								.getAttributes()
+								.getNamedItem(newAttributes.getName());
+
+						nodeToBeSet.setNodeValue(newAttributes.getValue());
+					}
+				}
+			}
+
+			//Traverse deeper if there are child nodes
+			if (XmlUtilities.hasChildNodes(baseNextSibling))
+			{
+				updateXmlContentAttributes(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
 			}
 
 			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
