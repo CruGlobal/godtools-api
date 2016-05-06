@@ -86,7 +86,7 @@ public final class Constants
 
 	/**
 	 * The user has uninstalled the application or turned off notifications.
-	 * Sender should stop sending messages to this device and deleteByTranslationId the
+	 * Sender should stop sending messages to this device and delete the
 	 * registration_id. The client needs to re-register with the GCM servers to
 	 * receive notifications again.
 	 */

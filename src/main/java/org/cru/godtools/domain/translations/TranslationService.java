@@ -171,13 +171,6 @@ public class TranslationService
 				.executeUpdate();
 	}
 
-	public void delete(UUID id)
-	{
-		sqlConnection.createQuery(TranslationQueries.deleteById)
-				.addParameter("id", id)
-				.executeUpdate();
-	}
-
 
 	public static class TranslationQueries
 	{
@@ -191,7 +184,6 @@ public class TranslationService
 		public static final String selectByLanguageIdPackageIdVersionNumber = "SELECT * FROM translations WHERE package_id = :packageId AND language_id = :languageId AND version_number = :versionNumber";
 		public static final String insert = "INSERT INTO translations(id, language_id, package_id, version_number, translated_name, released) VALUES(:id, :languageId, :packageId, :versionNumber, :translatedName, :released)";
 		public static final String update = "UPDATE translations SET language_id = :languageId, package_id = :packageId, version_number = :versionNumber, translated_name = :translatedName, released = :released WHERE id = :id";
-		public static final String deleteById = "DELETE FROM translations WHERE id = :id";
 	}
 
 }
