@@ -1,5 +1,6 @@
 package org.cru.godtools.domain.packages;
 
+import com.google.common.collect.Maps;
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
@@ -21,6 +22,8 @@ public class PackageStructure implements Serializable
 	private Integer versionNumber;
 	private Document xmlContent;
 	private String filename;
+
+	private final Map<String,String> filenameMap = Maps.newHashMap();
 
 	private final Logger logger = Logger.getLogger(PackageStructure.class);
 
@@ -53,13 +56,21 @@ public class PackageStructure implements Serializable
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "page"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
-			pageElement.setAttribute("filename", pageStructures.get(filenameFromXml).getId()+ ".xml");
+			String uuidFilename = pageStructures.get(filenameFromXml).getId() + ".xml";
+
+			pageElement.setAttribute("filename", uuidFilename);
+
+			filenameMap.put(uuidFilename, filenameFromXml);
 		}
 
 		for(Element pageElement : XmlDocumentSearchUtilities.findElements(getXmlContent(), "about"))
 		{
 			String filenameFromXml = pageElement.getAttribute("filename");
+			String uuidFilename = pageStructures.get(filenameFromXml).getId() + ".xml";
+
 			pageElement.setAttribute("filename", pageStructures.get(filenameFromXml).getId() + ".xml");
+
+			filenameMap.put(uuidFilename, filenameFromXml);
 		}
 	}
 
@@ -102,6 +113,11 @@ public class PackageStructure implements Serializable
 		if(packageNameElements.size() != 1) throw new IllegalStateException("Expected one packagename element");
 
 		return packageNameElements.get(0).getTextContent();
+	}
+
+	public String getOriginalFilenameForUUIDFilename(String uuidFilename)
+	{
+		return filenameMap.get(uuidFilename);
 	}
 
 	public UUID getId()

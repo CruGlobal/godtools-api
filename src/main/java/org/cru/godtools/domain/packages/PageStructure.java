@@ -2,7 +2,15 @@ package org.cru.godtools.domain.packages;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.io.IOException;
+import javax.ws.rs.BadRequestException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerException;
+
 import org.ccci.util.xml.XmlDocumentSearchUtilities;
+import org.cru.godtools.api.utilities.XmlUtilities;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.cru.godtools.domain.GuavaHashGenerator;
 import org.cru.godtools.domain.images.Image;
 import org.jboss.logging.Logger;
@@ -15,17 +23,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.xml.sax.SAXException;
 
-/**
- * Created by ryancarlson on 4/30/14.
- */
 public class PageStructure implements Serializable
 {
-	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("watermark", "tnt-trx-ref-value", "tnt-trx-translated", "translate");
+	private static final Set<String> REMOVABLE_ATTRIBUTES = Sets.newHashSet("tnt-trx-ref-value", "tnt-trx-translated", "translate");
 
 	private UUID id;
 	private UUID translationId;
@@ -64,6 +71,7 @@ public class PageStructure implements Serializable
 			{
 				UUID translationElementId = UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"));
 
+
 				if (mapOfTranslationElements.containsKey(UUID.fromString(translatableElement.getAttribute("gtapi-trx-id"))))
 				{
 					String translatedText = mapOfTranslationElements.get(translationElementId).getTranslatedText();
@@ -85,19 +93,29 @@ public class PageStructure implements Serializable
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "backgroundimage"))
 		{
 			String filenameFromXml = element.getAttribute("backgroundimage");
-			element.setAttribute("backgroundimage", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("backgroundimage", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElementsWithAttribute(getXmlContent(), "page", "watermark"))
 		{
 			String filenameFromXml = element.getAttribute("watermark");
-			element.setAttribute("watermark", GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setAttribute("watermark", image != null ?
+					(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 
 		for(Element element : XmlDocumentSearchUtilities.findElements(getXmlContent(), "image"))
 		{
 			String filenameFromXml = element.getTextContent();
-			element.setTextContent(GuavaHashGenerator.calculateHash(images.get(filenameFromXml).getImageContent()) + ".png");
+			Image image = images.get(filenameFromXml);
+
+			element.setTextContent(
+					image != null ?
+							(GuavaHashGenerator.calculateHash(image.getImageContent()) + ".png") : "<image not found>");
 		}
 	}
 
@@ -143,10 +161,137 @@ public class PageStructure implements Serializable
 				}
 			}
 		}
-
 		xmlContent = updatedPageLayout;
 	}
 
+	public void addXmlContent(Document updatedContent) throws IOException, TransformerException, ParserConfigurationException
+	{
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		baseContent.setStrictErrorChecking(false);
+
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
+
+		addXmlContent(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
+
+		xmlContent = baseContent;
+	}
+
+	private void addXmlContent(Node baseContentElement, Node updatedContentElement)
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
+
+		logger.info(String.format("Checking: %s for new elements", baseContentElement.getNodeName()));
+
+		while(updatedNextSibling != null)
+		{
+			if(baseNextSibling == null)
+			{
+				logger.info(String.format("Adding %s to %s", updatedNextSibling.getNodeName(), baseContentElement.getParentNode().getNodeName()));
+
+				Node clonedNode = updatedNextSibling.cloneNode(true);
+				this.xmlContent.importNode(clonedNode, true);
+				baseContentElement.getParentNode().appendChild(clonedNode);
+			}
+			else
+			{
+				final Document ownerDocument = baseNextSibling.getOwnerDocument();
+				final Node parentNode = baseNextSibling.getParentNode();
+				if(!XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling) && ownerDocument != parentNode)
+				{
+					logger.info(String.format("Adding %s before %s", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+	
+					Node clonedNode = updatedNextSibling.cloneNode(true);
+					this.xmlContent.importNode(clonedNode, true);
+					baseNextSibling.getParentNode().insertBefore(clonedNode, baseNextSibling);
+	
+					updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+					continue;
+				}
+				else
+				{
+					if (XmlUtilities.hasChildNodes(baseNextSibling))
+					{
+						if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+						{
+							throw new BadRequestException(String.format("Child nodes missing from updated %s that base %s has", updatedNextSibling.getNodeName(), baseNextSibling.getNodeName()));
+						}
+						logger.info(String.format("Checking children of: %s for new elements", baseNextSibling.getNodeName()));
+						addXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+					}
+				}
+			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
+		}
+
+		return;
+	}
+
+	public void removeXmlContent(Document updatedContent) throws XMLStreamException, IOException,
+			ParserConfigurationException,SAXException,TransformerException
+	{
+		Document baseContent = getStrippedDownCopyOfXmlContent();
+		XmlUtilities.verifyDifferentXml(baseContent, updatedContent);
+
+		removeXmlContent(baseContent.getDocumentElement(), updatedContent.getDocumentElement());
+
+		xmlContent = baseContent;
+	}
+
+	private void removeXmlContent(Node baseContentElement, Node updatedContentElement)
+	{
+		Node updatedNextSibling = updatedContentElement;
+		Node baseNextSibling = baseContentElement;
+
+		logger.info(String.format("Checking: %s for removed elements", baseContentElement.getNodeName()));
+
+		while(baseNextSibling != null)
+		{
+			final Node parentNode = baseNextSibling.getParentNode();
+			final Document ownerDocument = baseNextSibling.getOwnerDocument();
+			if((updatedNextSibling == null || !XmlUtilities.nodesMatch(baseNextSibling, updatedNextSibling)) && ownerDocument != parentNode)
+			{
+				logger.info(String.format("Removing %s from %s", baseNextSibling.getNodeName(), baseNextSibling.getParentNode().getNodeName()));
+
+				Node nextSiblingOfNodeToBeRemoved = XmlUtilities.getNextSiblingElement(baseNextSibling);
+				baseNextSibling.getParentNode().removeChild(baseNextSibling);
+
+				baseNextSibling = nextSiblingOfNodeToBeRemoved;
+				continue;
+			}
+			else
+			{
+				if (XmlUtilities.hasChildNodes(baseNextSibling))
+				{
+					if (!XmlUtilities.hasChildNodes(updatedNextSibling))
+					{
+						Iterator<Node> childNodeListIterator = XmlUtilities.getChildNodes(baseNextSibling).iterator();
+
+						while(childNodeListIterator.hasNext())
+						{
+							Node childNode = childNodeListIterator.next();
+							logger.info(String.format("Removing %s from %s", childNode.getNodeName(), baseNextSibling.getNodeName()));
+							baseNextSibling.removeChild(childNode);
+						}
+					}
+					else
+					{
+						logger.info(String.format("Checking children of: %s for removed elements", baseNextSibling.getNodeName()));
+						removeXmlContent(XmlUtilities.getFirstChild(baseNextSibling), XmlUtilities.getFirstChild(updatedNextSibling));
+					}
+				}
+			}
+
+			updatedNextSibling = XmlUtilities.getNextSiblingElement(updatedNextSibling);
+			baseNextSibling = XmlUtilities.getNextSiblingElement(baseNextSibling);
+		}
+
+		return;
+	}
+	
+	@JsonIgnore
 	public Document getStrippedDownCopyOfXmlContent() throws ParserConfigurationException
 	{
 		Document xmlDocumentCopy = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -190,6 +335,7 @@ public class PageStructure implements Serializable
 		this.translationId = translationId;
 	}
 
+	@JsonIgnore
 	public Document getXmlContent()
 	{
 		return xmlContent;

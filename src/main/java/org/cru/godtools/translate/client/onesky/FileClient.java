@@ -48,11 +48,11 @@ public class FileClient
 	 *                                for the elements being translated.
 	 */
 	@Asynchronous
-	public void uploadFile(Integer projectId, String pageName, String locale, ObjectNode jsonToUpload) throws Exception
+	public void uploadFile(Integer projectId, String pageName, String locale, ObjectNode jsonToUpload, boolean deprecateMissingPhrases) throws Exception
 	{
 		WebTarget target = OneSkyClientBuilder.buildTarget(projectId, SUB_PATH);
 
-		GenericEntity<MultipartFormDataOutput> genericEntity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, jsonToUpload)){};
+		GenericEntity<MultipartFormDataOutput> genericEntity = new GenericEntity<MultipartFormDataOutput>(buildMultipartFormDataOutput(pageName, locale, jsonToUpload, deprecateMissingPhrases)){};
 
 		LanguageCode languageCode = new LanguageCode(locale);
 
@@ -83,10 +83,10 @@ public class FileClient
 	 *  - dev_hash (a hash of the current timestamp and oneskyapp private key)
 	 *  - file_format (for now, always HIERARCHICAL_JSON)
 	 *  - the text file build from the translation element list.
-	 *
+	 *  - is_keeping_all_strings
 	 *  Returns an instance of MultipartFormDataOutput with the above values set.
 	 */
-	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, String locale, ObjectNode jsonToUpload) throws Exception
+	private MultipartFormDataOutput buildMultipartFormDataOutput(String pageName, String locale, ObjectNode jsonToUpload, boolean deprecateMissingPhrases) throws Exception
 	{
 		long timestamp = System.currentTimeMillis() / 1000;
 
@@ -96,6 +96,7 @@ public class FileClient
 		upload.addFormData("dev_hash", OneSkyClientBuilder.createDevHash(timestamp, (String)properties.get("oneskySecretKey")), MediaType.TEXT_PLAIN_TYPE);
 		upload.addFormData("file_format", "HIERARCHICAL_JSON", MediaType.TEXT_PLAIN_TYPE);
 		upload.addFormData("file", new ObjectMapper().writeValueAsString(jsonToUpload), MediaType.APPLICATION_JSON_TYPE.withCharset("utf-8"), pageName);
+		upload.addFormData("is_keeping_all_strings", String.valueOf(!deprecateMissingPhrases), MediaType.TEXT_PLAIN_TYPE);
 		if(!Strings.isNullOrEmpty(locale)) upload.addFormData("locale", locale, MediaType.TEXT_PLAIN_TYPE);
 
 		return upload;

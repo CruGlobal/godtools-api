@@ -58,7 +58,6 @@ public class ContentsFile
 		return contentsFile;
 	}
 
-	@XmlElement(name = "resource")
 	public Set<ResourceElement> getResourceSet()
 	{
 		return resourceSet;
