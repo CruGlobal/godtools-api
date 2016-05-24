@@ -10,6 +10,7 @@ import org.cru.godtools.domain.translations.Translation;
 import org.cru.godtools.translate.client.TranslationDownload;
 import org.cru.godtools.translate.client.TranslationResults;
 import org.cru.godtools.translate.client.TranslationStatus;
+import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -23,6 +24,8 @@ public class DraftTranslation
 	@Inject TranslationElementService translationElementService;
 	@Inject PageStructureService pageStructureService;
 	@Inject Clock clock;
+
+	private static final Logger logger = Logger.getLogger(DraftTranslation.class);
 
 	public void updateFromTranslationTool(Integer translationProjectId,
 															Translation translation,
@@ -57,6 +60,11 @@ public class DraftTranslation
 		for(UUID elementId : translationResults.keySet())
 		{
 			TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
+			if(element == null)
+			{
+				logger.warn(String.format("Element %s is missing from translation %s", elementId, translation.getId()));
+				continue;
+			}
 			element.setTranslatedText(translationResults.get(elementId));
 			translationElementService.update(element);
 		}
