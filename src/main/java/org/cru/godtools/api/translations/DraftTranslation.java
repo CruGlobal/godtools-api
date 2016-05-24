@@ -45,7 +45,7 @@ public class DraftTranslation
 						languageCode.toString(),
 						pageStructure.getFilename());
 
-				updateLocalTranslationElements(downloadResults, translation);
+				updateLocalTranslationElements(downloadResults, pageStructure.getId(), translation.getId());
 				pageStructure.updateCachedStatus(remoteStatus.getPercentCompleted(),
 						remoteStatus.getWordCount(),
 						remoteStatus.getStringCount(),
@@ -55,19 +55,33 @@ public class DraftTranslation
 		}
 	}
 
-	private void updateLocalTranslationElements(TranslationResults translationResults, Translation translation)
+	private void updateLocalTranslationElements(TranslationResults translationResults, UUID pageStructureId, UUID translationId)
 	{
 		for(UUID elementId : translationResults.keySet())
 		{
-			TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translation.getId());
+			final TranslationElement element = translationElementService.selectyByIdTranslationId(elementId, translationId);
 			if(element == null)
 			{
-				logger.warn(String.format("Element %s is missing from translation %s", elementId, translation.getId()));
-				continue;
+				logger.warn(String.format("Element %s is missing from translation %s b/c this draft didn't exist when phrase was added.", elementId, translationId));
+				translationElementService.insert(createTranslationElement(translationResults, pageStructureId, translationId, elementId));
 			}
-			element.setTranslatedText(translationResults.get(elementId));
-			translationElementService.update(element);
+			else
+			{
+				element.setTranslatedText(translationResults.get(elementId));
+				translationElementService.update(element);
+			}
 		}
+	}
+
+	private TranslationElement createTranslationElement(TranslationResults translationResults, UUID pageStructureId, UUID translationId, UUID elementId)
+	{
+		TranslationElement newElement = new TranslationElement();
+		newElement.setId(elementId);
+		newElement.setTranslationId(translationId);
+		newElement.setPageStructureId(pageStructureId);
+		newElement.setTranslatedText(translationResults.get(elementId));
+
+		return newElement;
 	}
 
 	private TranslationStatus loadRemoteStatus(Integer projectId, LanguageCode languageCode, PageStructure pageStructure)
