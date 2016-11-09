@@ -1,18 +1,29 @@
 package org.cru.godtools.api.v2;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import org.cru.godtools.api.v2.functions.NewPackage;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("v2/packages")
 public class PackageResource
 {
 	private Logger log = Logger.getLogger(this.getClass());
+
+	@Inject
+	NewPackage newPackage;
 
 	@GET
 	@Path("/{language}")
@@ -37,4 +48,29 @@ public class PackageResource
 				.status(Response.Status.NOT_FOUND)
 				.build();
 	}
+
+	@POST
+	public Response createPackage(org.cru.godtools.domain.packages.Package gtPackage,
+								  @QueryParam("numPages") Integer numberOfPages,
+								  @QueryParam("languages") String languages
+								  )
+	{
+		List<String> languageCodes;
+
+		if(!Strings.isNullOrEmpty(languages)) {
+			languageCodes = Lists.newArrayList(languages.split(","));
+		} else {
+			languageCodes = new ArrayList<>();
+		}
+
+		newPackage.create(gtPackage,
+				numberOfPages == null ? 1 : numberOfPages,
+				languageCodes);
+
+
+		return Response
+				.ok()
+				.build();
+	}
+
 }

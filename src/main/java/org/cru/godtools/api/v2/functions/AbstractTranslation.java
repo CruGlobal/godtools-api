@@ -34,8 +34,6 @@ import java.util.UUID;
 
 public abstract class AbstractTranslation
 {
-	static final Set<String> PACKAGE_CODES = Sets.newHashSet("kgp", "fourlaws", "satisfied");
-
 	final Logger logger = Logger.getLogger(getClass());
 
 	@Inject
@@ -61,10 +59,11 @@ public abstract class AbstractTranslation
 	public List<GodToolsTranslation> retrieve(String languageCode)
 	{
 		List<GodToolsTranslation> godToolsTranslationList = Lists.newArrayList();
+		List<Package> godToolsPackages = packageService.selectAllPackages();
 
-		for(String packageCode : PACKAGE_CODES)
+		for(Package godToolsPackage : godToolsPackages)
 		{
-			Optional<GodToolsTranslation> godToolsTranslationOptional = retrieve(languageCode, packageCode);
+			Optional<GodToolsTranslation> godToolsTranslationOptional = retrieve(languageCode, godToolsPackage.getCode());
 
 			if(godToolsTranslationOptional.isPresent())
 			{

@@ -4,6 +4,7 @@ import org.ccci.util.time.Clock;
 import org.cru.godtools.api.meta.MetaResults;
 import org.cru.godtools.api.meta.MetaService;
 import org.cru.godtools.domain.authentication.AuthorizationService;
+import org.cru.godtools.domain.packages.PackageService;
 import org.cru.godtools.s3.AmazonS3GodToolsConfig;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
@@ -30,6 +31,9 @@ public class MetaResource
 
 	@Inject
 	MetaService metaService;
+
+	@Inject
+	PackageService packageService;
 
 	@Inject
 	Clock clock;
@@ -134,5 +138,14 @@ public class MetaResource
 					.header("Location", AmazonS3GodToolsConfig.getMetaRedirectUrl(requestedContentType))
 					.build();
 		}
+	}
+
+	@GET
+	@Path("/packages")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAvailablePackages() {
+		return Response
+				.ok(packageService.selectAllPackages())
+				.build();
 	}
 }
