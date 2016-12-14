@@ -233,7 +233,8 @@ public class DraftResource
 				break;
 			case ADD_REMOVE_ELEMENTS:
 				break;
-			case UPDATE_ELEMENTS:
+			case UPDATE_ATTRIBUTES:
+				godToolsTranslationService.updateElementAttributes(gtPackage.getId(), pageName, updatedPageLayout);
 				break;
 			case OVERWRITE:
 				godToolsTranslationService.updatePageLayout(gtPackage.getId(), pageName, updatedPageLayout);
